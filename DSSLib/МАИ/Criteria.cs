@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace DSSLib
 {
@@ -11,6 +12,7 @@ namespace DSSLib
         public event Action ImportanceUpdated;
 
         private static int id { get; set; }
+        [XmlAttribute]
         public string ID { get; set; }
         public string Name { get; set; }
 
@@ -26,6 +28,9 @@ namespace DSSLib
             }
         }
         private int importance;
+
+        public List<CriteriaValue> CriteriaValues { get; set; }
+        private CriteriaValue value;
 
         public Criteria()
         {
@@ -47,5 +52,11 @@ namespace DSSLib
             Console.WriteLine(Print.GetPrintText("Приоритет",$"{Importance}",true));
             Console.WriteLine();
         }
+    }
+
+    public class CriteriaValue
+    {
+        public string Descriprion { get; set; }
+        public int Priority { get; set; }
     }
 }

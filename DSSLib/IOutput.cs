@@ -7,5 +7,6 @@ namespace DSSLib
     interface IOutput
     {
         void Output();
+        //void OutputFull();
     }
 }

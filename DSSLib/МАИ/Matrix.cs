@@ -5,76 +5,16 @@ using System.Text;
 
 namespace DSSLib
 {
-    public class Choice : IOutput
-    {
-        public override string ToString() => string.IsNullOrEmpty(Name) ? $"Выбор по {Criterias.Length} критериям из {Alternatives.Length} альтернатив" : Name;
-
-        public string Name { get; private set; }
-
-        public Criteria[] Criterias { get; private set; }
-        public Alternative[] Alternatives { get; private set; }
-
-        private void UpdateCriteriaMatrix()
-        {
-            CriteriaMatrix = new CriteriaMatrix(Criterias);
-            CriteriaWeights = CriteriaMatrix.Weights;
-            AlternativeComparisons = Criterias.Select(c => new AlternativesMatrix(c, Alternatives)).ToDictionary(c => c.Criteria);
-
-            AlternativeWeights = new Dictionary<Alternative, double>();
-            foreach (Alternative alternative in Alternatives)
-            {
-                double weight = 0;
-                foreach (Criteria criteria in Criterias)
-                {
-                    weight += CriteriaWeights[criteria] * AlternativeComparisons[criteria].Weights[alternative];
-                }
-                AlternativeWeights.Add(alternative, weight);
-            }
-        }
-        public CriteriaMatrix CriteriaMatrix { get; private set; }
-        public Dictionary<Criteria,double> CriteriaWeights { get; private set; }
-
-        public Dictionary<Criteria, AlternativesMatrix> AlternativeComparisons { get; set; }
-        public Dictionary<Alternative,double> AlternativeWeights { get; set; }
-
-        public Choice(string name, Criteria[] criterias, Alternative[] alternatives)
-        {
-            Name = name;
-            Criterias = criterias.Where(c => c.Importance > 0).ToArray();
-            Alternatives = alternatives;
-            UpdateCriteriaMatrix();
-            foreach (Criteria criteria in Criterias)
-            {
-                criteria.ImportanceUpdated += UpdateCriteriaMatrix;
-            }
-        }
-
-
-        public void Output()
-        {
-            Console.WriteLine($"ЗАДАЧА: {Name}");
-            Console.WriteLine(Print.GetPrintText("Критериев",$"{Criterias.Length}",false));
-            foreach (var item in Criterias)
-            {
-                Console.WriteLine(Print.GetPrintText($"{item.Name}",$"база: {item.Importance}, рассчет: {Math.Round(CriteriaWeights[item],4)}",true));
-            }
-            Console.WriteLine(Print.GetPrintText("Альтернативы",$"{Alternatives.Length}",false));
-            foreach (var item in Alternatives)
-            {
-                Console.WriteLine(Print.GetPrintText($"{item.Name}",$"{Math.Round(AlternativeWeights[item],4)}",true));
-            }
-
-
-            Console.WriteLine();
-
-        }
-    }
-
-
-
+    /// <summary>
+    /// Матрица
+    /// </summary>
+    /// <typeparam name="K"></typeparam>
     public abstract class Matrix<K> : IOutput
     {
         public double[,] Arr { get; protected set; }
+        protected int Rows => Arr.GetUpperBound(0) + 1;
+        protected int Columns => Arr.Length / Rows;
+
         public K[] Keys { get; protected set; }
         
         public Dictionary<K,double> Weights
@@ -87,13 +27,11 @@ namespace DSSLib
                 {
                     sumTotal += val;
                 }
-                int rows = Arr.GetUpperBound(0) + 1;
-                int columns = Arr.Length / rows;
-                for (int x = 0; x < rows; x++)
+                for (int x = 0; x < Rows; x++)
                 {
                     K key = Keys[x];
                     double sumRow = 0;
-                    for (int y = 0; y < columns; y++)
+                    for (int y = 0; y < Columns; y++)
                     {
                         sumRow += Arr[x, y];
                     }
@@ -127,6 +65,10 @@ namespace DSSLib
 
         }
     }
+
+    /// <summary>
+    /// Матрица сравнения критериев
+    /// </summary>
     public class CriteriaMatrix : Matrix<Criteria>
     {
         public override string ToString() => $"Матрица {Keys.Length} критериев";
@@ -150,6 +92,7 @@ namespace DSSLib
         {
             Console.WriteLine($"{ToString()}");
             Console.WriteLine(Print.GetPrintText("Критерии",$"{Keys.Length}",false));
+
             foreach (var item in Weights)
             {
                 Console.WriteLine(Print.GetPrintText($"{item.Key.Name}",$"{Math.Round(item.Value,4)}",true));
@@ -158,6 +101,10 @@ namespace DSSLib
             Console.WriteLine();
         }
     }
+
+    /// <summary>
+    /// Матрица сравнения альтернатив по критерию
+    /// </summary>
     public class AlternativesMatrix : Matrix<Alternative>
     {
         public override string ToString() => $"Матрица сравнения {Keys.Length} альтернатив по критерию {Criteria.Name}";
@@ -173,7 +120,7 @@ namespace DSSLib
                 for (int y = 0; y < altCount; y++)
                 {
                     Alternative b = alternatives.ElementAt(y);
-                    double val = (double)a.Criterias[Criteria] / b.Criterias[Criteria];
+                    double val = (double)a.GetCriteriaPriority(Criteria).Priority / b.GetCriteriaPriority(Criteria).Priority;
                     Arr[x, y] = val;
                 }
             }
@@ -192,4 +139,5 @@ namespace DSSLib
             Console.WriteLine();
         }
     }
+
 }
