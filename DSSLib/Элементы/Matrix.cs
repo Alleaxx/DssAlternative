@@ -20,6 +20,19 @@ namespace DSSLib
 
         public K[] Keys { get; protected set; }
         public V[] Values { get; protected set; }
+
+        public KeyValueRelation<K,V,double> Get(int r, int c) => new KeyValueRelation<K, V, double>(Keys[r], Values[c], Arr[r,c]);
+        public double Get(K a, V b)
+        {
+            int aPos = Keys.ToList().IndexOf(a);
+            int bPos = Values.ToList().IndexOf(b);
+
+            if (aPos != -1 && bPos != -1)
+                return Arr[aPos, bPos];
+            else
+                throw new Exception("Ключи в матрице не найдены");
+        }
+
         
         public Dictionary<K,double> Weights
         {
@@ -46,16 +59,6 @@ namespace DSSLib
                 return weights;
             }
         }
-        public double Get(K a, V b)
-        {
-            int aPos = Keys.ToList().IndexOf(a);
-            int bPos = Values.ToList().IndexOf(b);
-
-            if (aPos != -1 && bPos != -1)
-                return Arr[aPos, bPos];
-            else
-                throw new Exception("Ключи в матрице не найдены");
-        }
 
         public Matrix(K[] keys, V[] values)
         {
@@ -65,10 +68,7 @@ namespace DSSLib
         }
 
 
-        public virtual void Output()
-        {
-
-        }
+        public virtual void Output() { }
     }
     public abstract class Matrix<K> : Matrix<K,K>
     {
