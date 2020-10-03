@@ -7,15 +7,19 @@ namespace DSSLib
 {
     /// <summary>
     /// Матрица
+    /// TODO
+    /// - Представление нормализованной матрицы
+    /// - Проверка на согласованность
     /// </summary>
     /// <typeparam name="K"></typeparam>
-    public abstract class Matrix<K> : IOutput
+    public abstract class Matrix<K,V> : IOutput
     {
         public double[,] Arr { get; protected set; }
         protected int Rows => Arr.GetUpperBound(0) + 1;
         protected int Columns => Arr.Length / Rows;
 
         public K[] Keys { get; protected set; }
+        public V[] Values { get; protected set; }
         
         public Dictionary<K,double> Weights
         {
@@ -42,10 +46,10 @@ namespace DSSLib
                 return weights;
             }
         }
-        public double Get(K a, K b)
+        public double Get(K a, V b)
         {
             int aPos = Keys.ToList().IndexOf(a);
-            int bPos = Keys.ToList().IndexOf(b);
+            int bPos = Values.ToList().IndexOf(b);
 
             if (aPos != -1 && bPos != -1)
                 return Arr[aPos, bPos];
@@ -53,14 +57,22 @@ namespace DSSLib
                 throw new Exception("Ключи в матрице не найдены");
         }
 
-        public Matrix(K[] keys)
+        public Matrix(K[] keys, V[] values)
         {
-            Arr = new double[keys.Length,keys.Length];
+            Arr = new double[keys.Length,values.Length];
             Keys = keys;
+            Values = values;
         }
 
 
         public virtual void Output()
+        {
+
+        }
+    }
+    public abstract class Matrix<K> : Matrix<K,K>
+    {
+        public Matrix(K[] keys) : base(keys,keys)
         {
 
         }
@@ -139,5 +151,4 @@ namespace DSSLib
             Console.WriteLine();
         }
     }
-
 }

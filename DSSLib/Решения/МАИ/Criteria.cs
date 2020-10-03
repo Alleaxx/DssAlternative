@@ -6,12 +6,10 @@ using System.Xml.Serialization;
 namespace DSSLib
 {
     [Serializable]
-    public class Criteria : IOutput
+    public class Criteria : IOutput, IId
     {
         public override string ToString() => $"{Name}";
-        public event Action ImportanceUpdated;
 
-        private static int id { get; set; }
         [XmlAttribute]
         public string ID { get; set; }
         public string Name { get; set; }
@@ -24,20 +22,15 @@ namespace DSSLib
                 if (value < 0)
                     value = 0;
                 importance = value;
-                ImportanceUpdated?.Invoke();
             }
         }
         private int importance;
 
-        public List<CriteriaValue> CriteriaValues { get; set; }
-        private CriteriaValue value;
-
         public Criteria()
         {
-            id++;
+
         }
-        public Criteria(string name, int importance) : this($"Criteria-{id}", name, importance) { }
-        public Criteria(string idStr,string name, int importance) : this()
+        public Criteria(string idStr,string name, int importance)
         {
             ID = idStr;
             Name = name;
@@ -54,9 +47,9 @@ namespace DSSLib
         }
     }
 
-    public class CriteriaValue
-    {
-        public string Descriprion { get; set; }
-        public int Priority { get; set; }
-    }
+    //public class CriteriaValue
+    //{
+    //    public string Descriprion { get; set; }
+    //    public int Priority { get; set; }
+    //}
 }
