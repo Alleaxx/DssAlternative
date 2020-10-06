@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+using System.Xml.Serialization;
+
 namespace DSSLib
 {
     [Serializable]
@@ -17,41 +19,42 @@ namespace DSSLib
             set
             {
                 chance = value;
-                if (value == -1)
+                if (value == 0)
                     IsEqual = true;
             }
         }
         private double chance;
 
+        //Выгода
+        public double Benefit { get; set; }
+
         //Равновероятный шанс среди всез
-        [System.Xml.Serialization.XmlIgnore]
+        [XmlIgnore]
         public bool IsEqual { get; set; }
-        
+
+
+        public List<Alternative> AvailAlts { get; set; } = new List<Alternative>();
+
         public Case()
         {
 
         }
-        public Case(string name) : this(name,name,-1)
+        public Case(string idStr,string name, double chance) : this(idStr,name,chance,0)
         {
 
         }
-        public Case(string idStr,string name) : this(idStr,name,-1)
-        {
-
-        }
-        public Case(string idStr,string name, double chance)
+        public Case(string idStr,string name, double chance, double profit)
         {
             ID = idStr;
             Name = name;
             Chance = chance;
+            Benefit = profit;
         }
+
 
         public void Output()
         {
-            Console.WriteLine(Name);
-            Console.WriteLine(Print.GetPrintText("ID",$"{ID}",true));
-            Console.WriteLine(Print.GetPrintText("Шанс",$"{Chance}",true));
-            Console.WriteLine();
+            Console.WriteLine($"Исход [{ID,-10} {Name,-20} {Chance}]");
         }
     }
 }

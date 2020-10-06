@@ -10,7 +10,7 @@ namespace DSSLib
     /// Альтернатива - возможный вариант решения проблемы со своими преимуществами и недостатками
     /// </summary>
     [Serializable]
-    public class Alternative : IOutput
+    public class Alternative : IOutput, IId
     {
         public override string ToString() => $"Альтернатива {Name}";
 
@@ -21,6 +21,8 @@ namespace DSSLib
 
         //Подчиненные альтернативы
         public List<Alternative> Alternatives { get; set; }
+        //Исходы в случае принятия
+        public List<Case> AcceptCases { get; set; } = new List<Case>();
 
 
         //Приоритет альтернативы по критериям
@@ -51,7 +53,14 @@ namespace DSSLib
         public Alternative SetCaseProfits(params (Case key,int profit)[] cases)
         {
             CaseProfits = cases.Select(c => new AlternativeCaseProfit(c.key,c.profit)).ToList();
-            CaseProfits.ForEach(c => c.Alternative = this);
+            CaseProfits.ForEach(c => c.Alternative = this); 
+
+            return this;
+        }
+        public Alternative SetCaseAccept(params (Case key,int profit)[] cases)
+        {
+            cases.ToList().ForEach(c => c.key.Benefit = c.profit);
+            AcceptCases.AddRange(cases.Select(c => c.key));
             return this;
         }
         public Alternative SetCriteriasPrior(params (Criteria key,int importance)[] criterias)

@@ -49,27 +49,34 @@ namespace DSSLib
             }
         }
 
-        public List<Choice> GetDesizions()
+        public List<Decision> GetDesizions()
         {
             return default;
         }
-        public ChoiceAHP GetDesizionAHP()
+        public DecisionAHP GetDesizionAHP()
         {
-            if (ChoiceAHP.IsSolvable(this))
-                return new ChoiceAHP(this);
+            if (DecisionAHP.IsSolvable(this))
+                return new DecisionAHP(this);
             else
                 return null;
         }
-        public ChoiceCriterias GetDesizionCR()
+        public DecisionTree GetDesizionTree()
         {
-            if (ChoiceCriterias.IsSolvable(this))
-                return new ChoiceCriterias(this);
+            if (DecisionTree.IsSolvable(this))
+                return new DecisionTree(this);
+            else
+                return null;
+        }
+        public DecisionCriterias GetDesizionCR()
+        {
+            if (DecisionCriterias.IsSolvable(this))
+                return new DecisionCriterias(this);
             else
                 return null;
         }
 
         //Вывод
-        public void Output()
+        public virtual void Output()
         {
             Console.WriteLine($"ПРОБЛЕМА: {Name}");
             Console.WriteLine(Print.GetPrintText("Критериев",$"{Criterias.Count}",false));

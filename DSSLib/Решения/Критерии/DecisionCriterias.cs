@@ -5,20 +5,18 @@ using System.Text;
 
 namespace DSSLib
 {
-    public class ChoiceCriterias : Choice
+    public class DecisionCriterias : Decision
     {
         public override string ToString() => $"Решение по критериям: {Problem.Name}";
 
         //Проверить на наличие у альтернатив всех указанных критериев в выборе
-        public static CheckChoiceResult CheckAll(Problem problem)
+        public static DecisionCheckResult CheckAll(Problem problem)
         {
-            CheckChoiceResult check = new CheckChoiceResult();
-            if(problem.Alternatives.Count == 0)
-            {
-                check.Success = false;
-                check.Messages.Add("- В проблеме не задано альтернатив, из которых можно выбирать");
+            DecisionCheckResult check = CheckBasic(problem);
+            if (!check.Success)
                 return check;
-            }
+
+
             if(problem.Cases.Count == 0)
             {
                 check.Success = false;
@@ -48,20 +46,23 @@ namespace DSSLib
         public static bool IsSolvable(Problem problem) => CheckAll(problem).Success;
 
 
-
+        //Матрица максимального выигрыша
         public PayMatrix PayMatrixWins { get; set; }
+
+        //Матрица минимального риска
         public PayMatrix PayMatrixSafe { get; set; }
 
 
-        public ChoiceCriterias(Problem problem) : base(problem)
+        public DecisionCriterias(Problem problem) : base(problem)
         {
-            CountDesizion();
+            Solve();
         }
-        protected override void CountDesizion()
+        protected override void Solve()
         {
             PayMatrixWins = new PayMatrix(Problem.Alternatives, Problem.Cases,true);
             PayMatrixSafe = new PayMatrix(Problem.Alternatives, Problem.Cases, false);
         }
+
 
         public override void Output()
         {

@@ -41,6 +41,8 @@ namespace DSSConsole
             Command.Add(Command.Selection,"3","Показать текущую проблему",() => Control(Command.Current));
             Command.Add(Command.Selection,"4","Установить образцовую проблему (МАИ)",SetExampleProblemAHP);
             Command.Add(Command.Selection,"5","Установить образцовую проблему (критерии)",SetExampleProblemCriterias);
+            Command.Add(Command.Selection,"6","Установить образцовую проблему (деревья)",SetExampleProblemTree);
+            Command.Add(Command.Selection,"7","Создать валютную проблему",CreateCurrencyProblem);
 
             Command.Add(Command.Current, "1", "Показать проблему целиком", () => ProblemCurrent.Output());
             Command.Add(Command.Current, "2", "Показать альтернативы проблемы", () => ProblemCurrent.Alternatives.ForEach(p => p.Output()));
@@ -48,6 +50,7 @@ namespace DSSConsole
             Command.Add(Command.Current, "4", "Показать исходы проблемы", () => ProblemCurrent.Cases.ForEach(p => p.Output()));
             Command.Add(Command.Current, "5", "Показать решение по МАИ", ShowDecisionAHP);
             Command.Add(Command.Current, "6", "Показать решение по критериям", ShowDecisionCr);
+            Command.Add(Command.Current, "7", "Показать дерево решений", ShowDecisionTree);
 
             Control(Command.Selection);
         }
@@ -96,6 +99,19 @@ namespace DSSConsole
             };
             Control(Command.Current);
         }
+        static void SetExampleProblemTree()
+        {
+            string Name = "Вложение в инвестиционные фонды";
+            Alternative A1 = new Alternative("A1", "Фонд A1").SetCaseAccept((new Case("1","1",0.6), 500),(new Case("2","2",0.4), -200));
+            Alternative A2 = new Alternative("A2", "Фонд A2").SetCaseAccept((new Case("3","3",0.6), 250),(new Case("4","4",0.4), -100));
+            Alternative A3 = new Alternative("A3", "Фонд A3").SetCaseAccept((new Case("5","5",0.6), 120),(new Case("6","6",0.4), -50));
+            ProblemCurrent = new Problem()
+            {
+                Name = Name,
+                Alternatives = new List<Alternative>() { A1, A2, A3 }
+            };
+            Control(Command.Current);
+        }
         static void SetExampleProblemCriterias()
         {
             string Name = "Выбор управленческой стратегии для склада";
@@ -116,6 +132,18 @@ namespace DSSConsole
             };
             Control(Command.Current);
 
+        }
+
+        static void CreateCurrencyProblem()
+        {
+            Console.WriteLine("Введите сумму");
+            int sum = int.Parse(Console.ReadLine());
+            Console.WriteLine("Введите первую валюту");
+            string val1 = Console.ReadLine();
+            Console.WriteLine("Введите вторую валюту");
+            string val2 = Console.ReadLine();
+            ProblemCurrent = new CurrencyProblem(sum, val1, val2);
+            Control(Command.Current);
         }
 
 
@@ -156,7 +184,7 @@ namespace DSSConsole
         //Отобразить информацию по текущей проблеме
         static void ShowDecisionAHP()
         {
-            var check = ChoiceAHP.CheckAll(ProblemCurrent);
+            var check = DecisionAHP.CheckAll(ProblemCurrent);
             Console.WriteLine(check.Result);
             foreach (string message in check.Messages)
             {
@@ -170,7 +198,7 @@ namespace DSSConsole
         }
         static void ShowDecisionCr()
         {
-            var check = ChoiceCriterias.CheckAll(ProblemCurrent);
+            var check = DecisionCriterias.CheckAll(ProblemCurrent);
             Console.WriteLine(check.Result);
             foreach (string message in check.Messages)
             {
@@ -180,6 +208,20 @@ namespace DSSConsole
             if (check.Success)
             {
                 ProblemCurrent.GetDesizionCR().Output();
+            }
+        }
+        static void ShowDecisionTree()
+        {
+            var check = DecisionTree.CheckAll(ProblemCurrent);
+            Console.WriteLine(check.Result);
+            foreach (string message in check.Messages)
+            {
+                Console.WriteLine(message);
+            }
+
+            if (check.Success)
+            {
+                ProblemCurrent.GetDesizionTree().Output();
             }
         }
 

@@ -11,20 +11,17 @@ namespace DSSLib
     /// Задача выбора, решаемая методом анализа иерархий
     /// </summary>
     /// 
-    public class ChoiceAHP : Choice
+    public class DecisionAHP : Decision
     {
         public override string ToString() => $"Решение МАИ: {Problem.Name}";
 
         //Проверить на наличие у альтернатив всех указанных критериев в выборе
-        public static CheckChoiceResult CheckAll(Problem problem)
+        public static DecisionCheckResult CheckAll(Problem problem)
         {
-            CheckChoiceResult check = new CheckChoiceResult();
-            if(problem.Alternatives.Count == 0)
-            {
-                check.Success = false;
-                check.Messages.Add("В проблеме не задано альтернатив, из которых можно выбирать");
+            DecisionCheckResult check = CheckBasic(problem);
+            if (!check.Success)
                 return check;
-            }
+
             if(problem.Criterias.Count == 0)
             {
                 check.Success = false;
@@ -63,12 +60,12 @@ namespace DSSLib
 
 
         //Конструктор
-        public ChoiceAHP(Problem problem) : base(problem)
+        public DecisionAHP(Problem problem) : base(problem)
         {
-            CountDesizion();
+            Solve();
         }
         //Рассчет решения
-        protected override void CountDesizion()
+        protected override void Solve()
         {
             CriteriaMatrix = new CriteriaMatrix(Problem.Criterias);
             CriteriaWeights = CriteriaMatrix.Weights;
@@ -110,20 +107,6 @@ namespace DSSLib
 
             Console.WriteLine();
 
-        }
-    }
-
-
-    public class CheckChoiceResult
-    {
-        public bool Success { get; set; }
-        public string Result => Success ? "Успех, ошибок не обнаружено" : $"Внимание, обнаружено {Messages.Count} ошибок";
-        public List<string> Messages { get; set; }
-
-        public CheckChoiceResult()
-        {
-            Success = true;
-            Messages = new List<string>();
         }
     }
 }

@@ -326,7 +326,7 @@ namespace DSSLib
             Console.WriteLine($"{ToString()}");
 
             Console.Write("Альтернативы / исходы".PadRight(30));
-            Values.ToList().ForEach(k => Console.Write(k.Name.PadRight(20)));
+            Values.ToList().ForEach(k => Console.Write($"{k.Name} [{k.Chance}]".PadRight(20)));
             Console.WriteLine();
             for(int i = 0; i < Rows; i++)
             {

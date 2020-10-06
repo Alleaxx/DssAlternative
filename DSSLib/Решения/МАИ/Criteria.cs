@@ -40,10 +40,7 @@ namespace DSSLib
 
         public void Output()
         {
-            Console.WriteLine($"Критерий {Name}");
-            Console.WriteLine(Print.GetPrintText("ID",$"{ID}",true));
-            Console.WriteLine(Print.GetPrintText("Приоритет",$"{Importance}",true));
-            Console.WriteLine();
+            Console.WriteLine($"Критерий [{ID,-15} {Name,-20} {Importance}]");
         }
     }
 
