@@ -24,5 +24,11 @@ namespace DSSView
         {
             InitializeComponent();
         }
+
+        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            View view = DataContext as View;
+            view.Selected.Selected = e.NewValue as ITab;
+        }
     }
 }

@@ -176,7 +176,6 @@ namespace DSSLib
                         Arr[x, y] = Arr[x, y] * -1 + max;
                     }
                 }
-
             }
 
             Criterias = new CriteriaGame[]
