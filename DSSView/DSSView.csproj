@@ -55,9 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Основа\Матрица критериев\Data.cs" />
+    <Compile Include="Основа\Матрица критериев\Логика\ProblemPayMatrix.cs" />
     <Compile Include="Основа\RelayCommand.cs" />
-    <Compile Include="Основа\Матрица критериев\Criterias.cs" />
+    <Compile Include="Основа\Матрица критериев\Логика\Criterias.cs" />
     <Compile Include="Основа\Матрица критериев\View.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -69,11 +69,9 @@ namespace DSSView
 
         public TabView()
         {
-            Name = "Платежная матрица";
-            Tabs = new ObservableCollection<ITab>();
-            
-            Tab creator = new TabMatrixCreator();
-            Tabs.Add(creator);
+            Name = "Принятие решений в условиях неопределенности и риска";
+            Tabs = new ObservableCollection<ITab>();            
+            Tabs.Add(new TabMatrixCreator());
 
             Selected = Tabs[0];
         }
@@ -86,15 +84,7 @@ namespace DSSView
     interface ITab : INotifyPropertyChanged
     {
         string Name { get; }
-        string Tooltip { get; }
-
         ColorInfo Color { get; }
-
-
-        object Object { get; }
-
-        void Add(ITab tab);
-        void Remove(ITab tab);
     }
 
 
@@ -102,63 +92,36 @@ namespace DSSView
     class Tab : NotifyObj, ITab
     {
         public string Name { get; set; }
-        public virtual string Tooltip => Object != null ? Object.ToString() : "null";
         public ColorInfo Color { get; set; }
 
         public ObservableCollection<ITab> Children { get; set; }
         public bool IsExpanded { get; set; }
 
-        public object Object
+        public Tab()
         {
-            get => Obj;
-            set
-            {
-                Obj = value;
-                OnPropertyChanged();
-            }
-        }
-        private object Obj;
-
-        public Tab(string name, object obj = null)
-        {
-            Name = name;
-            Object = obj;
             Children = new ObservableCollection<ITab>();
-
-            if (obj == null)
-                Object = this;
-        }
-
-        public void Add(ITab tab)
-        {
-            Children.Add(tab);
-        }
-        public void Remove(ITab tab)
-        {
-            Children.Remove(tab);
         }
     }
 
     //Вкладка создания новых матриц
     class TabMatrixCreator : Tab
     {
-        public override string Tooltip => "Список матриц";
-        public InfoMatrix Info { get; set; }
+        public InfoAboutMatrix Info { get; set; }
 
         public RelayCommand AddMatrixCommand { get; set; }
         private void AddMatrix(object obj)
         {
-            InfoMatrix info = obj as InfoMatrix;
-            Children.Add(new DataView(info.Rows, info.Cols));
+            InfoAboutMatrix info = obj as InfoAboutMatrix;
+            Children.Add(new ProblemMatrixView(new ProblemPayMatrix(new Matrix(info.Rows,info.Cols))));
         }
 
-        public TabMatrixCreator() : base("Создание матриц")
+        public TabMatrixCreator()
         {
-            Info = new InfoMatrix() { Name = "Матрица", Rows = 2, Cols = 3 };
+            Info = new InfoAboutMatrix() { Name = "Матрица", Rows = 3, Cols = 3 };
             AddMatrixCommand = new RelayCommand(AddMatrix, obj => true);
         }
     }
-    class InfoMatrix
+    class InfoAboutMatrix
     {
         public string Name { get; set; }
         public int Rows { get; set; }
