@@ -13,7 +13,8 @@ namespace DSSView
     {
         public event Action Updated;
 
-        public MatrixObject Matrix { get; set; }
+        public Matrix Matrix { get; set; }
+        public ProblemPayMatrix Problem { get; set; }
         public List<Criteria> Criterias { get; set; }
         public CriteriaOption[] Options { get; set; }
 
@@ -22,9 +23,10 @@ namespace DSSView
         public CriteriasPriorAlternative[] Priorities { get; set; }
 
 
-        public CriteriasReport(MatrixObject matrix)
+        public CriteriasReport(ProblemPayMatrix problem)
         {
-            Matrix = matrix;
+            Problem = problem;
+            Matrix = Problem.Matrix;
             Criterias = new List<Criteria>();
             AddCriterias();
 
@@ -125,9 +127,9 @@ namespace DSSView
 
         //Быстрый доступ
         public CriteriasReport Report { get; private set; }
-        protected double[,] Matrix => Report.Matrix.SourceMatrix.Arr;
-        protected double Rows => Report.Matrix.SourceMatrix.RowsLen;
-        protected double Cols => Report.Matrix.SourceMatrix.ColsLen;
+        protected double[,] Matrix => Report.Matrix.Arr;
+        protected double Rows => Report.Matrix.RowsLen;
+        protected double Cols => Report.Matrix.ColsLen;
 
         //Условия критерия
         protected List<Func<CriteriaCondition>> Conditions { get; set; }
@@ -140,7 +142,7 @@ namespace DSSView
         public List<int> Choices { get; protected set; }
 
 
-        public Alternative[] ChoicesAlternatives => Choices.Select(c => Report.Matrix.Info.Alternatives[c]).ToArray();
+        public Alternative[] ChoicesAlternatives => Choices.Select(c => Report.Matrix.Rows[c]).ToArray();
 
 
         public Criteria(CriteriasReport data)
@@ -188,10 +190,10 @@ namespace DSSView
 
         protected double GetChance(int col)
         {
-            if (Report.Matrix.Info.Cases[col].IsChanceKnown)
-                return Report.Matrix.Info.Cases[col].Chance;
+            if (Report.Matrix.Cols[col].IsChanceKnown)
+                return Report.Matrix.Cols[col].Chance;
             else
-                return Report.Matrix.Info.DefaultUnknownChance;
+                return Report.Problem.Info.DefaultUnknownChance;
         }
 
 
@@ -315,7 +317,7 @@ namespace DSSView
         public double Profit { get; set; }
 
         public Criteria Criteria { get; set; }
-        public MatrixObject Matrix { get; set; }
+        public Matrix Matrix { get; set; }
 
         public CriteriaCondition(string name, Criteria criteria,bool good, double profit)
         {

@@ -14,13 +14,18 @@ namespace DSSView
     /// </summary>
     class ProblemMatrixView : NotifyObj, ITab
     {
+        //Источник
         public ProblemPayMatrix Problem { get; private set; }
+
+
+        //Представления отдельных объектов
+        public MatrixView MatrixView { get; set; }
         public CriteriasReportView ReportCriterias { get; set; }
         public ProblemInformationView Information { get; set; }
 
 
         //Выбранная ячейка, строка, столбец
-        public Cell SelectedCell
+        public CellAdvanced SelectedCell
         {
             get => selectedCell;
             set
@@ -28,14 +33,14 @@ namespace DSSView
                 if(value != null && value.Coords.X > 0 && value.Coords.Y > 0)
                 {
                     selectedCell = value;
-                    SelectedCellView = new CellView(Problem.Matrix,value);
+                    //SelectedCellView = new CellView(Problem.Matrix,value);
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(SelectedCellView));
+                    //OnPropertyChanged(nameof(SelectedCellView));
                 }
             }
         }
-        private Cell selectedCell;
-        public CellView SelectedCellView { get; set; }
+        private CellAdvanced selectedCell;
+        //public CellView SelectedCellView { get; set; }
 
         
         //Команды
@@ -47,26 +52,22 @@ namespace DSSView
 
         private void AddCol(object obj)
         {
-            Problem.Matrix.Info.AddCase(new Case($"C{Problem.Matrix.Colums.Length}",false));
-            Problem.Matrix.SourceMatrix.AddCol(Problem.Matrix.Colums.Length);
+            Problem.Matrix.AddCol(Problem.Matrix.ColsLen);
             OnPropertyChanged(nameof(Problem));
         }
         private void AddRow(object obj)
         {
-            Problem.Matrix.Info.AddAlternative(new Alternative($"A{Problem.Matrix.Rows.Length}"));
-            Problem.Matrix.SourceMatrix.AddRow(Problem.Matrix.Rows.Length);
+            Problem.Matrix.AddRow(Problem.Matrix.RowsLen);
             OnPropertyChanged(nameof(Problem));
         }
         private void RemoveCol(object obj)
         {
-            Problem.Matrix.SourceMatrix.RemoveCol(SelectedCellView.Col.Position - 1);
-            Problem.Matrix.Info.RemoveCase(SelectedCellView.Case);
+            Problem.Matrix.RemoveCol(SelectedCell.ColPosition);
             OnPropertyChanged(nameof(Problem));
         }
         private void RemoveRow(object obj)
         {
-            Problem.Matrix.SourceMatrix.RemoveRow(SelectedCellView.Row.Position - 1);
-            Problem.Matrix.Info.RemoveAlternative(SelectedCellView.Alternative);
+            Problem.Matrix.RemoveRow(SelectedCell.RowPosition);
             OnPropertyChanged(nameof(Problem));
         }
 
@@ -74,8 +75,8 @@ namespace DSSView
         {
             AddColCommand = new RelayCommand(AddCol, obj => true);
             AddRowCommand = new RelayCommand(AddRow, obj => true);
-            RemoveColCommand = new RelayCommand(RemoveCol, obj => SelectedCell != null && SelectedCellView.Col != Problem.Matrix.Colums[0] && Problem.Matrix.SourceMatrix.ColsLen > 1);
-            RemoveRowCommand = new RelayCommand(RemoveRow, obj => SelectedCell != null && SelectedCellView.Row != Problem.Matrix.Rows[0] && Problem.Matrix.SourceMatrix.RowsLen > 1);
+            RemoveColCommand = new RelayCommand(RemoveCol, obj => SelectedCell != null && Problem.Matrix.ColsLen > 1);
+            RemoveRowCommand = new RelayCommand(RemoveRow, obj => SelectedCell != null && Problem.Matrix.RowsLen > 1);
 
             SetMatrix(data);
         }
@@ -84,13 +85,16 @@ namespace DSSView
             Problem = data;
             Children = new ObservableCollection<ITab>();
             ReportCriterias = new CriteriasReportView(data.InfoCriterias);
-            Information = new ProblemInformationView(data.Matrix.Info, data.Matrix);   
-            if (!(data is ProblemSafeMatrix))
-            {
-                Children.Add(Information);
-                Children.Add(ReportCriterias);
-                Children.Add(new ProblemMatrixView(data.SafeMatrix));
-            }
+            Information = new ProblemInformationView(data.Info, data.Matrix);
+
+            Children.Add(Information);
+            Children.Add(ReportCriterias);   
+
+
+            //if (!(data is ProblemSafeMatrix))
+            //{
+            //    //Children.Add(new ProblemMatrixView(data.SafeMatrix));
+            //}
 
 
             OnPropertyChanged(nameof(Problem));
@@ -101,7 +105,7 @@ namespace DSSView
 
 
         //Интерфейс вкладки
-        public string Name => Problem.Matrix.Name;
+        public string Name => "мдыыыы";
         public ColorInfo Color => new ColorInfo();
 
         public ObservableCollection<ITab> Children { get; private set; }
@@ -111,8 +115,8 @@ namespace DSSView
     class ProblemInformationView : NotifyObj, ITab
     {
         //Источник
-        public MatrixObject Matrix { get; set; }
-        public MatrixInformation Info { get; set; }
+        public Matrix Matrix { get; set; }
+        public PayMatrixInfo Info { get; set; }
 
         //Вкладка
         public string Name => "Исходы, альтернативы";
@@ -149,31 +153,27 @@ namespace DSSView
         private void AddAlternativeExe(object obj)
         {
             Info.AddAlternative(new Alternative($"A{Info.Alternatives.Count}"));
-            Matrix.SourceMatrix.AddRow(Matrix.SourceMatrix.RowsLen);
             OnPropertyChanged(nameof(Alternatives));
         }
         private void AddCaseExe(object obj)
         {
             Info.AddCase(new Case($"C{Info.Cases.Count}",false));
-            Matrix.SourceMatrix.AddCol(Matrix.SourceMatrix.RowsLen);
             OnPropertyChanged(nameof(Cases));
         }
         private void RemoveAlternativeExe(object obj)
         {
-            Matrix.SourceMatrix.RemoveRow(Info.Alternatives.IndexOf(SelectedAlternative));
             Info.RemoveAlternative(SelectedAlternative);
             SelectedAlternative = null;
             OnPropertyChanged(nameof(Alternatives));
         }
         private void RemoveCaseExe(object obj)
         {
-            Matrix.SourceMatrix.RemoveCol(Info.Cases.IndexOf(SelectedCase));
             Info.RemoveCase(SelectedCase);
             SelectedCase = null;
             OnPropertyChanged(nameof(Cases));
         }
 
-        public ProblemInformationView(MatrixInformation source, MatrixObject obj1)
+        public ProblemInformationView(PayMatrixInfo source, Matrix obj1)
         {
             Matrix = obj1;
             Info = source;
@@ -196,13 +196,38 @@ namespace DSSView
     }
 
 
-    class MatrixObjectView
+    //Матрица с объектами для строк и столбцов
+    class MatrixView
     {
-        public MatrixObject Matrix { get; set; }
+        //Содержание матрицы
+        public Matrix SourceMatrix { get; set; }
 
-        public MatrixObjectView(Matrix matrix)
+        public CellView[][] Cells
         {
+            get
+            {
+                CellView[][] cells = new CellView[SourceMatrix.ColsLen][];
+                for (int r = 0; r < SourceMatrix.ColsLen; r++)
+                {
+                    Cells[r] = new CellView[SourceMatrix.RowsLen];
+                }
 
+                for (int r = 0; r < SourceMatrix.RowsLen; r++)
+                {
+                    for (int c = 0; c < SourceMatrix.ColsLen; c++)
+                    {
+                        Cells[c][r] = new CellView(SourceMatrix.Cells[c][r] as CellAdvanced);
+                    }
+                }
+                return cells;
+            }
+        }
+
+        public MatrixView(Matrix matrix)
+        {
+            SourceMatrix = matrix;
+
+            //SourceMatrix.StructureChanged += UpdateRowsColumns; 
         }
     }
 
@@ -242,7 +267,7 @@ namespace DSSView
             get
             {
                 List<Alternative> alts = new List<Alternative>();
-                Criteria.Choices.ForEach(choiceInt => alts.Add(Criteria.Report.Matrix.Info.Alternatives[choiceInt]));
+                Criteria.Choices.ForEach(choiceInt => alts.Add(Criteria.Report.Matrix.Rows[choiceInt]));
                 return alts;
             }
         }
@@ -267,34 +292,14 @@ namespace DSSView
     /// </summary>
     class CellView : NotifyObj
     {
-        public MatrixObject Matrix { get; set; }
-
-        public Cell Cell { get; set; }
-
-        public Alternative Alternative => Matrix.Info.Alternatives[Cell.Coords.X - 1];
-        public Case Case => Matrix.Info.Cases[Cell.Coords.Y - 1];
-
-        public MatrixRow Row => Matrix.Rows[Cell.Coords.X];
-        public MatrixCol Col => Matrix.Colums[Cell.Coords.Y];
-
+        public CellAdvanced Cell { get; set; }
 
         public bool IsEditable { get; set; }
 
-        public string Value
-        {
-            get => Cell.Value;
-            set
-            {
-                Cell.Value = value;
-                OnPropertyChanged();
-            }
-        }
 
-
-        public CellView(MatrixObject data,Cell cell)
+        public CellView(CellAdvanced cell)
         {
             Cell = cell;
-            Matrix = data;
         }
     }
 }
