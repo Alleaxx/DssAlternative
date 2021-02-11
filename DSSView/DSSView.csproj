@@ -55,10 +55,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Основа\Матрица критериев\Логика\ProblemPayMatrix.cs" />
-    <Compile Include="Основа\RelayCommand.cs" />
-    <Compile Include="Основа\Матрица критериев\Логика\Criterias.cs" />
-    <Compile Include="Основа\Матрица критериев\View.cs" />
+    <Compile Include="NewMatrixWindow.xaml.cs">
+      <DependentUpon>NewMatrixWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Основа\Логика\PayMatrixRisc.cs" />
+    <Compile Include="Основа\Техника\RelayCommand.cs" />
+    <Compile Include="Основа\Логика\Criterias.cs" />
+    <Compile Include="Основа\Представление\View.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -67,11 +70,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Основа\AppView.cs" />
+    <Compile Include="Основа\Представление\AppView.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="NewMatrixWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

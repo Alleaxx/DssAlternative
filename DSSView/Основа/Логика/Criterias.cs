@@ -11,27 +11,29 @@ namespace DSSView
 {
     class CriteriasReport
     {
-        public event Action Updated;
+        public event Action CriteriasUpdated;
 
-        public Matrix Matrix { get; set; }
-        public ProblemPayMatrix Problem { get; set; }
+
+        public PayMatrix Matrix { get; set; }
+
+
         public List<Criteria> Criterias { get; set; }
         public CriteriaOption[] Options { get; set; }
 
 
-        public Alternative BestAlternative => Priorities[0].Alternative;
+        public Alternative[] BestAlternatives => Priorities.Where(c => c.Rank == Priorities.Select(a => a.Rank).Max()).Select(f => f.Alternative).ToArray();
         public CriteriasPriorAlternative[] Priorities { get; set; }
 
 
-        public CriteriasReport(ProblemPayMatrix problem)
+        public CriteriasReport(PayMatrix matrix)
         {
-            Problem = problem;
-            Matrix = Problem.Matrix;
+            Matrix = matrix;
             Criterias = new List<Criteria>();
             AddCriterias();
-
-            Matrix.StructureChanged += Matrix_Changed;
-            Matrix.ValuesChanged += Matrix_Changed;
+            Matrix.Info.ChancesChanged += Matrix_Changed;
+            Matrix.RowChanged += a => Matrix_Changed();
+            Matrix.ColChanged += c => Matrix_Changed();
+            Matrix.ValuesChanged += c => Matrix_Changed();
         }
         private void AddCriterias()
         {
@@ -54,12 +56,13 @@ namespace DSSView
                 options.AddRange(Criterias[i].Options);
             }
             Options = options.ToArray();
+            Update();
         }
 
         private void Matrix_Changed()
         {
             Update();
-            Updated?.Invoke();
+            CriteriasUpdated?.Invoke();
         }
         public void Update()
         {
@@ -69,7 +72,7 @@ namespace DSSView
             Dictionary<Alternative, List<Criteria>> PriorityAlternatives = new Dictionary<Alternative, List<Criteria>>();
             foreach (Criteria criteria in Criterias)
             {
-                Alternative[] alternatives = criteria.ChoicesAlternatives;
+                Alternative[] alternatives = criteria.BestAlternatives;
                 for (int i = 0; i < alternatives.Length; i++)
                 {
                     if (!PriorityAlternatives.ContainsKey(alternatives[i]))
@@ -93,6 +96,7 @@ namespace DSSView
         public Alternative Alternative { get; set; }
         public Criteria[] Criterias { get; set; }
 
+        //Ранг для альтернативы
         public double Rank => Criterias.Select(c => c.Rank).Sum();
 
         public CriteriasPriorAlternative(Alternative alternative, Criteria[] criterias)
@@ -104,10 +108,16 @@ namespace DSSView
 
 
 
+    interface ICriteria
+    {
+        double Result { get; }
+        IEnumerable<int> BestAlternativeIndexes { get; }
+
+    }
     //Критерий (интерфейс компонента)
     abstract class Criteria
     {
-        public event Action ResultChanged;
+        public event Action<double, Alternative[]> ResultChanged;
 
 
         //Описание критерия
@@ -122,14 +132,18 @@ namespace DSSView
         public string DecizionAlgoritm { get; protected set; }
         public string DecizionInAction { get; protected set; }
 
-        //Коэффициент, если есть
+
+        //Коэффициенты, если есть
         public List<CriteriaOption> Options { get; private set; }
+
+
 
         //Быстрый доступ
         public CriteriasReport Report { get; private set; }
-        protected double[,] Matrix => Report.Matrix.Arr;
+        protected double[,] Arr => Report.Matrix.Arr;
         protected double Rows => Report.Matrix.RowsLen;
         protected double Cols => Report.Matrix.ColsLen;
+
 
         //Условия критерия
         protected List<Func<CriteriaCondition>> Conditions { get; set; }
@@ -139,31 +153,51 @@ namespace DSSView
 
         //Результаты
         public double Result { get; protected set; }
-        public List<int> Choices { get; protected set; }
+        protected List<int> BestAlternativeIndexes { get; set; }
+
+        protected List<int> GetPositions(double search, IEnumerable<double> arr)
+        {
+            List<int> poses = new List<int>();
+            for (int i = 0; i < arr.Count(); i++)
+            {
+                if (search == arr.ElementAt(i))
+                    poses.Add(i);
+            }
+            return poses;
+        }
+
+        public Alternative[] BestAlternatives => BestAlternativeIndexes.Select(c => Report.Matrix.Rows[c]).ToArray();
 
 
-        public Alternative[] ChoicesAlternatives => Choices.Select(c => Report.Matrix.Rows[c]).ToArray();
-
-
-        public Criteria(CriteriasReport data)
+        public Criteria(CriteriasReport report)
         {
             Type = "Классический";
             Description = "Неопознанный критерий без описания";
             DecizionAlgoritm = "Алгоритм решения не описан";
             DecizionInAction = "Решение не описано";
-            Report = data;
-            Choices = new List<int>();
+            Report = report;
+            BestAlternativeIndexes = new List<int>();
             Options = new List<CriteriaOption>();
 
             Conditions = new List<Func<CriteriaCondition>>();
             ConditionsRank = new List<CriteriaCondition>();
 
 
-            Conditions.Add(GetBasic);
-            CriteriaCondition GetBasic()
+            Conditions.Add(GetRiscConditions);
+            Conditions.Add(GetUnknownConditions);
+            CriteriaCondition GetRiscConditions()
             {
-                bool passed = Result % 2 == 0;
-                return new CriteriaCondition("Критериий делимости результата на 2", this, passed, Convert.ToInt32(passed));
+                if (!ChancesRequired && Report.Matrix.Info.InUnknownConditions)
+                    return new CriteriaCondition("Применимость в условиях неопределенности", this, true, 3);
+                else if (ChancesRequired && Report.Matrix.Info.InUnknownConditions)
+                    return new CriteriaCondition("Применимость в условиях неопределенности", this, true, 1);
+                else
+                    return new CriteriaCondition("Применимость в условиях неопределенности", this, false, 1);
+            }
+            CriteriaCondition GetUnknownConditions()
+            {
+                bool passed = ChancesRequired && Report.Matrix.Info.InRiscConditions;
+                return new CriteriaCondition("Применимость в условиях риска", this, passed,3);
             }
 
 
@@ -176,7 +210,7 @@ namespace DSSView
         {
             Count();
             UpdateRank();
-            ResultChanged?.Invoke();
+            ResultChanged?.Invoke(Result,BestAlternatives);
         }
 
         //Рассчитать критерий
@@ -187,33 +221,17 @@ namespace DSSView
             ConditionsRank = Conditions.Select(c => c.Invoke()).ToList();
         }
 
-
+        //Получить шанс исхода
         protected double GetChance(int col)
         {
-            if (Report.Matrix.Cols[col].IsChanceKnown)
+            if (Report.Matrix.Info.InRiscConditions)
                 return Report.Matrix.Cols[col].Chance;
             else
-                return Report.Problem.Info.DefaultUnknownChance;
+                return Report.Matrix.Info.DefaultChance;
         }
 
 
 
-
-        /// <summary>
-        /// Возвращает минимальное значение из указанного столбца
-        /// </summary>
-        /// <param name="c">Номер колонки</param>
-        /// <returns>Минимальное значение из колокни</returns>
-        protected double GetMinFromCol(int c)
-        {
-            double min = Matrix[0,c];
-            for (int r = 0; r < Rows; r++)
-            {
-                if (Matrix[r, c] <= min)
-                    min = Matrix[r,c];
-            }
-            return min;
-        }
 
         /// <summary>
         /// Возвращает минимальное значение из указанной строки
@@ -222,30 +240,15 @@ namespace DSSView
         /// <returns>Минимальное значение из строки</returns>
         protected double GetMinFromRow(int r)
         {
-            double min = Matrix[r, 0];
+            double min = Arr[r, 0];
             for (int c = 0; c < Cols; c++)
             {
-                if (Matrix[r, c] <= min)
-                    min = Matrix[r,c];
+                if (Arr[r, c] <= min)
+                    min = Arr[r,c];
             }
             return min;
         }
 
-        /// <summary>
-        /// Возвращает максимальное значение из указанной колонки
-        /// </summary>
-        /// <param name="c">Номер колонки</param>
-        /// <returns>Максимальное значение</returns>
-        protected double GetMaxFromCol(int c)
-        {
-            double max = Matrix[0, c];
-            for (int r = 0; r < Rows; r++)
-            {
-                if (Matrix[r, c] >= max)
-                    max = Matrix[r, c];
-            }
-            return max;
-        }
 
         /// <summary>
         /// Возвращает максимальное значение из указанной строки
@@ -254,31 +257,21 @@ namespace DSSView
         /// <returns>Максимальное значение</returns>
         protected double GetMaxFromRow(int r)
         {
-            double max = Matrix[r, 0];
+            double max = Arr[r, 0];
             for (int c = 0; c < Cols; c++)
             {
-                if (Matrix[r, c] >= max)
-                    max = Matrix[r, c];
+                if (Arr[r, c] >= max)
+                    max = Arr[r, c];
             }
             return max;
         }
 
 
-        protected List<int> GetPositions(double search, IEnumerable<double> arr)
-        {
-            List<int> poses = new List<int>();
-            for (int i = 0; i < arr.Count(); i++)
-            {
-                if (search == arr.ElementAt(i))
-                    poses.Add(i);
-            }
-            return poses;
-        }
     }
     class CriteriaOption
     {
 
-        public event Action ValueChanged;
+        public event Action<double,double> ValueChanged;
 
         public string Name { get; set; }
         public double Value
@@ -286,6 +279,7 @@ namespace DSSView
             get => value;
             set
             {
+                double old = value;
                 if (value < Min)
                     this.value = Min;
                 else if (value > Max)
@@ -293,7 +287,7 @@ namespace DSSView
                 else
                     this.value = value;
 
-                ValueChanged?.Invoke();
+                ValueChanged?.Invoke(old, value);
             }
         }
         private double value;
@@ -317,7 +311,7 @@ namespace DSSView
         public double Profit { get; set; }
 
         public Criteria Criteria { get; set; }
-        public Matrix Matrix { get; set; }
+        public MatrixContainer<Alternative,Case,double> Matrix { get; set; }
 
         public CriteriaCondition(string name, Criteria criteria,bool good, double profit)
         {
@@ -349,7 +343,7 @@ namespace DSSView
                 mins.Add(GetMinFromRow(i));
             }
             Result = mins.Max();
-            Choices = GetPositions(Result, mins);
+            BestAlternativeIndexes = GetPositions(Result, mins);
         }
     }
     class CriteriaMinMax : Criteria
@@ -369,7 +363,7 @@ namespace DSSView
                 maxes.Add(GetMaxFromRow(i));
             }
             Result = maxes.Min();
-            Choices = GetPositions(Result, maxes);
+            BestAlternativeIndexes = GetPositions(Result, maxes);
         }
     }    
     class CriteriaMaxMax : Criteria
@@ -389,7 +383,7 @@ namespace DSSView
                 maxes.Add(GetMaxFromRow(i));
             }
             Result = maxes.Max();
-            Choices = GetPositions(Result, maxes);
+            BestAlternativeIndexes = GetPositions(Result, maxes);
         }
     }
     class CriteriaBaies : Criteria
@@ -410,12 +404,12 @@ namespace DSSView
                 double sum = 0;
                 for (int c = 0; c < Cols; c++)
                 {
-                    sum += Matrix[r, c] * GetChance(c);
+                    sum += Arr[r, c] * GetChance(c);
                 }
                 averages[r] = sum;
             }
             Result = averages.Max();
-            Choices = GetPositions(Result, averages);
+            BestAlternativeIndexes = GetPositions(Result, averages);
         }
     }
     class CriteriaLaplas : Criteria
@@ -436,17 +430,17 @@ namespace DSSView
                 double sum = 0;
                 for (int c = 0; c < Cols; c++)
                 {
-                    sum += Matrix[r, c] / Cols;
+                    sum += Arr[r, c] / Cols;
                 }
                 averages[r] = sum;
             }
             Result = averages.Max();
-            Choices = GetPositions(Result, averages);
+            BestAlternativeIndexes = GetPositions(Result, averages);
         }
     }
     class CriteriaSavige : Criteria
     {
-        public ProblemPayMatrix RiscMatrix { get; set; }
+        public PayMatrixRisc RiscMatrix { get; set; }
         public CriteriaSavige(CriteriasReport data) : base(data)
         {
             Name = "Критерий Сэвиджа";
@@ -459,7 +453,7 @@ namespace DSSView
         protected override void Count()
         {
             double[] maxInRowsAfter = new double[(int)Rows];
-            double[,] riscMatrix = GetRiscMatrix(Matrix);
+            double[,] riscMatrix = GetRiscMatrix(Arr);
             for (int r = 0; r < Rows; r++)
             {
                 double max = double.MinValue;
@@ -471,7 +465,7 @@ namespace DSSView
                 maxInRowsAfter[r] = max;
             }
             Result = maxInRowsAfter.Min();
-            Choices = GetPositions(Result, maxInRowsAfter);
+            BestAlternativeIndexes = GetPositions(Result, maxInRowsAfter);
         }
 
         public static double[,] GetRiscMatrix(double[,] from)
@@ -520,7 +514,7 @@ namespace DSSView
 
 
             Options.Add(GurvitsCoeff);
-            GurvitsCoeff.ValueChanged += Update;
+            GurvitsCoeff.ValueChanged += (double old, double newV) => Update();
         }
 
         protected override void Count()
@@ -535,7 +529,7 @@ namespace DSSView
                 gurv[r] =  max * GurvitsCoeff.Value + min * (1 - GurvitsCoeff.Value);
             }
             Result = gurv.Max();
-            Choices = GetPositions(Result, gurv);
+            BestAlternativeIndexes = GetPositions(Result, gurv);
         }
     }
     class CriteriaLeman : Criteria
@@ -551,7 +545,7 @@ namespace DSSView
 
 
             Options.Add(LemanCoeff);
-            LemanCoeff.ValueChanged += Update;
+            LemanCoeff.ValueChanged += (double old, double newV) => Update();
         }
 
         protected override void Count()
@@ -560,18 +554,18 @@ namespace DSSView
 
             for (int r = 0; r < Rows; r++)
             {
-                double min = Matrix[r, 0];
+                double min = Arr[r, 0];
                 double sum = 0;
                 for (int c = 0; c < Cols; c++)
                 {
-                    if (Matrix[r, c] < min)
-                        min = Matrix[r, c];
-                    sum += Matrix[r, c] * GetChance(c);
+                    if (Arr[r, c] < min)
+                        min = Arr[r, c];
+                    sum += Arr[r, c] * GetChance(c);
                 }
                 coeff[r] = sum * LemanCoeff.Value + (1 - LemanCoeff.Value) * min;
             }
             Result = coeff.Max();
-            Choices = GetPositions(Result, coeff);
+            BestAlternativeIndexes = GetPositions(Result, coeff);
         }
     }
     class CriteriaMulti : Criteria
@@ -590,15 +584,15 @@ namespace DSSView
             double[] multi = new double[(int)Rows];
             for (int r = 0; r < Rows; r++)
             {
-                double sum = Matrix[r, 0];
+                double sum = Arr[r, 0];
                 for (int c = 1; c < Cols; c++)
                 {
-                    sum *= Matrix[r, c];
+                    sum *= Arr[r, c];
                 }
                 multi[r] = sum;
             }
             Result = multi.Max();
-            Choices = GetPositions(Result, multi);
+            BestAlternativeIndexes = GetPositions(Result, multi);
         }
     }
 
@@ -623,7 +617,7 @@ namespace DSSView
             {
                 for (int c = 0; c < Cols; c++)
                 {
-                    newArr[r, c] = Matrix[r, c] > 0 ? Matrix[r, c] / GetChance(c) : Matrix[r, c] * GetChance(c);
+                    newArr[r, c] = Arr[r, c] > 0 ? Arr[r, c] / GetChance(c) : Arr[r, c] * GetChance(c);
                 }
             }
 
@@ -641,7 +635,7 @@ namespace DSSView
                 minInRows[r] = m;
             }
             Result = minInRows.Max();
-            Choices = GetPositions(Result, minInRows);
+            BestAlternativeIndexes = GetPositions(Result, minInRows);
         }
     }
 }
