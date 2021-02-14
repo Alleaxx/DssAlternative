@@ -12,7 +12,7 @@
             <TextBlock Text="Имя" FontSize="14" FontWeight="Medium" Margin="0,8,0,4"/>
             <TextBox Text="{Binding InfoNewMatrix.Name}" FontSize="14" BorderThickness="0,0,0,1" BorderBrush="Orange" />
             <TextBlock Text="Размерность" FontSize="14" FontWeight="Medium" Margin="0,8,0,4"/>
-            <DockPanel LastChildFill="True">
+            <DockPanel LastChildFill="False">
                 <TextBox Text="{Binding InfoNewMatrix.Rows}" FontSize="18" Padding="15,0" Margin="10,3" BorderThickness="0,0,0,1" BorderBrush="Orange" />
                 <TextBlock Text="X" FontSize="14" VerticalAlignment="Center"/>
                 <TextBox Text="{Binding InfoNewMatrix.Cols}" FontSize="18" Padding="15,0" Margin="10,3" BorderThickness="0,0,0,1" BorderBrush="Orange" />

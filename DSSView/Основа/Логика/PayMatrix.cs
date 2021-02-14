@@ -1,0 +1,245 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DSSView
+{
+    abstract class PayMatrix : MatrixContainer<Alternative, Case, double>, IMatrixChance<Alternative,Case,double>
+    {
+        public event Action CaseChanceChanged;
+
+        public IInfoMatrix Info { get; set; }
+        public ReportCriterias Report { get; set; }
+
+        protected override void AddColToList(int pos)
+        {
+            base.AddColToList(pos);
+            Case last = ColsList.Last();
+            last.ChanceChanged += UpdateChances;
+        }
+        protected override void RemoveColFromList(Case col)
+        {
+            base.RemoveColFromList(col);
+            col.ChanceChanged -= UpdateChances;
+        }
+        protected void UpdateChances()
+        {
+            CaseChanceChanged?.Invoke();
+        }
+
+        protected override void CreateFiller()
+        {
+            Filler = new FillerPayMatrix(this);
+        }
+
+        public PayMatrix(int rows, int cols) : base(rows, cols)
+        {
+            Info = new InfoPayMatrix(this);
+            Report = new ReportCriterias(this);
+        }
+        public PayMatrix(PayMatrixXml xml) : base(0,0)
+        {
+            RowsList = new List<Alternative>(xml.Alternatives);
+            ColsList = new List<Case>(xml.Cases);
+            Arr = new double[xml.Alternatives.Length, xml.Cases.Length];
+            for (int r = 0; r < Rows; r++)
+            {
+                for (int c = 0; c < Cols; c++)
+                {
+                    Arr[r, c] = xml.Values[r][c];
+                }
+            }
+
+            UpdateCells();
+
+            Info = new InfoPayMatrix(this);
+            Report = new ReportCriterias(this);
+        }
+
+    }
+
+    //Риска
+    class PayMatrixRisc : PayMatrix
+    {
+        public PayMatrixRisc(int rows, int cols) : base(rows, cols) { }
+        public PayMatrixRisc(PayMatrixXml xml) : base(xml) { }
+    }
+    class PayMatrixSafe : PayMatrix
+    {
+        public IMatrix<Alternative, Case, double> MainMatrix { get; set; }
+
+        public PayMatrixSafe(PayMatrixRisc matrix) : base(matrix.Rows, matrix.Cols)
+        {
+            MainMatrix = matrix;
+
+            MainMatrix.ValuesChanged += c => UpdateSafeMatrixFromMain();
+            MainMatrix.RowChanged += c => UpdateSafeMatrixFromMain();
+            MainMatrix.ColChanged += c => UpdateSafeMatrixFromMain();
+            UpdateSafeMatrixFromMain();
+        }
+
+        private void UpdateSafeMatrixFromMain()
+        {
+            RowsList.Clear();
+            for (int r = 0; r < MainMatrix.Rows; r++)
+            {
+                RowsList.Add(MainMatrix.GetRow(r));
+            }
+            ColsList.Clear();
+            for (int c = 0; c < MainMatrix.Cols; c++)
+            {
+                ColsList.Add(MainMatrix.GetCol(c));
+            }
+
+
+            Arr = new double[Rows, Cols];
+            double max = double.MinValue;
+            for (int r = 0; r < Rows; r++)
+            {
+                for (int c = 0; c < Cols; c++)
+                {
+                    Arr[r, c] = MainMatrix.Get(r, c);
+                    if (Arr[r, c] > max)
+                        max = Arr[r, c];
+                }
+            }
+
+            for (int r = 0; r < Rows; r++)
+            {
+                for (int c = 0; c < Cols; c++)
+                {
+                    Arr[r, c] = Arr[r, c] * -1 + max;
+                }
+            }
+            UpdateCells();
+            Update();
+        }
+    }
+
+
+    class FillerPayMatrix : IRowColFiller<Alternative, Case, double>
+    {
+        private IMatrix<Alternative,Case,double> Matrix { get; set; }
+        public FillerPayMatrix(IMatrix<Alternative,Case,double> matrix)
+        {
+            Matrix = matrix;
+        }
+
+
+        public CellContainer<Alternative, Case, double> GetNewCell(Coords coords)
+            => new Cell(Matrix, coords);
+
+        public Case GetNewColumn()
+            => new Case($"C{Matrix.Cols}");
+
+        public Alternative GetNewRow()
+            => new Alternative($"A{Matrix.Rows}");
+
+        public double GetNewValue()
+            => default;
+    }
+    class InfoPayMatrix : IInfoMatrix
+    {
+        public event Action ChancesChanged;
+
+        private IMatrix<Alternative,Case,double> Matrix { get; set; }
+        private Case[] Cases => Matrix.ColsArr;
+
+
+        public bool InUnknownConditions
+        {
+            get => inUknownConditions;
+            set
+            {
+                inUknownConditions = value;
+                ChancesChanged?.Invoke();
+            }
+        }
+        private bool inUknownConditions = true;
+        public bool InRiscConditions => !InUnknownConditions;
+
+        public double GetChance(int col)
+        {
+            if (InRiscConditions)
+                return Matrix.GetCol(col).Chance;
+            else
+                return DefaultChance;
+        }
+
+        public bool AreChancesOk
+        {
+            get
+            {
+                if (InUnknownConditions)
+                    return true;
+
+                double sum = ChancesSum;
+                return sum >= 0.99 && sum <= 1;
+            }
+        }
+        public double ChancesSum => InUnknownConditions ? 1 : Cases.Select(c => c.Chance).Sum();
+
+        public double DefaultChance => (double)1 / Cases.Length;
+
+        
+        public InfoPayMatrix(IMatrix<Alternative,Case,double> data)
+        {
+            Matrix = data;
+            Matrix.RowChanged += r => InnerCase_ChanceChanged();
+            Matrix.ColChanged += c => InnerCase_ChanceChanged();
+
+        }
+        private void InnerCase_ChanceChanged()
+        {
+            ChancesChanged?.Invoke();
+        }
+    }
+    class Cell : CellContainer<Alternative,Case,double>
+    {
+        public Cell(IMatrix<Alternative,Case,double> matrix, Coords coords) : base(matrix, coords) { }
+    }
+
+
+
+    public class Alternative
+    {
+        public override string ToString() => Name;
+
+        public string Name { get; set; }
+        public Alternative() : this("") { }
+        public Alternative(string name)
+        {
+            Name = name;
+        }
+    }
+    public class Case
+    {
+        public event Action ChanceChanged;
+
+        public override string ToString() => Name;
+        public string Name { get; set; }
+
+        public double Chance
+        {
+            get => chance;
+            set
+            {
+                double old = chance;
+                chance = value;
+                ChanceChanged?.Invoke();
+            }
+        }
+        private double chance;
+
+        public Case() : this("") { }
+        public Case(string name, double chance = 0)
+        {
+            Name = name;
+            Chance = chance;
+        }
+    }
+}

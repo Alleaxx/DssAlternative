@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -42,10 +44,20 @@ namespace DSSView
 
         public InfoAboutMatrix InfoNewMatrix { get; set; }
 
+        private IXMLProvider<PayMatrix> XmlProvider { get; set; }
+        private IFileSelector FileSelector { get; set; }
+
+
+
 
         public RelayCommand ShowAddMatrixWindowCommand { get; set; }
         public RelayCommand AddMatrixCommand { get; set; }
+        public RelayCommand SaveAsMatrixCommand { get; set; }
+        public RelayCommand SaveMatrixCommand { get; set; }
+        public RelayCommand OpenMatrixCommand { get; set; }
         public RelayCommand CloseMatrixCommand { get; set; }
+        public RelayCommand CreateReportCommand { get; set; }
+
 
         private void ShowAddMatrixWindow(object obj)
         {
@@ -72,13 +84,64 @@ namespace DSSView
             ListMatrix.Remove(oldSelected);
         }
 
+        private void SaveMatrixExe(object obj)
+        {
+            SaveMatrixToFile(Selected.File.FullName,Selected.Matrix);
+        }
+        private void SaveAsMatrixExe(object obj)
+        {
+            FileInfo file = FileSelector.Save();
+            if(file != null && file.Exists)
+                SaveMatrixToFile(file.FullName,Selected.Matrix);
+        }
+        private void SaveMatrixToFile(string path,PayMatrix matrix)
+        {
+            string xml = XmlProvider.ToXml(matrix);
+            using(FileStream stream = new FileStream(path, FileMode.Create))
+            {
+                byte[] array = Encoding.Default.GetBytes(xml);
+                stream.Write(array, 0, array.Length);
+            }
+        }
+        private void OpenMatrixExe(object obj)
+        {
+            FileInfo fromFile = FileSelector.Open();
+            if (fromFile != null && fromFile.Exists)
+            {
+                using(FileStream stream = File.OpenRead(fromFile.FullName))
+                {
+                    byte[] array = new byte[stream.Length];
+                    stream.Read(array, 0, array.Length);
+                    string xml = Encoding.Default.GetString(array);
+                    PayMatrix newMatrix = XmlProvider.FromXml(xml);
+                    ListMatrix.Add(new PayMatrixView(newMatrix,fromFile));
+                    Selected = ListMatrix.Last();
+                }
+            }
+        }
+
+        private void CreateReport(object obj)
+        {
+            IReport report = Report.GetReport(Selected.Matrix,$"{obj}");
+
+            report.Create();
+            report.Open();
+        }
+
+
         public View()
         {
             Ex = this;
+            XmlProvider = new MatrixProvider();
+            FileSelector = new DialogFileSelector();
 
             ShowAddMatrixWindowCommand = new RelayCommand(ShowAddMatrixWindow, obj => true);
             AddMatrixCommand = new RelayCommand(AddMatrix, obj => InfoNewMatrix != null);
             CloseMatrixCommand = new RelayCommand(CloseMatrix, obj => Selected != null);
+            OpenMatrixCommand = new RelayCommand(OpenMatrixExe, obj => true);
+            SaveMatrixCommand = new RelayCommand(SaveMatrixExe, obj => Selected != null && Selected.File != null && Selected.File.Exists);
+            SaveAsMatrixCommand = new RelayCommand(SaveAsMatrixExe, obj => Selected != null);
+            CreateReportCommand = new RelayCommand(CreateReport, obj => Selected != null);
 
             
             InfoNewMatrix = new InfoAboutMatrix() { Name = "Матрица", Rows = 3, Cols = 3 };

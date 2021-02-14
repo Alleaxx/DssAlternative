@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -58,7 +59,15 @@
     <Compile Include="NewMatrixWindow.xaml.cs">
       <DependentUpon>NewMatrixWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Основа\Логика\PayMatrixRisc.cs" />
+    <Compile Include="Основа\Логика\Matrix.cs" />
+    <Compile Include="Основа\Логика\PayMatrix.cs" />
+    <Compile Include="Основа\Логика\Report.cs" />
+    <Compile Include="Основа\Логика\Отчеты\ReportExcel.cs" />
+    <Compile Include="Основа\Логика\Отчеты\ReportHTML.cs" />
+    <Compile Include="Основа\Логика\Отчеты\Report.cs" />
+    <Compile Include="Основа\Логика\XML.cs" />
+    <Compile Include="Основа\Логика\Отчеты\ReportXAML.cs" />
+    <Compile Include="Основа\Представление\FileSelector.cs" />
     <Compile Include="Основа\Техника\RelayCommand.cs" />
     <Compile Include="Основа\Логика\Criterias.cs" />
     <Compile Include="Основа\Представление\View.cs" />
@@ -111,6 +120,9 @@
       <Project>{649b425f-c47b-455e-88c6-270931c4d7b0}</Project>
       <Name>DSSLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Ресурсы\Matrix.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

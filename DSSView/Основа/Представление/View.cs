@@ -16,6 +16,7 @@ namespace DSSView
     {
         //Источник
         public PayMatrix Matrix { get; private set; }
+        public System.IO.FileInfo File { get; set; }
 
 
         //Обновляемые объекты
@@ -52,22 +53,22 @@ namespace DSSView
 
         private void AddCol(object obj)
         {
-            Matrix.AddCol(Matrix.ColsLen);
+            Matrix.AddCol(Matrix.Cols);
             UpdateMatrix();
         }
         private void AddRow(object obj)
         {
-            Matrix.AddRow(Matrix.RowsLen);
+            Matrix.AddRow(Matrix.Rows);
             UpdateMatrix();
         }
         private void RemoveCol(object obj)
         {
-            Matrix.RemoveCol(SelectedCell.ColPosition);
+            Matrix.RemoveCol(SelectedCell.Col);
             UpdateMatrix();
         }
         private void RemoveRow(object obj)
         {
-            Matrix.RemoveRow(SelectedCell.RowPosition);
+            Matrix.RemoveRow(SelectedCell.Row);
             UpdateMatrix();
         }
 
@@ -75,18 +76,17 @@ namespace DSSView
         {
             OnPropertyChanged(nameof(Matrix));
         }
-
-
-        public PayMatrixView(PayMatrix data)
+        public PayMatrixView(PayMatrix data, System.IO.FileInfo info = null)
         {
             AddColCommand = new RelayCommand(AddCol, obj => true);
             AddRowCommand = new RelayCommand(AddRow, obj => true);
-            RemoveColCommand = new RelayCommand(RemoveCol, obj => SelectedCell != null && Matrix.ColsLen > 1);
-            RemoveRowCommand = new RelayCommand(RemoveRow, obj => SelectedCell != null && Matrix.RowsLen > 1);
+            RemoveColCommand = new RelayCommand(RemoveCol, obj => SelectedCell != null && Matrix.Cols > 1);
+            RemoveRowCommand = new RelayCommand(RemoveRow, obj => SelectedCell != null && Matrix.Rows > 1);
             AddSafeMatrixCommand = new RelayCommand(obj => View.Ex.AddSafeMatrix(new PayMatrixSafe(Matrix as PayMatrixRisc)), obj => !(Matrix is PayMatrixSafe));
 
 
             SetMatrix(data);
+            File = info;
         }
         private void SetMatrix(PayMatrix data)
         {
@@ -109,11 +109,11 @@ namespace DSSView
 
         //Источник
         public PayMatrix Matrix => View.Matrix;
-        public InfoPayMatrix Info => View.Matrix.Info;
+        public InfoPayMatrix Info => View.Matrix.Info as InfoPayMatrix;
 
 
-        public Alternative[] Alternatives => Info.Alternatives.ToArray();
-        public CaseView[] Cases => Info.Cases.Select(c => new CaseView(View,c)).ToArray();
+        public Alternative[] Alternatives => Matrix.RowsArr;
+        public CaseView[] Cases => Matrix.ColsArr.Select(c => new CaseView(View,c)).ToArray();
 
 
         //Изменяемые данные
@@ -162,15 +162,15 @@ namespace DSSView
         {
             get
             {
-                CellView[][] cells = new CellView[SourceMatrix.ColsLen][];
-                for (int r = 0; r < SourceMatrix.ColsLen; r++)
+                CellView[][] cells = new CellView[SourceMatrix.Cols][];
+                for (int r = 0; r < SourceMatrix.Cols; r++)
                 {
-                    Cells[r] = new CellView[SourceMatrix.RowsLen];
+                    Cells[r] = new CellView[SourceMatrix.Rows];
                 }
 
-                for (int r = 0; r < SourceMatrix.RowsLen; r++)
+                for (int r = 0; r < SourceMatrix.Rows; r++)
                 {
-                    for (int c = 0; c < SourceMatrix.ColsLen; c++)
+                    for (int c = 0; c < SourceMatrix.Cols; c++)
                     {
                         Cells[c][r] = new CellView(View,SourceMatrix.Cells[c][r] as Cell);
                     }
@@ -191,7 +191,7 @@ namespace DSSView
         public PayMatrixView View { get; set; }
 
         //Источник
-        public CriteriasReport Report => View.Matrix.Report;
+        public ReportCriterias Report => View.Matrix.Report;
         
         //Данные
         public CriteriaView[] Criterias { get; set; }
@@ -221,16 +221,17 @@ namespace DSSView
 
 
         //Источник
-        public Criteria Criteria { get; set; }
+        public ICriteria Criteria { get; set; }
 
 
         //Обновляемые данные
         public double Result => Criteria.Result;
-        public Alternative[] Choices => Criteria.BestAlternatives;
+        public Alternative[] Choices => Criteria.BestAlts;
+        public IStep[] Steps => Criteria.Steps.ToArray();
 
 
 
-        public CriteriaView(PayMatrixView view,Criteria criteria)
+        public CriteriaView(PayMatrixView view, ICriteria criteria)
         {
             View = view;
             Criteria = criteria;
@@ -240,6 +241,7 @@ namespace DSSView
         {
             OnPropertyChanged(nameof(Result));
             OnPropertyChanged(nameof(Choices));
+            OnPropertyChanged(nameof(Steps));
         }
     }
 
@@ -249,7 +251,7 @@ namespace DSSView
 
 
         //Источник
-        public InfoPayMatrix Info => View.Matrix.Info;
+        public InfoPayMatrix Info => View.Matrix.Info as InfoPayMatrix;
         public Case Case { get; set; }
 
 
