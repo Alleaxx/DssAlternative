@@ -15,19 +15,14 @@ using System.Windows.Shapes;
 namespace DSSView
 {
     /// <summary>
-    /// Логика взаимодействия для NewMatrixWindow.xaml
+    /// Логика взаимодействия для AHPWindow.xaml
     /// </summary>
-    public partial class NewMatrixWindow : Window
+    public partial class AHPWindow : Window
     {
-        public NewMatrixWindow(object dataContext)
+        public AHPWindow(object dataContext)
         {
             DataContext = dataContext;
             InitializeComponent();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
         }
     }
 }

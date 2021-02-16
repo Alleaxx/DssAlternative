@@ -16,10 +16,6 @@ using System.Windows.Shapes;
 namespace DSSView
 {
 
-
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -27,10 +23,10 @@ namespace DSSView
             InitializeComponent();
         }
 
-        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void treeButton_Click(object sender, RoutedEventArgs e)
         {
-            View view = DataContext as View;
-            //view.Selected.Selected = e.NewValue as ITab;
+            TreeViewWindow window = new TreeViewWindow(DataContext);
+            window.Show();
         }
     }
 

@@ -1,35 +1,16 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DSSView
 {
 
-
-    //Вспомогательные интерфейсы
-    class NotifyObj : INotifyPropertyChanged
+    class ViewMatrix : NotifyObj
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName]string prop = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-    }
-
-
-    //Экземпляр приложения
-    class View : NotifyObj
-    {
-        public static View Ex { get; set; }
-
-
         public ObservableCollection<PayMatrixView> ListMatrix { get; set; }
         public PayMatrixView Selected
         {
@@ -61,7 +42,7 @@ namespace DSSView
 
         private void ShowAddMatrixWindow(object obj)
         {
-            NewMatrixWindow window = new NewMatrixWindow();
+            NewMatrixWindow window = new NewMatrixWindow(this);
             window.ShowDialog();
         }
         private void AddMatrix(object obj)
@@ -129,9 +110,8 @@ namespace DSSView
         }
 
 
-        public View()
+        public ViewMatrix()
         {
-            Ex = this;
             XmlProvider = new MatrixProvider();
             FileSelector = new DialogFileSelector();
 

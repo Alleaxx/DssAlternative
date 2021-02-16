@@ -15,19 +15,13 @@ using System.Windows.Shapes;
 namespace DSSView
 {
     /// <summary>
-    /// Логика взаимодействия для NewMatrixWindow.xaml
+    /// Логика взаимодействия для MatrixViewWindow.xaml
     /// </summary>
-    public partial class NewMatrixWindow : Window
+    public partial class MatrixViewWindow : Window
     {
-        public NewMatrixWindow(object dataContext)
+        public MatrixViewWindow()
         {
-            DataContext = dataContext;
             InitializeComponent();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
         }
     }
 }

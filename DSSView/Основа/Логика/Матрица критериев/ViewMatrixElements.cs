@@ -82,7 +82,7 @@ namespace DSSView
             AddRowCommand = new RelayCommand(AddRow, obj => true);
             RemoveColCommand = new RelayCommand(RemoveCol, obj => SelectedCell != null && Matrix.Cols > 1);
             RemoveRowCommand = new RelayCommand(RemoveRow, obj => SelectedCell != null && Matrix.Rows > 1);
-            AddSafeMatrixCommand = new RelayCommand(obj => View.Ex.AddSafeMatrix(new PayMatrixSafe(Matrix as PayMatrixRisc)), obj => !(Matrix is PayMatrixSafe));
+            AddSafeMatrixCommand = new RelayCommand(obj => View.Ex.ViewMatrix.AddSafeMatrix(new PayMatrixSafe(Matrix as PayMatrixRisc)), obj => !(Matrix is PayMatrixSafe));
 
 
             SetMatrix(data);

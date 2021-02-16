@@ -56,21 +56,39 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AHPWindow.xaml.cs">
+      <DependentUpon>AHPWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MatrixViewWindow.xaml.cs">
+      <DependentUpon>MatrixViewWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NewMatrixWindow.xaml.cs">
       <DependentUpon>NewMatrixWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Основа\Логика\Matrix.cs" />
-    <Compile Include="Основа\Логика\PayMatrix.cs" />
-    <Compile Include="Основа\Логика\Report.cs" />
-    <Compile Include="Основа\Логика\Отчеты\ReportExcel.cs" />
-    <Compile Include="Основа\Логика\Отчеты\ReportHTML.cs" />
-    <Compile Include="Основа\Логика\Отчеты\Report.cs" />
-    <Compile Include="Основа\Логика\XML.cs" />
-    <Compile Include="Основа\Логика\Отчеты\ReportXAML.cs" />
+    <Compile Include="TreeViewWindow.xaml.cs">
+      <DependentUpon>TreeViewWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Основа\Логика\AlternativeCase.cs" />
+    <Compile Include="Основа\Логика\Деревья решений\TreeDecision.cs" />
+    <Compile Include="Основа\Логика\МАИ\ViewAHP.cs" />
+    <Compile Include="Основа\Логика\Матрица критериев\Matrix.cs" />
+    <Compile Include="Основа\Логика\Матрица критериев\PayMatrix.cs" />
+    <Compile Include="Основа\Логика\Матрица критериев\Report.cs" />
+    <Compile Include="Основа\Логика\Матрица критериев\Отчеты\ReportExcel.cs" />
+    <Compile Include="Основа\Логика\Матрица критериев\Отчеты\ReportHTML.cs" />
+    <Compile Include="Основа\Логика\Матрица критериев\Отчеты\Report.cs" />
+    <Compile Include="Основа\Логика\Матрица критериев\XML.cs" />
+    <Compile Include="Основа\Логика\Матрица критериев\Отчеты\ReportXAML.cs" />
     <Compile Include="Основа\Представление\FileSelector.cs" />
+    <Compile Include="Основа\Логика\Матрица критериев\ViewMatrix.cs" />
+    <Compile Include="Основа\Логика\Деревья решений\ViewTree.cs" />
     <Compile Include="Основа\Техника\RelayCommand.cs" />
-    <Compile Include="Основа\Логика\Criterias.cs" />
-    <Compile Include="Основа\Представление\View.cs" />
+    <Compile Include="Основа\Логика\Матрица критериев\Criterias.cs" />
+    <Compile Include="Основа\Логика\Матрица критериев\ViewMatrixElements.cs" />
+    <Page Include="AHPWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -79,12 +97,20 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Основа\Представление\AppView.cs" />
+    <Compile Include="Основа\Представление\ViewApp.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MatrixViewWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="NewMatrixWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TreeViewWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -124,5 +150,6 @@
   <ItemGroup>
     <Resource Include="Ресурсы\Matrix.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
