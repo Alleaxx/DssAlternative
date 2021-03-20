@@ -23,6 +23,12 @@ namespace DSSView
 
         public AHPCriteriaAlpha Criteria { get; protected set; }
 
+        public RelayCommand CountCoeffCommand { get; set; }
+        private void CountCoeff(object obj)
+        {
+            Criteria.CountCoeffs();
+        }
+
         protected ViewCriteria()
         {
 
@@ -30,9 +36,17 @@ namespace DSSView
         public ViewCriteria(AHPCriteriaAlpha alpha)
         {
             Criteria = alpha;
-            //Add(new ViewProblemInfo(problem));
-            //Add(new ViewProblemAlternatives(problem));
-            //Add(new ViewProblemCriterias(problem));
+            CountCoeffCommand = new RelayCommand(CountCoeff, obj => true);
+        }
+
+        public override IEnumerable<IViewElement> Elements
+        {
+            get
+            {
+                List<IViewElement> elems = new List<IViewElement>();
+                elems.AddRange(Criteria.Inner.Select(critInner => new ViewCriteria(critInner)));
+                return elems;
+            }
         }
     }
 
@@ -52,6 +66,7 @@ namespace DSSView
         public ViewProblem(Problem problem)
         {
             Problem = problem;
+            Add(new ViewCriteria(problem));
             Add(new ViewProblemInfo(problem));
             Add(new ViewProblemAlternatives(problem));
             Add(new ViewProblemCriterias(problem));

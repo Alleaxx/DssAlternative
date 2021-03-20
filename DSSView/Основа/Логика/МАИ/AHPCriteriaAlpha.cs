@@ -22,7 +22,6 @@ namespace DSSView
             foreach (var newAlt in criterias)
             {
                 base.Add(newAlt);
-                newAlt.List = this;
                 Added?.Invoke(this, newAlt);
             }
         }
@@ -51,16 +50,33 @@ namespace DSSView
         protected double coefficient;
 
 
-        public AHPCriteriaAlpha Main { get; set; }
-        public AHPCriteriasAlpha List { get; set; }
-        public AHPCriteriasAlpha Inner { get; set; } = new AHPCriteriasAlpha();
+        public virtual Problem Main { get; set; }
 
-        public int Level => Main == null ? 0 : 1;
+        public AHPCriteriasAlpha Inner { get; set; } = new AHPCriteriasAlpha();
+        public Dictionary<int, AHPCriteriasAlpha> Dictionary { get; set; } = new Dictionary<int, AHPCriteriasAlpha>();
+
+        public int Level { get; set; }
+        public bool Deepest => Inner.Count == 0;
 
 
         public List<AlphaRelation> Relations { get; set; } = new List<AlphaRelation>();
         public IGrouping<AHPCriteriaAlpha, AlphaRelation>[] Grouped => Relations.GroupBy(r => r.From).ToArray();
         public MatrixAHP Matrix => new MatrixAHP(Grouped);
+
+
+        public virtual void CountCoeffs()
+        {
+            MatrixAHP matrix = Matrix;
+            if (!Main.UpperCoeffs.ContainsKey(Level))
+                Main.UpperCoeffs.Add(Level,new List<double[]>());
+            if(!Deepest && !Main.UpperCoeffs[Level].Contains(Matrix.Coeffiients))
+                Main.UpperCoeffs[Level].Add(Matrix.Coeffiients);
+
+            for (int i = 0; i < Inner.Count; i++)
+            {
+                Inner[i].Coefficient = matrix.Coeffiients[i];
+            }
+        }
 
 
 
@@ -70,16 +86,33 @@ namespace DSSView
         }
         public void Add(params AHPCriteriaAlpha[] newCriterias)
         {
-            foreach (var newCriteria in newCriterias)
+            Add(0, newCriterias);
+        }
+        public void Add(int level,params AHPCriteriaAlpha[] newCriterias)
+        {
+            if (!Main.Dictionary.ContainsKey(level))
             {
-                Inner.Add(newCriteria);
-                foreach (var existCriteria in Inner)
+                Main.Dictionary.Add(level, new AHPCriteriasAlpha());
+                Main.Dictionary[level].Add(newCriterias);
+            }
+
+            //Dictionary.Add(Level - level, new AHPCriteriasAlpha());
+            //Dictionary[Level - level].Add(newCriterias);
+
+            if (true)
+            {
+                foreach (var newCriteria in newCriterias)
                 {
-                    Add(new AlphaRelation(this, newCriteria, existCriteria, 1));
-                    if(existCriteria != newCriteria)
-                        Add(new AlphaRelation(this, existCriteria, newCriteria, 1));
+                    Inner.Add(newCriteria);
+                    foreach (var existCriteria in Inner)
+                    {
+                        Add(new AlphaRelation(this, newCriteria, existCriteria, 1));
+                        if (existCriteria != newCriteria)
+                            Add(new AlphaRelation(this, existCriteria, newCriteria, 1));
+                    }
                 }
             }
+
         }
         private void Remove(AlphaRelation delRel)
         {
@@ -97,15 +130,28 @@ namespace DSSView
                 }
             }
         }
+        public void Remove(int level,params AHPCriteriaAlpha[] delCriterias)
+        {
+            foreach (var delCriteria in delCriterias)
+            {
+                Inner.Remove(delCriteria);
+                var deleteRelations = Relations.Where(r => r.To == delCriteria || r.From == delCriteria);
+                foreach (var relation in deleteRelations)
+                {
+                    Remove(relation);
+                }
+            }
+        }
 
 
         public AHPCriteriaAlpha(string name)
         {
             Name = name;
         }
-        public AHPCriteriaAlpha(AHPCriteriaAlpha main,string name)
+        public AHPCriteriaAlpha(Problem main,int level,string name)
         {
             Main = main;
+            Level = level;
             Name = name;
         }
     }
