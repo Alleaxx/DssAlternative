@@ -19,10 +19,17 @@ namespace DSSView
     /// </summary>
     public partial class AHPWindow : Window
     {
-        public AHPWindow(object dataContext)
+        public ViewAHP View => DataContext as ViewAHP;
+        public AHPWindow(ViewAHP dataContext)
         {
             DataContext = dataContext;
             InitializeComponent();
+        }
+
+        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if(View.Selected != null)
+                View.Selected.Selected = e.NewValue as IViewElement;
         }
     }
 }

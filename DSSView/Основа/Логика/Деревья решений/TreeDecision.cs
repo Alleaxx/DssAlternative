@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DSSView
 {
-    interface ITreeDecision
+    public interface ITreeDecision
     {
         event Action<ITreeDecision> Updated;
 
@@ -31,7 +31,7 @@ namespace DSSView
         double MXStored { get; }
     }
 
-    abstract class TreeDecision : NotifyObj, ITreeDecision
+    public abstract class TreeDecision : NotifyObj, ITreeDecision
     {
         public ITreeDecision Link { get; set; }
 
@@ -170,7 +170,7 @@ namespace DSSView
 
 
     //Решающий узел
-    class AlternativeTree : TreeDecision
+    public class AlternativeTree : TreeDecision
     {
         public AlternativeTree(string name, double profit = 0) : base(name)
         {
@@ -180,7 +180,7 @@ namespace DSSView
     }
 
     //Вероятностный узел
-    class CaseTree : TreeDecision
+    public class CaseTree : TreeDecision
     {
         public override double Chance
         {

@@ -68,9 +68,25 @@
     <Compile Include="TreeViewWindow.xaml.cs">
       <DependentUpon>TreeViewWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Основа\Логика\AlternativeCase.cs" />
+    <Compile Include="Основа\Логика\Alternative.cs" />
+    <Compile Include="Основа\Логика\Case.cs" />
     <Compile Include="Основа\Логика\Деревья решений\TreeDecision.cs" />
-    <Compile Include="Основа\Логика\МАИ\ViewAHP.cs" />
+    <Compile Include="Основа\Логика\МАИ\AHP.cs" />
+    <Compile Include="Основа\Логика\МАИ\AHPCriteriaAlpha.cs" />
+    <Compile Include="Основа\Логика\МАИ\Relation.cs" />
+    <Compile Include="Основа\Логика\МАИ\Альтернативы\AlternativeAHP.cs" />
+    <Compile Include="Основа\Логика\МАИ\Альтернативы\AlternativesAHP.cs" />
+    <Compile Include="Основа\Логика\МАИ\Альтернативы\AlternativeView.cs" />
+    <Compile Include="Основа\Логика\МАИ\Критерии\CriteriaAHP.cs" />
+    <Compile Include="Основа\Логика\МАИ\Критерии\CriteriaAHPView.cs" />
+    <Compile Include="Основа\Логика\МАИ\Критерии\CriteriasAHP.cs" />
+    <Compile Include="Основа\Логика\МАИ\Матрицы\MatrixAHP.cs" />
+    <Compile Include="Основа\Логика\МАИ\Матрицы\MatrixConsistency.cs" />
+    <Compile Include="Основа\Логика\МАИ\Проблема\Problem.cs" />
+    <Compile Include="Основа\Логика\МАИ\Проблема\ProblemView.cs" />
+    <Compile Include="Основа\Логика\МАИ\AHPView.cs" />
+    <Compile Include="Основа\Логика\МАИ\ProjectSave.cs" />
+    <Compile Include="Основа\Логика\МАИ\ViewElement.cs" />
     <Compile Include="Основа\Логика\Матрица критериев\Matrix.cs" />
     <Compile Include="Основа\Логика\Матрица критериев\PayMatrix.cs" />
     <Compile Include="Основа\Логика\Матрица критериев\Report.cs" />
@@ -79,6 +95,7 @@
     <Compile Include="Основа\Логика\Матрица критериев\Отчеты\Report.cs" />
     <Compile Include="Основа\Логика\Матрица критериев\XML.cs" />
     <Compile Include="Основа\Логика\Матрица критериев\Отчеты\ReportXAML.cs" />
+    <Compile Include="Основа\Представление\Конвертеры\ObjectVisibility.cs" />
     <Compile Include="Основа\Представление\FileSelector.cs" />
     <Compile Include="Основа\Логика\Матрица критериев\ViewMatrix.cs" />
     <Compile Include="Основа\Логика\Деревья решений\ViewTree.cs" />

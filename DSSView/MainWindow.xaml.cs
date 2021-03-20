@@ -20,13 +20,11 @@ namespace DSSView
     {
         public MainWindow()
         {
+            DataContext = View.Ex;
             InitializeComponent();
-        }
 
-        private void treeButton_Click(object sender, RoutedEventArgs e)
-        {
-            TreeViewWindow window = new TreeViewWindow(DataContext);
-            window.Show();
+            View.Ex.OpenAHPWindow.Execute(null);
+            Close();
         }
     }
 

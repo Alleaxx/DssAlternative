@@ -15,7 +15,7 @@ namespace DSSView
         FileInfo SaveAs();
         FileInfo Create();
     }
-    class DialogFileSelector : IFileSelector
+    public class DialogFileSelector : IFileSelector
     {
         private string DefaultExt { get; set; }
         private string DefaultDirectory { get; set; }

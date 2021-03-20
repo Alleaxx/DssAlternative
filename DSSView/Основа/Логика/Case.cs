@@ -6,17 +6,6 @@ using System.Threading.Tasks;
 
 namespace DSSView
 {
-    public class Alternative
-    {
-        public override string ToString() => Name;
-
-        public string Name { get; set; }
-        public Alternative() : this("") { }
-        public Alternative(string name)
-        {
-            Name = name;
-        }
-    }
     public class Case
     {
         public event Action ChanceChanged;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace DSSView
 {
 
-    interface IMatrix<R, C, V>
+    public interface IMatrix<R, C, V>
     {
         V Get(int row, int col);
         void Set(int row, int col, V val);
@@ -37,11 +37,11 @@ namespace DSSView
     }
 
 
-    interface IMatrixChance<R, C, V> : IMatrix<R,C,V>
+    public interface IMatrixChance<R, C, V> : IMatrix<R,C,V>
     {
         IInfoMatrix Info { get; }
     }
-    interface IInfoMatrix
+    public interface IInfoMatrix
     {
         event Action ChancesChanged;
 
@@ -53,7 +53,7 @@ namespace DSSView
 
 
     //Главная матрица
-    abstract class MatrixContainer<R, C, V> :  IMatrix<R, C, V>
+    public abstract class MatrixContainer<R, C, V> :  IMatrix<R, C, V>
     {
         public event Action<R> RowChanged;
         public event Action<C> ColChanged;
@@ -232,7 +232,7 @@ namespace DSSView
 
 
     //Заполнитель
-    interface IRowColFiller<R,C,V>
+    public interface IRowColFiller<R,C,V>
     {
         R GetNewRow();
         C GetNewColumn();
@@ -240,7 +240,7 @@ namespace DSSView
 
         CellContainer<R, C, V> GetNewCell(Coords coords);
     }
-    class FillerDefaultMatrix<R, C, V> : IRowColFiller<R, C, V>
+    public class FillerDefaultMatrix<R, C, V> : IRowColFiller<R, C, V>
     {
         public CellContainer<R, C, V> GetNewCell(Coords c) => default;
         public C GetNewColumn() => default;
@@ -250,7 +250,7 @@ namespace DSSView
 
 
     //Ячейки
-    struct Coords
+    public struct Coords
     {
         public int X { get; set; }
         public int Y { get; set; }
@@ -261,7 +261,7 @@ namespace DSSView
             Y = y;
         }
     }
-    abstract class CellContainer<R,C,V>
+    public abstract class CellContainer<R,C,V>
     {
         public override string ToString() => Value.ToString();
 

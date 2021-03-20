@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DSSView
 {
-    class ReportCriterias
+    public class ReportCriterias
     {
         public event Action CriteriasUpdated;
 
@@ -95,7 +95,7 @@ namespace DSSView
         }
     }
 
-    class CriteriasPriorAlternative
+    public class CriteriasPriorAlternative
     {
         public Alternative Alternative { get; set; }
         public ICriteria[] Criterias { get; set; }

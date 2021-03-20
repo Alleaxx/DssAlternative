@@ -19,9 +19,10 @@ namespace DSSView
     /// </summary>
     public partial class MatrixViewWindow : Window
     {
-        public MatrixViewWindow()
+        public MatrixViewWindow(object dataContext)
         {
             InitializeComponent();
+            DataContext = dataContext;
         }
     }
 }

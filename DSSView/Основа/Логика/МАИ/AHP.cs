@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace DSSView
 {
-    class ViewAHP
+    class AHP
     {
-
+        public int MyProperty { get; set; }
     }
 }

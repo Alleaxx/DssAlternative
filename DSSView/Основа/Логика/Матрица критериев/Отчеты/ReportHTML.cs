@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DSSView
 {
-    class ReportHTML : Report
+    public class ReportHTML : Report
     {
         private string HTML { get; set; }
 

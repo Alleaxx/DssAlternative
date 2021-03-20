@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace DSSView
 {
-    interface IReport
+    public interface IReport
     {
         void Create();
         void Open();
     }
 
-    abstract class Report : IReport
+    public abstract class Report : IReport
     {
         protected PayMatrix Matrix { get; set; }
         protected DateTime Creation { get; set; }

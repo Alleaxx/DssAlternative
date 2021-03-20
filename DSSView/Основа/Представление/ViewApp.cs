@@ -14,7 +14,7 @@ namespace DSSView
 
 
     //Вспомогательные интерфейсы
-    class NotifyObj : INotifyPropertyChanged
+    public class NotifyObj : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName]string prop = "")
@@ -25,9 +25,18 @@ namespace DSSView
 
 
     //Экземпляр приложения
-    class View : NotifyObj
+    public class View : NotifyObj
     {
-        public static View Ex { get; set; }
+        public static View Ex
+        {
+            get
+            {
+                if (ex == null)
+                    ex = new View();
+                return ex;
+            }
+        }
+        private static View ex;
 
         public ViewMatrix ViewMatrix { get; set; }
         public ViewTree ViewTree { get; set; }
@@ -41,7 +50,7 @@ namespace DSSView
 
         private void OpenMatrix(object obj)
         {
-            MatrixViewWindow window = new MatrixViewWindow();
+            MatrixViewWindow window = new MatrixViewWindow(ViewMatrix);
             window.Show();
         }
         private void OpenTree(object obj)
@@ -55,11 +64,11 @@ namespace DSSView
             window.Show();
         }
 
-        public View()
+        private View()
         {
-            Ex = this;
             ViewMatrix = new ViewMatrix();
             ViewTree = new ViewTree();
+
             OpenMatrixWindow = new RelayCommand(OpenMatrix, obj => true);
             OpenTreeWindow = new RelayCommand(OpenTree, obj => true);
             OpenAHPWindow = new RelayCommand(OpenAHP, obj => true);

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DSSView
 {
-    class ReportExcel : Report
+    public class ReportExcel : Report
     {
         public ReportExcel(PayMatrix matrix) : base(matrix)
         {

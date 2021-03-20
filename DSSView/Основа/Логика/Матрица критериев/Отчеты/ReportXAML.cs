@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace DSSView
 {
 
-    abstract class ReportXAML : Report
+    public abstract class ReportXAML : Report
     {
         public ReportXAML(PayMatrix matrix) : base(matrix)
         {
@@ -21,7 +21,7 @@ namespace DSSView
 
         public override abstract void Open();
     }
-    class ReportPDF : ReportXAML
+    public class ReportPDF : ReportXAML
     {
         public ReportPDF(PayMatrix matrix) : base(matrix)
         {
@@ -33,7 +33,7 @@ namespace DSSView
             throw new NotImplementedException();
         }
     }
-    class ReportWord : ReportXAML
+    public class ReportWord : ReportXAML
     {
         public ReportWord(PayMatrix matrix) : base(matrix)
         {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DSSView
 {
-    class ViewTree : NotifyObj
+    public class ViewTree : NotifyObj
     {
         public ObservableCollection<ITreeDecision> Problems { get; set; }
 
@@ -89,7 +89,7 @@ namespace DSSView
 
         }
     }
-    class InfoAltCase
+    public class InfoAltCase
     {
         public string Name { get; set; }
     }

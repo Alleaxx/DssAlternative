@@ -12,7 +12,7 @@ namespace DSSView
     /// <summary>
     /// Визуализированные и редактируемая матрица
     /// </summary>
-    class PayMatrixView : NotifyObj
+    public class PayMatrixView : NotifyObj
     {
         //Источник
         public PayMatrix Matrix { get; private set; }
@@ -103,7 +103,7 @@ namespace DSSView
     }
 
 
-    class PayMatrixInfoView : NotifyObj
+    public class PayMatrixInfoView : NotifyObj
     {
         public PayMatrixView View { get; set; }
 
@@ -152,7 +152,7 @@ namespace DSSView
 
 
     //Матрица с объектами для строк и столбцов
-    class MatrixView
+    public class MatrixView
     {
         public PayMatrixView View { get; set; }
         //Содержание матрицы
@@ -186,7 +186,7 @@ namespace DSSView
     }
 
 
-    class CriteriasReportView : NotifyObj
+    public class CriteriasReportView : NotifyObj
     {
         public PayMatrixView View { get; set; }
 
@@ -215,7 +215,7 @@ namespace DSSView
             OnPropertyChanged(nameof(Priorities));
         }
     }
-    class CriteriaView : NotifyObj
+    public class CriteriaView : NotifyObj
     {
         public PayMatrixView View { get; set; }
 
@@ -245,7 +245,7 @@ namespace DSSView
         }
     }
 
-    class CaseView : NotifyObj
+    public class CaseView : NotifyObj
     {
         public PayMatrixView View { get; set; }
 
@@ -276,7 +276,7 @@ namespace DSSView
     }
 
 
-    class CellView : NotifyObj
+    public class CellView : NotifyObj
     {
         public PayMatrixView View { get; set; }
 

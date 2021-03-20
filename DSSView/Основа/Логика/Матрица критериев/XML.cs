@@ -13,7 +13,7 @@ namespace DSSView
         string ToXml(T obj);
         T FromXml(string xml);
     }
-    class DefaultXmlProvider<T> : IXMLProvider<T>
+    public class DefaultXmlProvider<T> : IXMLProvider<T>
     {
         public string ToXml(T Object)
         {
@@ -68,7 +68,7 @@ namespace DSSView
         }
     }
 
-    class MatrixProvider : IXMLProvider<PayMatrix>
+    public class MatrixProvider : IXMLProvider<PayMatrix>
     {
         public PayMatrix FromXml(string xml)
         {

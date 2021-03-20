@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace DSSView
 {
     //Критерий
-    interface ICriteria
+    public interface ICriteria
     {
         event Action<double, Alternative[]> ResultChanged;
 
@@ -25,7 +25,7 @@ namespace DSSView
     }
 
 
-    abstract class Criteria : ICriteria
+    public abstract class Criteria : ICriteria
     {
         public event Action<double, Alternative[]> ResultChanged;
 
@@ -196,12 +196,12 @@ namespace DSSView
 
     }
 
-    interface IStep
+    public interface IStep
     {
         int Order { get; }
         string Name { get; }
     }
-    class Option :  IOption
+    public class Option :  IOption
     {
 
         public event Action<double,double> Changed;
@@ -237,12 +237,12 @@ namespace DSSView
             Value = val;
         }
     }
-    interface IOption
+    public interface IOption
     {
         event Action<double, double> Changed;
         double Value { get; }
     }
-    class Step : IStep
+    public class Step : IStep
     {
 
         public int Order { get; set; }
@@ -256,7 +256,7 @@ namespace DSSView
             Result = result;
         }
     }
-    class StepArr : IStep
+    public class StepArr : IStep
     {
         public int Order { get; set; }
         public string Name { get; set; }
@@ -271,7 +271,7 @@ namespace DSSView
     }
 
 
-    class ConditionCriteria
+    public class ConditionCriteria
     {
         public string Name { get; set; }
         public bool IsGood { get; set; }
@@ -288,7 +288,7 @@ namespace DSSView
 
 
     //Классические критерии
-    class CriteriaWald : Criteria
+    public class CriteriaWald : Criteria
     {
         public CriteriaWald(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
         {
@@ -310,7 +310,7 @@ namespace DSSView
             AddStep("Максимум", Result);
         }
     }
-    class CriteriaMinMax : Criteria
+    public class CriteriaMinMax : Criteria
     {
         public CriteriaMinMax(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
         {
@@ -333,7 +333,7 @@ namespace DSSView
             AddStep("Минимум", Result);
         }
     }    
-    class CriteriaMaxMax : Criteria
+    public class CriteriaMaxMax : Criteria
     {
         public CriteriaMaxMax(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
         {
@@ -356,7 +356,7 @@ namespace DSSView
             AddStep("Максимум", Result);
         }
     }
-    class CriteriaBaies : Criteria
+    public class CriteriaBaies : Criteria
     {
         public CriteriaBaies(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
         {
@@ -385,7 +385,7 @@ namespace DSSView
             AddStep("Максимум", Result);
         }
     }
-    class CriteriaLaplas : Criteria
+    public class CriteriaLaplas : Criteria
     {
         public CriteriaLaplas(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
         {
@@ -414,7 +414,7 @@ namespace DSSView
             AddStep("Максимум", Result);
         }
     }
-    class CriteriaSavige : Criteria
+    public class CriteriaSavige : Criteria
     {
         public PayMatrixRisc RiscMatrix { get; set; }
         public CriteriaSavige(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
@@ -480,7 +480,7 @@ namespace DSSView
 
 
     //Производные критерии
-    class CriteriaGurvits : Criteria
+    public class CriteriaGurvits : Criteria
     {
         public IOption GurvitsCoeff { get; set; } = new Option("Коэффициент оптимизма", 0.4, 0, 1);
         public CriteriaGurvits(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
@@ -513,7 +513,7 @@ namespace DSSView
             AddStep("Максимум", Result);
         }
     }
-    class CriteriaLeman : Criteria
+    public class CriteriaLeman : Criteria
     {
         public IOption LemanCoeff { get; set; } = new Option("Коэффициент доверия к информации", 0.6, 0, 1);
         public CriteriaLeman(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
@@ -551,7 +551,7 @@ namespace DSSView
             AddStep("Максимум", Result);
         }
     }
-    class CriteriaMulti : Criteria
+    public class CriteriaMulti : Criteria
     {
         public CriteriaMulti(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
         {
@@ -583,7 +583,7 @@ namespace DSSView
     }
 
 
-    class CriteriaGerr : Criteria
+    public class CriteriaGerr : Criteria
     {
         public CriteriaGerr(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
         {

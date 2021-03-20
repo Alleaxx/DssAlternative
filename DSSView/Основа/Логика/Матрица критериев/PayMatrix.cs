@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DSSView
 {
-    abstract class PayMatrix : MatrixContainer<Alternative, Case, double>, IMatrixChance<Alternative,Case,double>
+    public abstract class PayMatrix : MatrixContainer<Alternative, Case, double>, IMatrixChance<Alternative,Case,double>
     {
         public event Action CaseChanceChanged;
 
@@ -63,12 +63,12 @@ namespace DSSView
     }
 
     //Риска
-    class PayMatrixRisc : PayMatrix
+    public class PayMatrixRisc : PayMatrix
     {
         public PayMatrixRisc(int rows, int cols) : base(rows, cols) { }
         public PayMatrixRisc(PayMatrixXml xml) : base(xml) { }
     }
-    class PayMatrixSafe : PayMatrix
+    public class PayMatrixSafe : PayMatrix
     {
         public IMatrix<Alternative, Case, double> MainMatrix { get; set; }
 
@@ -121,7 +121,7 @@ namespace DSSView
     }
 
 
-    class FillerPayMatrix : IRowColFiller<Alternative, Case, double>
+    public class FillerPayMatrix : IRowColFiller<Alternative, Case, double>
     {
         private IMatrix<Alternative,Case,double> Matrix { get; set; }
         public FillerPayMatrix(IMatrix<Alternative,Case,double> matrix)
@@ -142,7 +142,7 @@ namespace DSSView
         public double GetNewValue()
             => default;
     }
-    class InfoPayMatrix : IInfoMatrix
+    public class InfoPayMatrix : IInfoMatrix
     {
         public event Action ChancesChanged;
 
@@ -198,7 +198,7 @@ namespace DSSView
             ChancesChanged?.Invoke();
         }
     }
-    class Cell : CellContainer<Alternative,Case,double>
+    public class Cell : CellContainer<Alternative,Case,double>
     {
         public Cell(IMatrix<Alternative,Case,double> matrix, Coords coords) : base(matrix, coords) { }
     }

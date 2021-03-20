@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace DSSView
 {
 
-    class ViewMatrix : NotifyObj
+    public class ViewMatrix : NotifyObj
     {
         public ObservableCollection<PayMatrixView> ListMatrix { get; set; }
         public PayMatrixView Selected
@@ -133,7 +133,7 @@ namespace DSSView
         }
     }
     
-    class InfoAboutMatrix
+    public class InfoAboutMatrix
     {
         public string Name { get; set; }
         public int Rows { get; set; }
