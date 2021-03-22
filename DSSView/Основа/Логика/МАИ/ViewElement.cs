@@ -18,6 +18,8 @@ namespace DSSView
     }
     public class ViewElement : NotifyObj, IViewElement
     {
+        public override string ToString() => Name;
+
         public virtual IEnumerable<IViewElement> Elements => Collection;
         public IViewElement Selected
         {
@@ -29,6 +31,8 @@ namespace DSSView
             }
         }
         private IViewElement selected;
+
+        public string Name { get; set; }
 
         private ObservableCollection<IViewElement> collection { get; set; } = new ObservableCollection<IViewElement>();
         protected ReadOnlyCollection<IViewElement> Collection { get; set; }
@@ -43,6 +47,7 @@ namespace DSSView
             }
         }
         private bool isSelected;
+
 
         public ViewElement()
         {
@@ -71,4 +76,6 @@ namespace DSSView
             }
         }
     }
+
+
 }

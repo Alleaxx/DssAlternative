@@ -26,6 +26,31 @@ namespace DSSView
         public double Cr => CI / RI;
 
 
+        public string Report
+        {
+            get
+            {
+                if (IsCorrect)
+                    return "Матрица согласована";
+                else
+                    return "Матрица НЕ согласована";
+            }
+        }
+        public bool IsCorrect
+        {
+            get
+            {
+                if (Size < 3)
+                    return true;
+                else if (Size >= 3 && Cr <= 0.1)
+                    return true;
+                else
+                    return false;
+
+            }
+        }
+
+
         //Порог 0.1
         public double[] MultiCheck
         {

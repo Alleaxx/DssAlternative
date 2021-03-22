@@ -1,0 +1,412 @@
+﻿<Window x:Class="DSSView.AHPAdvicorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DSSView"
+        mc:Ignorable="d"
+        Title="{Binding Problem.Name}" Height="600" Width="800">
+    <Window.Resources>
+        <local:RoundNumbersConverter x:Key="MathRound" />
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <!--Списки-->
+        <Style x:Key="Items" TargetType="{x:Type ItemsControl}">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel" />
+        </Style>
+
+        <Style x:Key="Gray" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border x:Name="Border" BorderThickness="1"  SnapsToDevicePixels="true">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="Orange"/>
+                                <!--<Setter TargetName="Border" Property="Cursor" Value="Hand"/>-->
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="Black"/>
+                                <!--<Setter TargetName="Border" Property="Cursor" Value="Hand"/>-->
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Window.DataContext>
+        <local:AdviceSystem />
+    </Window.DataContext>
+
+    <TabControl>
+
+        <TabItem DataContext="{Binding HierarchySystem}">
+            <TabItem.Header>
+                <TextBlock Text="Настройка уровней" />
+            </TabItem.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <DataGrid x:Name="nodes" ItemsSource="{Binding NodesView.View}" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Имя" Binding="{Binding Name}" />
+                        <DataGridTextColumn Header="Уровень" Binding="{Binding Level}" />
+                        <DataGridTextColumn Header="Описание" Binding="{Binding Description}" />
+                    </DataGrid.Columns>
+                    <DataGrid.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Expander IsExpanded="True">
+                                                    <Expander.Header>
+                                                        <Border x:Name="Header" BorderBrush="Gainsboro" BorderThickness="0,0,0,1" >
+                                                            <DockPanel Margin="0,0,0,2">
+                                                                <TextBlock Text="{Binding Name,StringFormat=Уровень {0} -}" />
+                                                                <TextBlock Text="{Binding ItemCount}" Foreground="Gray" Margin="6,0,30,0" HorizontalAlignment="Right"/>
+                                                            </DockPanel>
+                                                        </Border>
+                                                    </Expander.Header>
+                                                    <ItemsPresenter />
+                                                </Expander>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </DataGrid.GroupStyle>
+                </DataGrid>
+                <StackPanel Grid.Column="1">
+                    <DockPanel>
+                        <TextBlock Text="Количество заполняемых отношений" />
+                        <TextBlock Text="{Binding RelationsFillAmount}" HorizontalAlignment="Right"/>
+                    </DockPanel>
+                    <Button Content="Добавить" Command="{Binding AddCommand}" />
+                    <Button Content="Удалить" Command="{Binding RemoveCommand}" CommandParameter="{Binding ElementName=nodes, Path=SelectedItem}" />
+                    <Button Content="Завершить создание иерархии" Command="{Binding EndCommand}" />
+                </StackPanel>
+            </Grid>
+        </TabItem>
+        
+        
+        <TabItem DataContext="{Binding RelationsSystem}">
+            <TabItem.Header>
+                <TextBlock Text="Настройка отношений" />
+            </TabItem.Header>
+            <ContentPresenter Content="{Binding}">
+                <ContentPresenter.Resources>
+                    <DataTemplate DataType="{x:Type local:SingleChoiceSystemRelations}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="6*"/>
+                            </Grid.ColumnDefinitions>
+                            <GroupBox>
+                                <GroupBox.Header>
+                                    <TextBlock Text="Критерии" />
+                                </GroupBox.Header>
+                                <ListBox x:Name="crits" ItemsSource="{Binding Criterias}" BorderThickness="0"/>
+                            </GroupBox>
+                            <GroupBox Grid.Column="1" DataContext="{Binding ElementName=crits,Path=SelectedItem}">
+                                <GroupBox.Header>
+                                    <TextBlock Text="{Binding Node.Name}" FontSize="16"/>
+                                </GroupBox.Header>
+                                <StackPanel>
+                                    <DockPanel>
+                                        <DockPanel MinWidth="150"/>
+                                        <DockPanel>
+                                            <TextBlock Text="1" />
+                                            <TextBlock Text="9" DockPanel.Dock="Right"/>
+                                            <TextBlock Text="5" HorizontalAlignment="Center"/>
+                                        </DockPanel>
+                                    </DockPanel>
+                                    <ItemsControl ItemsSource="{Binding NodeRatings}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type local:NodeRating}">
+                                                <DockPanel>
+                                                    <DockPanel MinWidth="150">
+                                                        <TextBlock Text="{Binding Node.Name,StringFormat=- {0}}" />
+                                                        <TextBlock Text="{Binding Rating}" Margin="5,0"/>
+                                                    </DockPanel>
+                                                    <Slider Value="{Binding Rating}" Minimum="1" Maximum="9" SmallChange="1" IsSnapToTickEnabled="True" />
+                                                </DockPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <ItemsControl ItemsSource="{Binding Node.Matrix.Coeffiients}" />
+                                    <TextBlock Text="{Binding Node.Matrix.Consistency.Report}" />
+                                </StackPanel>
+                            </GroupBox>
+                        </Grid>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:AdviceSystemRelations}">
+                        <TabControl>
+                            <TabItem>
+                                <TabItem.Header>
+                                    <TextBlock Text="Матрицы" />
+                                </TabItem.Header>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*" />
+                                        <ColumnDefinition Width="7*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ListBox x:Name="crits"  ItemsSource="{Binding CriteriasView.View}" />
+                                    <StackPanel Grid.Column="1"  DataContext="{Binding ElementName=crits,Path=SelectedItem}">
+                                        <ItemsControl ItemsSource="{Binding Grouped}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <DockPanel>
+                                                        <TextBlock Text="{Binding Key}" VerticalAlignment="Center"/>
+                                                        <ItemsControl ItemsSource="{Binding}">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <StackPanel Margin="10" Width="66">
+                                                                        <TextBlock Text="{Binding To.Name}" HorizontalAlignment="Center"/>
+                                                                        <TextBox x:Name="text" Text="{Binding Value}" Padding="5"/>
+                                                                    </StackPanel>
+                                                                    <DataTemplate.Triggers>
+                                                                        <DataTrigger Binding="{Binding Self}" Value="True">
+                                                                            <Setter TargetName="text" Property="IsEnabled" Value="False" />
+                                                                        </DataTrigger>
+                                                                    </DataTemplate.Triggers>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <WrapPanel  />
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+                                                        </ItemsControl>
+                                                    </DockPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <TextBlock Text="{Binding Matrix}" FontWeight="Medium"/>
+                                        <ItemsControl ItemsSource="{Binding Matrix.Coeffiients}" />
+                                        <DockPanel>
+                                            <TextBlock Text="Мультичек - " />
+                                            <ItemsControl ItemsSource="{Binding Matrix.Consistency.MultiCheck}"/>
+                                        </DockPanel>
+                                        <DockPanel>
+                                            <TextBlock Text="Nmax - " />
+                                            <TextBlock Text="{Binding Matrix.Consistency.Nmax,Converter={StaticResource MathRound},ConverterParameter=2}"/>
+                                        </DockPanel>
+                                        <DockPanel>
+                                            <TextBlock Text="CI - Индекс согласованности матрицы - " />
+                                            <TextBlock Text="{Binding Matrix.Consistency.CI,Converter={StaticResource MathRound}}"/>
+                                        </DockPanel>
+                                        <DockPanel>
+                                            <TextBlock Text="RI - Стохастический индекс согласованности - " />
+                                            <TextBlock Text="{Binding Matrix.Consistency.RI,Converter={StaticResource MathRound}}"/>
+                                        </DockPanel>
+                                        <DockPanel>
+                                            <TextBlock Text="CR - Коэффициент согласованности - " />
+                                            <TextBlock Text="{Binding Matrix.Consistency.Cr,Converter={StaticResource MathRound}}"/>
+                                        </DockPanel>
+                                        <DockPanel>
+                                            <TextBlock Text="Вердикт: " />
+                                            <TextBlock Text="{Binding Matrix.Consistency.Report}"/>
+                                        </DockPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    <TextBlock Text="Отдельные отношения" />
+                                </TabItem.Header>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*" />
+                                        <ColumnDefinition Width="6*" />
+                                    </Grid.ColumnDefinitions>
+                                    <GroupBox Grid.Column="0">
+                                        <GroupBox.Header>
+                                            <TextBlock Text="Отношения" FontSize="16"/>
+                                        </GroupBox.Header>
+                                        <ListBox ItemsSource="{Binding RelationsView.View}" SelectedItem="{Binding Selected}" BorderThickness="0" ItemContainerStyle="{StaticResource Gray}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:RelationFiller}">
+                                                    <Border x:Name="item" Padding="0,2">
+                                                        <DockPanel>
+                                                            <TextBlock Text="{Binding Relation.Main.Name,StringFormat=[{0}]}" Foreground="Gray" MinWidth="110" VerticalAlignment="Center"/>
+                                                            <StackPanel>
+                                                                <TextBlock Text="{Binding Relation.From.Name}" />
+                                                                <TextBlock Text="{Binding Relation.To.Name}" />
+                                                            </StackPanel>
+                                                            <TextBlock Text="{Binding Value}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0"/>
+                                                        </DockPanel>
+                                                    </Border>
+                                                    <DataTemplate.Triggers>
+                                                        <DataTrigger Binding="{Binding Filled}" Value="True">
+                                                            <Setter TargetName="item" Property="Background" Value="LightGreen" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Filled}" Value="False">
+                                                            <Setter TargetName="item" Property="Background" Value="WhiteSmoke" />
+                                                        </DataTrigger>
+                                                    </DataTemplate.Triggers>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                            <ListBox.GroupStyle>
+                                                <GroupStyle>
+                                                    <GroupStyle.ContainerStyle>
+                                                        <Style TargetType="{x:Type GroupItem}">
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate>
+                                                                        <Expander IsExpanded="True">
+                                                                            <Expander.Header>
+                                                                                <Border x:Name="Header" BorderBrush="Gainsboro" BorderThickness="0,0,0,1" >
+                                                                                    <DockPanel Margin="0,0,0,2">
+                                                                                        <TextBlock Text="{Binding Name,StringFormat=Уровень {0} -}" />
+                                                                                        <TextBlock Text="{Binding ItemCount}" Foreground="Gray" Margin="6,0,30,0" HorizontalAlignment="Right"/>
+                                                                                    </DockPanel>
+                                                                                </Border>
+                                                                            </Expander.Header>
+                                                                            <ItemsPresenter />
+                                                                        </Expander>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </GroupStyle.ContainerStyle>
+                                                </GroupStyle>
+                                            </ListBox.GroupStyle>
+                                        </ListBox>
+                                    </GroupBox>
+
+
+                                    <GroupBox Grid.Column="1">
+                                        <GroupBox.Header>
+                                            <TextBlock Text="{Binding Selected}" FontSize="16" MaxWidth="400"/>
+                                        </GroupBox.Header>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="1*" />
+                                                <RowDefinition Height="1*" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Selected.Relation.Main.Name}" FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+
+
+                                            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="15,25">
+                                                <DockPanel>
+                                                    <StackPanel Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" DockPanel.Dock="Left">
+                                                        <TextBlock Text="{Binding Selected.Relation.From.Name}" FontSize="24" />
+                                                        <TextBlock Text="{Binding Selected.FromValue}" FontSize="20" HorizontalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" DockPanel.Dock="Right">
+                                                        <TextBlock  Text="{Binding Selected.Relation.To.Name}" FontSize="24" />
+                                                        <TextBlock  Text="{Binding Selected.ToValue}" FontSize="20" HorizontalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <TextBlock Text="=" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </DockPanel>
+                                                <Slider  Minimum="-8" Maximum="8" IsSnapToTickEnabled="True" TickPlacement="TopLeft" SmallChange="1" Value="{Binding Selected.Value}"/>
+                                                <TextBlock Text="{Binding Selected.Results}" FontSize="16" Margin="0,2" Height="50" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+
+                                                <TextBlock Text="{Binding Selected.Consistenct.Report}" FontSize="16" Margin="0,2" Height="50" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                                            </StackPanel>
+
+
+                                            <DockPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,10">
+                                                <Button Content="Отменить заполнение" Command="{Binding Selected.CancelFinishCommand}" />
+                                                <Button Content="Завершить сейчас" Command="{Binding FinishedCommand}" />
+                                                <Button Content="Следующий" Command="{Binding Selected.FinishCommand}"/>
+                                            </DockPanel>
+
+                                            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="0,10,0,0">
+                                                <Separator />
+                                                <DockPanel>
+                                                    <TextBlock Text="{Binding Progress}"/>
+                                                    <TextBlock Text="/"/>
+                                                    <TextBlock Text="{Binding Relations.Length}"/>
+                                                </DockPanel>
+                                                <ProgressBar Maximum="{Binding Relations.Length}" Minimum="0" Value="{Binding Progress, Mode=OneWay}" Background="WhiteSmoke" Height="8" Margin="0,5"/>
+                                            </StackPanel>
+
+                                        </Grid>
+                                    </GroupBox>
+                                </Grid>
+                            </TabItem>
+                        </TabControl>
+                    </DataTemplate>
+                </ContentPresenter.Resources>
+            </ContentPresenter>
+        </TabItem>
+        
+        <TabItem DataContext="{Binding ResultsSystem}">
+            <TabItem.Header>
+                <TextBlock Text="Завершение" />
+            </TabItem.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ItemsControl ItemsSource="{Binding Results}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type local:NodeLevelResults}">
+                            <GroupBox>
+                                <GroupBox.Header>
+                                    <DockPanel>
+                                        <TextBlock Text="{Binding Level, StringFormat=Уровень {0}}" />
+                                        <TextBlock Text="{Binding Nodes.Length, StringFormat=критериев {0}}" Margin="5,0"/>
+                                    </DockPanel>
+                                </GroupBox.Header>
+                                <ItemsControl ItemsSource="{Binding Nodes}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type local:NodeRating}">
+                                            <DockPanel>
+                                                <TextBlock Text="{Binding Node.Name}" Width="100"/>
+                                                <DockPanel Margin="5,0" ToolTip="{Binding Node.Coefficient}">
+                                                    <TextBlock Text="{Binding Rating}"/>
+                                                    <TextBlock Text=" / "/>
+                                                    <TextBlock Text="100"/>
+                                                </DockPanel>
+                                                <ProgressBar Minimum="0" Maximum="100" Value="{Binding Rating}" Height="4" />
+                                            </DockPanel>
+                                            
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </GroupBox>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <GroupBox Grid.Row="1">
+                    <GroupBox.Header>
+                        <TextBlock Text="Создание отчетов" />
+                    </GroupBox.Header>
+                </GroupBox>
+                <GroupBox Grid.Row="2">
+                    <GroupBox.Header>
+                        <TextBlock Text="Сохранение результата и всё такое" />
+                    </GroupBox.Header>
+                    <StackPanel>
+                        <Button Content="Перенести в основное окно" />
+                        <Button Content="Сохранить" />
+                    </StackPanel>
+                </GroupBox>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</Window>

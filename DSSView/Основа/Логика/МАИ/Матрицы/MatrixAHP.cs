@@ -125,25 +125,6 @@ namespace DSSView
         }
 
 
-        //public string NormalText => Get(Normalised);
-        //public string Normal2Text => Get(Normalised);
-
-
-        private string Get(double[,] arr)
-        {
-            string text = "";
-            for (int i = 0; i < Size; i++)
-            {
-                for (int a = 0; a < Size; a++)
-                {
-                    text += $"{Math.Round(arr[i,a],5)} ";
-                }
-                text += "\n";
-            }
-            return text;
-        }
-
-
         public double[] RowAveragesFromNormalised
         {
             get
@@ -164,33 +145,7 @@ namespace DSSView
             }
         }
 
-        public MatrixAHP(CriteriaAHP[] criteriaAHPs)
-        {
-            Array = new double[criteriaAHPs.Count(), criteriaAHPs.Count()];
-            for (int x = 0; x < Size; x++)
-            {
-                for (int y = 0; y < Size; y++)
-                {
-                    Array[x,y] = criteriaAHPs.ElementAt(x).Coeffs[y].Value; 
-                }
-            }
-            Consistency = new MatrixConsistenct(this);
-        }
-
-        public MatrixAHP(CriteriaAHPGroup group)
-        {
-            Array = new double[group.Groups.Count, group.Groups.Count];
-            for (int x = 0; x < Size; x++)
-            {
-                for (int y = 0; y < Size; y++)
-                {
-                    Array[x,y] = group.Groups[x].Relations[y].Value; 
-                }
-            }
-            Consistency = new MatrixConsistenct(this);
-        }
-
-        public MatrixAHP(IGrouping<AHPCriteriaAlpha, AlphaRelation>[] grouped)
+        public MatrixAHP(IGrouping<Node, NodeRelation>[] grouped)
         {
             Array = new double[grouped.Length, grouped.Length];
             for (int x = 0; x < Size; x++)
@@ -201,6 +156,26 @@ namespace DSSView
                 }
             }
             Consistency = new MatrixConsistenct(this);
+        }
+        public MatrixAHP(double[,] arr)
+        {
+            Array = arr;
+            Consistency = new MatrixConsistenct(this);
+        }
+
+
+        private string Get(double[,] arr)
+        {
+            string text = "";
+            for (int i = 0; i < Size; i++)
+            {
+                for (int a = 0; a < Size; a++)
+                {
+                    text += $"{Math.Round(arr[i,a],5)} ";
+                }
+                text += "\n";
+            }
+            return text;
         }
     }
 }

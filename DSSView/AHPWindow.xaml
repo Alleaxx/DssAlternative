@@ -9,6 +9,7 @@
     <Window.Resources>
         <local:ObjectToVisibilityConverter x:Key="ObjectVisibility" />
         <local:ObjectToVisibilityInvertedConverter x:Key="ObjectVisibilityInverted" />
+        <local:RoundNumbersConverter x:Key="MathRound" />
         
         <Style TargetType="{x:Type TreeViewItem}">
             <Style.Resources>
@@ -64,485 +65,165 @@
                             <GroupBox.Header>
                                 <TextBlock Text="Структура" />
                             </GroupBox.Header>
-                            <TreeView BorderThickness="0" ItemsSource="{Binding Elements}" SelectedItemChanged="TreeView_SelectedItemChanged">
-                                <TreeView.Resources>
-                                    <HierarchicalDataTemplate ItemsSource="{Binding Elements}" DataType="{x:Type local:ViewElement}">
-                                        <TextBlock Text="{Binding }" />
-                                    </HierarchicalDataTemplate>
-                                </TreeView.Resources>
-                            </TreeView>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TreeView Grid.Row="0" BorderThickness="0" ItemsSource="{Binding Elements}" SelectedItemChanged="TreeView_SelectedItemChanged">
+                                    <TreeView.Resources>
+                                        <HierarchicalDataTemplate ItemsSource="{Binding Elements}" DataType="{x:Type local:ViewElement}">
+                                            <DockPanel>
+                                                <TextBlock Text="{Binding }" />
+                                            </DockPanel>
+                                        </HierarchicalDataTemplate>
+                                        <HierarchicalDataTemplate ItemsSource="{Binding Elements}" DataType="{x:Type local:ViewNode}">
+                                            <DockPanel>
+                                                <TextBlock Text="{Binding Criteria.Level}" Width="20" Foreground="Gray"/>
+                                                <TextBlock Text="{Binding }" />
+                                            </DockPanel>
+                                        </HierarchicalDataTemplate>
+                                    </TreeView.Resources>
+                                </TreeView>
+                                <Button Content="Открыть систему заполнения" Command="{Binding OpenAdvicorWindow}" Grid.Row="1" />
+                            </Grid>
                         </GroupBox>
                         
                         <ContentPresenter Content="{Binding Selected}" Grid.Column="1">
                             <ContentPresenter.Resources>
-                                <DataTemplate DataType="{x:Type local:ViewProblemInfo}">
+                                <DataTemplate DataType="{x:Type local:ViewNode}">
                                     <GroupBox>
                                         <GroupBox.Header>
-                                            <TextBlock Text="Так надо" />
+                                            <TextBlock Text="{Binding Criteria}" />
                                         </GroupBox.Header>
                                         <StackPanel>
                                             <DockPanel>
                                                 <TextBlock Text="Имя:" />
-                                                <TextBox Text="{Binding Problem.Name,UpdateSourceTrigger=PropertyChanged}" />
+                                                <TextBox Text="{Binding Criteria.Name,UpdateSourceTrigger=PropertyChanged}" />
                                             </DockPanel>
                                             <StackPanel>
                                                 <TextBlock Text="Описание:" />
-                                                <TextBox Text="{Binding Problem.Description}" />
+                                                <TextBox Text="{Binding Criteria.Description}" />
                                             </StackPanel>
-                                            <TextBlock Text="Подконтрольные критерии:" />
-                                            <ItemsControl ItemsSource="{Binding Problem.Inner}">
-                                                
-                                            </ItemsControl>
-                                            <TextBlock Text="Отношения критериев" />
-                                            <ItemsControl ItemsSource="{Binding Problem.Relations}">
+                                            <StackPanel>
+                                                <TextBlock Text="Уровень:" />
+                                                <TextBlock Text="{Binding Criteria.Level}" />
+                                                <Button Content="Удалить этот критерий" Command="{Binding RemoveThisCommand}"/>
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock Text="Структура:" />
+                                                <ItemsControl ItemsSource="{Binding Structure}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <DockPanel>
+                                                                <TextBlock Text="{Binding Key,StringFormat=Уровень {0}: }" Margin="0,0,20,0"/>
+                                                                <ItemsControl ItemsSource="{Binding Value}" />
+                                                            </DockPanel>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <DockPanel>
+                                                    <TextBlock Text="Коэффициент:" FontWeight="Medium"/>
+                                                    <Button Content="Обновить" Command="{Binding CountCoeffCommand}" HorizontalAlignment="Right"/>
+                                                </DockPanel>
+                                                <TextBlock Text="{Binding Criteria.Coefficient}" />
+                                            </StackPanel>
 
-                                            </ItemsControl>
-                                            <TextBlock Text="Группировка" />
-                                            <ItemsControl ItemsSource="{Binding Problem.Grouped}">
+
+                                            <DockPanel>
+                                                <TextBlock Text="Подконтрольные критерии:" FontWeight="Medium" />
+                                                <Button Content="+" Width="40" HorizontalAlignment="Right" Command="{Binding AddInnerCommand}"/>
+                                            </DockPanel>
+                                            <ItemsControl ItemsSource="{Binding Inner}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
                                                         <DockPanel>
-                                                            <TextBlock Text="{Binding Key}" VerticalAlignment="Center"/>
-                                                            <ItemsControl ItemsSource="{Binding}">
-                                                                <ItemsControl.ItemTemplate>
-                                                                    <DataTemplate>
-                                                                        <StackPanel Margin="10">
-                                                                            <TextBlock Text="{Binding To.Name}" HorizontalAlignment="Center"/>
-                                                                            <TextBox Text="{Binding Value}" Padding="5"/>
-                                                                        </StackPanel>
-                                                                    </DataTemplate>
-                                                                </ItemsControl.ItemTemplate>
-                                                                <ItemsControl.ItemsPanel>
-                                                                    <ItemsPanelTemplate>
-                                                                        <WrapPanel  />
-                                                                    </ItemsPanelTemplate>
-                                                                </ItemsControl.ItemsPanel>
-                                                            </ItemsControl>
-
+                                                            <TextBlock Text="{Binding }" Width="300"/>
+                                                            <TextBlock Text="{Binding Criteria.Coefficient}" />
+                                                            <Button Content="X" HorizontalAlignment="Right" Width="40" Command="{Binding RemoveThisCommand}"/>
                                                         </DockPanel>
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
-
                                             </ItemsControl>
-                                            <TextBlock Text="Матрица" />
-                                            <TextBlock Text="{Binding Problem.Matrix}" />
-                                            <ItemsControl ItemsSource="{Binding Problem.Matrix.Coeffiients}" />
 
-                                        </StackPanel>
-                                    </GroupBox>
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type local:ViewCriteria}">
-                                    <StackPanel>
-                                        <DockPanel>
-                                            <TextBlock Text="Имя:" />
-                                            <TextBox Text="{Binding Criteria.Name,UpdateSourceTrigger=PropertyChanged}" />
-                                        </DockPanel>
-                                        <StackPanel>
-                                            <TextBlock Text="Описание:" />
-                                            <TextBox Text="{Binding Criteria.Description}" />
-                                        </StackPanel>
-                                        <StackPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Коэффициент:" FontWeight="Medium"/>
-                                                <Button Content="Обновить" Command="{Binding CountCoeffCommand}" HorizontalAlignment="Right"/>
-                                            </DockPanel>
-                                            <TextBlock Text="{Binding Criteria.Coefficient}" />
-                                        </StackPanel>
-                                        <TextBlock Text="Верхние коэффициент:" FontWeight="Medium"/>
-                                        <ItemsControl ItemsSource="{Binding Criteria.UpperCoeffs.Values}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <ItemsControl ItemsSource="{Binding }"/>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                        <TextBlock Text="Подконтрольные критерии:" FontWeight="Medium"/>
-                                        <ItemsControl ItemsSource="{Binding Criteria.Inner}">
 
-                                        </ItemsControl>
+                                            <StackPanel Visibility="{Binding Inner.Length,Converter={StaticResource ObjectVisibility}}">
+                                                <TextBlock Text="Отношения критериев" FontWeight="Medium"/>
+                                                <ItemsControl ItemsSource="{Binding Relations}">
 
-                                        <TextBlock Text="Все внутренние критерии:" />
+                                                </ItemsControl>
+                                                <TextBlock Text="Необходимые для заполнения" FontWeight="Medium"/>
+                                                <TextBlock Text="{Binding Criteria.ReqRelationsCount}"/>
+                                                <ItemsControl ItemsSource="{Binding Criteria.FillRelations}">
 
-                                        <TextBlock Text="Отношения критериев" FontWeight="Medium"/>
-                                        <ItemsControl ItemsSource="{Binding Criteria.Relations}">
+                                                </ItemsControl>
+                                                <TextBlock Text="Все внутренние необходимые для заполнения" FontWeight="Medium"/>
+                                                <ItemsControl ItemsSource="{Binding Criteria.FillRelationsAll}">
 
-                                        </ItemsControl>
-                                        <TextBlock Text="Группировка" FontWeight="Medium"/>
-                                        <ItemsControl ItemsSource="{Binding Criteria.Grouped}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <DockPanel>
-                                                        <TextBlock Text="{Binding Key}" VerticalAlignment="Center"/>
-                                                        <ItemsControl ItemsSource="{Binding}">
-                                                            <ItemsControl.ItemTemplate>
-                                                                <DataTemplate>
-                                                                    <StackPanel Margin="10">
-                                                                        <TextBlock Text="{Binding To.Name}" HorizontalAlignment="Center"/>
-                                                                        <TextBox Text="{Binding Value}" Padding="5"/>
-                                                                    </StackPanel>
-                                                                </DataTemplate>
-                                                            </ItemsControl.ItemTemplate>
-                                                            <ItemsControl.ItemsPanel>
-                                                                <ItemsPanelTemplate>
-                                                                    <WrapPanel  />
-                                                                </ItemsPanelTemplate>
-                                                            </ItemsControl.ItemsPanel>
-                                                        </ItemsControl>
+                                                </ItemsControl>
+                                                <TextBlock Text="Группировка" FontWeight="Medium"/>
 
-                                                    </DockPanel>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-
-                                        </ItemsControl>
-                                        <TextBlock Text="Матрица" FontWeight="Medium"/>
-                                        <TextBlock Text="{Binding Criteria.Matrix}" />
-                                        <ItemsControl ItemsSource="{Binding Criteria.Matrix.Coeffiients}" />
-                                    </StackPanel>
-                                    
-                                </DataTemplate>
-                                
-                                
-                                <DataTemplate DataType="{x:Type local:ViewProblemAlternatives}">
-                                    <GroupBox>
-                                        <GroupBox.Header>
-                                            <TextBlock Text="Альтернативы" />
-                                        </GroupBox.Header>
-                                        <StackPanel>
-                                            <Button Content="Добавить" Command="{Binding AddCommand}"/>
-                                            <Button Content="Удалить" Command="{Binding RemoveCommand}" CommandParameter="{Binding ElementName=alts,Path=SelectedItem}"/>
-                                            <ListView x:Name="alts" ItemsSource="{Binding Elements}" >
-                                                <ListView.View>
-                                                    <GridView>
-                                                        <GridViewColumn Header="Имя" DisplayMemberBinding="{Binding Alternative}" />
-                                                        <GridViewColumn Header="Коэффициент" DisplayMemberBinding="{Binding Alternative.Coefficient}" />
-                                                        <GridViewColumn Header="Отношений" DisplayMemberBinding="{Binding Alternative.Relations.Count}" />
-                                                    </GridView>
-                                                </ListView.View>
-                                            </ListView>
-                                            <ItemsControl ItemsSource="{Binding GroupCriterias}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Expander IsExpanded="True">
-                                                            <Expander.Header>
-                                                                <TextBlock Text="{Binding Criteria}" />
-                                                            </Expander.Header>
-                                                            <StackPanel>
-                                                                <TextBlock Text="{Binding Criteria}" FontSize="16"/>
-                                                                <DockPanel>
-                                                                    <TextBlock Text="Мультичек - " />
-                                                                    <ItemsControl ItemsSource="{Binding Matrix.Consistency.MultiCheck}"/>
-                                                                </DockPanel>
-                                                                <DockPanel>
-                                                                    <TextBlock Text="Nmax - " />
-                                                                    <TextBlock Text="{Binding Matrix.Consistency.Nmax}"/>
-                                                                </DockPanel>
-                                                                <DockPanel>
-                                                                    <TextBlock Text="CI - Индекс согласованности матрицы - " />
-                                                                    <TextBlock Text="{Binding Matrix.Consistency.CI}"/>
-                                                                </DockPanel>
-                                                                <DockPanel>
-                                                                    <TextBlock Text="RI - Стохастический индекс согласованности - " />
-                                                                    <TextBlock Text="{Binding Matrix.Consistency.RI}"/>
-                                                                </DockPanel>
-                                                                <DockPanel>
-                                                                    <TextBlock Text="CR - Коэффициент согласованности - " />
-                                                                    <TextBlock Text="{Binding Matrix.Consistency.Cr}"/>
-                                                                </DockPanel>
-                                                                <DockPanel>
-                                                                    <TextBlock Text="Коэффициенты - " />
-                                                                    <ItemsControl ItemsSource="{Binding Matrix.Coeffiients}"/>
-                                                                </DockPanel>
-                                                                <!--<DockPanel>
-                                                                    <TextBlock Text="Средние значения - " />
-                                                                    <ItemsControl ItemsSource="{Binding Matrix.RowAveragesFromNormalised}"/>
-                                                                </DockPanel>-->
-                                                                <!--<DockPanel>
-                                                                    <TextBlock Text="Суммы столбцов - " />
-                                                                    <ItemsControl ItemsSource="{Binding Matrix.SumColumns}"/>
-                                                                </DockPanel>
-                                                                <DockPanel>
-                                                                    <TextBlock Text="Суммы строк - " />
-                                                                    <ItemsControl ItemsSource="{Binding Matrix.SumRows}"/>
-                                                                </DockPanel>-->
-                                                                <!--<DockPanel>
-                                                                    <TextBlock Text="Нормализация - " />
-                                                                    <TextBlock Text="{Binding Matrix.NormalText}"/>
-                                                                </DockPanel>-->
-                                                                <!--<DockPanel>
-                                                                    <TextBlock Text="Нормализация 1.0 - " />
-                                                                    <TextBlock Text="{Binding Matrix.Normal2Text}"/>
-                                                                </DockPanel>-->
-                                                                <ItemsControl ItemsSource="{Binding Groups}">
+                                                <ItemsControl ItemsSource="{Binding Grouped}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <DockPanel>
+                                                                <TextBlock Text="{Binding Key}" VerticalAlignment="Center"/>
+                                                                <ItemsControl ItemsSource="{Binding}">
                                                                     <ItemsControl.ItemTemplate>
                                                                         <DataTemplate>
-                                                                            <DockPanel>
-                                                                                <TextBlock Text="{Binding Alternative}" VerticalAlignment="Center" Width="150"/>
-                                                                                <ItemsControl ItemsSource="{Binding Relations}">
-                                                                                    <ItemsControl.ItemTemplate>
-                                                                                        <DataTemplate DataType="{x:Type local:CriteriaAHPRelation}">
-                                                                                            <StackPanel >
-                                                                                                <TextBlock Text="{Binding To}" Margin="15,0" Padding="5,0" ToolTip="{Binding}" />
-                                                                                                <TextBox x:Name="panel" Text="{Binding Value,UpdateSourceTrigger=PropertyChanged}" Width="80" Margin="15,5" Padding="5,0" ToolTip="{Binding}"/>
-                                                                                            </StackPanel>
-                                                                                            <DataTemplate.Triggers>
-                                                                                                <DataTrigger Binding="{Binding Self}" Value="True">
-                                                                                                    <Setter TargetName="panel" Property="IsEnabled" Value="False" />
-                                                                                                </DataTrigger>
-                                                                                            </DataTemplate.Triggers>
-                                                                                        </DataTemplate>
-                                                                                    </ItemsControl.ItemTemplate>
-                                                                                    <ItemsControl.ItemsPanel>
-                                                                                        <ItemsPanelTemplate>
-                                                                                            <WrapPanel />
-                                                                                        </ItemsPanelTemplate>
-                                                                                    </ItemsControl.ItemsPanel>
-                                                                                </ItemsControl>
-                                                                            </DockPanel>
+                                                                            <StackPanel Margin="10" Width="100">
+                                                                                <TextBlock Text="{Binding To.Name}" HorizontalAlignment="Center"/>
+                                                                                <TextBox x:Name="text" Text="{Binding Value}" Padding="5"/>
+                                                                            </StackPanel>
+                                                                            <DataTemplate.Triggers>
+                                                                                <DataTrigger Binding="{Binding Self}" Value="True">
+                                                                                    <Setter TargetName="text" Property="IsEnabled" Value="False" />
+                                                                                </DataTrigger>
+                                                                            </DataTemplate.Triggers>
                                                                         </DataTemplate>
                                                                     </ItemsControl.ItemTemplate>
+                                                                    <ItemsControl.ItemsPanel>
+                                                                        <ItemsPanelTemplate>
+                                                                            <WrapPanel  />
+                                                                        </ItemsPanelTemplate>
+                                                                    </ItemsControl.ItemsPanel>
                                                                 </ItemsControl>
-                                                            </StackPanel>
-                                                        </Expander>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
+                                                            </DockPanel>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                                <TextBlock Text="{Binding Matrix}" FontWeight="Medium"/>
+                                                <ItemsControl ItemsSource="{Binding Matrix.Coeffiients}" />
+                                                <DockPanel>
+                                                    <TextBlock Text="Мультичек - " />
+                                                    <ItemsControl ItemsSource="{Binding Matrix.Consistency.MultiCheck}"/>
+                                                </DockPanel>
+                                                <DockPanel>
+                                                    <TextBlock Text="Nmax - " />
+                                                    <TextBlock Text="{Binding Matrix.Consistency.Nmax,Converter={StaticResource MathRound},ConverterParameter=2}"/>
+                                                </DockPanel>
+                                                <DockPanel>
+                                                    <TextBlock Text="CI - Индекс согласованности матрицы - " />
+                                                    <TextBlock Text="{Binding Matrix.Consistency.CI,Converter={StaticResource MathRound}}"/>
+                                                </DockPanel>
+                                                <DockPanel>
+                                                    <TextBlock Text="RI - Стохастический индекс согласованности - " />
+                                                    <TextBlock Text="{Binding Matrix.Consistency.RI,Converter={StaticResource MathRound}}"/>
+                                                </DockPanel>
+                                                <DockPanel>
+                                                    <TextBlock Text="CR - Коэффициент согласованности - " />
+                                                    <TextBlock Text="{Binding Matrix.Consistency.Cr,Converter={StaticResource MathRound}}"/>
+                                                </DockPanel>
+                                                <DockPanel>
+                                                    <TextBlock Text="Вердикт: " />
+                                                    <TextBlock Text="{Binding Matrix.Consistency.Report}"/>
+                                                </DockPanel>
+                                            </StackPanel>
                                         </StackPanel>
                                     </GroupBox>
-                                </DataTemplate>
 
-                                <DataTemplate DataType="{x:Type local:ViewProblemCriterias}">
-                                    <GroupBox x:Name="group">
-                                        <GroupBox.Header>
-                                            <TextBlock Text="Критерии" />
-                                        </GroupBox.Header>
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Matrix}" />
-                                            <DockPanel>
-                                                <TextBlock Text="Сумма - " />
-                                                <TextBlock Text="{Binding Matrix.Sum}"/>
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Nmax - " />
-                                                <TextBlock Text="{Binding Matrix.Consistency.Nmax}"/>
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="CI - Индекс согласованности матрицы - " />
-                                                <TextBlock Text="{Binding Matrix.Consistency.CI}"/>
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="RI - Стохастический индекс согласованности - " />
-                                                <TextBlock Text="{Binding Matrix.Consistency.RI}"/>
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="CR - Коэффициент согласованности - " />
-                                                <TextBlock Text="{Binding Matrix.Consistency.Cr}"/>
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Коэффициенты - " />
-                                                <ItemsControl ItemsSource="{Binding Matrix.Coeffiients}"/>
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Средние значения - " />
-                                                <ItemsControl ItemsSource="{Binding Matrix.RowAveragesFromNormalised}"/>
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Суммы столбцов - " />
-                                                <ItemsControl ItemsSource="{Binding Matrix.SumColumns}"/>
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Суммы строк - " />
-                                                <ItemsControl ItemsSource="{Binding Matrix.SumRows}"/>
-                                            </DockPanel>
-                                            <!--<DockPanel>
-                                                <TextBlock Text="Нормализация 1.0 - " />
-                                                <TextBlock Text="{Binding Matrix.Normal2Text}"/>
-                                            </DockPanel>-->
-                                            <ItemsControl ItemsSource="{Binding Elements}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate DataType="{x:Type local:CriteriaView}">
-                                                        <DockPanel>
-                                                            <TextBlock Text="{Binding Criteria}" VerticalAlignment="Center" Width="150"/>
-                                                            <ItemsControl ItemsSource="{Binding Criteria.Coeffs}">
-                                                                <ItemsControl.ItemTemplate>
-                                                                    <DataTemplate DataType="{x:Type local:CriteriaAHPRelation}">
-                                                                        <StackPanel >
-                                                                            <TextBlock Text="{Binding To}" Margin="15,0" Padding="5,0" ToolTip="{Binding}" />
-                                                                            <TextBox x:Name="panel" Text="{Binding Value,UpdateSourceTrigger=PropertyChanged}" Width="80" Margin="15,5" Padding="5,0" ToolTip="{Binding}"/>
-                                                                        </StackPanel>
-                                                                        <DataTemplate.Triggers>
-                                                                            <DataTrigger Binding="{Binding Self}" Value="True">
-                                                                                <Setter TargetName="panel" Property="IsEnabled" Value="False" />
-                                                                            </DataTrigger>
-                                                                        </DataTemplate.Triggers>
-                                                                    </DataTemplate>
-                                                                </ItemsControl.ItemTemplate>
-                                                                <ItemsControl.ItemsPanel>
-                                                                    <ItemsPanelTemplate>
-                                                                        <WrapPanel />
-                                                                    </ItemsPanelTemplate>
-                                                                </ItemsControl.ItemsPanel>
-                                                            </ItemsControl>
-                                                        </DockPanel>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                            <Button Content="Добавить" Command="{Binding AddCommand}"/>
-
-                                            <ListView x:Name="crits" ItemsSource="{Binding Elements}" >
-                                                <ListView.View>
-                                                    <GridView>
-                                                        <GridViewColumn Header="Критерий" DisplayMemberBinding="{Binding Criteria.Name}"/>
-                                                        <GridViewColumn Header="Итоговый коэффициент" DisplayMemberBinding="{Binding Criteria.Coefficient}"/>
-                                                        <GridViewColumn Header="Коэффициенты" DisplayMemberBinding="{Binding Criteria.Coeffs}"/>
-                                                    </GridView>
-                                                </ListView.View>
-                                            </ListView>
-                                            <Button Content="Удалить" Command="{Binding RemoveCommand}" CommandParameter="{Binding ElementName=crits,Path=SelectedItem}"/>
-                                        </StackPanel>
-                                    </GroupBox>
-                                </DataTemplate>
-
-                                <DataTemplate DataType="{x:Type local:AlternativeView}">
-                                    <GroupBox>
-                                        <GroupBox.Header>
-                                            <TextBlock Text="{Binding Alternative.Name}" />
-                                        </GroupBox.Header>
-                                        <StackPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Имя: " />
-                                                <TextBox Text="{Binding Alternative.Name}" />
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Коэффициент: " />
-                                                <TextBlock Text="{Binding Alternative.Coefficient}" />
-                                            </DockPanel>
-                                            <Expander>
-                                                <ListView ItemsSource="{Binding Alternative.Relations}">
-                                                    <ListView.View>
-                                                        <GridView>
-                                                            <GridViewColumn DisplayMemberBinding="{Binding From}" />
-                                                        </GridView>
-                                                    </ListView.View>
-                                                </ListView>
-
-                                            </Expander>
-                                        </StackPanel>
-                                    </GroupBox>
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type local:AlternativeCriteriaGroupView}">
-                                    <GroupBox>
-                                        <GroupBox.Header>
-                                            <TextBlock Text="{Binding Group.Criteria}" />
-                                        </GroupBox.Header>
-                                        <DockPanel VerticalAlignment="Top">
-                                            <TextBlock Text="{Binding Group.Alternative}" VerticalAlignment="Center"/>
-                                            <ItemsControl ItemsSource="{Binding Group.Relations}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate DataType="{x:Type local:CriteriaAHPRelation}">
-                                                        <StackPanel >
-                                                            <TextBlock Text="{Binding To}" Margin="15,0" Padding="5,0" ToolTip="{Binding}" />
-                                                            <TextBox x:Name="panel" Text="{Binding Value,UpdateSourceTrigger=PropertyChanged}" Width="80" Margin="15,5" Padding="5,0" ToolTip="{Binding}"/>
-                                                        </StackPanel>
-                                                        <DataTemplate.Triggers>
-                                                            <DataTrigger Binding="{Binding Self}" Value="True">
-                                                                <Setter TargetName="panel" Property="IsEnabled" Value="False" />
-                                                            </DataTrigger>
-                                                        </DataTemplate.Triggers>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <WrapPanel />
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                            </ItemsControl>
-                                        </DockPanel>
-                                    </GroupBox>
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type local:AlternativeAHPRelationView}">
-                                    <GroupBox>
-                                        <GroupBox.Header>
-                                            <TextBlock Text="{Binding Relation}" />
-                                        </GroupBox.Header>
-                                        <StackPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Критерий: " />
-                                                <TextBlock Text="{Binding Relation.Criteria}" />
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Первый: " />
-                                                <TextBlock Text="{Binding Relation.From}" />
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Второй: " />
-                                                <TextBlock Text="{Binding Relation.To}" />
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Значение: " />
-                                                <TextBox Text="{Binding Relation.Value}" />
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="К самому себе: " />
-                                                <TextBlock Text="{Binding Relation.Self}" />
-                                            </DockPanel>
-                                        </StackPanel>
-                                    </GroupBox>
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type local:CriteriaAHPView}">
-                                    <GroupBox>
-                                        <GroupBox.Header>
-                                            <TextBlock Text="{Binding Criteria.Name}" />
-                                        </GroupBox.Header>
-                                        <StackPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Имя: " />
-                                                <TextBox Text="{Binding Criteria.Name}" />
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Итоговый коэффициент: " />
-                                                <TextBlock Text="{Binding Criteria.Coefficient}" />
-                                            </DockPanel>
-                                            <ListView ItemsSource="{Binding Criteria.Coeffs}">
-                                                <ListView.View>
-                                                    <GridView>
-                                                        <GridViewColumn Header="По отношению к" DisplayMemberBinding="{Binding To}" />
-                                                        <GridViewColumn Header="Коэффициент" DisplayMemberBinding="{Binding Value}">
-                                                            <GridViewColumn.CellTemplate>
-                                                                <DataTemplate>
-                                                                    <TextBox Text="{Binding}" />
-                                                                </DataTemplate>
-                                                            </GridViewColumn.CellTemplate>
-                                                        </GridViewColumn>
-                                                    </GridView>
-                                                </ListView.View>
-                                            </ListView>
-                                        </StackPanel>
-                                    </GroupBox>
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type local:CriteriaAHPRelationView}">
-                                    <GroupBox>
-                                        <GroupBox.Header>
-                                            <TextBlock Text="{Binding CriteriaRelation}" />
-                                        </GroupBox.Header>
-                                        <StackPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Первый: " />
-                                                <TextBlock Text="{Binding CriteriaRelation.From}" />
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Второй: " />
-                                                <TextBlock Text="{Binding CriteriaRelation.To}" />
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Значение: " />
-                                                <TextBox Text="{Binding CriteriaRelation.Value}" />
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="К самому себе: " />
-                                                <TextBlock Text="{Binding CriteriaRelation.Self}" />
-                                            </DockPanel>
-                                        </StackPanel>
-                                    </GroupBox>
                                 </DataTemplate>
                             </ContentPresenter.Resources>
                         </ContentPresenter>

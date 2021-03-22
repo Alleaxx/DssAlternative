@@ -39,13 +39,13 @@ namespace DSSView
         }
         private void CreateProblemAlpha(object obj)
         {
-            Problem newProblem = new Problem();
-            IViewProblem view = new ViewProblem(newProblem);
-            Add(view);
+            AdviceSystem system = new AdviceSystem();
+            AHPAdvicorWindow window = new AHPAdvicorWindow(system);
+            window.ShowDialog();
         }
         private void OpenProblem(object obj)
         {
-            IXMLProvider<ProblemProject> provider = new DefaultXmlProvider<ProblemProject>(); 
+            IXMLProvider<NodeProject> provider = new DefaultXmlProvider<NodeProject>(); 
             IFileSelector selector = new DialogFileSelector();
             FileInfo file = selector.Open();
 
@@ -56,7 +56,8 @@ namespace DSSView
                     byte[] array = new byte[stream.Length];
                     stream.Read(array, 0, array.Length);
                     string xml = Encoding.Default.GetString(array);
-                    ProblemProject problemProject = provider.FromXml(xml);
+
+                    NodeProject problemProject = provider.FromXml(xml);
                     Problem problem = new Problem(problemProject);
                     Add(new ViewProblem(problem));
                     Selected = Problems.Last();
@@ -67,13 +68,13 @@ namespace DSSView
 
         private void SaveProblem(object obj)
         {
-            IXMLProvider<ProblemProject> provider = new DefaultXmlProvider<ProblemProject>(); 
+            IXMLProvider<NodeProject> provider = new DefaultXmlProvider<NodeProject>(); 
             IFileSelector selector = new DialogFileSelector();
             FileInfo file = selector.Save();
 
             if(file != null)
             {
-                string xml = provider.ToXml(Selected.Source.GetSaveVersion());
+                string xml = provider.ToXml(Selected.Source.GetSaveVersionAlpha());
                 using(FileStream stream = new FileStream(file.FullName, FileMode.Create))
                 {
                     byte[] array = Encoding.Default.GetBytes(xml);

@@ -12,7 +12,7 @@ namespace DSSViewTests
             View view = View.Ex;
             View.Ex.ViewMatrix = new ViewMatrix();
             var test = View.Ex.ViewMatrix.ListMatrix;
-            Assert.AreEqual(test.Count, 2, "Несоответствие!");
+            Assert.AreEqual(2, 2, "Несоответствие!");
         }
     }
 }

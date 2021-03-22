@@ -11,11 +11,11 @@ namespace DSSView
         public override string ToString()
         {
             if (Value > 1)
-                return $"'{From}' лучше '{To}' в {Value} раз";
+                return $"'{From}' лучше '{To}' в {Value} раз по {Main}";
             else if (Value == 1)
-                return $"'{From}' и '{To}' равны";
+                return $"'{From}' и '{To}' равны по {Main}";
             else
-                return $"'{From}' хуже '{To}' в {1 / Value} раз";
+                return $"'{From}' хуже '{To}' в {1 / Value} раз по {Main}";
         }
         public event Action<Relation<T,C>> Changed;
 
@@ -25,8 +25,9 @@ namespace DSSView
         public T To { get; private set; }
 
 
-        public void SetFromTo(C main,T first, T to)
+        public void SetFromTo(C main, T first, T to)
         {
+            Main = main;
             From = first;
             To = to;
         }
@@ -45,6 +46,10 @@ namespace DSSView
                     value = MaxValue;
 
                 this.value = value;
+                if (Mirrored != null)
+                    Mirrored.SetValueMirror(1 / value);
+
+
                 OnPropertyChanged();
                 Changed?.Invoke(this);
             }
@@ -54,6 +59,9 @@ namespace DSSView
         private static double MinValue { get; set; } = 0;
         private static double MaxValue { get; set; } = 100;
 
+
+
+        public Relation<T,C> Mirrored { get; set; }
 
         public void SetValueMirror(double mirrored)
         {
@@ -67,6 +75,19 @@ namespace DSSView
             From = from;
             To = to;
             Value = val;
+        }
+    }
+    public class NodeRelation : Relation<Node, Node>
+    {
+        public new event Action<NodeRelation> Changed;
+        public NodeRelation(Node main, Node from, Node to, double val) : base(main, from, to, val)
+        {
+            base.Changed += AlphaRelation_Changed;
+        }
+
+        private void AlphaRelation_Changed(Relation<Node, Node> obj)
+        {
+            Changed?.Invoke(this);
         }
     }
 }
