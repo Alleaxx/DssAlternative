@@ -74,17 +74,36 @@ namespace DSSView
         {
             get
             {
-                double[,] normalised = Normalised;
-
-                double[] coeffs = new double[Size];
-                for (int x = 0; x < Size; x++)
+                double[] test = new double[Size];
+                for (int y = 0; y < Size; y++)
                 {
-                    for (int y = 0; y < Size; y++)
+                    test[y] = 1;
+                    for (int x = 0; x < Size; x++)
                     {
-                        coeffs[x] += normalised[x, y];
+                        test[y] *= Array[y, x];
                     }
+                    test[y] = Math.Pow(test[y], 1 / (double)Size);
                 }
-                return coeffs;
+                double r = test.Sum();
+                double[] test2 = new double[Size];
+                for (int i = 0; i < Size; i++)
+                {
+                    test2[i] = test[i] / r;
+                }
+                return test2;
+
+
+                //double[,] normalised = Normalised;
+
+                //double[] coeffs = new double[Size];
+                //for (int x = 0; x < Size; x++)
+                //{
+                //    for (int y = 0; y < Size; y++)
+                //    {
+                //        coeffs[x] += normalised[x, y];
+                //    }
+                //}
+                //return coeffs;
 
             }
         }

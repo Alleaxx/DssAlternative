@@ -23,7 +23,12 @@ namespace DSSView
             DataContext = View.Ex;
             InitializeComponent();
 
-            View.Ex.OpenAHPWindow.Execute(null);
+
+
+            AHPAdvicorWindow advicorWindow = new AHPAdvicorWindow(new AdviceSystem());
+            advicorWindow.Show();
+
+            //View.Ex.OpenAHPWindow.Execute(null);
             Close();
         }
     }

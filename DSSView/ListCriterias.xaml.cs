@@ -10,29 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace DSSView
 {
     /// <summary>
-    /// Логика взаимодействия для AHPAdvicorWindow.xaml
+    /// Логика взаимодействия для ListCriterias.xaml
     /// </summary>
-    public partial class AHPAdvicorWindow : Window
+    public partial class ListCriterias : UserControl
     {
-        public AHPAdvicorWindow(AdviceSystem system)
+        public ListCriterias()
         {
             InitializeComponent();
-            DataContext = system;
-        }
-
-        private void relationsBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Tab.SelectedIndex = 2;
-        }
-
-        private void hierarchyBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Tab.SelectedIndex = 1;
         }
     }
 }

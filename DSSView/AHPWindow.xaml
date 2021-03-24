@@ -42,11 +42,13 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
-            <MenuItem Header="Создать" Command="{Binding CreateProblemCommand}"/>
-            <MenuItem Header="Создать альфу" Command="{Binding CreateProblemAlphaCommand}"/>
-            <MenuItem Header="Открыть" Command="{Binding OpenProblemCommand}"/>
-            <MenuItem Header="Сохранить" Command="{Binding SaveProblemCommand}"/>
-            <MenuItem Header="Закрыть" Command="{Binding CloseProblemCommand}"/>
+            <MenuItem Header="Файл" Command="{Binding CreateProblemCommand}">
+                <MenuItem Header="Создать" Command="{Binding CreateProblemCommand}"/>
+                <MenuItem Header="Открыть" Command="{Binding OpenProblemCommand}"/>
+                <MenuItem Header="Сохранить" Command="{Binding SaveProblemCommand}"/>
+                <MenuItem Header="Закрыть" Command="{Binding CloseProblemCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Открыть альфа-окно" Command="{Binding CreateProblemAlphaCommand}"/>
         </Menu>
         <TabControl ItemsSource="{Binding Problems}" SelectedItem="{Binding Selected}" Grid.Row="1" >
             <TabControl.ItemTemplate>
@@ -88,40 +90,21 @@
                                 <Button Content="Открыть систему заполнения" Command="{Binding OpenAdvicorWindow}" Grid.Row="1" />
                             </Grid>
                         </GroupBox>
-                        
+
                         <ContentPresenter Content="{Binding Selected}" Grid.Column="1">
                             <ContentPresenter.Resources>
                                 <DataTemplate DataType="{x:Type local:ViewNode}">
                                     <GroupBox>
                                         <GroupBox.Header>
-                                            <TextBlock Text="{Binding Criteria}" />
+                                            <DockPanel>
+                                                <TextBlock Text="{Binding Criteria.Level,StringFormat=[{0}]}" FontSize="18" Foreground="Gray"/>
+                                                <TextBox Text="{Binding Criteria.Name,UpdateSourceTrigger=PropertyChanged}" BorderThickness="0,0,0,1" FontSize="18" Margin="5,0"/>
+                                            </DockPanel>
                                         </GroupBox.Header>
                                         <StackPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="Имя:" />
-                                                <TextBox Text="{Binding Criteria.Name,UpdateSourceTrigger=PropertyChanged}" />
-                                            </DockPanel>
                                             <StackPanel>
                                                 <TextBlock Text="Описание:" />
                                                 <TextBox Text="{Binding Criteria.Description}" />
-                                            </StackPanel>
-                                            <StackPanel>
-                                                <TextBlock Text="Уровень:" />
-                                                <TextBlock Text="{Binding Criteria.Level}" />
-                                                <Button Content="Удалить этот критерий" Command="{Binding RemoveThisCommand}"/>
-                                            </StackPanel>
-                                            <StackPanel>
-                                                <TextBlock Text="Структура:" />
-                                                <ItemsControl ItemsSource="{Binding Structure}">
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <DockPanel>
-                                                                <TextBlock Text="{Binding Key,StringFormat=Уровень {0}: }" Margin="0,0,20,0"/>
-                                                                <ItemsControl ItemsSource="{Binding Value}" />
-                                                            </DockPanel>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
                                             </StackPanel>
                                             <StackPanel>
                                                 <DockPanel>
@@ -130,41 +113,59 @@
                                                 </DockPanel>
                                                 <TextBlock Text="{Binding Criteria.Coefficient}" />
                                             </StackPanel>
-
-
                                             <DockPanel>
-                                                <TextBlock Text="Подконтрольные критерии:" FontWeight="Medium" />
-                                                <Button Content="+" Width="40" HorizontalAlignment="Right" Command="{Binding AddInnerCommand}"/>
+                                                <GroupBox Header="Структура">
+                                                    <ItemsControl ItemsSource="{Binding Structure}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <DockPanel>
+                                                                    <TextBlock Text="{Binding Key,StringFormat=Уровень {0}: }" Margin="0,0,20,0"/>
+                                                                    <ItemsControl ItemsSource="{Binding Value}">
+                                                                        <ItemsControl.ItemTemplate>
+                                                                            <DataTemplate DataType="{x:Type local:Node}">
+                                                                                <DockPanel>
+                                                                                    <TextBlock Text="{Binding}" Width="200"/>
+                                                                                    <TextBlock Text="{Binding Coefficient,Converter={StaticResource MathRound},ConverterParameter=8}" />
+                                                                                </DockPanel>
+                                                                            </DataTemplate>
+                                                                        </ItemsControl.ItemTemplate>
+                                                                    </ItemsControl>
+                                                                </DockPanel>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </GroupBox>
+                                                <GroupBox Header="Подконтрольные критерии">
+                                                    <ItemsControl ItemsSource="{Binding Inner}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <DockPanel>
+                                                                    <TextBlock Text="{Binding }" Width="300"/>
+                                                                    <TextBlock Text="{Binding Criteria.Coefficient}" />
+                                                                </DockPanel>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </GroupBox>
                                             </DockPanel>
-                                            <ItemsControl ItemsSource="{Binding Inner}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <DockPanel>
-                                                            <TextBlock Text="{Binding }" Width="300"/>
-                                                            <TextBlock Text="{Binding Criteria.Coefficient}" />
-                                                            <Button Content="X" HorizontalAlignment="Right" Width="40" Command="{Binding RemoveThisCommand}"/>
-                                                        </DockPanel>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-
-
                                             <StackPanel Visibility="{Binding Inner.Length,Converter={StaticResource ObjectVisibility}}">
-                                                <TextBlock Text="Отношения критериев" FontWeight="Medium"/>
-                                                <ItemsControl ItemsSource="{Binding Relations}">
+                                                <DockPanel>
+                                                    <GroupBox Header="Отношения критериев">
+                                                        <ItemsControl ItemsSource="{Binding Relations}" />
+                                                    </GroupBox>
+                                                    <GroupBox >
+                                                        <GroupBox.Header>
+                                                            <TextBlock Text="{Binding Criteria.ReqRelationsCount,StringFormat=Необходимо заполнить: {0}}"/>
+                                                        </GroupBox.Header>
+                                                        <StackPanel>
+                                                            <ItemsControl ItemsSource="{Binding Criteria.FillRelations}" />
+                                                            <TextBlock Text="Все внутренние необходимые для заполнения" FontWeight="Medium"/>
+                                                            <ItemsControl ItemsSource="{Binding Criteria.FillRelationsAll}" />
+                                                        </StackPanel>
+                                                    </GroupBox>
+                                                </DockPanel>
 
-                                                </ItemsControl>
-                                                <TextBlock Text="Необходимые для заполнения" FontWeight="Medium"/>
-                                                <TextBlock Text="{Binding Criteria.ReqRelationsCount}"/>
-                                                <ItemsControl ItemsSource="{Binding Criteria.FillRelations}">
-
-                                                </ItemsControl>
-                                                <TextBlock Text="Все внутренние необходимые для заполнения" FontWeight="Medium"/>
-                                                <ItemsControl ItemsSource="{Binding Criteria.FillRelationsAll}">
-
-                                                </ItemsControl>
                                                 <TextBlock Text="Группировка" FontWeight="Medium"/>
-
                                                 <ItemsControl ItemsSource="{Binding Grouped}">
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
@@ -232,10 +233,5 @@
             </TabControl.ContentTemplate>
 
         </TabControl>
-        <!--<StackPanel Grid.Row="1" Visibility="{Binding Problems.Count,Converter={StaticResource ObjectVisibilityInverted}}">
-            <TextBlock Text="Выборы отсутствуют" FontSize="30" />
-            <Button Content="Создать"/>
-            <Button Content="Открыть"/>
-        </StackPanel>-->
     </Grid>
 </Window>

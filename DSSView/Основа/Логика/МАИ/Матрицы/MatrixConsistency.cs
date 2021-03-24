@@ -20,9 +20,28 @@ namespace DSSView
         public double CI => (Nmax - Size) / (Size - 1);
 
         //Стохастический индекс согласованности
-        public double RI => (1.98 * (Size - 2)) / Size;
+        public double RI => RISize.ContainsKey(Size) ? RISize[Size] : (1.98 * (Size - 2)) / Size;
+        private static Dictionary<int, double> RISize { get; set; } = new Dictionary<int, double>
+        {
+            [1] = 0,
+            [2] = 0,
+            [3] = 0.58,
+            [4] = 0.9,
+            [5] = 1.12,
+            [6] = 1.24,
+            [7] = 1.32,
+            [8] = 1.41,
+            [9] = 1.45,
+            [10] = 1.49,
+            [11] = 1.51,
+            [12] = 1.48,
+            [13] = 1.56,
+            [14] = 1.57,
+            [15] = 1.59,
+        };
 
-        //Коэффициент согласованности
+
+        //Коэффициент согласованности (отношение согласованности)
         public double Cr => CI / RI;
 
 
@@ -42,13 +61,15 @@ namespace DSSView
             {
                 if (Size < 3)
                     return true;
-                else if (Size >= 3 && Cr <= 0.1)
+                else if (Size >= 3 && Cr <= BorderConsistenct)
                     return true;
                 else
                     return false;
 
             }
         }
+
+        public static double BorderConsistenct { get; set; } = 0.15;
 
 
         //Порог 0.1
@@ -57,7 +78,7 @@ namespace DSSView
             get
             {
                 double[] averagesRowNor = Matrix.Coeffiients;
-
+                double[] sumCols = Matrix.SumColumns;
                 double[] multiCheck = new double[Size];
                 for (int y = 0; y < Size; y++)
                 {
@@ -68,6 +89,13 @@ namespace DSSView
                     }
                     multiCheck[y] = res;
                 }
+
+                for (int i = 0; i < Size; i++)
+                {
+                    multiCheck[i] = sumCols[i] * averagesRowNor[i];
+                }
+
+
                 return multiCheck;
             }
         }

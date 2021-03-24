@@ -6,23 +6,37 @@ using System.Threading.Tasks;
 
 namespace DSSView
 {
-    public class SingleChoiceSystemRelations : ISystemRelations
+    public class SingleChoiceSystemRelations : NotifyObj, IAdviceSystem
     {
-        private Problem Problem { get; set; }
-        
+        public override string ToString() => "Система рейтинга критериев";
+
+        private Problem Problem { get; set; }    
         public CriteriaChoice[] Criterias { get; set; }
 
-        public SingleChoiceSystemRelations()
+        public CriteriaChoice Selected
         {
-
+            get => selected;
+            set
+            {
+                selected = value;
+                OnPropertyChanged();
+            }
         }
+        private CriteriaChoice selected;
+
 
         public void SetProblem(Problem problem)
         {
-            Problem = problem;
-            Criterias = Problem.AllCriterias.Where(cr => cr.Inner.Count > 0).Select(cr => new CriteriaChoice(cr)).ToArray();
+            if(problem != Problem)
+            {
+                Problem = problem;
+                Criterias = Problem.AllCriterias.Where(cr => cr.Inner.Count > 0).Select(cr => new CriteriaChoice(cr)).ToArray();
+            }
         }
-
+        public void ClearProblem()
+        {
+            SetProblem(new Problem());
+        }
 
     }
     public class CriteriaChoice
@@ -66,7 +80,7 @@ namespace DSSView
                 {
                     NodeRating first = NodeRatings[i];
                     NodeRating sec = NodeRatings[a];
-                    Node.SetRelationBetween(Node, NodeRatings[i].Node, NodeRatings[a].Node, newRates[first.Node] / newRates[sec.Node]);
+                    Node.SetRelationBetween(Node, NodeRatings[i].Node, NodeRatings[a].Node, newRates[sec.Node] / newRates[first.Node]);
                 }
             }
         }

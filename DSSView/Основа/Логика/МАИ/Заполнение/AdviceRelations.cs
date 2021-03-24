@@ -7,34 +7,9 @@ using System.Windows.Data;
 
 namespace DSSView
 {
-    public interface ISystemRelations
+    public abstract class AdviceSystemRelations<T> : NotifyObj, IAdviceSystem
     {
-        void SetProblem(Problem problem);
-    }
-    public class AdviceSystemRelations : NotifyObj, ISystemRelations
-    {
-        public event Action<AdviceSystemRelations> Finished;
-
-
-        public Node[] Criterias { get; private set; }
-        public CollectionViewSource CriteriasView { get; private set; }
-
-        public RelationFiller[] Relations { get; private set; }
-        public CollectionViewSource RelationsView { get; private set; }
-
-
-        public int Progress => Relations.Where(r => r.Filled).Count();
-
-        public RelationFiller Selected
-        {
-            get => selected;
-            set
-            {
-                selected = value;
-                OnPropertyChanged();
-            }
-        }
-        private RelationFiller selected;
+        public override string ToString() => "Система сравнения критериев";
 
         public Problem Problem
         {
@@ -48,25 +23,64 @@ namespace DSSView
         private Problem problem;
 
 
-        public RelayCommand FinishedCommand { get; set; }
-        private void Finish(object obj)
+        public T[] NodesRelations { get; protected set; }
+        public CollectionViewSource NodesRelationsView { get; protected set; }
+
+        public T Selected
         {
-            Finished?.Invoke(this);
+            get => selected;
+            set
+            {
+                selected = value;
+                OnPropertyChanged();
+            }
         }
+        private T selected;
 
         public AdviceSystemRelations()
         {
-            FinishedCommand = new RelayCommand(Finish, obj => true);
+            NextCommand = new RelayCommand(MoveNext, IsNextAvailable);
+            PrevCommand = new RelayCommand(MovePrevious, IsPrevAvailable);
         }
+
+        public RelayCommand NextCommand { get; set; }
+        public RelayCommand PrevCommand { get; set; }
+
+        private bool IsNextAvailable(object obj)
+        {
+            return NodesRelations.ToList().IndexOf(Selected) < NodesRelations.Length - 1;
+        }
+        private bool IsPrevAvailable(object obj)
+        {
+            return NodesRelations.ToList().IndexOf(Selected) != 0;
+        }
+
+        private void MoveNext(object obj)
+        {
+            Selected = NodesRelations[NodesRelations.ToList().IndexOf(Selected) + 1];
+        }
+        private void MovePrevious(object obj)
+        {
+            Selected = NodesRelations[NodesRelations.ToList().IndexOf(Selected) - 1];
+        }
+
 
         public void SetProblem(Problem newProblem)
         {
-            if(Problem != null)
-                TransferMatrixFromOld(Problem, newProblem);
-            Problem = newProblem;
-            RecreateCriterias(newProblem);
-            RecreateRelations(newProblem);
+            if(newProblem != Problem)
+            {
+                //if(Problem != null)
+                //    TransferMatrixFromOld(Problem, newProblem);
+                Problem = newProblem;
+
+                RecreateRelations(newProblem);
+            }
         }
+        public void ClearProblem()
+        {
+            SetProblem(new Problem());
+        }
+
         private void TransferMatrixFromOld(Problem oldProblem, Problem problem)
         {
             var oldRelations = oldProblem.FillRelationsAll;
@@ -83,72 +97,102 @@ namespace DSSView
             }
         }
 
+        protected abstract void RecreateRelations(Problem problem);
+    }
 
-        private void RecreateCriterias(Problem problem)
+
+
+    public class AdviceSystemRelationNode : AdviceSystemRelations<NodeFiller>, IAdviceSystem
+    {
+        public override string ToString() => "Система единовременного попарного сравнения критериев";
+
+        protected override void RecreateRelations(Problem problem)
         {
-            Criterias = problem.AllCriterias.Where(crit => crit.Inner.Count > 1).ToArray();
+            NodesRelations = problem.AllCriterias.Where(crit => crit.Inner.Count > 0).Select(criteria => new NodeFiller(criteria)).ToArray();
 
-            CriteriasView = new CollectionViewSource();
-            CriteriasView.Source = Criterias;
-            CriteriasView.View.GroupDescriptions.Add(new PropertyGroupDescription("Level"));
+            NodesRelationsView = new CollectionViewSource();
+            NodesRelationsView.Source = NodesRelations;
+            NodesRelationsView.View.GroupDescriptions.Add(new PropertyGroupDescription("Node.Level"));
 
-            OnPropertyChanged(nameof(Criterias));
-            OnPropertyChanged(nameof(CriteriasView));
+            OnPropertyChanged(nameof(NodesRelations));
+            OnPropertyChanged(nameof(NodesRelationsView));
+
+
+            if (NodesRelations.Length > 0)
+                Selected = NodesRelations.First();
         }
-        private void RecreateRelations(Problem problem)
+    }
+    public class NodeFiller
+    {
+        public Node Node { get; set; }
+        public RelationFiller[] Fillers { get; set; }
+
+        public RelayCommand ClearAllCommand { get; set; }
+        private void ClearAll(object obj)
         {
-            Relations = problem.GetReqRelationsInner().Select(rel => new RelationFiller(rel)).ToArray();
-
-            RelationsView = new CollectionViewSource();
-            RelationsView.Source = Relations;
-            RelationsView.View.GroupDescriptions.Add(new PropertyGroupDescription("Relation.Main.Level"));
-
-            OnPropertyChanged(nameof(Relations));
-            OnPropertyChanged(nameof(RelationsView));
-
-            foreach (var rel in Relations)
+            foreach (var item in Fillers)
             {
-                rel.Finished += Relation_Finished;
-                rel.Canceled += Rel_Canceled;
+                item.ClearInfoCommand.Execute(null);
             }
-
-            if (Relations.Length > 0)
-                Selected = Relations.First();
         }
 
-
-        private void Rel_Canceled(RelationFiller obj)
+        public NodeFiller(Node node)
         {
-            OnPropertyChanged(nameof(Progress));
+            Node = node;
+            Fillers = node.GetReqRelationsThis().Select(rel => new RelationFiller(rel)).ToArray();
+            ClearAllCommand = new RelayCommand(ClearAll, obj => true);
         }
-        private void Relation_Finished(RelationFiller obj)
-        {
-            int pos = Relations.ToList().IndexOf(obj);
-            if (pos < Relations.Length - 1)
-                Selected = Relations[pos + 1];
-            OnPropertyChanged(nameof(Progress));
+    }
 
-            if (Relations.Length == Progress)
-                Finished?.Invoke(this);
+
+    public class AdviceSystemRelation : AdviceSystemRelations<RelationFiller>, IAdviceSystem
+    {
+        public override string ToString() => "Система последовательного попарного сравнения критериев";
+
+        private void TransferMatrixFromOld(Problem oldProblem, Problem problem)
+        {
+            var oldRelations = oldProblem.FillRelationsAll;
+            var newRelations = problem.FillRelationsAll;
+            foreach (var newRelation in newRelations)
+            {
+                if(oldRelations.Find(oldRel =>
+                    oldRel.Main.Name == newRelation.Main.Name &&
+                    oldRel.From.Name == newRelation.From.Name &&
+                    oldRel.To.Name == oldRel.To.Name) is NodeRelation rel)
+                {
+                    newRelation.Value = rel.Value;
+                }
+            }
+        }
+
+        protected override void RecreateRelations(Problem problem)
+        {
+            NodesRelations = problem.GetReqRelationsInner().Select(rel => new RelationFiller(rel)).ToArray();
+
+            NodesRelationsView = new CollectionViewSource();
+            NodesRelationsView.Source = NodesRelations;
+            NodesRelationsView.View.GroupDescriptions.Add(new PropertyGroupDescription("Relation.Main.Name"));
+
+            OnPropertyChanged(nameof(NodesRelations));
+            OnPropertyChanged(nameof(NodesRelationsView));
+
+
+            if (NodesRelations.Length > 0)
+                Selected = NodesRelations.First();
         }
     }
     public class RelationFiller : NotifyObj
     {
         public override string ToString() => $"Выбор по {Relation}";
 
-
-        public event Action<RelationFiller> Finished;
         public event Action<RelationFiller> Canceled;
 
 
         public NodeRelation Relation { get; set; }
-        private double SourceValue { get; set; }
+        private double OriginalValue { get; set; }
 
 
-        public MatrixConsistenct Consistenct => Relation.Main.Matrix.Consistency;
-
-
-        public int Value
+        public double Value
         {
             get => value;
             set
@@ -156,93 +200,76 @@ namespace DSSView
                 this.value = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(Results));
-                OnPropertyChanged(nameof(FromValue));
-                OnPropertyChanged(nameof(ToValue));
+                UpdateRelation();
             }
         }
-        private int value = 0;
-        private int RealValue => Math.Abs(Value) + 1;
+        private double value = 1;
+        public string Results => NodeRelation.GetTextRelationFor(Value);
 
-        public Node Best => Value < 0 ? Relation.From : Relation.To;
-        public double FromValue => Value < 0 ? RealValue : 1;
-        public Node Worst => Value < 0 ? Relation.To : Relation.From;
-        public double ToValue => Value > 0 ? RealValue : 1;
-        public string Results
+
+        public Node Best
         {
-            get
-            {
-                switch (RealValue)
-                {
-                    case 1:
-                        return $"'{Best.Name}' и '{Worst.Name}' равнозначны";
-                    case 2:
-                        return $"'{Best.Name}' и '{Worst.Name}' почти равнозначны";
-                    case 3:
-                        return $"'{Best.Name}' немного преобладает над '{Worst.Name}'";
-                    case 4:
-                        return $"'{Best.Name}' немного преобладает над '{Worst.Name}'";
-                    case 5:
-                        return $"'{Best.Name}' преобладает над '{Worst.Name}'";
-                    case 6:
-                        return $"'{Best.Name}' преобладает над '{Worst.Name}'";
-                    case 7:
-                        return $"'{Best.Name}' сильно преобладает над '{Worst.Name}'";
-                    case 8:
-                        return $"'{Best.Name}' сильно преобладает над '{Worst.Name}'";
-                    case 9:
-                        return $"'{Best.Name}' абсолютно превосходит '{Worst.Name}'";
-                    default:
-                        return "Неизвестное отношение";
-                }
-            }
-        }
-
-
-
-        public bool Filled
-        {
-            get => filled;
+            get => best;
             set
             {
-                filled = value;
+                best = value;
                 OnPropertyChanged();
             }
         }
-        private bool filled;
+        private Node best;
 
-        public RelayCommand FinishCommand { get; private set; }
-        private void Finish(object obj)
+        public Node Worst
         {
-            if (Value < 0)
-                Relation.Value = RealValue;
-            else if (Value > 0)
-                Relation.Mirrored.Value = RealValue;
-            else
-                Relation.Value = RealValue;
+            get => worst;
+            set
+            {
+                worst = value;
+                OnPropertyChanged();
+            }
+        }
+        private Node worst;
 
-            Filled = true;
-            OnPropertyChanged(nameof(Consistenct));
-            Finished?.Invoke(this);
+
+        public static double RelationMod = 1;
+
+        private void UpdateRelation()
+        {
+            if (Relation.From == Best)
+                Relation.Value = Value * RelationMod;
+            else
+                Relation.Mirrored.Value = Value * RelationMod;
         }
 
-        public RelayCommand CancelFinishCommand { get; private set; }
-        private void CancelFinish(object obj)
+
+        public RelayCommand ToggleCommand { get; private set; }
+        private void Toggle(object obj)
         {
-            Relation.Value = SourceValue;
-            Filled = false;
-            OnPropertyChanged(nameof(Consistenct));
+            Node oldWorst = worst;
+            Worst = Best;
+            Best = oldWorst;
+            UpdateRelation();
+        }
+        public RelayCommand ClearInfoCommand { get; private set; }
+        private void ClearInfo(object obj)
+        {
+            Value = 1;
+            Relation.Value = OriginalValue;
+
             Canceled?.Invoke(this);
         }
-
 
 
 
         public RelationFiller(NodeRelation relation)
         {
             Relation = relation;
-            SourceValue = relation.Value;
-            FinishCommand = new RelayCommand(Finish, obj => true);
-            CancelFinishCommand = new RelayCommand(CancelFinish, obj => Filled);
+            OriginalValue = Relation.Value;
+            best = Relation.From;
+            worst = Relation.To;
+
+            ToggleCommand = new RelayCommand(Toggle, RelayCommand.IsTrue);
+            ClearInfoCommand = new RelayCommand(ClearInfo, RelayCommand.IsTrue);
+
         }
     }
 }

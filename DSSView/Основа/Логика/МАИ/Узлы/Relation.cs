@@ -25,15 +25,9 @@ namespace DSSView
         public T To { get; private set; }
 
 
-        public void SetFromTo(C main, T first, T to)
-        {
-            Main = main;
-            From = first;
-            To = to;
-        }
-
         public bool Inited => From != null && To != null;
         public bool Self => Inited && From == To;
+
 
         public double Value
         {
@@ -51,10 +45,14 @@ namespace DSSView
 
 
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(Results));
                 Changed?.Invoke(this);
             }
         }
         protected double value;
+
+        public string Results => NodeRelation.GetTextRelationFor(Value);
+
 
         private static double MinValue { get; set; } = 0;
         private static double MaxValue { get; set; } = 100;
@@ -89,5 +87,65 @@ namespace DSSView
         {
             Changed?.Invoke(this);
         }
+
+
+        public static string GetTextRelationFor(double Value)
+        {
+            if (Value == 1)
+            {
+                return $"РАВНОЗНАЧЕН";
+            }
+            else if(Value > 1)
+            {
+                switch (Value)
+                {
+                    case 2:
+                        return $"почти РАВНОЗНАЧЕН";
+                    case 3:
+                        return $"НЕМНОГО ПРЕОБЛАДАЕТ над";
+                    case 4:
+                        return $"НЕМНОГО ПРЕОБЛАДАЕТ над";
+                    case 5:
+                        return $"ПРЕОБЛАДАЕТ над";
+                    case 6:
+                        return $"ПРЕОБЛАДАЕТ над";
+                    case 7:
+                        return $"СИЛЬНО ПРЕОБЛАДАЕТ над";
+                    case 8:
+                        return $"СИЛЬНО ПРЕОБЛАДАЕТ над";
+                    case 9:
+                        return $"АБСОЛЮТНО ПРЕВОСХОДИТ";
+                    default:
+                        return "Неизвестное отношение";
+                }
+            }
+            else
+            {
+                Value = 1 / Value;
+                switch (Value)
+                {
+                    case 2:
+                        return $"почти РАВНОЗНАЧЕН";
+                    case 3:
+                        return $"НЕМНОГО ПРОИГРЫВАЕТ";
+                    case 4:
+                        return $"НЕМНОГО ПРОИГРЫВАЕТ";
+                    case 5:
+                        return $"ПРОИГРЫВАЕТ";
+                    case 6:
+                        return $"ПРОИГРЫВАЕТ";
+                    case 7:
+                        return $"СИЛЬНО ПРОИГРЫВАЕТ";
+                    case 8:
+                        return $"СИЛЬНО ПРОИГРЫВАЕТ";
+                    case 9:
+                        return $"АБСОЛЮТНО ПРОИГРЫВАЕТ";
+                    default:
+                        return "Неизвестное отношение";
+                }
+            }
+        }
+
+
     }
 }

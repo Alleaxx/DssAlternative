@@ -45,42 +45,22 @@ namespace DSSView
         }
         private void OpenProblem(object obj)
         {
-            IXMLProvider<NodeProject> provider = new DefaultXmlProvider<NodeProject>(); 
-            IFileSelector selector = new DialogFileSelector();
-            FileInfo file = selector.Open();
+            DefaultSaver<NodeProject> opener = new DefaultSaver<NodeProject>();
+            NodeProject project = opener.OpenFromFile();
 
-            if(file != null && file.Exists)
+            if(project != null)
             {
-                using(FileStream stream = File.OpenRead(file.FullName))
-                {
-                    byte[] array = new byte[stream.Length];
-                    stream.Read(array, 0, array.Length);
-                    string xml = Encoding.Default.GetString(array);
-
-                    NodeProject problemProject = provider.FromXml(xml);
-                    Problem problem = new Problem(problemProject);
-                    Add(new ViewProblem(problem));
-                    Selected = Problems.Last();
-                }
+                Problem problem = new Problem(project);
+                Add(new ViewProblem(problem));
+                Selected = Problems.Last();
             }
         }
 
 
         private void SaveProblem(object obj)
         {
-            IXMLProvider<NodeProject> provider = new DefaultXmlProvider<NodeProject>(); 
-            IFileSelector selector = new DialogFileSelector();
-            FileInfo file = selector.Save();
-
-            if(file != null)
-            {
-                string xml = provider.ToXml(Selected.Source.GetSaveVersionAlpha());
-                using(FileStream stream = new FileStream(file.FullName, FileMode.Create))
-                {
-                    byte[] array = Encoding.Default.GetBytes(xml);
-                    stream.Write(array, 0, array.Length);
-                }
-            }
+            DefaultSaver<NodeProject> saver = new DefaultSaver<NodeProject>();
+            saver.SaveToFile(Selected.Source.GetSaveVersionAlpha());
         }
         private void CloseProblem(object obj)
         {

@@ -159,25 +159,5 @@ namespace DSSViewTests
 
             Node.SetRelationBetween(DefaultProblem, Reputation, Place, 5);
         }
-
-        [TestMethod]
-        public void RemoveCriteriaTest()
-        {
-            B.RemoveThis();
-
-            Assert.AreEqual(Math.Round(F2.Coefficient,4), 0.2672, "Коэффициент критерия 4-го ур. неверно рассчитывается после удаления критерия 2-го ур.");
-
-            DefaultProblem.AddInner(B);
-        }
-
-        [TestMethod]
-        public void AddCriteriaTest()
-        {
-            DefaultProblem.AddInner(new Node(DefaultProblem, 1, "Тестовый критерий"));
-
-            Assert.AreEqual(Math.Round(F2.Coefficient,4), 0.1429, "Коэффициент критерия 4-го ур. неверно рассчитывается после добавления критерия 1-го ур.");
-
-            DefaultProblem.Dictionary[1].Last().RemoveThis();
-        }
     }
 }

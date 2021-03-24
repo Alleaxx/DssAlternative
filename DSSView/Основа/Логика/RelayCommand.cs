@@ -30,6 +30,8 @@ namespace DSSView
         {
             this.execute(parameter);
         }
+
+        public static bool IsTrue(object obj) => true;
     }
 
 }

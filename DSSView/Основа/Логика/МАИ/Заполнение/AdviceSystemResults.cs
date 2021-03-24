@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace DSSView
 {
-    public class AdviceSystemResults : NotifyObj
+    public class AdviceSystemResults : NotifyObj, IAdviceSystem
     {
+        public override string ToString() => "Стандартная система оценки результатов";
 
         private Problem Problem { get; set; }
         public List<NodeLevelResults> Results
@@ -17,7 +18,8 @@ namespace DSSView
                 var results = new List<NodeLevelResults>();
                 foreach (var item in Problem.Dictionary)
                 {
-                    results.Add(new NodeLevelResults(item.Key, item.Value));
+                    if(item.Key != 0)
+                        results.Add(new NodeLevelResults(item.Key, item.Value));
                 }
                 return results;
             }
@@ -32,6 +34,14 @@ namespace DSSView
             OnPropertyChanged(nameof(Results));
             Problem.CoefficientUpdated += Problem_CoefficientUpdated;
         }
+        public void ClearProblem()
+        {
+            if(Problem != null)
+            {
+                Problem.CoefficientUpdated -= Problem_CoefficientUpdated;
+            }
+            Problem = new Problem();
+        }
 
         private void Problem_CoefficientUpdated(Node obj)
         {
@@ -39,17 +49,43 @@ namespace DSSView
         }
     }
 
+
+
     public class NodeLevelResults
     {
         public int Level { get; set; }
         public NodeRating[] Nodes { get; set; }
 
+        private double[] Rating { get; set; }
+        
+        private double Dispersion
+        {
+            get
+            {
+                double sum = 0;
+                double average = Rating.Average();
+                for (int i = 0; i < Rating.Length; i++)
+                {
+                    sum += Math.Pow((average - Rating[i]), 2);
+                }
+
+                return sum / Rating.Length;
+
+            }
+        }
+        public double StandartDeviation => Math.Sqrt(Dispersion);
+        public double Variance => StandartDeviation / Rating.Average();
+
+
+
         public NodeRating Best => Nodes.First();
+        public NodeRating[] LowPriorityNodes => Nodes.Where(n => n.Node.Coefficient < 0.15).ToArray();
 
         public NodeLevelResults(int level, IEnumerable<Node> nodes)
         {
             Level = level;
             Nodes = nodes.Select(n => new NodeRating(nodes.ToArray(), n)).OrderBy(n => n.Rating).Reverse().ToArray();
+            Rating = nodes.OrderBy(n => n.Coefficient).Select(n => n.Coefficient).ToArray();
         }
     }
 

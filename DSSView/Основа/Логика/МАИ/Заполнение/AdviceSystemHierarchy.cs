@@ -8,48 +8,84 @@ using System.Windows.Data;
 
 namespace DSSView
 {
-    public class AdviceSystemHierarchy : NotifyObj
+    public class AdviceSystemHierarchy : NotifyObj, IHierarchyAdviceSystem
     {
-        public event Action<Problem> Finished;
+        public override string ToString() => "Иерархическая система задания критериев";
+
+
+        public event Action<IHierarchyAdviceSystem, Problem> Finished;
 
 
         public NodeHierarcy MainNode => Nodes.Where(n => n.Level == 0).First();
 
         public ObservableCollection<NodeHierarcy> Nodes { get; set; } = new ObservableCollection<NodeHierarcy>();
         public CollectionViewSource NodesView { get; private set; }
+        public int NodeLevelsCount => Nodes.GroupBy(n => n.Level).Count();
 
 
         public RelayCommand AddCommand { get; set; }
+        public RelayCommand AddNextCommand { get; set; }
         public RelayCommand RemoveCommand { get; set; }
         public RelayCommand ClearAllCommand { get; set; }
-        public RelayCommand EndCommand { get; set; }
+        public RelayCommand UpdateProblemCommand { get; set; }
 
+
+
+        private void Add(NodeHierarcy node)
+        {
+            Nodes.Add(node);
+            Nodes.Last().PropertyChanged += AdviceSystemHierarchy_PropertyChanged; ;
+            AdviceSystemHierarchy_PropertyChanged(null, null);
+
+            if (Saved)
+                Saved = false;
+        }
+
+        private void AdviceSystemHierarchy_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (Saved)
+                Saved = false;
+
+            OnPropertyChanged(nameof(RelationsFillAmount));
+            OnPropertyChanged(nameof(NodeLevelsCount));
+        }
 
         private void Add(object obj)
         {
-            if(obj == null)
+            if(int.TryParse(obj.ToString(), out int res))
             {
-                Nodes.Add(new NodeHierarcy() { Name = $"Критерий {Nodes.Count}", Level = 1, Description="Описание критерия" });
-            }
-            else if(obj is NodeHierarcy node)
-            {
-                Nodes.Add(node);
-            }
+                if (res == 0)
+                    res++;
 
-            Nodes.Last().LevelChanged += Node_LevelChanged;
-            Node_LevelChanged(Nodes.Last());
+                NodeHierarcy newNode = new NodeHierarcy($"Критерий {Nodes.Count}","Описание критерия",res);
+                Add(newNode);
+            }
         }
-        private void Node_LevelChanged(NodeHierarcy obj)
+        private void AddNext(object obj)
         {
-            OnPropertyChanged(nameof(RelationsFillAmount));
+            if(int.TryParse(obj.ToString(), out int res))
+            {
+                Add(res + 1);
+            }
         }
+
+        private bool IsRemoveAvaillable(object obj) => obj != null && obj is NodeHierarcy node && node.Level != 0;
         private void Remove(object obj)
         {
             if(obj is NodeHierarcy node)
             {
                 Nodes.Remove(node);
-                node.LevelChanged -= Node_LevelChanged;
+                node.PropertyChanged -= AdviceSystemHierarchy_PropertyChanged;
                 OnPropertyChanged(nameof(RelationsFillAmount));
+            }
+        }
+
+        private void ClearAllNodes(object obj)
+        {
+            NodeHierarcy[] nodes = Nodes.Where(n => n.Level > 0).ToArray();
+            foreach (var node in nodes)
+            {
+                Remove(node);
             }
         }
 
@@ -74,72 +110,90 @@ namespace DSSView
 
         public AdviceSystemHierarchy()
         {
-            AddDefaultNode();
-            CreateView();
             InitCommands();
+            SetProblem(new Problem());
         }
-        public AdviceSystemHierarchy(Problem problem)
+        private void InitCommands()
         {
+            AddCommand = new RelayCommand(Add, RelayCommand.IsTrue);
+            AddNextCommand = new RelayCommand(AddNext, RelayCommand.IsTrue);
+            RemoveCommand = new RelayCommand(Remove, IsRemoveAvaillable);
+            UpdateProblemCommand = new RelayCommand(UpdateProblem, IsUpdatingProblemAvailable);
+            ClearAllCommand = new RelayCommand(ClearAllNodes, RelayCommand.IsTrue);
+        }
+
+        public void SetProblem(Problem problem)
+        {
+            Nodes.Clear();
             AddNodesFromProblem(problem);
             CreateView();
-            InitCommands();
+            Saved = true;
         }
-
-
-        private void AddDefaultNode()
+        public void ClearProblem()
         {
-            Nodes.Add(new NodeHierarcy() { Name="Проблема", Level=0, Description = "Основная задача, которую требуется решить" });
+            SetProblem(new Problem());
         }
+
+
         private void AddNodesFromProblem(Problem problem)
         {
             foreach (var item in problem.Dictionary)
             {
                 foreach (var criteria in item.Value)
                 {
-                    Add(new NodeHierarcy() { Name = criteria.Name, Level = criteria.Level, Description = criteria.Description });
+                    Add(new NodeHierarcy(criteria.Name, criteria.Description, criteria.Level));
                 }
             }
         }
-
-
         private void CreateView()
         {
-            NodesView = new System.Windows.Data.CollectionViewSource();
+            NodesView = new CollectionViewSource();
             NodesView.Source = Nodes;
             NodesView.View.GroupDescriptions.Add(new System.Windows.Data.PropertyGroupDescription("Level"));
         }
-        private void InitCommands()
+
+
+        public bool Saved
         {
-            AddCommand = new RelayCommand(Add,obj => true);
-            RemoveCommand = new RelayCommand(Remove, obj => obj != null && obj is NodeHierarcy node && node.Level != 0);
-            EndCommand = new RelayCommand(Finish, obj => RelationsFillAmount > 1);
+            get => saved;
+            set
+            {
+                saved = value;
+                OnPropertyChanged();
+            }
         }
+        private bool saved;
 
 
-        private void Finish(object obj)
+        public bool IsUpdatingProblemAvail => !Saved && RelationsFillAmount > 1;
+        private bool IsUpdatingProblemAvailable(object obj) => IsUpdatingProblemAvail;
+        private void UpdateProblem(object obj)
         {
-            Problem Problem = new Problem(MainNode);
+            Problem problem = CreateProblem();
+            Saved = true;
+            Finished?.Invoke(this, problem);
+        }
+        private Problem CreateProblem()
+        {
+            Problem problem = new Problem(MainNode);
 
             var groupedLevel = Nodes.OrderBy(n => n.Level).GroupBy(n => n.Level);
             foreach (var group in groupedLevel)
             {
                 if(group.Key != 0)
                 {
-                    Problem.AddInner(group.Select(node => new Node(Problem, node)).ToArray());
+                    problem.AddInner(group.Select(node => new Node(problem, node)).ToArray());
                 }
             }
-
-            Finished?.Invoke(Problem);
+            return problem;
         }
     }
 
 
-    public class NodeHierarcy : NotifyObj
+    public class NodeHierarcy : Alternative
     {
         public event Action<NodeHierarcy> LevelChanged;
 
-        public string Name { get; set; }
-        public string Description { get; set; }
         public int Level
         {
             get => level;
@@ -151,5 +205,24 @@ namespace DSSView
             }
         }
         private int level;
+
+        public RelayCommand InsertImageCommand { get; set; }
+        private bool IsInsertAvailable(object obj) => System.Windows.Clipboard.GetText().Contains("http");
+        private void InsertImage(object obj)
+        {
+            string info = System.Windows.Clipboard.GetText();
+            Image = info;
+        }
+
+
+        public NodeHierarcy(string name, string descr, int level)
+        {
+            Name = name;
+            Description = descr;
+            this.level = level;
+            InsertImageCommand = new RelayCommand(InsertImage, IsInsertAvailable);
+        }
+
+        public bool Usual => Level != 0;
     }
 }

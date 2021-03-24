@@ -20,8 +20,28 @@ namespace DSSView
             }
         }
         private string name;
-        public string Description { get; set; }
-        public string Image { get; set; }
+
+        public string Description
+        {
+            get => description;
+            set
+            {
+                description = value;
+                OnPropertyChanged();
+            }
+        }
+        private string description;
+
+        public string Image
+        {
+            get => image;
+            set
+            {
+                image = value;
+                OnPropertyChanged();
+            }
+        }
+        private string image;
 
 
         public Alternative() : this("") { }

@@ -121,4 +121,13 @@
   <data name="Matrix" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Ресурсы\Matrix.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Иерархия" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Иерархия.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Отношения" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Отношения.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Результаты" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Результаты.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

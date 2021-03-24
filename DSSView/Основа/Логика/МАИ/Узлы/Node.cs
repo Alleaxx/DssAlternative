@@ -38,15 +38,12 @@ namespace DSSView
 
     public class Node : Alternative
     {
+        public override string ToString() => $"{Name} [{Level}]";
+
+
         public event Action<Node> StructureChanged;
 
-        public event Action<Node> Removed;
-        public event Action<Node> Added;
-
         public event Action<Node> CoefficientUpdated;
-
-
-        public override string ToString() => $"{Name} - {Level} ур";
 
         public double Coefficient
         {
@@ -79,7 +76,6 @@ namespace DSSView
 
 
         public int Level { get; private set; }
-        public bool Deepest => Inner.Count == 0;
 
 
         public List<NodeRelation> GetReqRelationsThis()
@@ -97,6 +93,8 @@ namespace DSSView
         public List<NodeRelation> FillRelations => GetReqRelationsThis();
         public List<NodeRelation> FillRelationsAll => GetReqRelationsInner();
 
+
+
         public List<NodeRelation> GetReqRelationsInner()
         {
             List<NodeRelation> relations = new List<NodeRelation>();
@@ -113,7 +111,6 @@ namespace DSSView
             }
             return relations;
         }
-
         public int ReqRelationsCount => (int)Math.Ceiling((double)(Inner.Count * Inner.Count / 3));
 
 
@@ -139,6 +136,7 @@ namespace DSSView
                 Inner[i].Coefficient = matrix.Coeffiients[i];
             }
             CoefficientUpdated?.Invoke(this);
+            OnPropertyChanged(nameof(Matrix));
         }
         private void Relation_ValueChanged(NodeRelation obj)
         {
@@ -154,42 +152,7 @@ namespace DSSView
                 {
                     thisLevelCriteria.Add(criteriaAlpha);
                 }
-
-                //if(Main.Dictionary.ContainsKey(criteriaAlpha.Level + 1))
-                //{
-                //    foreach (var lowerLevelCriteria in Main.Dictionary[criteriaAlpha.Level + 1])
-                //    {
-                //        criteriaAlpha.Add(lowerLevelCriteria);
-                //    }
-                //}
-
-
-                //foreach (var thisLevelCriteria in Main.Dictionary[criteriaAlpha.Level])
-                //{
-                //    foreach (var crAlpha in criteriasAlpha)
-                //    {
-                //        crAlpha.AddToStructureDictionary(thisLevelCriteria);
-                //    }
-                //    thisLevelCriteria.AddToStructureDictionary(criteriaAlpha);
-                //}
             }
-        }
-        public void RemoveThis()
-        {
-            int level = Level;
-            for (int i = 0; i < Level; i++)
-            {
-                var currentList = Main.Dictionary[i];
-                foreach (var criteria in currentList)
-                {
-                    criteria.Dictionary[level - i].Remove(this);
-                    criteria.Remove(this);
-                    criteria.StructureChanged?.Invoke(criteria);
-                    if (criteria.Dictionary[level - i].Count == 0)
-                        criteria.Dictionary.Remove(level - i);
-                }
-            }
-            Removed?.Invoke(this);
         }
         
 
@@ -215,26 +178,6 @@ namespace DSSView
                         Relations[Relations.Count - 1].Mirrored = Relations[Relations.Count - 2];
                         Relations[Relations.Count - 2].Mirrored = Relations[Relations.Count - 1];
                     }
-                }
-                newCriteria.Added?.Invoke(newCriteria);
-            }
-            Main.UpdateCoeffs();
-        }
-
-        private void Remove(NodeRelation delRel)
-        {
-            Relations.Remove(delRel);
-            delRel.Changed -= Relation_ValueChanged;
-        }
-        private void Remove(params Node[] delCriterias)
-        {
-            foreach (var delCriteria in delCriterias)
-            {
-                Inner.Remove(delCriteria);
-                var deleteRelations = Relations.Where(r => r.To == delCriteria || r.From == delCriteria).ToArray();
-                foreach (var item in deleteRelations)
-                {
-                    Remove(item);
                 }
             }
             Main.UpdateCoeffs();
