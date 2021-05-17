@@ -87,7 +87,6 @@
     <Compile Include="Основа\Логика\МАИ\Узлы\Node.cs" />
     <Compile Include="Основа\Логика\МАИ\Узлы\Relation.cs" />
     <Compile Include="Основа\Логика\МАИ\Матрицы\MatrixAHP.cs" />
-    <Compile Include="Основа\Логика\МАИ\Матрицы\MatrixConsistency.cs" />
     <Compile Include="Основа\Логика\МАИ\Проблема\Problem.cs" />
     <Compile Include="Основа\Логика\МАИ\Проблема\ProblemView.cs" />
     <Compile Include="Основа\Логика\МАИ\AHPView.cs" />

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DSSView
+namespace DSSLib.New
 {
     public class MatrixConsistenct
     {
@@ -77,22 +77,22 @@ namespace DSSView
         {
             get
             {
-                double[] averagesRowNor = Matrix.Coeffiients;
+                double[] coeffs = Matrix.Coeffiients;
                 double[] sumCols = Matrix.SumColumns;
                 double[] multiCheck = new double[Size];
-                for (int y = 0; y < Size; y++)
-                {
-                    double res = 0;
-                    for (int x = 0; x < Size; x++)
-                    {
-                        res += (Matrix.Array[y,x] * averagesRowNor[x]);
-                    }
-                    multiCheck[y] = res;
-                }
+                //for (int y = 0; y < Size; y++)
+                //{
+                //    double res = 0;
+                //    for (int x = 0; x < Size; x++)
+                //    {
+                //        res += (Matrix.Array[y,x] * coeffs[x]);
+                //    }
+                //    multiCheck[y] = res;
+                //}
 
                 for (int i = 0; i < Size; i++)
                 {
-                    multiCheck[i] = sumCols[i] * averagesRowNor[i];
+                    multiCheck[i] = sumCols[i] * coeffs[i];
                 }
 
 
