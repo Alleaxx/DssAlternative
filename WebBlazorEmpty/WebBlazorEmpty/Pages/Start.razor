@@ -1,0 +1,141 @@
+﻿@page "/start"
+
+@inject HttpClient Http
+
+@using System.Text.Unicode;
+@using System.Text.Encodings.Web;
+
+<h3>Как зададим проблему?</h3>
+
+
+<ul>
+    <li>
+        <NavLink @onclick="LoadSample" href="start">
+            Загрузим образцовую
+        </NavLink>
+        <p>
+            Для ознакомления с возможностями
+        </p>
+    </li>
+    <li>
+        <NavLink @onclick="LoadOwn" href="start">
+            Создать свою проблему
+        </NavLink>
+        <p>
+            С нуля
+        </p>
+    </li>
+    <li>
+        <details>
+            <summary>Вставить JSON для загрузки</summary>
+            @JSONLoadResult <br />
+            <textarea rows="5" cols="50" @onchange="LoadJSON"></textarea>
+        </details>
+        <p>
+            Воссоздать ранее созданную проблему
+        </p>
+    </li>
+    <li>
+        Выбрать из шаблона
+        <ol>
+            @foreach (var problem in Templates)
+            {
+                <NavLink @onclick="@(() => LoadTemplate(problem))" href="start">
+                    <li>@problem</li>
+                </NavLink>
+            }
+        </ol>
+        <p>
+            Если лень думать
+        </p>
+    </li>
+    <li>
+        Перейти к уже загруженной проблеме
+        <ol>
+            @foreach (var project in DSS.Ex.Problems)
+            {
+                <NavLink @onclick="@(() => DSS.Ex.SelectProblem(project))" href="@($"hierarchy")">
+                    <li>@project.Problem</li>
+                </NavLink>
+            }
+        </ol>
+        <p>
+            Была проведена знатная работа
+        </p>
+    </li>
+</ul>
+
+@code {
+    //Загрузка шаблонов
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTemplates();
+    }
+    public List<HierarchyNodes> Templates { get; set; } = new List<HierarchyNodes>();
+    private async Task LoadTemplates()
+    {
+        Templates = new List<HierarchyNodes>();
+        string[] pathes = new string[]
+        {
+                "alpha-problem.json",
+                "small-problem.json"
+                };
+
+        var options = new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+            IgnoreNullValues = true,
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+        };
+
+        foreach (var path in pathes)
+        {
+            string json = await Http.GetStringAsync($"sample-data/{path}");
+            Node[] nodes = JsonSerializer.Deserialize<Node[]>(json, options);
+
+            Templates.Add(new HierarchyNodes(nodes));
+        }
+        Console.WriteLine("Шаблоны загружены");
+    }
+    private void LoadTemplate(HierarchyNodes hier)
+    {
+        DSS.Ex.AddProblem(hier.Hierarchy);
+    }
+
+
+
+    //Загрузка своих проблем
+    private void LoadSample()
+    {
+        DSS.Ex.AddSample();
+    }
+    private void LoadOwn()
+    {
+        INode[] nodes = new INode[]
+        {
+            new Node(0,"ЦЕЛЬ")
+            };
+        DSS.Ex.AddProblem(nodes);
+    }
+
+
+    //Загрузка JSON
+    private string JSONLoadResult = "";
+    private void LoadJSON(ChangeEventArgs e)
+    {
+        string json = e.Value.ToString();
+        try
+        {
+            Node[] obj = JsonSerializer.Deserialize<Node[]>(json);
+            var list = new List<INode>(obj);
+            DSS.Ex.AddProblem(list);
+            JSONLoadResult = "Проблема успешно загружена";
+        }
+        catch (Exception ex)
+        {
+            JSONLoadResult = "Неверный формат данных, попробуйте ещё раз";
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+}

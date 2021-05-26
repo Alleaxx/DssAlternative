@@ -1,0 +1,110 @@
+﻿<div class="top-row pl-5 navbar navbar-dark">
+    <a class="navbar-brand" href="">WebBlazorEmpty</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<style>
+    .white-color{
+        color: white;
+    }
+    .good-color a{
+        color: lightgreen;
+    }
+    .bad-color a{
+        color: lightpink;
+    }
+    .gray-color{
+        color: gainsboro;
+    }
+
+    .relations{
+        font-size: 0.95em;
+    }
+
+
+
+
+</style>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="start">
+                РЕШИТЬ ПРОБЛЕМУ
+            </NavLink>
+        </li>
+
+
+        <li class="nav-item px-3">
+            <details class="relations px-3" open>
+                <summary class="row-own">
+                    <h6 class="white-color">Этапы</h6>
+                </summary>
+                <section>
+                    <NavLink class="nav-link" href="hierarchy">
+                        1 - Иерархия
+                    </NavLink>
+
+                    <NavLink class="nav-link" href="view">
+                        2 - Обзор
+                    </NavLink>
+
+                    <NavLink class="nav-link" href="results">
+                        3 - Анализ
+                    </NavLink>
+
+                </section>
+            </details>
+        </li>
+
+        <li class="nav-item px-3">
+            <details class="relations px-3" open>
+                <summary class="row-own">
+                    <h6 class="white-color">Элементы</h6>
+                </summary>
+                <section>
+                    @foreach (var relationGroup in Problem.RelationsRequired.GroupBy(q => q.Main))
+                    {
+                        <NavLink class="nav-link" href="@($"/node/{relationGroup.Key.Level}/{relationGroup.Key.Name}")">
+                            @relationGroup.Key
+                        </NavLink>
+                        @*<ul class="none">
+                            @foreach (var relation in relationGroup)
+                            {
+                                <li class="@(!Problem.RelationsNotConsistent.Contains(relation) ? "good-color" : "bad-color")">
+                                    <NavLink href="@($"relation/{GetIndexOf(relation)}")">
+                                        @relation.From.Name - @relation.To.Name
+                                    </NavLink>
+                                </li>
+                            }
+                        </ul>*@
+                    }
+                </section>
+
+            </details>
+        </li>
+
+
+
+    </ul>
+</div>
+
+@code {
+
+    public ProblemDecizion Problem => DSS.Ex.Problem;
+
+    private int GetIndexOf(INodeRelation rel) => Problem.RelationsAll.ToList().IndexOf(rel);
+
+
+
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

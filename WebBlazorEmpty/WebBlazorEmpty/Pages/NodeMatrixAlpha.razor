@@ -1,0 +1,146 @@
+﻿@page "/node/{level:int}/{nodeName}/matrix"
+@inherits DSSComponentNode
+@layout RelationsLayout
+
+
+<style>
+    .row-usual {
+        display: flex;
+        flex-direction: row;
+        margin-top: 10px;
+    }
+
+    .counts {
+        flex-basis: 50%;
+    }
+
+    .relation-sel {
+    }
+
+    .mtx table {
+        min-width: 65%;
+        padding: 5px;
+        border: 1px solid gainsboro;
+    }
+
+    td {
+        padding: 5px 8px;
+    }
+
+    .good-mtx {
+        color: green;
+        padding: 10px;
+    }
+
+    .bad-mtx {
+        color: darkred;
+        padding: 2px 10px;
+    }
+
+    .lower-border {
+        border-bottom: 1px solid gainsboro;
+    }
+
+    .right-border {
+        border-right: 1px solid gainsboro;
+    }
+</style>
+<div class="mtx">
+    <table>
+        <tbody>
+            <tr class="lower-border">
+
+                <td class="@(Matrix.Consistency.IsCorrect(Problem.Border) ? "good-mtx" : "bad-mtx") right-border">
+                    <h4>
+                        <b>@Node.Name</b>  @(Matrix.Consistency.IsCorrect(Problem.Border) ? "✓" : "X")
+                    </h4>
+                </td>
+
+                @foreach (var node in Problem.CriteriasFurther[Node])
+                {
+            <td>
+                <NavLink href="@($"/node/{node.Level}/{node.Name}")">
+                    @node.Name
+                </NavLink>
+            </td>
+                }
+            </tr>
+            @foreach (var node in Problem.GetGrouped(Node))
+            {
+                <tr>
+                    <td class="right-border">
+
+                        <NavLink href="@($"/node/{node.Key.Level}/{node.Key.Name}")">
+                            @node.Key.Name
+                        </NavLink>
+                    </td>
+                    @foreach (var relation in node)
+                    {
+                        <td><input disabled="@relation.Self" type="text" @onfocus="@(() => RelationSelected = relation)" @bind-value="@relation.Value" /></td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+@if (RelationSelected != null)
+{
+    <div class="relation-sel">
+        <NodeQuestion Relation="@RelationSelected" />
+    </div>
+}
+
+<div class="counts">
+    <details>
+        <summary>
+            <span>Подробные расчеты</span>
+        </summary>
+        <dl>
+            <dt>nmax</dt>
+            <dd>@Matrix.Consistency.Nmax</dd>
+            <dt>nmax-alpha</dt>
+            <dd>@Matrix.Consistency.NmaxAlpha</dd>
+            <dt>CI</dt>
+            <dd>@Matrix.Consistency.CI</dd>
+            <dt>RI</dt>
+            <dd>@Matrix.Consistency.RI</dd>
+            <dt>CR (порог @Problem.Border)</dt>
+            <dd>@Matrix.Consistency.Cr</dd>
+
+            <dt>Локальные коэффициенты</dt>
+            <dd>
+                <details>
+                    <ul>
+                        @foreach (var coeff in MatrixAHP.LocalCoefficients(Matrix.Array))
+                        {
+                            <li>@coeff</li>
+                        }
+                    </ul>
+                </details>
+            </dd>
+
+
+            <dt>Вектор произведения матрицы отношений и локальных коэффициентов</dt>
+            <dd>
+                <details>
+                    <ul>
+                        @foreach (var coeff in Matrix.Consistency.MultiMatrixLocalCoeffs)
+                        {
+                            <li>@coeff</li>
+                        }
+                    </ul>
+                </details>
+            </dd>
+
+        </dl>
+    </details>
+</div>
+
+@code {
+
+    private INodeRelation RelationSelected { get; set; }
+
+}

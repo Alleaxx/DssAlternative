@@ -1,0 +1,298 @@
+﻿@page "/view"
+@inherits DSSComponent
+@layout EditorLayout
+
+
+<style>
+    .basic-border {
+        border: 1px solid gainsboro;
+        border-radius: 3px;
+        margin: 3px;
+        padding: 5px;
+    }
+
+    .info-sheme {
+        flex-basis: 20%;
+        max-width: 350px;
+    }
+
+    .sheme {
+        flex-basis: 80%;
+    }
+
+
+
+    .col-own {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .row-own {
+        display: flex;
+        flex-direction: row;
+        justify-content: initial;
+    }
+
+    .level {
+        align-items: center;
+        border: 1px solid gainsboro;
+    }
+
+
+
+    .space-between {
+        justify-content: space-between;
+    }
+
+
+    .level-name {
+        width: 20%;
+        text-align: center;
+    }
+
+    .level-elements {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .node-element {
+        padding: 10px;
+        margin: 10px;
+        border: 1px solid gray;
+        text-align: center;
+        border-radius: 4px;
+    }
+
+        .node-element ol {
+            list-style: none;
+        }
+        .node-element:hover{
+            border: 1px solid orange;
+            cursor: pointer;
+        }
+
+    .filters {
+        list-style: none;
+        display: flex;
+    }
+
+        .filters li {
+            padding: 5px 15px;
+            border-bottom: 1px solid gainsboro;
+        }
+
+            .filters li:hover {
+                background-color: gainsboro;
+                cursor: pointer;
+            }
+
+    .selected {
+        background-color: gainsboro;
+    }
+
+
+    .good {
+        background-color: lightgreen;
+    }
+
+
+    .good-g a {
+        color: green;
+    }
+
+    .bad {
+        background-color: lightpink;
+    }
+
+    .bad-b a {
+        color: orangered;
+    }
+
+    .best {
+        background-color: lightblue;
+    }
+
+    .sheme-header{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+</style>
+
+<section>
+    <div>
+        <h4>Схема</h4>
+        <ul class="filters">
+            @foreach (var filter in Filters)
+            {
+                <li class="@(filter == Filter ? "selected" : "") " @onclick="@(() => Select(filter))">
+                    @filter
+                </li>
+            }
+        </ul>
+    </div>
+    @foreach (var levelGroup in Problem.GroupedByLevel)
+    {
+        <div class="row-own level">
+            <div class="level-name">
+                <span style="font-size:1.1em">Уровень @levelGroup.Key</span>
+                <br>
+                <span style="font-size:1.35em">@(Problem.GetTextInfo(levelGroup.Key))</span>
+            </div>
+            <div class="level-elements">
+                @foreach (var node in levelGroup)
+                {
+                    <p class="node-element @(GetTag(node).Class)" style="width:@NodeSize%">
+                        <NavLink href="@(GetLink(node))">
+                            <span>@node.Name</span>
+                        </NavLink><br />
+                        <span> @(GetTag(node).Text)</span>
+                        @if (Filter == Relations && node.Level != 0)
+                        {
+                            <ol>
+                                @foreach (var rel in Problem.RelationsAll.Where(r => r.From == node && r.To != node))
+                                {
+                                    <li style="font-size: 0.8em" class="@(!Problem.RelationsNotConsistent.Contains(rel) ? "good-g" : "bad-b")">
+                                        <NavLink href="@($"relation/{GetIndexOf(rel)}")">
+                                            [@(Math.Round(rel.Value,2))] @rel.Main.Name - @rel.To.Name
+                                        </NavLink>
+                                    </li>
+                                }
+                            </ol>
+                        }
+                    </p>
+                }
+            </div>
+        </div>
+    }
+</section>
+
+<div class="row-own">
+    <section>
+        <h4>Отображение</h4>
+        <p>
+            Размер узлов:
+            <input type="number" @bind-value="@NodeSize" />
+        </p>
+    </section>
+
+    <section>
+        @if (Filter == Constistency)
+        {
+            <ViewConsistency />
+        }
+        else if (Filter == Description)
+        {
+
+        }
+        else if (Filter == FilterRating)
+        {
+            <ViewRating />
+        }
+        else if (Filter == Relations)
+        {
+            <ViewRelations />
+        }
+        else if (Filter == JSON)
+        {
+            <ViewJson />
+        }
+    </section>
+
+</div>
+
+
+
+@code {
+    private int NodeSize { get; set; } = 20;
+
+
+
+    const string Description = "По описанию";
+    const string FilterRating = "По рейтингу критериев";
+    const string Constistency = "По согласованности отношения критериев (матрицам критериев)";
+    const string Relations = "По связанным отношениям";
+    const string JSON = "JSON";
+
+
+    public string[] Filters { get; set; } = new string[]
+    {
+            Description,
+            FilterRating,
+            Constistency,
+            Relations,
+            JSON
+        };
+    private string Filter
+    {
+        get => Project.ViewFilter;
+        set
+        {
+            Project.ViewFilter = value;
+        }
+    }
+
+
+    private void Select(string text)
+    {
+        Filter = text;
+    }
+
+
+    private string GetLink(INode node)
+    {
+        if (Filter == FilterRating || Filter == Constistency)
+            return $"/node/{node.Level}/{node.Name}/matrix";
+        else
+            return $"/node/{node.Level}/{node.Name}";
+    }
+    private Tag GetTag(INode node)
+    {
+        Tag info = new Tag("", "usual");
+        switch (Filter)
+        {
+            case FilterRating:
+                string style = "usual";
+                if (Problem.Best(node.Level).Contains(node))
+                    style = "best";
+
+
+                return new Tag($"{Math.Round(node.Coefficient, 5)}", style);
+            case Constistency:
+                double res = Problem.GetMatrix(node).Consistency.Cr;
+                if (double.IsNaN(res))
+                    return new Tag("~", "good");
+                else if (res >= Problem.Border)
+                    return new Tag($"{Math.Round(res, 5)}", "bad");
+                else
+                    return new Tag($"{Math.Round(res, 5)}", "good");
+            case Relations:
+                return new Tag($"{Problem.RelationsRequired.Where(r => r.From == node).Count()}", "usual");
+            case Description:
+                return new Tag(node.Description, "");
+            default:
+                return info;
+        }
+    }
+
+
+
+
+    private int GetIndexOf(INodeRelation rel) => Problem.RelationsAll.ToList().IndexOf(rel);
+
+    class Tag
+    {
+        public string Text { get; set; }
+        public string Class { get; set; }
+
+        public Tag(string text, string style)
+        {
+            Text = text;
+            Class = style;
+        }
+    }
+}

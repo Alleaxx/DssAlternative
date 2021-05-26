@@ -1,0 +1,33 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+
+<style>
+    .top-row{
+        justify-content: center;
+    }
+
+    .top-row ul{
+        margin-bottom: 0;
+    }
+</style>
+
+<div class="sidebar">
+
+    @*Подстановка компонента навигации*@
+    <NavMenu />
+
+
+</div>
+
+<div class="main">
+    <div class="top-row px-4" style="justify-content: start">
+        <ProblemsMenu />
+    </div>
+
+    <div class="content px-4">
+
+        @*Сюда будет подставляться запрошенный компонент*@
+        <StageMenu URi="@(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))" />
+        @Body
+    </div>
+</div>

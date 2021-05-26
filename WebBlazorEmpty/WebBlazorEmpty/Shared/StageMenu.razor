@@ -1,0 +1,137 @@
+﻿
+
+<style>
+    .stages {
+        border: 1px solid gainsboro;
+        padding: 8px;
+    }
+
+        .stages a {
+            padding: 10px;
+            border: 1px solid gray;
+        }
+        .stages p{
+            margin-bottom: 5px;
+        }
+
+    .prev a{
+        cursor: pointer;
+        border-right: 0;
+    }
+
+    .next {
+    }
+
+    .stages a:hover {
+        background-color: gainsboro;
+    }
+
+    .widt {
+        min-width: 30%;
+    }
+
+    .row-own-own {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .space-between {
+        justify-content: space-between;
+    }
+
+    .cool-green {
+        height: 8px;
+        background-color: lightgreen;
+    }
+</style>
+
+@if (Now.Name != "Непонел")
+{
+    <div>
+        <div class="cool-green" style="width:@(Math.Round(((IndexNow + 1) / (double)Stages.Count) * 100))%">
+            <div></div>
+        </div>
+
+        <div class="stages row-own-own">
+            <div>
+                <h3>
+                    @Now.Name, @(IndexNow + 1) / @Stages.Count
+                </h3>
+                <p>
+                    @Now.Description
+                </p>
+            </div>
+            <div>
+                <NavLink class="widt prev" href="@Prev.Way">
+                    <span>
+                        ← @Prev.Name
+                    </span>
+                </NavLink>
+                <NavLink class="widt next" href="@Next.Way">
+                    <span>
+                        @Next.Name →
+                    </span>
+                </NavLink>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public string URI { get; set; }
+
+
+    private List<IStage> Stages => DSS.Ex.Problem.Stages;
+
+
+    public IStage Prev1()
+    {
+
+        if (IndexNow > 0 && IndexNow < Stages.Count)
+        {
+            return Stages[IndexNow - 1];
+        }
+        return new Stage("Назад пути нет", URI ,"Запретный этап");
+    }
+
+    public IStage Now1()
+    {
+        if (Stages != null && Stages.Find(s => s.Way == URI) is IStage stage)
+            return stage;
+
+        return new Stage("Непонел", "", "");
+    }
+    public int IndexNow => Stages.IndexOf(Now1());
+
+    public IStage Next1()
+    {
+        if (IndexNow > -1 && IndexNow < Stages.Count - 1)
+        {
+            return Stages[IndexNow + 1];
+        }
+        return new Stage("Дальше пути нет", URI, "Запретный этап");
+    }
+
+
+    public IStage Prev { get; set; }
+    public IStage Now { get; set; }
+    public IStage Next { get; set; }
+
+    protected override bool ShouldRender()
+    {
+        return true;
+    }
+
+    protected override void OnParametersSet()
+    {
+        Prev = Prev1();
+        Now = Now1();
+        Next = Next1();
+        Console.WriteLine($"{URI} - {Now.Name} - {Now.Way}");
+    }
+
+}

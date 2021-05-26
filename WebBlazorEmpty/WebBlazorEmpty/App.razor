@@ -1,0 +1,25 @@
+
+@*Атрибут AppAssembly - сборка, в которой производится поиск компонентов*@
+
+@*
+Found - RouteView - DefaultLayout
+NotFound - LayoutView - Layout
+    задают компоновку отображаемого содержимого*@
+
+
+
+
+<Router AppAssembly="@typeof(Program).Assembly">
+
+    @*В случае если запрашиваемый компонент найден*@
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+
+    @*В случае если НЕ найден*@
+    <NotFound>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p>Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>

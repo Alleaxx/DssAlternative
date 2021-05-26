@@ -1,0 +1,75 @@
+﻿@page "/results"
+@inherits DSSComponent
+@layout EditorLayout
+
+<style>
+    .green {
+        height: 6px;
+        background-color: green;
+    }
+
+    .results {
+        list-style: none;
+        flex-flow: row;
+    }
+
+        .results li {
+            display: flex;
+            align-items: center;
+        }
+
+        .results span {
+            min-width: 15%;
+            margin-bottom: 5px;
+        }
+</style>
+
+@if (Problem.AreRelationsCorrect)
+{
+    @foreach (var levelGroup in Problem.GroupedByLevel)
+    {
+        @if (levelGroup.Key != 0)
+        {
+            <h4>Уровень @levelGroup.Key</h4>
+            <ul class="results">
+                @foreach (var node in levelGroup)
+                {
+                    <li>
+                        <span>
+                            @node.Name
+                        </span>
+                        <span>
+                            @(Math.Round(node.Coefficient,5))
+                        </span>
+                        <div class="green" style="width:@(Math.Round(node.Coefficient * 100))%"></div>
+                    </li>
+                }
+            </ul>
+            <p>
+                ЛУЧШИЙ ВЫБОР -
+                @foreach (var test in Problem.Best(levelGroup.Key))
+                {
+                    <b>@test.Name</b>;
+                }
+            </p>
+        }
+    }
+
+    <input type="button" value="Создать новую проблему на основе" />
+}
+else
+{
+<p>
+    <b>Внимание!</b>
+    Отношения между критериями несогласованны. Необходимо их скорректировать:
+</p>
+    <NavLink @onclick="@(() => DSS.Ex.Project.ViewFilter = "По согласованности отношения критериев (матрицам критериев)")" href="view">
+        Перейти для исправления связей
+    </NavLink>
+}
+
+
+
+@code {
+
+}

@@ -1,0 +1,229 @@
+﻿@page "/hierarchy"
+@inherits DSSComponent
+@layout EditorLayout
+
+
+
+<style>
+
+
+
+    .basic-border {
+        border: 1px solid gainsboro;
+        border-radius: 3px;
+        margin: 3px;
+        padding: 5px;
+    }
+
+    .info-sheme {
+        flex-basis: 25%;
+    }
+
+    .info-node {
+        flex-basis: 15%
+    }
+
+    .sheme {
+        flex-basis: 75%;
+    }
+
+
+
+    .col-own {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .row-own {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .level {
+        align-items: center;
+        border-bottom: 1px solid gainsboro;
+    }
+
+
+
+    .space-between {
+        justify-content: space-between;
+    }
+
+
+    .level-name {
+        width: 200px;
+        text-align: center;
+    }
+
+    .level-elements {
+        display: flex;
+        flex-flow: row wrap;
+        margin: 5px 0;
+    }
+
+    .node-element {
+        padding: 10px;
+        margin: 10px;
+        border: 1px solid gray;
+    }
+
+    .add {
+        background-color: lightgreen;
+    }
+
+    .remove {
+        background-color: lightpink;
+    }
+</style>
+
+<div style="height:10px"></div>
+
+<div class="row-own">
+    <div class="col-own sheme basic-border space-between">
+        <div>
+            @foreach (var levelGroup in Hierarchies.GroupedByLevel)
+            {
+                <div class="row-own level">
+                    <div class="level-name">
+                        <span style="font-size:1.1em">Уровень @levelGroup.Key</span>
+                        <br>
+                        <span style="font-size:1.35em">@(Hierarchies.GetTextInfo(levelGroup.Key))</span>
+                        <br />
+
+                        @*<input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />*@
+                    </div>
+                    <div class="level-elements">
+                        @foreach (var node in levelGroup)
+                        {
+                            <div class="node-element row-own">
+                                <div>
+                                    <input type="text" @bind-value="@node.Name" @onfocus="@( () => SelectedNode = node )" />
+                                </div>
+                                <div style="height:30px">
+                                    <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div>
+                        <div style="margin-left: 10px;" class="row-own">
+                            <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="row-own level">
+                <div class="level-name" style="color:gray">
+                    <span style="font-size:1.1em">Уровень @Hierarchies.LevelsCount</span>
+                    <br>
+                    @*<span style="font-size:1.35em">@(NHierarchys.GetTextInfo(levelGroup.Key))</span>
+                        <br />
+                        <span ></span>*@
+                </div>
+                <div>
+                    <div class="row-own">
+                        <input class="add" type="button" value="+" @onclick="@(() => AddNode(Hierarchies.LevelsCount))" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div>
+            @if (Project.UnsavedChanged)
+            {
+                <b>Есть несохраненные изменения</b>
+                <input class="add" type="button" value="Подтвердить текущую иерархию" @onclick="UpdateHierarchy" />
+            }
+            else
+            {
+                <b @onclick="UpdateHierarchy">Все изменения сохранены</b>
+            }
+        </div>
+    </div>
+    <div class="info-sheme basic-border">
+        @if (SelectedNode != null)
+        {
+            <h5>Редактирование узла</h5>
+            <div class="col">
+                <input type="text" @bind-value="@SelectedNode.Name" />
+                <input type="button" value="/\" @onclick="@(() => MoveNode(SelectedNode, -1))" />
+                <input type="button" value="\/" @onclick="@(() => MoveNode(SelectedNode, 1))" />
+            </div>
+        }
+        <h5>Информация</h5>
+        <dl>
+            <dt>Уровней иерархии:</dt>
+            <dl>@Hierarchies.LevelsCount</dl>
+
+            <dt>Узлов:</dt>
+            <dl>@Hierarchies.NodesCount</dl>
+
+            <dt>Отношений:</dt>
+            <dd>@Hierarchies.RelationsCount</dd>
+
+            <dt>Максимальный уровень:</dt>
+            <dd>@Hierarchies.MaxLevel</dd>
+
+            <dt>Пригодна для использования:</dt>
+            <dl>
+                @(Hierarchies.Correctness.Result ? "ДА" : "НЕТ")
+                @if (Hierarchies.Correctness.Comments.Count > 0)
+                {
+                    <ol>
+                        @foreach (var comment in Hierarchies.Correctness.Comments)
+                        {
+                            <li>@comment</li>
+                        }
+                    </ol>
+
+                }
+            </dl>
+
+            <dt>Главная цель</dt>
+            <dl>@Hierarchies.MainGoal.Name</dl>
+
+            <dt>Критерии:</dt>
+            <dl>@string.Join(',', Hierarchies.Criterias.Select(c => c.Name))</dl>
+
+            <dt>Альтернативы:</dt>
+            <dl>@string.Join(',', Hierarchies.Alternatives.Select(c => c.Name))</dl>
+        </dl>
+    </div>
+</div>
+
+
+
+@code {
+    private HierarchyNodes Hierarchies => Project.HierEdit;
+    private List<INode> Nodes => Project.NodesEditing;
+
+
+
+
+    //Подтверждение иерархии
+    private void UpdateHierarchy() => Project.UpdateProblem();
+
+
+    //Редактирование иерархии
+    private INode SelectedNode { get; set; }
+    private void AddNode(int level = -1)
+    {
+        level = level == -1 ? Hierarchies.LevelsCount - 1 : level;
+        INode newNode = new Node(level, "Узел");
+        Nodes.Add(newNode);
+    }
+    private void MoveNode(INode node, int inc)
+    {
+        int newLevel = node.Level + inc;
+        if (newLevel >= 0)
+            node.Level = newLevel;
+    }
+    private void RemoveNode(INode e)
+    {
+        SelectedNode = Nodes.First();
+        if (e != Hierarchies.MainGoal)
+            Nodes.Remove(e);
+    }
+}

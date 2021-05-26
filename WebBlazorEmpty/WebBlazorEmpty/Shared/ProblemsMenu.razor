@@ -1,0 +1,43 @@
+﻿
+<style>
+    .problems-list{
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+    }
+
+    .problems-list li{
+        padding: 5px 15px;
+    }
+    .problems-list li:hover{
+        cursor: pointer;
+        background-color: gainsboro;
+    }
+    .selected{
+        background-color: gainsboro;
+    }
+
+    .row-row-own{
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+    }
+
+</style>
+<div class="row-row-own">
+        <b>Выбранная проблема</b>: @DSS.Ex.Project
+    <ul class="problems-list">
+        @foreach (var project in DSS.Ex.Problems)
+        {
+            <li class="@(DSS.Ex.Project == project ? "selected" : "")" @onclick="@(() => { DSS.Ex.SelectProblem(project); })">
+                @project
+            </li>
+        }
+    </ul>
+</div>
+
+
+@code {
+
+}

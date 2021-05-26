@@ -1,0 +1,76 @@
+﻿@page "/node/{level:int}/{nodeName}"
+@inherits DSSComponentNode
+@layout EditorLayout
+
+<style>
+    .row-flex-flex{
+        display: flex;
+        flex-flow: row;
+    }
+    .edit{
+        flex-basis: 25%
+    }
+    .rels{
+        flex-basis: 75%;
+    }
+</style>
+
+<section class="row-flex-flex">
+    <div class="edit">
+        <h4>Редактирование узла</h4>
+        <dl>
+            <dt>
+                Название
+            </dt>
+            <dd>
+                <input type="text" @bind-value="@Node.Name" />
+            </dd>
+            <dt>
+                Описание
+            </dt>
+            <dd>
+                <input type="text" @bind-value="@Node.Description" />
+            </dd>
+        </dl>
+    </div>
+    <div class="rels">
+        <h4>Отношения</h4>
+        @if (Problem.RelationsAll.Where(r => r.From == Node).Count() > 0)
+        {
+            <ul>
+                @foreach (var relGroup in Problem.RelationsAll.Where(r => r.From == Node && r.To != Node).GroupBy(r => r.Main))
+                {
+                    <li>
+                        По @relGroup.Key.Name:
+                        <ul>
+                            @foreach (var rel in relGroup)
+                            {
+
+                                <li>
+                                    <NavLink href="@($"relation/{Problem.RelationsAll.ToList().IndexOf(rel)}")">
+                                        @NodeRelation.GetTextRelationFor(rel.Value) <i>@rel.To.Name</i>
+                                    </NavLink>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Отношений с элементами этого же уровня нет</p>
+        }
+    </div>
+</section>
+
+<section>
+    <h4>Матрица коэффициентов для уровня данного критерия</h4>
+</section>
+
+<NodeMatrixAlpha Node="@Node" />
+
+@code {
+
+
+}
