@@ -121,6 +121,11 @@
         flex-direction: row;
         align-items: center;
     }
+
+    .node-element a{
+        text-decoration: none;
+        color: black;
+    }
 </style>
 
 <section>
@@ -139,9 +144,9 @@
     {
         <div class="row-own level">
             <div class="level-name">
-                <span style="font-size:1.1em">Уровень @levelGroup.Key</span>
+                <span style="font-size:1.05em">Уровень @levelGroup.Key</span>
                 <br>
-                <span style="font-size:1.35em">@(Problem.GetTextInfo(levelGroup.Key))</span>
+                <span style="font-size:1.15em">@(Problem.GetTextInfo(levelGroup.Key))</span>
             </div>
             <div class="level-elements">
                 @foreach (var node in levelGroup)
@@ -197,10 +202,9 @@
         {
             <ViewRelations />
         }
-        else if (Filter == JSON)
-        {
-            <ViewJson />
-        }
+    </section>
+    <section>
+        <ViewJson />
     </section>
 
 </div>
@@ -214,9 +218,8 @@
 
     const string Description = "По описанию";
     const string FilterRating = "По рейтингу критериев";
-    const string Constistency = "По согласованности отношения критериев (матрицам критериев)";
+    const string Constistency = "По согласованности отношений";
     const string Relations = "По связанным отношениям";
-    const string JSON = "JSON";
 
 
     public string[] Filters { get; set; } = new string[]
@@ -225,7 +228,6 @@
             FilterRating,
             Constistency,
             Relations,
-            JSON
         };
     private string Filter
     {
@@ -246,7 +248,7 @@
     private string GetLink(INode node)
     {
         if (Filter == FilterRating || Filter == Constistency)
-            return $"/node/{node.Level}/{node.Name}/matrix";
+            return $"/node/{node.Level}/{node.Name}";
         else
             return $"/node/{node.Level}/{node.Name}";
     }

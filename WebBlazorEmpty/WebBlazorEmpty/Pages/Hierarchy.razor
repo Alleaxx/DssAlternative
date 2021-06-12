@@ -52,8 +52,8 @@
 
 
     .level-name {
-        width: 200px;
         text-align: center;
+        flex-basis: 20%;
     }
 
     .level-elements {
@@ -66,6 +66,7 @@
         padding: 10px;
         margin: 10px;
         border: 1px solid gray;
+        flex-basis: 15%;
     }
 
     .add {
@@ -74,6 +75,9 @@
 
     .remove {
         background-color: lightpink;
+    }
+
+    .input-text{
     }
 </style>
 
@@ -86,9 +90,9 @@
             {
                 <div class="row-own level">
                     <div class="level-name">
-                        <span style="font-size:1.1em">Уровень @levelGroup.Key</span>
+                        <span style="font-size:1em">Уровень @levelGroup.Key</span>
                         <br>
-                        <span style="font-size:1.35em">@(Hierarchies.GetTextInfo(levelGroup.Key))</span>
+                        <span style="font-size:1.1em">@(Hierarchies.GetTextInfo(levelGroup.Key))</span>
                         <br />
 
                         @*<input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />*@
@@ -98,7 +102,7 @@
                         {
                             <div class="node-element row-own">
                                 <div>
-                                    <input type="text" @bind-value="@node.Name" @onfocus="@( () => SelectedNode = node )" />
+                                    <input class="input-text" type="text" @bind-value="@node.Name" @onfocus="@( () => SelectedNode = node )" />
                                 </div>
                                 <div style="height:30px">
                                     <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
@@ -167,7 +171,7 @@
             <dd>@Hierarchies.MaxLevel</dd>
 
             <dt>Пригодна для использования:</dt>
-            <dl>
+            <dd>
                 @(Hierarchies.Correctness.Result ? "ДА" : "НЕТ")
                 @if (Hierarchies.Correctness.Comments.Count > 0)
                 {
@@ -179,16 +183,16 @@
                     </ol>
 
                 }
-            </dl>
+            </dd>
 
             <dt>Главная цель</dt>
-            <dl>@Hierarchies.MainGoal.Name</dl>
+            <dd>@Hierarchies.MainGoal.Name</dd>
 
             <dt>Критерии:</dt>
-            <dl>@string.Join(',', Hierarchies.Criterias.Select(c => c.Name))</dl>
+            <dd>@string.Join(',', Hierarchies.Criterias.Select(c => c.Name))</dd>
 
             <dt>Альтернативы:</dt>
-            <dl>@string.Join(',', Hierarchies.Alternatives.Select(c => c.Name))</dl>
+            <dd>@string.Join(',', Hierarchies.Alternatives.Select(c => c.Name))</dd>
         </dl>
     </div>
 </div>
@@ -199,7 +203,16 @@
     private HierarchyNodes Hierarchies => Project.HierEdit;
     private List<INode> Nodes => Project.NodesEditing;
 
+    const string Sheme = "По описанию";
+    const string Information = "По рейтингу критериев";
 
+
+    public string[] Filters { get; set; } = new string[]
+    {
+            Sheme,
+            Information,
+        };
+    private string Filter { get; set; }
 
 
     //Подтверждение иерархии

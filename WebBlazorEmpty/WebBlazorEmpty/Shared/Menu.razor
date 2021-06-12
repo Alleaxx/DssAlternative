@@ -5,51 +5,34 @@
         <h2>Этапы решения</h2>
         <ul>
             <li>
-                <a class="row center active" href="hierarchy">
+                <NavLink class="row center" href="hierarchy">
                     <img class="icon" src="Images/Иерархия.png" />
                     <span>I - ИЕРАРХИЯ</span>
-                </a>
+                </NavLink>
             </li>
             <li>
-                <a class="row center" href="view">
+                <NavLink class="row center" href="view">
                     <img class="icon" src="Images/Отношения.png" />
                     <span>II - ОТНОШЕНИЯ</span>
-                </a>
+                </NavLink>
             </li>
             <li>
                 <ul class="relations row center">
-                    <li>
-                        <a href="#">
-                            1
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            2
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            3
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            4
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            5
-                        </a>
-                    </li>
+                    @foreach (var rel in DSS.Ex.Problem.RelationsRequired)
+                    {
+                        <li>
+                            <NavLink href="@($"relation/{DSS.Ex.Problem.RelationsRequired.ToList().IndexOf(rel)}")">
+                                @rel.Main.Name.Substring(0, 3);
+                            </NavLink>
+                        </li>
+                    }
                 </ul>
             </li>
             <li>
-                <a class="row center" href="results">
+                <NavLink href="results">
                     <img class="icon" src="Images/Результаты.png" />
                     <span>III - РЕЗУЛЬТАТЫ</span>
-                </a>
+                </NavLink>
             </li>
         </ul>
     </section>
@@ -69,8 +52,8 @@
             @foreach (var project in DSS.Ex.Problems)
             {
                 <li>
-                    <a class="@(project.Problem == DSS.Ex.Problem ? "active" : "")" href="#">
-                        <img src="Images/foto_117859.png" />
+                    <a class="@(project.Problem == DSS.Ex.Problem ? "active" : "")" @onclick="@(() => { DSS.Ex.SelectProblem(project); })">
+                        <img src="Images/Иерархия.png" />
                         <header>
                             <h4>@project.Problem.MainGoal.Name</h4>
                             <p>Описание</p>

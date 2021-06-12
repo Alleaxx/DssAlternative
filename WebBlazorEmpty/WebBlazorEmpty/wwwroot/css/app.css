@@ -198,6 +198,7 @@
 main {
     grid-area: content;
     padding: 0px 10px;
+    margin: 0;
 }
 
 .grid > footer {
@@ -270,6 +271,7 @@ ul.relations {
         border-top: 1px solid gainsboro;
         border-bottom: 1px solid gainsboro;
         border-left: 1px solid gainsboro;
+        border-right: 3px solid gainsboro;
         padding: 5px 10px;
         text-decoration: none;
         color: black;
