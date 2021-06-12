@@ -167,20 +167,11 @@ namespace WebBlazorEmpty.AHP
         }
     }
 
-
-
     public class ProblemDecizion : Problem
     {
-        public RelationMatrixSystem MatrixSystem { get; private set; }
-
-        public RelationQuestionSystem QuestionSystem { get; private set; }
 
         public ProblemDecizion(IEnumerable<INode> nodes) : base(nodes)
         {
-            MatrixSystem = new RelationMatrixSystem(this);
-            QuestionSystem = new RelationQuestionSystem(this);
-
-
             Stages.Add(new Stage("Формирование иерархии",$"hierarchy", "На этом этапе необходимо выделить основные элементы проблемы"));
             Stages.Add(new Stage("Обзор проблемы",$"view", "Отображение проблемы с разных точек зрения"));
             int counter = 0;
@@ -198,11 +189,11 @@ namespace WebBlazorEmpty.AHP
 
 
 
-
         public bool AreRelationsCorrect => NodesNotConsistent.Count() == 0;
 
         //Список матриц
         public double Border { get; set; } = 0.15;
+
 
         //Список критериев, матрицы по которым не согласованы
         public IEnumerable<INode> NodesNotConsistent

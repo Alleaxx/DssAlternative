@@ -1,183 +1,281 @@
-﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
-
-html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+﻿body {
+    background-color: rgb(255, 255, 255);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-a, .btn-link {
-    color: #0366d6;
+.grid {
+    display: grid;
+    grid-template-columns: 25fr 75fr;
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-areas:
+        "logo header"
+        "navside upper-menu"
+        "navside content"
+        "navside lower-menu"
+        "footer footer";
 }
 
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-app {
-    position: relative;
+.logo {
+    grid-area: logo;
+    background-color: rgb(230, 230, 230);
+    border-bottom: 2px solid gainsboro;
+    border-right: 1px solid gainsboro;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
 }
 
-.top-row {
-    height: 3.5rem;
+    .logo a {
+        text-decoration: none;
+        color: black;
+    }
+
+
+.main-header {
+    grid-area: header;
+    background-color: rgb(240, 240, 240);
+    border-bottom: 2px solid gainsboro;
     display: flex;
+    justify-content: space-between;
     align-items: center;
 }
 
-.main {
-    flex: 1;
-}
-
-    .main .top-row {
-        background-color: #f7f7f7;
-        border-bottom: 1px solid #d6d5d5;
-        justify-content: flex-end;
+    .main-header ul {
+        list-style: none;
     }
 
-        .main .top-row > a, .main .top-row .btn-link {
-            white-space: nowrap;
-            margin-left: 1.5rem;
+    .main-header li {
+        margin: 5px 20px;
+    }
+
+    .main-header a {
+        text-decoration: none;
+    }
+
+        .main-header a:hover {
+            text-decoration: underline;
         }
 
-.main .top-row a:first-child {
-    overflow: hidden;
-    text-overflow: ellipsis;
+
+.upper-menu {
+    grid-area: upper-menu;
 }
 
-.sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
-}
-
-    .sidebar .top-row {
-        background-color: rgba(0,0,0,0.4);
+    .upper-menu ul {
+        display: flex;
+        list-style: none;
+        border-top: 1px solid gainsboro;
+        border-bottom: 1px solid gainsboro;
+        margin: 0;
+        padding: 0;
     }
 
-    .sidebar .navbar-brand {
-        font-size: 1.1rem;
+    .upper-menu h3 {
+        margin: 5px;
+        padding: 5px 0;
     }
 
-    .sidebar .oi {
-        width: 2rem;
-        font-size: 1.1rem;
-        vertical-align: text-top;
-        top: -2px;
-    }
-
-    .sidebar .nav-item {
-        font-size: 0.9rem;
-        padding-bottom: 0.5rem;
-    }
-
-        .sidebar .nav-item:first-of-type {
-            padding-top: 1rem;
-        }
-
-        .sidebar .nav-item:last-of-type {
-            padding-bottom: 1rem;
-        }
-
-        .sidebar .nav-item a {
-            color: #d7d7d7;
-            border-radius: 4px;
-            height: 3rem;
-            display: flex;
-            align-items: center;
-            line-height: 3rem;
-        }
-
-            .sidebar .nav-item a.active {
-                background-color: rgba(255,255,255,0.25);
-                color: white;
-            }
-
-            .sidebar .nav-item a:hover {
-                background-color: rgba(255,255,255,0.1);
-                color: white;
-            }
-
-.content {
-    padding-top: 1.1rem;
-}
-
-.navbar-toggler {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
-}
-
-.invalid {
-    outline: 1px solid red;
-}
-
-.validation-message {
-    color: red;
-}
-
-#blazor-error-ui {
-    background: lightyellow;
-    bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
-    display: none;
-    left: 0;
-    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
-    position: fixed;
-    width: 100%;
-    z-index: 1000;
-}
-
-#blazor-error-ui .dismiss {
-    cursor: pointer;
-    position: absolute;
-    right: 0.75rem;
-    top: 0.5rem;
-}
-
-@media (max-width: 767.98px) {
-    .main .top-row:not(.auth) {
-        display: none;
-    }
-
-    .main .top-row.auth {
-        justify-content: space-between;
-    }
-
-    .main .top-row a, .main .top-row .btn-link {
-        margin-left: 0;
-    }
-}
-
-@media (min-width: 768px) {
-    app {
-        flex-direction: row;
-    }
-
-    .sidebar {
-        width: 250px;
-        height: 100vh;
-        position: sticky;
-        top: 0;
-    }
-
-    .main .top-row {
-        position: sticky;
-        top: 0;
-    }
-
-    .main > div {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
-    }
-
-    .navbar-toggler {
-        display: none;
-    }
-
-    .sidebar .collapse {
-        /* Never collapse the sidebar for wide screens */
+    .upper-menu ul li {
         display: block;
     }
+
+    .upper-menu ul a {
+        height: 30px;
+        padding: 5px 25px;
+        border-right: 1px solid gainsboro;
+        border-bottom: 2px solid lightgreen;
+        text-decoration: none;
+        color: rgb(68, 68, 68);
+        display: flex;
+        align-items: center;
+    }
+
+    .upper-menu a img {
+        height: 20px;
+        padding: 4px;
+    }
+
+    .upper-menu ul a:hover {
+        background-color: rgb(255, 243, 221);
+    }
+
+
+
+.lower-menu {
+    grid-area: lower-menu;
+    border-top: 1px solid gainsboro;
+    border-bottom: 1px solid gainsboro;
+    display: flex;
 }
+
+    .lower-menu a {
+        border-right: 1px solid gainsboro;
+        text-align: center;
+        text-decoration: none;
+        color: black;
+        padding: 10px;
+        width: 50%;
+    }
+
+        .lower-menu a:hover {
+            background-color: rgb(255, 243, 221);
+        }
+
+
+.navside {
+    grid-area: navside;
+    background-color: rgb(250, 250, 250);
+    border-right: 1px solid gainsboro;
+}
+
+    .navside h2 {
+        text-align: center;
+        font-size: 1.15em;
+    }
+
+    .navside h3 {
+        padding: 5px 0;
+        margin: 10px 0;
+        border-bottom: 1px solid gainsboro;
+    }
+
+    .navside ul {
+        display: flex;
+        flex-direction: column;
+        list-style: none;
+        padding: 0;
+        margin-top: 0;
+    }
+
+        .navside ul li {
+            border-bottom: 1px solid gainsboro;
+        }
+
+        .navside ul li {
+            border-bottom: 0;
+        }
+
+
+        .navside ul a {
+            display: grid;
+            grid: auto 1fr / auto 1fr;
+            grid-template-areas:
+                "image header"
+                "image description";
+            padding: 4px;
+            text-decoration: none;
+        }
+
+            .navside ul a h4 {
+                color: black;
+                font-size: 0.85em;
+                margin: 0;
+            }
+
+            .navside ul a.active {
+                background-color: white;
+                border-right: 3px solid orange;
+            }
+
+            .navside ul a p {
+                color: gray;
+                font-size: 0.8em;
+                margin: 3px 0;
+            }
+
+            .navside ul a:hover {
+                background-color: white;
+            }
+
+        .navside ul img {
+            grid-area: image;
+            width: 50px;
+            height: 50px;
+            border-radius: 2px;
+            margin: 0 10px;
+        }
+
+
+main {
+    grid-area: content;
+    padding: 0px 10px;
+}
+
+.grid > footer {
+    grid-area: footer;
+    background-color: whitesmoke;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-top: 1px solid gainsboro;
+    border-bottom: 1px solid gainsboro;
+    padding: 20px;
+}
+
+.row {
+    display: flex;
+}
+
+ul.tasks {
+}
+
+.task-menu li {
+    border-bottom: 1px solid gainsboro;
+}
+
+ul.relations {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 5px 40px;
+}
+
+    ul.relations a {
+        height: 12px;
+        font-size: 0.8em;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        padding: 5px 10px;
+        margin: 0 3px;
+    }
+
+.navside ul .icon {
+    height: 16px;
+    width: 16px;
+    padding: 6px;
+}
+
+.center {
+    align-items: center;
+}
+
+
+
+.task-menu a {
+    border-bottom: 1px solid gainsboro;
+}
+
+.stage-menu a {
+    border-top: 1px solid gainsboro;
+    border-bottom: 1px solid lightgreen;
+    border-left: 2px solid lightgreen;
+}
+
+.next-menu {
+    display: flex;
+}
+
+    .next-menu a {
+        width: 50%;
+        border-top: 1px solid gainsboro;
+        border-bottom: 1px solid gainsboro;
+        border-left: 1px solid gainsboro;
+        padding: 5px 10px;
+        text-decoration: none;
+        color: black;
+        text-align: center;
+    }
+
+        .next-menu a:hover {
+            background-color: white;
+        }

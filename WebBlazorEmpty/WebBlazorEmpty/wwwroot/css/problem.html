@@ -1,38 +1,32 @@
-<!DOCTYPE html>
-<html lang="ru">
-
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>DSS "В разработке"</title>
-    <base href="/" />
-    <link href="css/app.css" rel="stylesheet" />
-</head>
-
-<body>
-    <app>Загрузка...</app>
-
-
-    <div id="blazor-error-ui">
-        Необработанное исключение в приложении.
-        <a href="" class="reload">Перезагрузить страницу</a>
-        <a class="dismiss">🗙</a>
-    </div>
-
-    <script src="_framework/blazor.webassembly.js"></script>
-</body>
-
-</html>
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Макет сайта</title>
     <link rel='stylesheet' type='text/css' media='screen' href='style.css'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main-style.css'>
-</head>
 
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: 25fr 75fr;
+            grid-template-rows: auto auto 1fr auto;
+            grid-template-areas:
+                "logo header"
+                "content content"
+                "footer footer";
+        }
+
+        main {
+            grid-area: content;
+            min-width: 640px;
+            max-width: 1000px;
+            margin: auto;
+            border-right: 1px solid gainsboro;
+            border-left: 1px solid gainsboro;
+            padding: 0px 10px;
+        }
+    </style>
+</head>
 <body>
     <section class="grid">
         <header class="logo">

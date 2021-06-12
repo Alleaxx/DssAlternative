@@ -92,6 +92,29 @@ namespace WebBlazorEmpty.AHP
         public ProblemDecizion Problem { get; private set; }
 
 
+        public BigStage StageHier
+        {
+            get
+            {
+                return new BigStage("", 1, 1);
+            }
+        }
+        public BigStage StageRelations
+        {
+            get
+            {
+                return new BigStage("", 1, 1);
+            }
+        }
+        public BigStage StageResults
+        {
+            get
+            {
+                return new BigStage("",1,1);
+            }
+        }
+
+
 
         public string ViewFilter { get; set; } = "По описанию";
 
@@ -99,7 +122,6 @@ namespace WebBlazorEmpty.AHP
         {
             SetProblem(nodes);
         }
-
 
         public void UpdateProblem()
         {

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace WebBlazorEmpty.AHP
 {
+
     public class DSSComponent : ComponentBase
     {
         protected Project Project { get; private set; }
@@ -73,4 +74,5 @@ namespace WebBlazorEmpty.AHP
             }
         }
     }
+
 }

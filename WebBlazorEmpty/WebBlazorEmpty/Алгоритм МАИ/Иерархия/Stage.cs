@@ -12,6 +12,25 @@ namespace WebBlazorEmpty.AHP
         string Description { get; }
     }
 
+    public class BigStage
+    {
+
+        public string Name { get; set; }
+        public int ProgressNow { get; set; }
+        public int ProgressMax { get; set; }
+
+        public bool Warning { get; set; }
+        public bool Error { get; set; }
+
+        public BigStage(string name,int now, int max, bool warn = false, bool error = false)
+        {
+            Name = name;
+            ProgressNow = now;
+            ProgressMax = max;
+            Warning = warn;
+            Error = error;
+        }
+    }
 
     public class Stage : IStage
     {
