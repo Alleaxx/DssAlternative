@@ -57,7 +57,7 @@ namespace DSSConsole
 
         static Problem ProblemCurrent { get; set; }
 
-        static DirectoryInfo Directory = new DirectoryInfo(@"C:\Users\Alleaxx\Documents\Программы\Базы данных\Решения АНР");
+        static DirectoryInfo Directory = new DirectoryInfo(@"C:\Users\Allex\Downloads\Решения");
 
         static XmlSerializer ProblemFormatter = new XmlSerializer(typeof(Problem));
         

@@ -1,20 +1,30 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: 25fr 75fr;
+            grid-template-rows: auto auto 1fr auto;
+            grid-template-areas: "logo header" "content content" "footer footer";
+        }
 
-<div class="sidebar">
+        main {
+            grid-area: content;
+            min-width: 640px;
+            max-width: 1000px;
+            margin: auto;
+            border-right: 1px solid gainsboro;
+            border-left: 1px solid gainsboro;
+            padding: 0px 10px;
+        }
+    </style>
 
-    @*Подстановка компонента навигации*@
-    <NavSite />
+    <section class="grid">
+        <Logo />
+        <MainHeader />
 
-
-</div>
-
-<div class="main">
-    <div class="top-row px-4">
-        <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
-    </div>
-
-    <div class="content px-4">
-        @Body
-    </div>
-</div>
+        <main>
+            @Body
+        </main>
+        <Footer />
+    </section>

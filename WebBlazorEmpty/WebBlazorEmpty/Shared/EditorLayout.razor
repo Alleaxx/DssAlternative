@@ -1,33 +1,54 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 
-<style>
-    .top-row{
-        justify-content: center;
-    }
 
-    .top-row ul{
-        margin-bottom: 0;
-    }
-</style>
+    @*Сюда будет подставляться запрошенный компонент*@
+    @*<StageMenu URi="@(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))" />*@
 
-<div class="sidebar">
+<link rel="stylesheet" href="/css/app.css" />
+<section class="grid">
+    <Logo />
+    <MainHeader />
 
-    @*Подстановка компонента навигации*@
-    <NavMenu />
+    <nav class="upper-menu">
+        <!-- <section class="lower-menu">
+            <a href="#">
+                ← Назад
+            </a>
+            <a href="#">
+                Далее →
+            </a>
+        </section> -->
+        <!-- <ul>
+            <li>
+                <a href="#">
+                    <img src="Иерархия.png" />
+                    I ИЕРАРХИЯ
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="Отношения.png" />
+                    II ОБЗОР
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="Результаты.png" />
+                    III РЕЗУЛЬТАТЫ
+                </a>
+            </li>
+        </ul> -->
+    </nav>
 
-
-</div>
-
-<div class="main">
-    <div class="top-row px-4" style="justify-content: start">
-        <ProblemsMenu />
-    </div>
-
-    <div class="content px-4">
-
-        @*Сюда будет подставляться запрошенный компонент*@
-        <StageMenu URi="@(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))" />
+    <Menu />
+    <main>
         @Body
-    </div>
-</div>
+    </main>
+
+    <nav class="lower-menu">
+    </nav>
+
+    <Footer />
+</section>
+

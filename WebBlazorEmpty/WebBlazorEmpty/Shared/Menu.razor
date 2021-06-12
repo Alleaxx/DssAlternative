@@ -1,0 +1,86 @@
+﻿
+<nav class="navside">
+
+    <section class="stage-menu">
+        <h2>Этапы решения</h2>
+        <ul>
+            <li>
+                <a class="row center active" href="hierarchy">
+                    <img class="icon" src="Images/Иерархия.png" />
+                    <span>I - ИЕРАРХИЯ</span>
+                </a>
+            </li>
+            <li>
+                <a class="row center" href="view">
+                    <img class="icon" src="Images/Отношения.png" />
+                    <span>II - ОТНОШЕНИЯ</span>
+                </a>
+            </li>
+            <li>
+                <ul class="relations row center">
+                    <li>
+                        <a href="#">
+                            1
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            2
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            3
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            4
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            5
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a class="row center" href="results">
+                    <img class="icon" src="Images/Результаты.png" />
+                    <span>III - РЕЗУЛЬТАТЫ</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+
+    <!-- <section class="next-menu">
+        <a href="#">
+            ← Назад
+        </a>
+        <a href="#">
+            Далее →
+        </a>
+    </section> -->
+
+    <section class="task-menu">
+        <h2>Открытые задачи</h2>
+        <ul>
+            @foreach (var project in DSS.Ex.Problems)
+            {
+                <li>
+                    <a class="@(project.Problem == DSS.Ex.Problem ? "active" : "")" href="#">
+                        <img src="Images/foto_117859.png" />
+                        <header>
+                            <h4>@project.Problem.MainGoal.Name</h4>
+                            <p>Описание</p>
+                        </header>
+                    </a>
+                </li>
+            }
+        </ul>
+
+    </section>
+</nav>
+
+
