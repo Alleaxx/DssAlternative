@@ -113,7 +113,7 @@
     }
 
     .best {
-        background-color: lightblue;
+        background-color: lightgreen;
     }
 
     .sheme-header{
@@ -155,7 +155,7 @@
                         <NavLink href="@(GetLink(node))">
                             <span>@node.Name</span>
                         </NavLink><br />
-                        <span> @(GetTag(node).Text)</span>
+                        <span style="font-size:0.9em; color: gray"> @(GetTag(node).Text)</span>
                         @if (Filter == Relations && node.Level != 0)
                         {
                             <ol>
@@ -177,13 +177,13 @@
 </section>
 
 <div class="row-own">
-    <section>
+    @*<section>
         <h4>Отображение</h4>
         <p>
             Размер узлов:
             <input type="number" @bind-value="@NodeSize" />
         </p>
-    </section>
+    </section>*@
 
     <section>
         @if (Filter == Constistency)
@@ -203,9 +203,9 @@
             <ViewRelations />
         }
     </section>
-    <section>
+    @*<section>
         <ViewJson />
-    </section>
+    </section>*@
 
 </div>
 
@@ -227,7 +227,6 @@
             Description,
             FilterRating,
             Constistency,
-            Relations,
         };
     private string Filter
     {

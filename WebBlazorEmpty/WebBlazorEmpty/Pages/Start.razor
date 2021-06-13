@@ -5,65 +5,226 @@
 @using System.Text.Unicode;
 @using System.Text.Encodings.Web;
 
-<h3>Как зададим проблему?</h3>
+<style>
+    .load-task-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: auto 1fr;
+        grid-template-areas:
+            "header header header"
+            "own preset loaded";
+    }
+
+        .load-task-grid h3 {
+            font-size: 1em;
+        }
 
 
-<ul>
-    <li>
-        <NavLink @onclick="LoadSample" href="start">
-            Загрузим образцовую
-        </NavLink>
-        <p>
-            Для ознакомления с возможностями
+    .load-header {
+        grid-area: header;
+        text-align: center;
+        border-bottom: 1px solid gainsboro;
+    }
+
+    .load-sample {
+        grid-area: sample;
+        padding: 10px;
+        min-height: 30em;
+    }
+
+    .load-own {
+        grid-area: own;
+        padding: 10px;
+    }
+
+        .load-own input[type="button"], .load-sample input[type="button"] {
+            width: 90%;
+            margin: 5px;
+            cursor: pointer;
+            background-color: transparent;
+            border: 1px solid gray;
+            padding: 8px;
+        }
+
+            .load-own input[type="button"]:hover, .load-sample input[type="button"]:hover {
+                background-color: lightgreen;
+            }
+
+
+    .load-preset {
+        grid-area: preset;
+        border-right: 1px solid gainsboro;
+        border-left: 1px solid gainsboro;
+        cursor: initial;
+        padding: 10px;
+    }
+
+    .presets, .problems {
+        list-style: none;
+        padding: 0;
+    }
+
+        .presets a, .problems a {
+            text-decoration: none;
+            color: black;
+        }
+
+            .problems a:hover {
+                background-color: gainsboro;
+            }
+
+    .preset {
+        display: grid;
+        grid-template-columns: 8fr 1fr;
+        grid-template-rows: auto auto;
+        padding: 5px 0;
+        border-top: 1px solid gainsboro;
+        border-bottom: 1px solid gainsboro;
+        grid-template-areas:
+            "name load"
+            "descr load";
+    }
+
+
+
+    .preset-name {
+        grid-area: name;
+        font-size: 0.8em;
+        margin: 0;
+    }
+
+    .problem-name {
+        grid-area: name;
+        font-size: 0.8em;
+        margin: 0;
+    }
+
+    .preset-descr {
+        grid-area: descr;
+        font-size: 0.8em;
+        margin: 4px 0;
+        color: gray;
+    }
+
+    .problem-status {
+        grid-area: status;
+        font-size: 0.8em;
+        margin: 4px 0;
+        color: gray;
+    }
+
+
+    .preset-load {
+        grid-area: load;
+        height: 24px;
+        margin-left: 1em;
+        border: 1px solid gray;
+        background-color: transparent;
+    }
+
+        .preset-load:hover {
+            background-color: lightgreen;
+            cursor: pointer;
+        }
+
+    .problem-img {
+        grid-area: img;
+        margin-right: 1em;
+        width: 30px;
+        vertical-align: middle;
+    }
+
+    .loaded {
+        grid-area: loaded;
+        padding: 10px;
+    }
+
+    .problems {
+        list-style: none;
+        padding: 0;
+    }
+
+    .problem {
+        display: grid;
+        grid-template-rows: auto auto;
+        grid-template-columns: auto 1fr;
+        padding: 5px 0;
+        border-top: 1px solid gainsboro;
+        border-bottom: 1px solid gainsboro;
+        grid-template-areas:
+            "img name"
+            "img status";
+    }
+
+
+    .load-note {
+        color: gray;
+        font-size: 0.9em;
+    }
+</style>
+
+<div class="load-task-grid">
+    <header class="load-header">
+        <h2>Формирование задачи выбора</h2>
+    </header>
+    <section class="load-own">
+        <h3>Создание с нуля</h3>
+        <p class="load-note">
+            Формирование иерархии проблемы с нуля. Подходит для нетипичных задач.
         </p>
-    </li>
-    <li>
-        <NavLink @onclick="LoadOwn" href="start">
-            Создать свою проблему
-        </NavLink>
-        <p>
-            С нуля
+        <input type="button" @onclick="LoadSample" value="Создать" />
+        <h3>Загрузка образца</h3>
+        <p class="load-note">
+            Образцовая задача показывает возможности системы на примере уже решенной проблемы.
         </p>
-    </li>
-    <li>
-        <details>
-            <summary>Вставить JSON для загрузки</summary>
-            @JSONLoadResult <br />
-            <textarea rows="5" cols="50" @onchange="LoadJSON"></textarea>
-        </details>
-        <p>
-            Воссоздать ранее созданную проблему
+        <input type="button" @onclick="LoadOwn" value="Загрузить" />
+    </section>
+    <section class="load-preset">
+        <h3>Модификация шаблона</h3>
+        <p class="load-note">
+            Позволяет задать типовую задачу, которую можно изменить под свои условия.
         </p>
-    </li>
-    <li>
-        Выбрать из шаблона
-        <ol>
+        <ul class="presets">
             @foreach (var problem in Templates)
             {
-                <NavLink @onclick="@(() => LoadTemplate(problem))" href="start">
-                    <li>@problem</li>
-                </NavLink>
+                <li>
+                    <section class="preset">
+                        <h4 class="preset-name">@problem.MainGoal.Name</h4>
+                        <p class="preset-descr">@problem.Criterias.Count() КР, @problem.Alternatives.Count() АЛЬТ</p>
+                        <input class="preset-load" type="button" value="->" @onclick="@(() => LoadTemplate(problem))" />
+                    </section>
+                </li>
             }
-        </ol>
-        <p>
-            Если лень думать
+        </ul>
+    </section>
+    <section class="loaded">
+        <h3>Открытые задачи</h3>
+        <p class="load-note">
+            Список уже загруженных задач выбора.
         </p>
-    </li>
-    <li>
-        Перейти к уже загруженной проблеме
-        <ol>
+        <ul class="problems">
+
             @foreach (var project in DSS.Ex.Problems)
             {
-                <NavLink @onclick="@(() => DSS.Ex.SelectProblem(project))" href="@($"hierarchy")">
-                    <li>@project.Problem</li>
-                </NavLink>
+                <li>
+                    <NavLink @onclick="@(() => DSS.Ex.SelectProblem(project))" class="problem" href="hierarchy">
+                        <img class="problem-img" src="Images/Отношения.png" />
+                        <h4 class="problem-name">@project.Problem.MainGoal.Name</h4>
+                        <p class="problem-status">@project.Problem.Status</p>
+                    </NavLink>
+                </li>
             }
-        </ol>
-        <p>
-            Была проведена знатная работа
-        </p>
-    </li>
-</ul>
+        </ul>
+    </section>
+</div>
+
+
+@*<details>
+    <summary>Вставить JSON для загрузки</summary>
+    @JSONLoadResult <br />
+    <textarea rows="5" cols="50" @onchange="LoadJSON"></textarea>
+</details>*@
+
 
 @code {
     //Загрузка шаблонов
@@ -78,8 +239,13 @@
         string[] pathes = new string[]
         {
                 "alpha-problem.json",
-                "small-problem.json"
-                };
+                "small-problem.json",
+                "analyze-problem.json",
+                "work-problem.json",
+                "project-team-problem.json",
+                "project-riscs-problem.json",
+                "project-tools-problem.json",
+                        };
 
         var options = new JsonSerializerOptions()
         {
@@ -113,8 +279,8 @@
     {
         INode[] nodes = new INode[]
         {
-            new Node(0,"ЦЕЛЬ")
-            };
+            new Node(0,"Задача выбора")
+                    };
         DSS.Ex.AddProblem(nodes);
     }
 

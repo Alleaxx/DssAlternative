@@ -149,7 +149,6 @@ namespace DSSViewTests
             Assert.AreEqual(Math.Round(Reputation.Matrix.Consistency.Cr,5), 0, "Неверно рассчитывается согласованность матрицы");
         }
 
-
         [TestMethod]
         public void ChangeRelationTest()
         {

@@ -170,6 +170,8 @@ namespace WebBlazorEmpty.AHP
     public class ProblemDecizion : Problem
     {
 
+        public string Status => AreRelationsCorrect ? "Анализ завершен" : "Требуется ввод данных";
+
         public ProblemDecizion(IEnumerable<INode> nodes) : base(nodes)
         {
             Stages.Add(new Stage("Формирование иерархии",$"hierarchy", "На этом этапе необходимо выделить основные элементы проблемы"));

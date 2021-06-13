@@ -17,6 +17,7 @@
 
     .info-sheme {
         flex-basis: 25%;
+        display: none;
     }
 
     .info-node {
@@ -24,7 +25,7 @@
     }
 
     .sheme {
-        flex-basis: 75%;
+        flex-basis: 100%;
     }
 
 
@@ -66,7 +67,8 @@
         padding: 10px;
         margin: 10px;
         border: 1px solid gray;
-        flex-basis: 15%;
+        width: 20%;
+        min-width: 125px;
     }
 
     .add {
@@ -78,6 +80,7 @@
     }
 
     .input-text{
+        width: 100%;
     }
 </style>
 
@@ -88,34 +91,28 @@
         <div>
             @foreach (var levelGroup in Hierarchies.GroupedByLevel)
             {
-                <div class="row-own level">
-                    <div class="level-name">
-                        <span style="font-size:1em">Уровень @levelGroup.Key</span>
-                        <br>
-                        <span style="font-size:1.1em">@(Hierarchies.GetTextInfo(levelGroup.Key))</span>
-                        <br />
+            <div class="row-own level">
+                <div class="level-name">
+                    <span style="font-size:1em">Уровень @levelGroup.Key</span>
+                    <br>
+                    <span style="font-size:1.1em">@(Hierarchies.GetTextInfo(levelGroup.Key))</span>
+                    <br />
 
-                        @*<input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />*@
-                    </div>
-                    <div class="level-elements">
-                        @foreach (var node in levelGroup)
-                        {
-                            <div class="node-element row-own">
-                                <div>
-                                    <input class="input-text" type="text" @bind-value="@node.Name" @onfocus="@( () => SelectedNode = node )" />
-                                </div>
-                                <div style="height:30px">
-                                    <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    <div>
-                        <div style="margin-left: 10px;" class="row-own">
-                            <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
-                        </div>
-                    </div>
+                    @*<input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />*@
                 </div>
+                <div class="level-elements">
+                    @foreach (var node in levelGroup)
+                    {
+                        <div class="node-element row-own">
+                            <input class="input-text" type="text" @bind-value="@node.Name" @onfocus="@( () => SelectedNode = node )" />
+                            <input style="height:30px" class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
+                        </div>
+                    }
+                </div>
+                <div style="margin-left: 10px;" class="row-own">
+                    <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
+                </div>
+            </div>
             }
             <div class="row-own level">
                 <div class="level-name" style="color:gray">

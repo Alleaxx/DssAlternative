@@ -232,10 +232,12 @@ ul.relations {
 }
 
     ul.relations a {
+        width: 40px;
         height: 12px;
         font-size: 0.8em;
         border-top-right-radius: 10px;
         border-bottom-right-radius: 10px;
+        border-right: 3px solid gainsboro;
         padding: 5px 10px;
         margin: 0 3px;
     }
@@ -254,6 +256,7 @@ ul.relations {
 
 .task-menu a {
     border-bottom: 1px solid gainsboro;
+    color: black;
 }
 
 .stage-menu a {

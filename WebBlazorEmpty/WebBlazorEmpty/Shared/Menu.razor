@@ -21,8 +21,8 @@
                     @foreach (var rel in DSS.Ex.Problem.RelationsRequired)
                     {
                         <li>
-                            <NavLink href="@($"relation/{DSS.Ex.Problem.RelationsRequired.ToList().IndexOf(rel)}")">
-                                @rel.Main.Name.Substring(0, 3);
+                            <NavLink href="@($"relation/{DSS.Ex.Problem.RelationsAll.ToList().IndexOf(rel)}")">
+                                О-@DSS.Ex.Problem.RelationsAll.ToList().IndexOf(rel)
                             </NavLink>
                         </li>
                     }

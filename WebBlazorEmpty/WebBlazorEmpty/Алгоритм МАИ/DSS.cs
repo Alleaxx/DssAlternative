@@ -14,7 +14,7 @@ namespace WebBlazorEmpty.AHP
         {
 
             List<INode> nodes = new List<INode>();
-            INode main = new Node(0, "Альфа");
+            INode main = new Node(0, "Выбор места учебы");
 
             INode Place = new Node(1, "Местоположение");
             INode Reputation = new Node(1, "Репутация");
