@@ -6,20 +6,21 @@ using System.Threading.Tasks;
 
 namespace WebBlazorEmpty.AHP
 {
-    public interface IMatrixAHP
+    public interface IMatrix
     {
         int Size { get; }
+        double[,] Array { get; }
+        double[] Coeffiients { get; }
+        IConsistency Consistency { get; }
     }
-    public class MatrixAHP : IMatrixAHP 
+    public class Matrix : IMatrix 
     {
         public override string ToString() => $"Матрица ({Array.GetLength(0)}x{Array.GetLength(1)})";
         
         public double[,] Array { get; set; }
         public int Size => Array.GetLength(0);
 
-
-        public MatrixConsistenct Consistency { get; set; }
-
+        public IConsistency Consistency { get; set; }
 
         public double[] Coeffiients => LocalCoefficients(Array);
 
@@ -87,7 +88,7 @@ namespace WebBlazorEmpty.AHP
         }
 
 
-        public static double[,] GetRelationMatrixForNode(Problem problem, INode node)
+        public static double[,] GetRelationMatrixForNode(IProblem problem, INode node)
         {
             var grouped = problem.RelationsAll.Where(g => g.Main == node).GroupBy(r => r.From).ToArray();
             return GetArrayFromRelations(grouped);
@@ -105,7 +106,7 @@ namespace WebBlazorEmpty.AHP
             }
             return arr;
         }
-        public static double[,] GetCoeffMatrixForLevel(Problem problem, int level)
+        public static double[,] GetCoeffMatrixForLevel(IProblem problem, int level)
         {
             var nodes = problem.Dictionary[level];
             var nodeCoeffs = nodes.Select(n => LocalCoefficients(GetRelationMatrixForNode(problem, n))).ToArray();
@@ -125,7 +126,7 @@ namespace WebBlazorEmpty.AHP
 
             return mtx;
         }
-        public static double[] GetGlobalCoeffs(Problem problem, int level)
+        public static double[] GetGlobalCoeffs(IProblem problem, int level)
         {
             var localCoeffMatrix = GetCoeffMatrixForLevel(problem, level);
             var globalCoeffMatrix = problem.Hierarchy.Where(node => node.Level == level).Select(n => n.Coefficient).ToArray();
@@ -134,11 +135,11 @@ namespace WebBlazorEmpty.AHP
         }
 
 
-        public MatrixAHP(IGrouping<INode, INodeRelation>[] grouped) : this(GetArrayFromRelations(grouped))
+        public Matrix(IGrouping<INode, INodeRelation>[] grouped) : this(GetArrayFromRelations(grouped))
         {
 
         }
-        public MatrixAHP(double[,] arr)
+        public Matrix(double[,] arr)
         {
             Array = arr;
             Consistency = new MatrixConsistenct(this);

@@ -18,18 +18,36 @@
     }
 
     .mtx table {
-        min-width: 65%;
+        width: 100%;
         padding: 5px;
         border: 1px solid gainsboro;
+    }
+    .mtx table a{
+        text-decoration: none;
+    }
+    .mtx table a:hover{
+        text-decoration: underline;
+    }
+    .mtx table h4{
+        margin: 5px 0;
     }
 
     td {
         padding: 5px 8px;
+        text-align: center;
+    }
+
+    .selected-cell{
+        background-color: gainsboro;
     }
 
     .good-mtx {
         color: green;
         padding: 10px;
+    }
+
+    .unknown{
+        background-color: lightyellow;
     }
 
     .bad-mtx {
@@ -48,21 +66,21 @@
 <div class="mtx">
     <table>
         <tbody>
-            <tr class="lower-border">
+            <tr>
 
-                <td class="@(Matrix.Consistency.IsCorrect(Problem.Border) ? "good-mtx" : "bad-mtx") right-border">
+                <td class="@(Mtx.Consistency.IsCorrect() ? "good-mtx" : "bad-mtx") lower-border right-border">
                     <h4>
-                        <b>@Node.Name</b>  @(Matrix.Consistency.IsCorrect(Problem.Border) ? "✓" : "X")
+                        <b>@Node.Name</b>  @(Mtx.Consistency.IsCorrect() ? "✓" : "X")
                     </h4>
                 </td>
 
                 @foreach (var node in Problem.CriteriasFurther[Node])
                 {
-            <td>
-                <NavLink href="@($"/node/{node.Level}/{node.Name}")">
-                    @node.Name
-                </NavLink>
-            </td>
+                    <td class="lower-border">
+                        <NavLink href="@($"/node/{node.Level}/{node.Name}")">
+                            @node.Name
+                        </NavLink>
+                    </td>
                 }
             </tr>
             @foreach (var node in Problem.GetGrouped(Node))
@@ -76,7 +94,9 @@
                     </td>
                     @foreach (var relation in node)
                     {
-                        <td><input disabled="@relation.Self" type="text" @onfocus="@(() => RelationSelected = relation)" @bind-value="@relation.Value" /></td>
+                        <td class="@(relation == RelationSelected ? "selected-cell" : "")">
+                    <input class="@(relation.Unknown)" disabled="@relation.Self" type="text" @onfocus="@(() => RelationSelected = relation)" @bind-value="@relation.Value" />
+                        </td>
                     }
                 </tr>
             }
@@ -89,7 +109,7 @@
 @if (RelationSelected != null)
 {
     <div class="relation-sel">
-        <NodeQuestion Relation="@RelationSelected" />
+        <NodeQuestion RelationUpdated="@(() => StateHasChanged())" Relation="@RelationSelected" />
     </div>
 }
 
@@ -100,21 +120,19 @@
         </summary>
         <dl>
             <dt>nmax</dt>
-            <dd>@Matrix.Consistency.Nmax</dd>
-            <dt>nmax-alpha</dt>
-            <dd>@Matrix.Consistency.NmaxAlpha</dd>
+            <dd>@Mtx.Consistency.Nmax</dd>
             <dt>CI</dt>
-            <dd>@Matrix.Consistency.CI</dd>
+            <dd>@Mtx.Consistency.CI</dd>
             <dt>RI</dt>
-            <dd>@Matrix.Consistency.RI</dd>
-            <dt>CR (порог @Problem.Border)</dt>
-            <dd>@Matrix.Consistency.Cr</dd>
+            <dd>@Mtx.Consistency.RI</dd>
+            <dt>CR </dt>
+            <dd>@Mtx.Consistency.Cr</dd>
 
             <dt>Локальные коэффициенты</dt>
             <dd>
                 <details>
                     <ul>
-                        @foreach (var coeff in MatrixAHP.LocalCoefficients(Matrix.Array))
+                        @foreach (var coeff in AHP.Matrix.LocalCoefficients(Mtx.Array))
                         {
                             <li>@coeff</li>
                         }
@@ -127,7 +145,7 @@
             <dd>
                 <details>
                     <ul>
-                        @foreach (var coeff in Matrix.Consistency.MultiMatrixLocalCoeffs)
+                        @foreach (var coeff in Mtx.Consistency.MultiMatrixLocalCoeffs)
                         {
                             <li>@coeff</li>
                         }

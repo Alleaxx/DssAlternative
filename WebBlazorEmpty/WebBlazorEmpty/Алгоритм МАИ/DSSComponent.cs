@@ -10,8 +10,8 @@ namespace WebBlazorEmpty.AHP
 
     public class DSSComponent : ComponentBase
     {
-        protected Project Project { get; private set; }
-        protected ProblemDecizion Problem => Project.Problem;
+        protected IProject Project { get; private set; }
+        protected IProblem Problem => Project.Problem;
 
         protected override void OnParametersSet()
         {
@@ -30,7 +30,7 @@ namespace WebBlazorEmpty.AHP
         public string NodeName { get; set; }
 
 
-        protected MatrixAHP Matrix => Problem.GetMatrix(Node);
+        protected IMatrix Mtx => Problem.GetMatrix(Node);
 
 
         protected override void OnParametersSet()

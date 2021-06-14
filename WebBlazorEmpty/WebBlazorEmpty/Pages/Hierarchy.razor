@@ -54,7 +54,7 @@
 
     .level-name {
         text-align: center;
-        flex-basis: 20%;
+        flex-basis: 22%;
     }
 
     .level-elements {
@@ -64,74 +64,65 @@
     }
 
     .node-element {
-        padding: 10px;
-        margin: 10px;
+        padding: 2px 5px;
+        padding-right: 0;
+        margin: 8px;
         border: 1px solid gray;
-        width: 20%;
+        width: 15%;
         min-width: 125px;
+        border-radius: 2px;
     }
 
     .add {
-        background-color: lightgreen;
+        color: green;
+        border: 1px solid lightgreen;
+        background: transparent;
+        padding: 5px 30px;
     }
+
+        .add:hover {
+            background-color: lightgreen;
+            cursor: pointer;
+        }
 
     .remove {
-        background-color: lightpink;
+        color: red;
+        /* height: 2em; */
+        font-size: 0.75em;
+        margin: 0 3px;
+        margin-right:0;
+        padding: 5px 8px;
+        background-color: transparent;
+        border: 0;
     }
 
-    .input-text{
+        .remove:hover {
+            background-color: lightpink;
+            cursor: pointer;
+        }
+
+
+    .input-text {
         width: 100%;
+        font-size: 0.7em;
+        border: 0;
+        border-right: 1px solid gainsboro;
+        padding: 10px 0;
+    }
+
+    .confirm{
+        margin: 10px;
     }
 </style>
 
 <div style="height:10px"></div>
 
+<h2 class="content-header-h">Редактирование иерархии задачи выбора</h2>
 <div class="row-own">
     <div class="col-own sheme basic-border space-between">
-        <div>
-            @foreach (var levelGroup in Hierarchies.GroupedByLevel)
-            {
-            <div class="row-own level">
-                <div class="level-name">
-                    <span style="font-size:1em">Уровень @levelGroup.Key</span>
-                    <br>
-                    <span style="font-size:1.1em">@(Hierarchies.GetTextInfo(levelGroup.Key))</span>
-                    <br />
 
-                    @*<input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />*@
-                </div>
-                <div class="level-elements">
-                    @foreach (var node in levelGroup)
-                    {
-                        <div class="node-element row-own">
-                            <input class="input-text" type="text" @bind-value="@node.Name" @onfocus="@( () => SelectedNode = node )" />
-                            <input style="height:30px" class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
-                        </div>
-                    }
-                </div>
-                <div style="margin-left: 10px;" class="row-own">
-                    <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
-                </div>
-            </div>
-            }
-            <div class="row-own level">
-                <div class="level-name" style="color:gray">
-                    <span style="font-size:1.1em">Уровень @Hierarchies.LevelsCount</span>
-                    <br>
-                    @*<span style="font-size:1.35em">@(NHierarchys.GetTextInfo(levelGroup.Key))</span>
-                        <br />
-                        <span ></span>*@
-                </div>
-                <div>
-                    <div class="row-own">
-                        <input class="add" type="button" value="+" @onclick="@(() => AddNode(Hierarchies.LevelsCount))" />
-                    </div>
-                </div>
-            </div>
 
-        </div>
-
-        <div>
+        <div class="confirm">
             @if (Project.UnsavedChanged)
             {
                 <b>Есть несохраненные изменения</b>
@@ -141,6 +132,43 @@
             {
                 <b @onclick="UpdateHierarchy">Все изменения сохранены</b>
             }
+        </div>
+        <div>
+            @foreach (var levelGroup in Hierarchies.GroupedByLevel)
+            {
+                <div class="row-own level">
+                    <div class="level-name">
+                        <span style="font-size:1em">Уровень @levelGroup.Key</span>
+                        <br>
+                        <span style="font-size:1.1em">@(HierarchyNodes.GetTextInfo(Hierarchies,levelGroup.Key))</span>
+                        <br />
+
+                    </div>
+                    <div class="level-elements">
+                        @foreach (var node in levelGroup)
+                        {
+                            <div class="node-element row-own">
+                                <input class="input-text" type="text" @bind-value="@node.Name" @onfocus="@( () => SelectedNode = node )" />
+                                <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
+                            </div>
+                        }
+                    </div>
+                    <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
+
+                </div>
+            }
+            <div class="row-own level">
+                <div class="level-name" style="color:gray">
+                    <span style="font-size:1.1em">Уровень @Hierarchies.LevelsCount</span>
+                    <br>
+                </div>
+                <div>
+                    <div class="row-own">
+                        <input class="add" type="button" value="+" @onclick="@(() => AddNode(Hierarchies.LevelsCount))" />
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
     <div class="info-sheme basic-border">
@@ -197,7 +225,7 @@
 
 
 @code {
-    private HierarchyNodes Hierarchies => Project.HierEdit;
+    private IHierarchy Hierarchies => Project.ProblemEditing;
     private List<INode> Nodes => Project.NodesEditing;
 
     const string Sheme = "По описанию";
@@ -208,7 +236,7 @@
     {
             Sheme,
             Information,
-        };
+            };
     private string Filter { get; set; }
 
 

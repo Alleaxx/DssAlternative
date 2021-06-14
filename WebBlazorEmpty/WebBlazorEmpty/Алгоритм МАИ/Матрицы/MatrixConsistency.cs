@@ -6,16 +6,35 @@ using System.Threading.Tasks;
 
 namespace WebBlazorEmpty.AHP
 {
-    public class MatrixConsistenct
+    public interface IConsistency
+    {
+        bool IsCorrect(double border);
+        bool IsCorrect();
+        double Cr { get; }
+
+        public double Nmax { get; }
+        public double NmaxAlpha { get; }
+
+        public double CI { get; }
+
+
+        //Стохастический индекс согласованности
+        public double RI { get; }
+
+        double[] MultiMatrixLocalCoeffs { get; }
+
+
+    }
+    public class MatrixConsistenct : IConsistency
     {
         public override string ToString() => "Согласованность матрицы";
-        private MatrixAHP Matrix { get; set; }
-        private int Size => Matrix.Size;
+        private IMatrix Mtx { get; set; }
+        private int Size => Mtx.Size;
 
 
         public double Nmax => NmaxAlpha;
         public double NmaxOld => MultiMatrixLocalCoeffs.Sum();
-        public double NmaxAlpha => MatrixAHP.MatrixMultiplication(Matrix.Array, MultiChecker()).Sum();
+        public double NmaxAlpha => Matrix.MatrixMultiplication(Mtx.Array, MultiChecker()).Sum();
 
 
 
@@ -49,8 +68,8 @@ namespace WebBlazorEmpty.AHP
         //Коэффициент согласованности (отношение согласованности)
         public double Cr => CI / RI;
 
-
-        public bool IsCorrect(double border = BorderConsistenct)
+        public bool IsCorrect() => IsCorrect(BorderConsistenct);
+        public bool IsCorrect(double border)
         {
             if (Size < 3)
                 return true;
@@ -60,11 +79,11 @@ namespace WebBlazorEmpty.AHP
                 return false;
         }
 
-        public const double BorderConsistenct = 0.15;
+        public static double BorderConsistenct { get; set; } = 0.2;
 
 
         //Порог 0.1
-        public double[] MultiMatrixLocalCoeffs => MatrixAHP.MatrixMultiplication(Matrix.Array, Matrix.Coeffiients);
+        public double[] MultiMatrixLocalCoeffs => AHP.Matrix.MatrixMultiplication(Mtx.Array, Mtx.Coeffiients);
 
 
         public double[] MultiChecker()
@@ -75,18 +94,18 @@ namespace WebBlazorEmpty.AHP
                 double sum = 0;
                 for (int c = 0; c < Size; c++)
                 {
-                    sum += Matrix.Array[r, c];
+                    sum += Mtx.Array[r, c];
                 }
                 rowSum[r] = sum;
             }
             double sumAll = rowSum.Sum();
 
-            return MatrixAHP.Normalise(rowSum, sumAll);
+            return AHP.Matrix.Normalise(rowSum, sumAll);
         }
 
-        public MatrixConsistenct(MatrixAHP matrix)
+        public MatrixConsistenct(IMatrix matrix)
         {
-            Matrix = matrix;
+            Mtx = matrix;
         }
     }
 }

@@ -130,7 +130,6 @@
     .problem-img {
         grid-area: img;
         margin-right: 1em;
-        width: 30px;
         vertical-align: middle;
     }
 
@@ -147,7 +146,7 @@
     .problem {
         display: grid;
         grid-template-rows: auto auto;
-        grid-template-columns: auto 1fr;
+        grid-template-columns: 2fr 8fr;
         padding: 5px 0;
         border-top: 1px solid gainsboro;
         border-bottom: 1px solid gainsboro;
@@ -172,12 +171,12 @@
         <p class="load-note">
             Формирование иерархии проблемы с нуля. Подходит для нетипичных задач.
         </p>
-        <input type="button" @onclick="LoadSample" value="Создать" />
+        <input type="button" @onclick="LoadOwn" value="Создать" />
         <h3>Загрузка образца</h3>
         <p class="load-note">
             Образцовая задача показывает возможности системы на примере уже решенной проблемы.
         </p>
-        <input type="button" @onclick="LoadOwn" value="Загрузить" />
+        <input type="button" @onclick="LoadSample"  value="Загрузить" />
     </section>
     <section class="load-preset">
         <h3>Модификация шаблона</h3>
@@ -208,9 +207,12 @@
             {
                 <li>
                     <NavLink @onclick="@(() => DSS.Ex.SelectProblem(project))" class="problem" href="hierarchy">
-                        <img class="problem-img" src="Images/Отношения.png" />
+                        @*<img class="problem-img" src="Images/Отношения.png" />*@
+                        <div class="problem-img">
+                            <WebBlazorEmpty.Pages.HierSheme Project="@project" />
+                        </div>
                         <h4 class="problem-name">@project.Problem.MainGoal.Name</h4>
-                        <p class="problem-status">@project.Problem.Status</p>
+                        <p class="problem-status">@project.Status</p>
                     </NavLink>
                 </li>
             }
@@ -230,12 +232,15 @@
     //Загрузка шаблонов
     protected override async Task OnInitializedAsync()
     {
-        await LoadTemplates();
+        if (DSS.Ex.Templates == null)
+            await LoadTemplates();
+        else
+            Templates = DSS.Ex.Templates;
     }
-    public List<HierarchyNodes> Templates { get; set; } = new List<HierarchyNodes>();
+    public List<IHierarchy> Templates { get; set; } = new List<IHierarchy>();
     private async Task LoadTemplates()
     {
-        Templates = new List<HierarchyNodes>();
+        Templates = new List<IHierarchy>();
         string[] pathes = new string[]
         {
                 "alpha-problem.json",
@@ -245,7 +250,7 @@
                 "project-team-problem.json",
                 "project-riscs-problem.json",
                 "project-tools-problem.json",
-                        };
+        };
 
         var options = new JsonSerializerOptions()
         {
@@ -261,9 +266,10 @@
 
             Templates.Add(new HierarchyNodes(nodes));
         }
+        DSS.Ex.Templates = Templates;
         Console.WriteLine("Шаблоны загружены");
     }
-    private void LoadTemplate(HierarchyNodes hier)
+    private void LoadTemplate(IHierarchy hier)
     {
         DSS.Ex.AddProblem(hier.Hierarchy);
     }

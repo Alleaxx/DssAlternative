@@ -1,35 +1,50 @@
 ﻿
+<style>
+    .stage-menu a.warning{
+        border-bottom-color: yellow;
+        border-left-color: yellow;
+    }
+    .stage-menu a.error {
+        border-bottom-color: red;
+        border-left-color: red;
+    }
+    .stage-menu a.none{
+        display: none;
+    }
+</style>
+
+
 <nav class="navside">
 
     <section class="stage-menu">
         <h2>Этапы решения</h2>
         <ul>
             <li>
-                <NavLink class="row center" href="hierarchy">
+                <NavLink class="@(GetProgressStyle(DSS.Ex.Project.StageHier))" href="hierarchy">
                     <img class="icon" src="Images/Иерархия.png" />
                     <span>I - ИЕРАРХИЯ</span>
                 </NavLink>
             </li>
             <li>
-                <NavLink class="row center" href="view">
+                <NavLink class="@(GetProgressStyle(DSS.Ex.Project.StageView))" href="view">
                     <img class="icon" src="Images/Отношения.png" />
-                    <span>II - ОТНОШЕНИЯ</span>
+                    <span>II - ОБЗОР</span>
                 </NavLink>
             </li>
             <li>
                 <ul class="relations row center">
-                    @foreach (var rel in DSS.Ex.Problem.RelationsRequired)
+                    @foreach (var rel in DSS.Ex.Project.StageRelations)
                     {
                         <li>
-                            <NavLink href="@($"relation/{DSS.Ex.Problem.RelationsAll.ToList().IndexOf(rel)}")">
-                                О-@DSS.Ex.Problem.RelationsAll.ToList().IndexOf(rel)
+                            <NavLink class="@(GetProgressStyle(rel.Value))" href="@($"relation/{DSS.Ex.Problem.RelationsAll.ToList().IndexOf(rel.Key)}")">
+                                О-@DSS.Ex.Problem.RelationsAll.ToList().IndexOf(rel.Key)
                             </NavLink>
                         </li>
                     }
                 </ul>
             </li>
             <li>
-                <NavLink href="results">
+                <NavLink class="@(GetProgressStyle(DSS.Ex.Project.StageResults))" href="results">
                     <img class="icon" src="Images/Результаты.png" />
                     <span>III - РЕЗУЛЬТАТЫ</span>
                 </NavLink>
@@ -53,10 +68,10 @@
             {
                 <li>
                     <a class="@(project.Problem == DSS.Ex.Problem ? "active" : "")" @onclick="@(() => { DSS.Ex.SelectProblem(project); })">
-                        <img src="Images/Иерархия.png" />
+                        <WebBlazorEmpty.Pages.HierSheme Project="@project" />
                         <header>
                             <h4>@project.Problem.MainGoal.Name</h4>
-                            <p>Описание</p>
+                            <p>@project.Status</p>
                         </header>
                     </a>
                 </li>
@@ -65,5 +80,37 @@
 
     </section>
 </nav>
+
+@code{
+    private string GetProgressStyle(IStage stage)
+    {
+        string classes = "";
+
+        if (stage.Warning)
+            classes += "warning ";
+        if (stage.Error)
+            classes += "error ";
+        if (stage.Hidden)
+            classes += "none ";
+
+        classes += "normal";
+
+        return classes;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        foreach (var relation in DSS.Ex.Problem.RelationsRequired.OfType<NodeRelation>())
+        {
+            relation.Changed += RelationValue_Changed;
+        }
+    }
+    private void RelationValue_Changed(Relation<INode, INode> changedRelation)
+    {
+        StateHasChanged();
+    }
+
+}
 
 

@@ -11,34 +11,7 @@
     <MainHeader />
 
     <nav class="upper-menu">
-        <!-- <section class="lower-menu">
-            <a href="#">
-                ← Назад
-            </a>
-            <a href="#">
-                Далее →
-            </a>
-        </section> -->
-        <!-- <ul>
-            <li>
-                <a href="#">
-                    <img src="Иерархия.png" />
-                    I ИЕРАРХИЯ
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <img src="Отношения.png" />
-                    II ОБЗОР
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <img src="Результаты.png" />
-                    III РЕЗУЛЬТАТЫ
-                </a>
-            </li>
-        </ul> -->
+
     </nav>
 
     <Menu />
@@ -51,4 +24,16 @@
 
     <Footer />
 </section>
+
+@code{       
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        DSS.Ex.ProjectChanged += Changed;
+        }
+    private void Changed(IProject prjc)
+    {
+        StateHasChanged();
+    }
+}
 

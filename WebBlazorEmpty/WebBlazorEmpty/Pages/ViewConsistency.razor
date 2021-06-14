@@ -3,12 +3,12 @@
 
 <p>
     Граница согласованности
-    <input type="number" @bind-value="@Problem.Border" />
+    <input type="number" @bind-value="@MatrixConsistenct.BorderConsistenct" />
     <br />
     Максимально допустимым значением является 0.2
 </p>
 
-@if (Problem.AreRelationsCorrect)
+@if (Problem.CorrectnessRels.AreRelationsCorrect)
 {
     <p>Все отношения прошли проверку на согласованность</p>
 }

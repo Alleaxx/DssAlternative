@@ -8,10 +8,24 @@
         flex-flow: row;
     }
     .edit{
-        flex-basis: 25%
+        flex-basis: 25%;
+        padding-right: 20px;
+        border-right: 1px solid gainsboro;
     }
     .rels{
         flex-basis: 75%;
+        margin-left: 20px;
+    }
+    .rels a{
+        text-decoration: none;
+        margin-top: 2px;
+    }
+    .rels a:hover{
+        text-decoration: none;
+    }
+
+    dt{
+        margin-bottom: 5px;
     }
 </style>
 
@@ -41,7 +55,7 @@
                 @foreach (var relGroup in Problem.RelationsAll.Where(r => r.From == Node && r.To != Node).GroupBy(r => r.Main))
                 {
                     <li>
-                        По @relGroup.Key.Name:
+                        По '@relGroup.Key.Name':
                         <ul>
                             @foreach (var rel in relGroup)
                             {
@@ -67,8 +81,9 @@
 <section>
     <h4>Матрица коэффициентов для уровня данного критерия</h4>
 </section>
-
+<input type="button" value="Cбросить отношения" />
 <NodeMatrixAlpha Node="@Node" />
+
 
 @code {
 

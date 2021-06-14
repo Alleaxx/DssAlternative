@@ -22,6 +22,7 @@
     border-right: 1px solid gainsboro;
     display: flex;
     justify-content: center;
+    text-align: center;
 }
 
     .logo a {
@@ -258,11 +259,19 @@ ul.relations {
     border-bottom: 1px solid gainsboro;
     color: black;
 }
+.task-menu p{
+    color: gray;
+}
 
 .stage-menu a {
     border-top: 1px solid gainsboro;
     border-bottom: 1px solid lightgreen;
     border-left: 2px solid lightgreen;
+}
+.content-header-h{
+    margin-top: 2em;
+    margin:auto;
+    text-align: center;
 }
 
 .next-menu {

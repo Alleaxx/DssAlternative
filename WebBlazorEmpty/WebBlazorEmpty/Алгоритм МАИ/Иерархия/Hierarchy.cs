@@ -8,6 +8,22 @@ namespace WebBlazorEmpty.AHP
     public interface IHierarchy
     {
         IEnumerable<INode> Hierarchy { get; set; }
+        IEnumerable<IGrouping<int, INode>> GroupedByLevel { get; }
+        
+        //Узлы
+        public INode MainGoal { get; }
+        public IEnumerable<INode> Criterias { get; }
+        public IEnumerable<INode> Alternatives { get; }
+        public IEnumerable<INode> HardNodes { get; }
+
+        public ICorrectness Correctness { get; }
+
+        public int NodesCount { get; }
+        public int LevelsCount { get; }
+        public int RelationsCount { get; }
+        public int MaxLevel { get; }
+
+
     }
 
     public class HierarchyNodes : IHierarchy
@@ -43,7 +59,7 @@ namespace WebBlazorEmpty.AHP
 
 
         //Является ли иерархия корректной для применения в МАИ
-        public HierarchyCorrectness Correctness => new HierarchyCorrectness(this);
+        public ICorrectness Correctness => new HierarchyCorrectness(this);
 
 
         //Сгруппированные по уровням
@@ -64,18 +80,14 @@ namespace WebBlazorEmpty.AHP
         public IEnumerable<INode> Alternatives => Hierarchy.Where(h => h.Level == LevelsCount - 1);
         public IEnumerable<INode> HardNodes => Criterias.Prepend(MainGoal);
         
-
-
         //Сложность?
         //Ожидаемое время решения проблемы
 
-
-
-        public string GetTextInfo(int level)
+        public static string GetTextInfo(IHierarchy hier,int level)
         {
             if (level == 0)
                 return "Цель";
-            else if (level == MaxLevel)
+            else if (level == hier.MaxLevel)
                 return "Альтернативы";
             else if (level == 1)
                 return "Критерии";
@@ -84,7 +96,7 @@ namespace WebBlazorEmpty.AHP
         }
 
 
-        public static bool CompareEqual(HierarchyNodes a, HierarchyNodes b)
+        public static bool CompareEqual(IHierarchy a, IHierarchy b)
         {
             if (a == null || b == null)
                 return false;
@@ -107,12 +119,17 @@ namespace WebBlazorEmpty.AHP
 
 
 
-
-    public class HierarchyCorrectness
+    public interface ICorrectness
     {
-        private HierarchyNodes Hierarchy { get; set; }
+        bool Result { get; }
+        List<string> Comments { get; }
+    }
 
-        public HierarchyCorrectness(HierarchyNodes hierarchy)
+    public class HierarchyCorrectness : ICorrectness
+    {
+        private IHierarchy Hierarchy { get; set; }
+
+        public HierarchyCorrectness(IHierarchy hierarchy)
         {
             Hierarchy = hierarchy;
             Check();

@@ -72,6 +72,7 @@ namespace WebBlazorEmpty.AHP
             From = from;
             To = to;
             Value = val;
+            Unknown = true;
         }
     }
     public interface INodeRelation
@@ -79,9 +80,10 @@ namespace WebBlazorEmpty.AHP
         INode Main { get; }
         INode From { get; }
         INode To { get; }
+
         bool Self { get; }
         INodeRelation Mirrored { get; set; }
-        bool Unknown { get; }
+        bool Unknown { get;  }
         double Value { get; set; }
 
         INode Node { get; }
@@ -168,6 +170,41 @@ namespace WebBlazorEmpty.AHP
 
 
         INodeRelation INodeRelation.Mirrored { get => base.Mirrored as INodeRelation; set => base.Mirrored = value as NodeRelation; }
+    }
+
+        public class Rating
+    {
+        public string Name { get; private set; }
+        public int Value { get; private set; }
+        public string Style { get; set; }
+
+        public Rating(int val)
+        {
+            Value = val;
+            switch (val)
+            {
+                case 1:
+                    Name = "Одинаковы по значимости";
+                    Style = "color:Black;text-decoration: underline";
+                    break;
+                case 3:
+                    Name = "Немного важнее";
+                    Style = "color:green;text-decoration: underline";
+                    break;
+                case 5:
+                    Name = "Важнее";
+                    Style = "color:blue;text-decoration: underline";
+                    break;
+                case 7:
+                    Name = "Значительно важнее";
+                    Style = "color:violet;text-decoration: underline";
+                    break;
+                case 9:
+                    Name = "Абсолютно важнее";
+                    Style = "color:orange;text-decoration: underline";
+                    break;
+            }
+        }
     }
 
 }

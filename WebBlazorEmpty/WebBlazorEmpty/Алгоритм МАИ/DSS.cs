@@ -10,7 +10,7 @@ namespace WebBlazorEmpty.AHP
 {
     public class DSS
     {
-        private static Project CreateSampleProblem()
+        private static IProject CreateSampleProblem()
         {
 
             List<INode> nodes = new List<INode>();
@@ -28,8 +28,8 @@ namespace WebBlazorEmpty.AHP
 
             nodes.AddRange(new INode[] { main ,Reputation, Place, A, B, C, F1, F2 });
 
-            Project project = new Project(nodes);
-            ProblemDecizion sampleProblem = project.Problem;
+            IProject project = new Project(nodes);
+            IProblem sampleProblem = project.Problem;
 
             sampleProblem.SetRelationBetween(main, Reputation, Place, 5);
             sampleProblem.SetRelationBetween(Reputation, A, B, 2);
@@ -48,24 +48,29 @@ namespace WebBlazorEmpty.AHP
         {
             Ex = new DSS();
         }
+
+
         public static DSS Ex { get; private set; }
 
+        public event Action<IProject> ProjectChanged;
 
+        public List<IHierarchy> Templates { get; set; }
         //Все проблемы
-        public List<Project> Problems { get; private set; } = new List<Project>();
-        public Project Find(string name)
+        public List<IProject> Problems { get; private set; } = new List<IProject>();
+        public IProject Find(string name)
         {
             return Problems.Find(p => p.Problem.MainGoal.Name == name);
         }
 
         //Выбранная проблема
-        public Project Project { get; private set; }
-        public ProblemDecizion Problem => Project.Problem;
+        public IProject Project { get; private set; }
+        public IProblem Problem => Project.Problem;
 
 
-        public void SelectProblem(Project project)
+        public void SelectProblem(IProject project)
         {
             Project = project;
+            ProjectChanged?.Invoke(project);
         }
 
         public void AddProblem(IEnumerable<INode> nodes)
@@ -76,62 +81,5 @@ namespace WebBlazorEmpty.AHP
         {
             Problems.Add(CreateSampleProblem());
         }
-    }
-
-    public class Project
-    {
-        public override string ToString() => Problem.ToString();
-
-        //Иерархия проблемы
-        public List<INode> NodesEditing { get; set; }
-        public HierarchyNodes HierEdit => new HierarchyNodes(NodesEditing);
-
-        public bool UnsavedChanged => !HierarchyNodes.CompareEqual(Problem, HierEdit);
-
-        //Текущая проблема
-        public ProblemDecizion Problem { get; private set; }
-
-
-        public BigStage StageHier
-        {
-            get
-            {
-                return new BigStage("", 1, 1);
-            }
-        }
-        public BigStage StageRelations
-        {
-            get
-            {
-                return new BigStage("", 1, 1);
-            }
-        }
-        public BigStage StageResults
-        {
-            get
-            {
-                return new BigStage("",1,1);
-            }
-        }
-
-
-
-        public string ViewFilter { get; set; } = "По описанию";
-
-        public Project(IEnumerable<INode> nodes)
-        {
-            SetProblem(nodes);
-        }
-
-        public void UpdateProblem()
-        {
-            SetProblem(NodesEditing);
-        }
-        public void SetProblem(IEnumerable<INode> nodes)
-        {
-            NodesEditing = nodes.ToList();
-            Problem = new ProblemDecizion(nodes);
-        }
-
     }
 }

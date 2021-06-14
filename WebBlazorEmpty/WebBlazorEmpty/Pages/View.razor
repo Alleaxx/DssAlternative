@@ -71,8 +71,8 @@
             list-style: none;
         }
         .node-element:hover{
-            border: 1px solid orange;
             cursor: pointer;
+            font-style: italic;
         }
 
     .filters {
@@ -130,7 +130,7 @@
 
 <section>
     <div>
-        <h4>Схема</h4>
+        <h2 class="content-header-h">Схема задачи выбора</h2>
         <ul class="filters">
             @foreach (var filter in Filters)
             {
@@ -146,7 +146,7 @@
             <div class="level-name">
                 <span style="font-size:1.05em">Уровень @levelGroup.Key</span>
                 <br>
-                <span style="font-size:1.15em">@(Problem.GetTextInfo(levelGroup.Key))</span>
+                <span style="font-size:1.15em">@(HierarchyNodes.GetTextInfo(Problem,levelGroup.Key))</span>
             </div>
             <div class="level-elements">
                 @foreach (var node in levelGroup)
@@ -161,7 +161,7 @@
                             <ol>
                                 @foreach (var rel in Problem.RelationsAll.Where(r => r.From == node && r.To != node))
                                 {
-                                    <li style="font-size: 0.8em" class="@(!Problem.RelationsNotConsistent.Contains(rel) ? "good-g" : "bad-b")">
+                                    <li style="font-size: 0.8em" class="@(!Problem.CorrectnessRels.RelationsNotConsistent.Contains(rel) ? "good-g" : "bad-b")">
                                         <NavLink href="@($"relation/{GetIndexOf(rel)}")">
                                             [@(Math.Round(rel.Value,2))] @rel.Main.Name - @rel.To.Name
                                         </NavLink>
@@ -267,7 +267,7 @@
                 double res = Problem.GetMatrix(node).Consistency.Cr;
                 if (double.IsNaN(res))
                     return new Tag("~", "good");
-                else if (res >= Problem.Border)
+                else if (res >= MatrixConsistenct.BorderConsistenct)
                     return new Tag($"{Math.Round(res, 5)}", "bad");
                 else
                     return new Tag($"{Math.Round(res, 5)}", "good");

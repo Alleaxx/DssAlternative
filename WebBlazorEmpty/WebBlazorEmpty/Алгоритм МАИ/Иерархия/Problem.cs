@@ -5,7 +5,25 @@ using System.Threading.Tasks;
 
 namespace WebBlazorEmpty.AHP
 {
-    public class Problem : HierarchyNodes
+    public interface IProblem : IHierarchy
+    {
+        Dictionary<int, INode[]> Dictionary { get; }
+        INodeRelation[] RelationsAll { get; }
+        INodeRelation[] RelationsRequired { get; }
+        void SetRelationBetween(INode main, INode from, INode to, double value);
+        IMatrix GetMatrix(INode node);
+
+        //Для рейтинга критериев
+        Dictionary<INode, INode[]> CriteriasFurther { get; }
+
+        IGrouping<INode, INodeRelation>[] GetGrouped(INode node);
+
+        INode[] Best(int level);
+
+        IRelationsCorrecntess CorrectnessRels { get; set; }
+
+    }
+    public class Problem : HierarchyNodes, IProblem
     {
         public Problem(IEnumerable<INode> nodes) : base(nodes)
         {
@@ -13,7 +31,7 @@ namespace WebBlazorEmpty.AHP
             RecountCoeffsBeta();
         }
 
-        public void UpdateStructure()
+        private void UpdateStructure()
         {
             SetFurtherCriterias();
 
@@ -87,6 +105,8 @@ namespace WebBlazorEmpty.AHP
             {
                 RelationCriteriasGrouped.Add(node, RelationsAll.Where(r => r.Main == node).ToArray());
             }
+
+            CorrectnessRels = new RelationsCorrectness(this);
         }
         private void RelationValue_Changed(Relation<INode, INode> changedRelation)
         {
@@ -108,7 +128,7 @@ namespace WebBlazorEmpty.AHP
         public Dictionary<INode, INode[]> CriteriasFurther { get; private set; }
 
         
-        public MatrixAHP GetMatrix(INode node) => new MatrixAHP(GetGrouped(node));
+        public IMatrix GetMatrix(INode node) => new Matrix(GetGrouped(node));
 
         public void RecountCoeffsBeta()
         {
@@ -117,7 +137,7 @@ namespace WebBlazorEmpty.AHP
                 int level = group.Key;
                 if(level > 0)
                 {
-                    var coeffs = MatrixAHP.GetGlobalCoeffs(this, level - 1);
+                    var coeffs = Matrix.GetGlobalCoeffs(this, level - 1);
                     Console.WriteLine();
                     foreach (var item in group)
                     {
@@ -151,7 +171,8 @@ namespace WebBlazorEmpty.AHP
             return Dictionary[level].Where(n => n.Coefficient == max).ToArray();
         }
 
-        
+        public IRelationsCorrecntess CorrectnessRels { get; set; }
+
 
 
         public void SetRelationBetween(INode main, INode from, INode to, double value)
@@ -166,32 +187,51 @@ namespace WebBlazorEmpty.AHP
             }
         }
     }
+    
 
-    public class ProblemDecizion : Problem
+    public interface IRelationsCorrecntess
     {
+        double Border { get; set; }
 
-        public string Status => AreRelationsCorrect ? "Анализ завершен" : "Требуется ввод данных";
+        bool AreRelationsCorrect { get; }
 
-        public ProblemDecizion(IEnumerable<INode> nodes) : base(nodes)
+        IEnumerable<INodeRelation> RelationsNotConsistent { get; }
+
+
+    }
+    public class RelationsCorrectness : IRelationsCorrecntess
+    {
+        public IProblem Pr { get; set; }
+        public RelationsCorrectness(IProblem problem)
         {
-            Stages.Add(new Stage("Формирование иерархии",$"hierarchy", "На этом этапе необходимо выделить основные элементы проблемы"));
-            Stages.Add(new Stage("Обзор проблемы",$"view", "Отображение проблемы с разных точек зрения"));
-            int counter = 0;
-            foreach (var relation in RelationsRequired)
-            {
-                counter++;
-                Stages.Add(new Stage($"{counter}-е определение связей ", $"relation/{RelationsAll.ToList().IndexOf(relation)}", $"Сравнение элементов '{relation.From.Name}' и '{relation.To.Name}' по критерию '{relation.Main.Name}'"));
-            }
-            //Stages.Add(new Stage("Обзор проблемы",$"view", "Отображение проблемы с разных точек зрения"));
-            Stages.Add(new Stage("Анализ результатов","results", "Выбор наилучшего результата согласно установленным отношениям"));
+            Pr = problem;
         }
 
+        
 
-        public List<IStage> Stages { get; set; } = new List<IStage>();
+ 
+        public string[] Messages
+        {
+            get
+            {
+                List<string> msgs = new List<string>();
+                if (!AreRelationsConsistenct)
+                    msgs.Add("Отношения не согласованы.");
+                if (!AreRelationsFilled)
+                    msgs.Add("Некоторые отношения не согласованы");
 
+                if (msgs.Count == 0)
+                    msgs.Add("Всё в порядке");
 
+                return msgs.ToArray();
+            }
+        }
 
-        public bool AreRelationsCorrect => NodesNotConsistent.Count() == 0;
+        public bool AreRelationsCorrect => AreRelationsConsistenct && AreRelationsFilled;
+
+        public bool AreRelationsFilled => RelationsUnknown.Count() == 0;
+        public bool AreRelationsConsistenct => NodesNotConsistent.Count() == 0;
+
 
         //Список матриц
         public double Border { get; set; } = 0.15;
@@ -202,10 +242,10 @@ namespace WebBlazorEmpty.AHP
         {
             get
             {
-                Dictionary<INode, MatrixAHP> pairs = new Dictionary<INode, MatrixAHP>();
-                foreach (var node in HardNodes)
+                Dictionary<INode, IMatrix> pairs = new Dictionary<INode, IMatrix>();
+                foreach (var node in Pr.HardNodes)
                 {
-                    pairs.Add(node, GetMatrix(node));
+                    pairs.Add(node, Pr.GetMatrix(node));
                 }
                 var badNodes = pairs.Where(p => !p.Value.Consistency.IsCorrect(Border)).Select(p => p.Key);
                 return badNodes;
@@ -216,8 +256,9 @@ namespace WebBlazorEmpty.AHP
             get
             {
                 var nodes = NodesNotConsistent.ToArray();
-                return RelationsRequired.Where(r => nodes.Contains(r.Main));
+                return Pr.RelationsRequired.Where(r => nodes.Contains(r.Main));
             }
         }
+        public IEnumerable<INodeRelation> RelationsUnknown => Pr.RelationsRequired.Where(r => r.Unknown);
     }
 }

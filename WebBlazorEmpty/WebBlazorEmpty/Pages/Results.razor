@@ -6,6 +6,7 @@
     .green {
         height: 6px;
         background-color: green;
+        border: 2px solid #71cc3f;
     }
 
     .results {
@@ -23,8 +24,10 @@
             margin-bottom: 5px;
         }
 </style>
-
-@if (Problem.AreRelationsCorrect)
+<h2 class="content-header-h">
+    Анализ результатов
+</h2>
+@if (Problem.CorrectnessRels.AreRelationsCorrect)
 {
     @foreach (var levelGroup in Problem.GroupedByLevel)
     {
@@ -59,11 +62,12 @@
 }
 else
 {
+
 <p>
     <b>Внимание!</b>
-    Отношения между критериями несогласованны. Необходимо их скорректировать:
+    Есть некоторые проблемы
 </p>
-    <NavLink @onclick="@(() => DSS.Ex.Project.ViewFilter = "По согласованности отношения критериев (матрицам критериев)")" href="view">
+    <NavLink @onclick="@(() => DSS.Ex.Project.ViewFilter = "По согласованности отношений")" href="view">
         Перейти для исправления связей
     </NavLink>
 }
