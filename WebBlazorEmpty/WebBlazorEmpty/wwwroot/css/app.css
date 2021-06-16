@@ -233,7 +233,7 @@ ul.relations {
 }
 
     ul.relations a {
-        width: 40px;
+        display: block;
         height: 12px;
         font-size: 0.8em;
         border-top-right-radius: 10px;
@@ -268,9 +268,10 @@ ul.relations {
     border-bottom: 1px solid lightgreen;
     border-left: 2px solid lightgreen;
 }
-.content-header-h{
-    margin-top: 2em;
-    margin:auto;
+.content-header-h {
+    margin: auto;
+    margin-top: 15px;
+    margin-bottom: 10px;
     text-align: center;
 }
 
@@ -292,4 +293,37 @@ ul.relations {
 
         .next-menu a:hover {
             background-color: white;
+        }
+
+
+        .navigation-link{
+            text-decoration: none;
+            font-family: "Calibri Light";
+            margin: 3px 12px;
+            text-align: center;
+            font-size:1.1em;
+        }
+        .navigation-link:hover{
+            text-decoration: underline;
+        }
+
+
+
+        .example-section{
+            display: flex;
+            align-items: center;
+            margin: 3px 5px;
+        }
+        .example-block{
+            border: 1px solid;
+            border-radius: 2px;
+            height: 20px;
+            width: 20px;
+            margin: 5px;
+        }
+        .example-description{
+            margin-left: 5px;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            font-family: Consolas;
         }

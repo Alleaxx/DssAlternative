@@ -22,9 +22,12 @@ namespace WebBlazorEmpty.AHP
 
         IRelationsCorrecntess CorrectnessRels { get; set; }
 
+        event Action RelationValueChanged;
     }
     public class Problem : HierarchyNodes, IProblem
     {
+        public event Action RelationValueChanged;
+
         public Problem(IEnumerable<INode> nodes) : base(nodes)
         {
             UpdateStructure();
@@ -111,6 +114,7 @@ namespace WebBlazorEmpty.AHP
         private void RelationValue_Changed(Relation<INode, INode> changedRelation)
         {
             RecountCoeffsBeta();
+            RelationValueChanged?.Invoke();
         }
 
         public Dictionary<int, INode[]> Dictionary { get; set; }
@@ -243,7 +247,7 @@ namespace WebBlazorEmpty.AHP
             get
             {
                 Dictionary<INode, IMatrix> pairs = new Dictionary<INode, IMatrix>();
-                foreach (var node in Pr.HardNodes)
+                foreach (var node in Pr.NodesWithRels)
                 {
                     pairs.Add(node, Pr.GetMatrix(node));
                 }

@@ -50,9 +50,6 @@ namespace WebBlazorEmpty.AHP
         protected double value;
         public bool Unknown { get; private set; }
 
-        public string Results => NodeRelation.GetTextRelationFor(Value);
-
-
         private static double MinValue { get; set; } = 0;
         private static double MaxValue { get; set; } = 100;
 
@@ -72,7 +69,7 @@ namespace WebBlazorEmpty.AHP
             From = from;
             To = to;
             Value = val;
-            Unknown = true;
+            Unknown = !Self;
         }
     }
     public interface INodeRelation
@@ -117,8 +114,12 @@ namespace WebBlazorEmpty.AHP
 
 
 
-        public static string GetTextRelationFor(double Value)
+        public static string GetTextRelationFor(INodeRelation relation)
         {
+            double Value = relation.Value;
+            if (relation.Unknown)
+                return "??????";
+
             if (Value == 1)
             {
                 return $"РАВНОЗНАЧЕН";
@@ -172,7 +173,7 @@ namespace WebBlazorEmpty.AHP
         INodeRelation INodeRelation.Mirrored { get => base.Mirrored as INodeRelation; set => base.Mirrored = value as NodeRelation; }
     }
 
-        public class Rating
+    public class Rating
     {
         public string Name { get; private set; }
         public int Value { get; private set; }
@@ -185,23 +186,23 @@ namespace WebBlazorEmpty.AHP
             {
                 case 1:
                     Name = "Одинаковы по значимости";
-                    Style = "color:Black;text-decoration: underline";
+                    Style = "color:Black";
                     break;
                 case 3:
                     Name = "Немного важнее";
-                    Style = "color:green;text-decoration: underline";
+                    Style = "color:green";
                     break;
                 case 5:
                     Name = "Важнее";
-                    Style = "color:blue;text-decoration: underline";
+                    Style = "color:#0070dd";
                     break;
                 case 7:
                     Name = "Значительно важнее";
-                    Style = "color:violet;text-decoration: underline";
+                    Style = "color:#9345ff";
                     break;
                 case 9:
                     Name = "Абсолютно важнее";
-                    Style = "color:orange;text-decoration: underline";
+                    Style = "color:#ff8000";
                     break;
             }
         }

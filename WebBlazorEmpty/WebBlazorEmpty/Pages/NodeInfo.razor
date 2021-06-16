@@ -10,11 +10,24 @@
     .edit{
         flex-basis: 25%;
         padding-right: 20px;
-        border-right: 1px solid gainsboro;
     }
     .rels{
-        flex-basis: 75%;
+        flex-basis: 45%;
         margin-left: 20px;
+    }
+    .structure {
+        flex-basis: 30%;
+        border-right: 1px solid gainsboro;
+        border-left: 1px solid gainsboro;
+    }
+    .structure a{
+        text-decoration: none;
+    }
+    .structure a:hover{
+        text-decoration: underline;
+    }
+    .structure h4{
+        margin: 8px 0;
     }
     .rels a{
         text-decoration: none;
@@ -34,17 +47,17 @@
         <h4>Редактирование узла</h4>
         <dl>
             <dt>
-                Название
+                Название:
             </dt>
             <dd>
                 <input type="text" @bind-value="@Node.Name" />
             </dd>
-            <dt>
+            @*<dt>
                 Описание
             </dt>
             <dd>
                 <input type="text" @bind-value="@Node.Description" />
-            </dd>
+            </dd>*@
         </dl>
     </div>
     <div class="rels">
@@ -61,8 +74,8 @@
                             {
 
                                 <li>
-                                    <NavLink href="@($"relation/{Problem.RelationsAll.ToList().IndexOf(rel)}")">
-                                        @NodeRelation.GetTextRelationFor(rel.Value) <i>@rel.To.Name</i>
+                                    <NavLink href="@($"relation-new/{Problem.RelationsAll.ToList().IndexOf(rel)}")">
+                                        @NodeRelation.GetTextRelationFor(rel) <i>@rel.To.Name</i>
                                     </NavLink>
                                 </li>
                             }
@@ -76,12 +89,63 @@
             <p>Отношений с элементами этого же уровня нет</p>
         }
     </div>
+    <div class="structure">
+        <h4>Выше</h4>
+        <ul>
+            @if (Problem.Dictionary.ContainsKey(Node.Level - 1))
+            {
+
+                @foreach (var node in Problem.Dictionary[Node.Level - 1])
+                {
+                    @if (node != Node)
+                    {
+                        <li>
+                            <NavLink href="@($"/node/{node.Level}/{node.Name}")">
+                                @node.Name
+                            </NavLink>
+                        </li>
+                    }
+                }
+            }
+        </ul>
+        <h4>Соседние узлы</h4>
+        <ul>
+            @foreach (var node in Problem.Dictionary[Node.Level])
+            {
+                @if (node != Node)
+                {
+                    <li>
+                        <NavLink href="@($"/node/{node.Level}/{node.Name}")">
+                            @node.Name
+                        </NavLink>
+                    </li>
+                }
+            }
+        </ul>
+        <h4>Ниже</h4>
+        <ul>
+            @if (Problem.Dictionary.ContainsKey(Node.Level + 1))
+            {
+
+                @foreach (var node in Problem.Dictionary[Node.Level + 1])
+                {
+                    @if (node != Node)
+                    {
+                        <li>
+                            <NavLink href="@($"/node/{node.Level}/{node.Name}")">
+                                @node.Name
+                            </NavLink>
+                        </li>
+                    }
+                }
+            }
+        </ul>
+    </div>
 </section>
 
 <section>
     <h4>Матрица коэффициентов для уровня данного критерия</h4>
 </section>
-<input type="button" value="Cбросить отношения" />
 <NodeMatrixAlpha Node="@Node" />
 
 

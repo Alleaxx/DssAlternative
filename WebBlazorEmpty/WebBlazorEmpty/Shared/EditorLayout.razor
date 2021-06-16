@@ -2,9 +2,6 @@
 @inject NavigationManager NavigationManager
 
 
-    @*Сюда будет подставляться запрошенный компонент*@
-    @*<StageMenu URi="@(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))" />*@
-
 <link rel="stylesheet" href="/css/app.css" />
 <section class="grid">
     <Logo />
@@ -29,10 +26,10 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        DSS.Ex.ProjectChanged += Changed;
-        }
-    private void Changed(IProject prjc)
+    }
+    private void Changed()
     {
+        Console.WriteLine("Интерфейс обновлен");
         StateHasChanged();
     }
 }

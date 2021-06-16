@@ -8,7 +8,8 @@
         border-radius: 3px;
         padding: 5px;
         margin: 5px;
-        min-width: 65%;
+        width: 100%;
+        table-layout: fixed;
     }
 
     .matrix th, .matrix td {
@@ -17,16 +18,16 @@
     }
 
     .matrix th {
-        font-size: 1.15em;
+
     }
 
     .matrix .selectable:hover {
         cursor: pointer;
-        text-decoration: underline;
+        color: black;
     }
 
     .matrix .selected {
-        text-decoration: underline;
+
     }
 
 
@@ -35,11 +36,14 @@
     }
 
     .name-cell {
-        width: 28%
+        width: 40%
+    }
+    .name-cell a:hover{
+        text-decoration: underline;
     }
 
     .value-cell {
-        width: 44%;
+        text-align: center;
     }
 
     .left {
@@ -60,7 +64,7 @@
         color: black;
     }
 
-    .matria a:hover {
+    .matrix a:hover {
         text-decoration: underline;
     }
 
@@ -71,7 +75,6 @@
         align-items: center;
     }
     .main-node {
-        text-transform: uppercase;
         text-align: center;
         text-decoration: none;
     }
@@ -102,6 +105,14 @@
     .node-rating .selected{
         background-color: gainsboro;
     }
+
+    .selectable {
+        color: #4a4a4a;
+    }
+    .selected{
+        background-color: whitesmoke;
+    }
+    
     
 
     .nodes{
@@ -112,9 +123,31 @@
         margin: 5px 5px;
         align-items:stretch;
     }
+    .ratings-tr{
+
+    }
+
     .new-system{
         padding: 10px 0;
         border: 1px solid gainsboro;
+    }
+
+    .clear-relation {
+        background: transparent;
+        border: 1px solid whitesmoke;
+        padding: 5px 15px;
+        width: 100%;
+        cursor: pointer;
+    }
+    .clear-relation:hover{
+        background-color: lightpink;
+    }
+
+    .matrix .results-text{
+        padding: 20px 0;
+        border-bottom: 1px solid gray;
+        border-top: 1px solid gray;
+        text-align: center;
     }
 </style>
 
@@ -122,15 +155,7 @@
 
 <table class="matrix" @onclick="@RelationUpdated">
     <tbody>
-        <tr class="border-bottom-t">
-            <td colspan="3" style="color: gray;padding-bottom: 15px">
-
-                <NavLink class="main-node" href="@($"/node/{Relation.Main.Level}/{Relation.Main.Name}")">
-                    Критерий @Relation.Main.Name
-                </NavLink>
-            </td>
-        </tr>
-        <tr class="border-bottom-t" style="font-size: 1.33em">
+        <tr class="border-bottom-t" style="font-size: 1.2em">
             <th class="name-cell right">
                 <NavLink href="@($"/node/{Relation.From.Level}/{Relation.From.Name}")">
                     @Relation.From.Name
@@ -139,7 +164,7 @@
 
             </th>
             <td class="value-cell">
-                @NodeRelation.GetTextRelationFor(Relation.Value)
+                <input class="clear-relation" type="button" value="X" />
             </td>
             <th class="name-cell left">
                 <NavLink href="@($"/node/{Relation.To.Level}/{Relation.To.Name}")">
@@ -147,13 +172,13 @@
                 </NavLink>
             </th>
         </tr>
-        <tr>
+        <tr class="ratings-tr">
             <td></td>
-            <td rowspan="5" style="@((Relation.Value == 1) ? RatingEqual.Style : "")" class="@( (Relation.Value == 1) ? "selecte" : "selectable")" @onclick="@(() => Relation.SetRating(Relation.From, 1))">@RatingEqual.Name</td>
+            <td rowspan="5" style="@((Relation.Value == 1) ? RatingEqual.Style : "")" class="@( (Relation.Value == 1) ? "selected" : "selectable")" @onclick="@(() => Relation.SetRating(Relation.From, 1))">@RatingEqual.Name</td>
         </tr>
         @foreach (var rating in Ratings)
         {
-            <tr>
+            <tr class="ratings-tr">
                 <td style="@((Relation.Node == Relation.From && rating.Value == Relation.Rating) ? rating.Style : "")" class="@( (Relation.Node == Relation.From && rating.Value == Relation.Rating) ? "selected" : "selectable")" @onclick="@(() => Relation.SetRating(Relation.From, rating.Value))">
                     @rating.Name
                 </td>
@@ -163,13 +188,15 @@
                 </td>
             </tr>
         }
-        @*<tr>
-                <td colspan="3">@Relation.Value</td>
-            </tr>*@
+    <tr>
+        <td colspan="3" class="results-text">
+            '@Relation.From.Name' @NodeRelation.GetTextRelationFor(Relation) '@Relation.To.Name'
+        </td>
+    </tr>
     </tbody>
 </table>
 
-<section class="new-system">
+@*<section class="new-system">
     <div>
         <NavLink class="main-node" href="@($"/node/{Relation.Main.Level}/{Relation.Main.Name}")">
             <h4>
@@ -208,7 +235,7 @@
             </div>
         }
     </div>
-</section>
+</section>*@
 
 
 

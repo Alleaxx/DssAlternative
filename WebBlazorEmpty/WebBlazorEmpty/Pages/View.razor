@@ -65,6 +65,8 @@
         border: 1px solid gray;
         text-align: center;
         border-radius: 4px;
+
+        text-decoration: none;
     }
 
         .node-element ol {
@@ -72,7 +74,7 @@
         }
         .node-element:hover{
             cursor: pointer;
-            font-style: italic;
+            text-decoration: underline;
         }
 
     .filters {
@@ -106,6 +108,10 @@
 
     .bad {
         background-color: lightpink;
+    }
+
+    .warn{
+        background-color: antiquewhite;
     }
 
     .bad-b a {
@@ -151,10 +157,9 @@
             <div class="level-elements">
                 @foreach (var node in levelGroup)
                 {
-                    <p class="node-element @(GetTag(node).Class)" style="width:@NodeSize%">
-                        <NavLink href="@(GetLink(node))">
-                            <span>@node.Name</span>
-                        </NavLink><br />
+                    <a class="node-element @(GetTag(node).Class)" href="@(GetLink(node))" style="width:@NodeSize%">
+                        <span>@node.Name</span>
+                        <br />
                         <span style="font-size:0.9em; color: gray"> @(GetTag(node).Text)</span>
                         @if (Filter == Relations && node.Level != 0)
                         {
@@ -169,7 +174,7 @@
                                 }
                             </ol>
                         }
-                    </p>
+                    </a>
                 }
             </div>
         </div>
@@ -224,7 +229,6 @@
 
     public string[] Filters { get; set; } = new string[]
     {
-            Description,
             FilterRating,
             Constistency,
         };
@@ -246,10 +250,18 @@
 
     private string GetLink(INode node)
     {
-        if (Filter == FilterRating || Filter == Constistency)
+        INodeRelation rel = null;
+        if (Problem.NodesWithRels.Contains(node))
+        {
+            rel = Problem.RelationsRequired.Where(r => r.Main == node).First();
+        }
+
+
+        if (rel == null)
             return $"/node/{node.Level}/{node.Name}";
         else
-            return $"/node/{node.Level}/{node.Name}";
+            return $"/relation-new/{GetIndexOf(rel)}";
+
     }
     private Tag GetTag(INode node)
     {
@@ -265,6 +277,9 @@
                 return new Tag($"{Math.Round(node.Coefficient, 5)}", style);
             case Constistency:
                 double res = Problem.GetMatrix(node).Consistency.Cr;
+                if (Problem.RelationsRequired.Where(r => r.Main == node && r.Unknown).Count() > 0)
+                    return new Tag("-", "warn");
+
                 if (double.IsNaN(res))
                     return new Tag("~", "good");
                 else if (res >= MatrixConsistenct.BorderConsistenct)

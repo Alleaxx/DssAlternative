@@ -8,8 +8,11 @@ namespace WebBlazorEmpty.AHP
 
     public interface IProject
     {
+        event Action Updated;
+
         string ViewFilter { get; set; }
         bool UnsavedChanged { get; }
+
         List<INode> NodesEditing { get; set; }
         IHierarchy ProblemEditing { get; }
         IProblem Problem { get; }
@@ -23,7 +26,6 @@ namespace WebBlazorEmpty.AHP
 
         void UpdateProblem();
         string Status { get; }
-
     }
     public class Project : IProject
     {
@@ -49,14 +51,16 @@ namespace WebBlazorEmpty.AHP
 
         public Project(IEnumerable<INode> nodes)
         {
-            SetProblem(nodes);
+            SetProblem(nodes);      
+        }
 
-            
-            StageHier = new Stage("Формирование иерархии",$"hierarchy", "На этом этапе необходимо выделить основные элементы проблемы");
-            StageView = new Stage("Обзор проблемы",$"view", "Отображение проблемы с разных точек зрения");
-            StageResults = new Stage("Анализ результатов", "results", "Выбор наилучшего результата согласно установленным отношениям");
+        private void SetStages()
+        {
+            StageHier = new Stage("Формирование иерархии");
+            StageView = new Stage("Обзор проблемы");
+            StageResults = new Stage("Анализ результатов");
 
-            if(StageHier is Stage stH)
+            if (StageHier is Stage stH)
             {
                 stH.GetWarning = () => UnsavedChanged || Problem == null;
                 stH.GetError = () => ProblemEditing.Correctness.Result;
@@ -75,14 +79,14 @@ namespace WebBlazorEmpty.AHP
             {
                 return !Problem.CorrectnessRels.AreRelationsCorrect;
             }
-            
 
+            StageRelations.Clear();
             int counter = 0;
             foreach (var relation in Problem.RelationsRequired)
             {
-                Stage relStage = new Stage($"{counter}-е определение связей ", $"relation/{Problem.RelationsAll.ToList().IndexOf(relation)}", $"Сравнение элементов '{relation.From.Name}' и '{relation.To.Name}' по критерию '{relation.Main.Name}'");
+                Stage relStage = new Stage($"{counter}-е определение связей ");
                 counter++;
-                StageRelations.Add(relation,relStage);
+                StageRelations.Add(relation, relStage);
 
                 relStage.GetWarning = IsWarned;
                 relStage.GetError = IsErrored;
@@ -97,17 +101,6 @@ namespace WebBlazorEmpty.AHP
                 }
             }
             StageHier = new Stage("");
-            
-            
-            bool warn()
-            {
-                return UnsavedChanged;
-            }
-            bool error()
-            {
-                return !ProblemEditing.Correctness.Result;
-            }
-
         }
 
         public Dictionary<INodeRelation, IStage> StageRelations { get; private set; } = new Dictionary<INodeRelation, IStage>();
@@ -123,7 +116,20 @@ namespace WebBlazorEmpty.AHP
         public void SetProblem(IEnumerable<INode> nodes)
         {
             NodesEditing = nodes.ToList();
+            IProblem old = Problem;
             Problem = new Problem(nodes);
+            SetStages();
+
+            if(old != null)
+            {
+                old.RelationValueChanged -= Update;
+            }
+            Problem.RelationValueChanged += Update;
+
+            void Update()
+            {
+                Updated?.Invoke();
+            }
         }
 
     }

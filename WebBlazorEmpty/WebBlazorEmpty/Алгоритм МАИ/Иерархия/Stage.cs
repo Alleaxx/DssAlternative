@@ -8,8 +8,6 @@ namespace WebBlazorEmpty.AHP
     public interface IStage
     {
         string Name { get; }
-        string Way { get; }
-        string Description { get; }
 
         public bool Warning { get; }
         public bool Error { get; }
@@ -18,22 +16,11 @@ namespace WebBlazorEmpty.AHP
 
     public class Stage : IStage
     {
-        public string Name { get; set; }
-        public string Way { get; set; }
-        public string Description { get; set; }
-
-        public List<IStage> Stages { get; set; } = new List<IStage>();
-
-        public Stage(string name) : this(name, "/", "") { }
-        public Stage(string name, string way) : this(name, way, "") { }
-        public Stage(string name, string way, string descr)
+        public string Name { get; private set; }
+        public Stage(string name)
         {
             Name = name;
-            Way = way;
-    
-            Description = descr;
         }
-
 
 
         public bool Warning => GetWarning();

@@ -2,20 +2,36 @@
     .main-header a{
         text-transform: uppercase;
         font-family: "Calibri Light";
-        font-size: 1.3em;
+        font-size: 1.35em;
         text-align: center;
     }
+
+    .main-header a.active{
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
 </style>
 <div class="main-header">
     <ul class="row">
         <li>
-            <a href="/info">О системе</a>
+            <NavLink href="information">
+                [ О системе ]
+            </NavLink>
         </li>
         <li>
-            <a href="/start">Поддержка принятия решений</a>
+            <NavLink href="start">
+                [ Поддержка принятия решений ]
+            </NavLink>
         </li>
         <li>
-            <a href="#">О методе</a>
+            <NavLink href="AHP">
+                [ О методе ]
+            </NavLink>
         </li>
     </ul>
 </div>
+
+@code{
+
+}

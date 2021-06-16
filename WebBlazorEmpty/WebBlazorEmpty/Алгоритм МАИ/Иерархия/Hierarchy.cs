@@ -14,7 +14,7 @@ namespace WebBlazorEmpty.AHP
         public INode MainGoal { get; }
         public IEnumerable<INode> Criterias { get; }
         public IEnumerable<INode> Alternatives { get; }
-        public IEnumerable<INode> HardNodes { get; }
+        public IEnumerable<INode> NodesWithRels { get; }
 
         public ICorrectness Correctness { get; }
 
@@ -22,8 +22,6 @@ namespace WebBlazorEmpty.AHP
         public int LevelsCount { get; }
         public int RelationsCount { get; }
         public int MaxLevel { get; }
-
-
     }
 
     public class HierarchyNodes : IHierarchy
@@ -78,7 +76,7 @@ namespace WebBlazorEmpty.AHP
         public INode MainGoal => Hierarchy.Where(h => h.Level == 0).FirstOrDefault();
         public IEnumerable<INode> Criterias => Hierarchy.Where(h => h.Level > 0 && h.Level < LevelsCount - 1);
         public IEnumerable<INode> Alternatives => Hierarchy.Where(h => h.Level == LevelsCount - 1);
-        public IEnumerable<INode> HardNodes => Criterias.Prepend(MainGoal);
+        public IEnumerable<INode> NodesWithRels => Criterias.Prepend(MainGoal);
         
         //Сложность?
         //Ожидаемое время решения проблемы

@@ -12,16 +12,15 @@ namespace WebBlazorEmpty.AHP
     {
         private static IProject CreateSampleProblem()
         {
-
             List<INode> nodes = new List<INode>();
             INode main = new Node(0, "Выбор места учебы");
 
             INode Place = new Node(1, "Местоположение");
             INode Reputation = new Node(1, "Репутация");
 
-            INode A = new Node(2, "Универ А");
-            INode B = new Node(2, "Универ B");
-            INode C = new Node(2, "Универ C");
+            INode A = new Node(2, "Вариант А");
+            INode B = new Node(2, "Вариант B");
+            INode C = new Node(2, "Вариант C");
 
             INode F1 = new Node(3, "Факультет ПИ");
             INode F2 = new Node(3, "Факультет БИ");
@@ -54,6 +53,8 @@ namespace WebBlazorEmpty.AHP
 
         public event Action<IProject> ProjectChanged;
 
+        public event Action ProjectRelChanged;
+
         public List<IHierarchy> Templates { get; set; }
         //Все проблемы
         public List<IProject> Problems { get; private set; } = new List<IProject>();
@@ -69,8 +70,20 @@ namespace WebBlazorEmpty.AHP
 
         public void SelectProblem(IProject project)
         {
+            IProject old = Project;
             Project = project;
             ProjectChanged?.Invoke(project);
+
+            if(old != null)
+            {
+                old.Updated -= Update;
+            }
+            project.Updated += Update;
+
+            void Update()
+            {
+                ProjectChanged?.Invoke(project);
+            }
         }
 
         public void AddProblem(IEnumerable<INode> nodes)

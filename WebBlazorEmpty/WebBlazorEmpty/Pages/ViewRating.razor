@@ -1,20 +1,26 @@
 ﻿@inherits DSSComponent
 <h4>Оптимальные варианты</h4>
-@if (Problem.CorrectnessRels.AreRelationsCorrect)
+<section>
+    <div class="example-section">
+        <div class="example-block" style="background-color:lightgreen"></div>
+        <span class="example-description">
+            - Лучшая альтернатива
+        </span>
+    </div>
+</section>
+
+@if (!Problem.CorrectnessRels.AreRelationsCorrect)
 {
+    <b>Внимание!</b>
     <p>
-        Лучшие альтернативы на каждом уровне отмечены цветом
+        Отношения между элементами несогласованы! Результаты считаются недействительными до тех пор, пока все отношения не будут исправлены.
     </p>
 }
 else
 {
-    <b>Внимание!</b>
-    <p>
-        Отношения между элементами несогласованы! Для использования результатов необходимо исправить неправильные отношения
-    </p>
+    <NavLink class="navigation-link" href="/results">
+        [ Анализ результатов ]
+    </NavLink>
+    <br />
+    <br />
 }
-
-@code {
-
-}
-

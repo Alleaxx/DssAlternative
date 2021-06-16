@@ -41,6 +41,7 @@
     }
 
     .level {
+        justify-content: space-between;
         align-items: center;
         border-bottom: 1px solid gainsboro;
     }
@@ -54,13 +55,19 @@
 
     .level-name {
         text-align: center;
-        flex-basis: 22%;
+        width: 150px;
+    }
+    .level-index{
+        color: gray;
     }
 
     .level-elements {
         display: flex;
         flex-flow: row wrap;
         margin: 5px 0;
+    }
+    .level-add{
+
     }
 
     .node-element {
@@ -89,8 +96,8 @@
         color: red;
         /* height: 2em; */
         font-size: 0.75em;
-        margin: 0 3px;
-        margin-right:0;
+        margin: 0;
+        
         padding: 5px 8px;
         background-color: transparent;
         border: 0;
@@ -108,14 +115,22 @@
         border: 0;
         border-right: 1px solid gainsboro;
         padding: 10px 0;
+        text-align: center;
     }
 
     .confirm{
         margin: 10px;
     }
-</style>
 
-<div style="height:10px"></div>
+    .new-level{
+        margin: 10px 0;
+    }
+    .main-goal-level{
+        flex-basis: 35%;
+    }
+
+
+</style>
 
 <h2 class="content-header-h">Редактирование иерархии задачи выбора</h2>
 <div class="row-own">
@@ -123,14 +138,21 @@
 
 
         <div class="confirm">
-            @if (Project.UnsavedChanged)
+            @if (Project.UnsavedChanged && Project.ProblemEditing.Correctness.Result)
             {
                 <b>Есть несохраненные изменения</b>
                 <input class="add" type="button" value="Подтвердить текущую иерархию" @onclick="UpdateHierarchy" />
             }
+            else if(Project.UnsavedChanged && !Project.ProblemEditing.Correctness.Result)
+            {
+                <b>Некорректная структура иерархии</b>
+            }
             else
             {
                 <b @onclick="UpdateHierarchy">Все изменения сохранены</b>
+                <NavLink class="navigation-link" href="/view">
+                    [ Обзор задачи ]
+                </NavLink>
             }
         </div>
         <div>
@@ -138,7 +160,7 @@
             {
                 <div class="row-own level">
                     <div class="level-name">
-                        <span style="font-size:1em">Уровень @levelGroup.Key</span>
+                        <span class="level-index" style="font-size:1em">Уровень @levelGroup.Key</span>
                         <br>
                         <span style="font-size:1.1em">@(HierarchyNodes.GetTextInfo(Hierarchies,levelGroup.Key))</span>
                         <br />
@@ -147,13 +169,15 @@
                     <div class="level-elements">
                         @foreach (var node in levelGroup)
                         {
-                            <div class="node-element row-own">
+                            <div class="node-element row-own @(levelGroup.Key == 0 ? "main-goal-level" : "")">
                                 <input class="input-text" type="text" @bind-value="@node.Name" @onfocus="@( () => SelectedNode = node )" />
                                 <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
                             </div>
                         }
                     </div>
-                    <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
+                    <div class="level-add">
+                        <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
+                    </div>
 
                 </div>
             }
@@ -164,7 +188,7 @@
                 </div>
                 <div>
                     <div class="row-own">
-                        <input class="add" type="button" value="+" @onclick="@(() => AddNode(Hierarchies.LevelsCount))" />
+                        <input class="add new-level" type="button" value="+" @onclick="@(() => AddNode(Hierarchies.LevelsCount))" />
                     </div>
                 </div>
             </div>

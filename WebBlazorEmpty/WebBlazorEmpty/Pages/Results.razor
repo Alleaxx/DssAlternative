@@ -6,7 +6,7 @@
     .green {
         height: 6px;
         background-color: green;
-        border: 2px solid #71cc3f;
+        border: 2px solid #246600;
     }
 
     .results {
@@ -58,15 +58,23 @@
         }
     }
 
+    <NavLink class="navigation-link" href="hier">
+        [ Модификация иерархии ]
+    </NavLink>
+
     <input type="button" value="Создать новую проблему на основе" />
+
+    <input type="button" value="Очистить все отношения и начать заново" />
+
+    <br />
 }
 else
 {
 
-<p>
-    <b>Внимание!</b>
-    Есть некоторые проблемы
-</p>
+    <p>
+        <b>Внимание!</b>
+        Есть некоторые проблемы
+    </p>
     <NavLink @onclick="@(() => DSS.Ex.Project.ViewFilter = "По согласованности отношений")" href="view">
         Перейти для исправления связей
     </NavLink>

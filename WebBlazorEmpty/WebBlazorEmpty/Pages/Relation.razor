@@ -1,0 +1,160 @@
+﻿@page "/relation-new/{relIndex:int}"
+@inherits DSSComponentRelation
+@layout EditorLayout
+
+
+<style>
+    .relations-grid{
+        display: grid;
+        grid-template-columns: 7fr 3fr;
+        grid-template-areas: "relation menu";
+    }
+    .relation-area{
+        grid-area: relation;
+        padding: 10px;
+    }
+    .relation-area .matrix{
+        border: 0;
+    }
+
+    .relation-current-header{
+        text-align: center;
+        font-size: 1.2em;
+    }
+    .stage-area{
+        display: flex;
+    }
+    .stage-area a{
+        flex-basis: 50%;
+        text-align: center;
+        color: black;
+        padding: 8px 0;
+        border: 1px solid lightgreen;
+    }
+    .stage-area a:hover{
+        background-color: lightgreen;
+    }
+    
+    .node-edit{
+        font-size: 0.9em;
+    }
+
+
+    .menu-area {
+        grid-area: menu;
+        padding: 10px;
+        border-left: 1px solid whitesmoke;
+    }
+    .rel-menu-header{
+        font-size: 1.2em;
+    }
+    .rel-menu-list-header{
+        display: inline;
+        font-size: 1em;
+        font-weight: 400;
+        margin: 4px 0;
+
+    }
+    .rel-menu-element {
+        font-size: 0.8em;
+        color: black;
+        padding: 4px 0;
+        border-bottom: 1px solid gainsboro;
+        text-decoration: none;
+        cursor: pointer;
+        border-left: 2px solid gainsboro;
+        border-right: 2px solid gainsboro;
+        padding: 5px;
+        display: block;
+    }
+        .rel-menu-element.normal {
+            border-right: 2px solid lightgreen;
+            border-bottom: 1px solid lightgreen;
+        }
+        .rel-menu-element.warning {
+            border-right: 2px solid #cccc10;
+            border-bottom: 1px solid #cccc10;
+        }
+        .rel-menu-element.error {
+            border-right: 2px solid red;
+            border-bottom: 1px solid red;
+        }
+
+
+    .rel-menu-element:hover{
+        background-color: whitesmoke;
+    }
+    .rel-menu-list{
+        list-style: none;
+        margin: 5px 0;
+    }
+
+    .menu-area .active{
+        border-left: 5px solid orange;
+    }
+
+</style>
+
+<div class="relations-grid">
+
+    <div class="relation-area">
+
+        <h2 class="relation-current-header">
+            @Relation.Main.Name
+            <NavLink class="node-edit navigation-link" href="@($"/node/{Relation.Main.Level}/{Relation.Main.Name}")" title="Отредактировать критерий">
+                [ Р ] 
+            </NavLink>
+        </h2>
+        <NodeQuestion Relation="@Relation" />
+
+        @*<nav class="stage-area">
+            <NavLink href="#">
+                Назад
+            </NavLink>
+            <NavLink href="#">
+                Далее
+            </NavLink>
+        </nav>*@
+    </div>
+
+    <nav class="menu-area">
+        <h2 class="rel-menu-header">Список отношений</h2>
+        @foreach (var criteria in Problem.NodesWithRels)
+        {
+            <h3 class="rel-menu-list-header">@criteria.Name</h3>
+            <ul class="rel-menu-list">
+                @foreach (var relation in Problem.RelationsRequired.Where(r => r.Main == criteria))
+                {
+                    <li>
+                        <NavLink class="@(GetProgressStyle(Project.StageRelations[relation]) + " rel-menu-element")" href="@($"relation-new/{Problem.RelationsAll.ToList().IndexOf(relation)}")">
+                            @relation.From.Name - @relation.To.Name
+                        </NavLink>
+                    </li>
+                }
+            </ul>
+        }
+    </nav>
+
+</div>
+
+@code {
+    private string GetProgressStyle(IStage stage)
+    {
+        string classes = "";
+
+        if (stage.Warning)
+            classes += "warning ";
+        if (stage.Error)
+            classes += "error ";
+        if (stage.Hidden)
+            classes += "none ";
+
+        classes += "normal";
+
+        return classes;
+    }
+
+    //private int RelationIndex => Project.StageRelations.ToList().IndexOf(Relation);
+
+    //private INodeRelation NextRelation => Project.StageRelations.ToList().IndexOf(Relation)
+}

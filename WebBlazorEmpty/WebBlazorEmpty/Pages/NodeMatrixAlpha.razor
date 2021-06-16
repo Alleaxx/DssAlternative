@@ -38,13 +38,15 @@
     }
 
     .selected-cell{
-        background-color: gainsboro;
+        background-color: whitesmoke;
     }
 
     .good-mtx {
         color: green;
         padding: 10px;
+        
     }
+
 
     .unknown{
         background-color: lightyellow;
@@ -55,6 +57,12 @@
         padding: 2px 10px;
     }
 
+    .good-mtx, .bad-mtx{
+        display: flex;
+        justify-content: center;
+
+    }
+
     .lower-border {
         border-bottom: 1px solid gainsboro;
     }
@@ -62,16 +70,32 @@
     .right-border {
         border-right: 1px solid gainsboro;
     }
+
+    .clear-relations {
+        background: transparent;
+        border: 1px solid whitesmoke;
+        margin-left: 4px;
+        margin-right: 4px;
+        padding: 5px 15px;
+        width: 40px;
+        text-align: center;
+        cursor: pointer;
+        margin: inherit 6px;
+    }
+
+        .clear-relations:hover {
+            background-color: lightpink;
+        }
 </style>
 <div class="mtx">
     <table>
         <tbody>
             <tr>
-
                 <td class="@(Mtx.Consistency.IsCorrect() ? "good-mtx" : "bad-mtx") lower-border right-border">
                     <h4>
                         <b>@Node.Name</b>  @(Mtx.Consistency.IsCorrect() ? "✓" : "X")
                     </h4>
+                    <input class="clear-relations" type="button" value="X" />
                 </td>
 
                 @foreach (var node in Problem.CriteriasFurther[Node])
@@ -108,9 +132,9 @@
 
 @if (RelationSelected != null)
 {
-    <div class="relation-sel">
+    @*<div class="relation-sel">
         <NodeQuestion RelationUpdated="@(() => StateHasChanged())" Relation="@RelationSelected" />
-    </div>
+    </div>*@
 }
 
 <div class="counts">

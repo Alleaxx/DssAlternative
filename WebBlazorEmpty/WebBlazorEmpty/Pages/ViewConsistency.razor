@@ -1,25 +1,40 @@
 ﻿@inherits DSSComponent
-<h4>Согласованность отношений</h4>
+<h4>Пригодность отношений</h4>
 
-<p>
-    Граница согласованности
-    <input type="number" @bind-value="@MatrixConsistenct.BorderConsistenct" />
-    <br />
-    Максимально допустимым значением является 0.2
-</p>
 
-@if (Problem.CorrectnessRels.AreRelationsCorrect)
-{
-    <p>Все отношения прошли проверку на согласованность</p>
-}
-else
+
+
+
+<section>
+    <div class="example-section">
+        <div class="example-block" style="background-color:lightgreen"></div>
+        <span class="example-description">
+            - отношения заполнены и согласованы
+        </span>
+    </div>
+    <div class="example-section">
+        <div class="example-block" style="background-color:lightyellow"></div>
+        <span class="example-description">
+            - отношения не заполнены
+        </span>
+    </div>
+    <div class="example-section">
+        <div class="example-block" style="background-color:lightpink"></div>
+        <span class="example-description">
+            - отношения не согласованы
+        </span>
+    </div>
+</section>
+
+<dl>
+    <dt>Граница согласованности</dt>
+    <dd><input type="number" @bind-value="@MatrixConsistenct.BorderConsistenct" /></dd>
+</dl>
+
+@if (!Problem.CorrectnessRels.AreRelationsCorrect)
 {
     <p>
-        Некоторые отношения являются НЕСОГЛАСОВАННЫМИ! Отмеченные цветом элементы необходимо скорректировать
+        Некоторые отношения не заполнены или являются несогласованными!
     </p>
 }
 
-
-@code {
-
-}
