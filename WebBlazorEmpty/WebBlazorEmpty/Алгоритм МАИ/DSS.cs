@@ -53,9 +53,7 @@ namespace WebBlazorEmpty.AHP
 
         public event Action<IProject> ProjectChanged;
 
-        public event Action ProjectRelChanged;
-
-        public List<IHierarchy> Templates { get; set; }
+        public List<ITemplate> Templates { get; set; }
         //Все проблемы
         public List<IProject> Problems { get; private set; } = new List<IProject>();
         public IProject Find(string name)

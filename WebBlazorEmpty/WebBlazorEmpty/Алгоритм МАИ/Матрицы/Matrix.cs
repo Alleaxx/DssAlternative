@@ -12,6 +12,7 @@ namespace WebBlazorEmpty.AHP
         double[,] Array { get; }
         double[] Coeffiients { get; }
         IConsistency Consistency { get; }
+        bool WithZeros();
     }
     public class Matrix : IMatrix 
     {
@@ -24,6 +25,18 @@ namespace WebBlazorEmpty.AHP
 
         public double[] Coeffiients => LocalCoefficients(Array);
 
+        public bool WithZeros()
+        {
+            for (int x = 0; x < Array.GetLength(0); x++)
+            {
+                for (int y = 0; y < Array.GetLength(1); y++)
+                {
+                    if (Array[x, y] == 0)
+                        return true;
+                }
+            }
+            return false;
+        }
 
         public static double[] GeometricMultiVector(double[,] mtx)
         {
@@ -141,7 +154,14 @@ namespace WebBlazorEmpty.AHP
         }
         public Matrix(double[,] arr)
         {
-            Array = arr;
+            Array = new double[arr.GetLength(0), arr.GetLength(1)];
+            for (int i = 0; i < arr.GetLength(0); i++)
+            {
+                for (int a = 0; a < arr.GetLength(1); a++)
+                {
+                    Array[i, a] = arr[i,a];
+                }
+            }
             Consistency = new MatrixConsistenct(this);
         }
     }

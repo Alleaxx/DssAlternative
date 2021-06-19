@@ -23,15 +23,21 @@ namespace WebBlazorEmpty.AHP
         IRelationsCorrecntess CorrectnessRels { get; set; }
 
         event Action RelationValueChanged;
+
+        void ClearRelations();
+        void ClearRelations(INode node);
+        int IndexNode(INode node);
+
+        IEnumerable<IMatrix> PossibleMatrixesForRel(INodeRelation relation);
     }
-    public class Problem : HierarchyNodes, IProblem
+    public class Problem : HierarchyN, IProblem
     {
         public event Action RelationValueChanged;
 
         public Problem(IEnumerable<INode> nodes) : base(nodes)
         {
             UpdateStructure();
-            RecountCoeffsBeta();
+            RecountCoeffs();
         }
 
         private void UpdateStructure()
@@ -76,7 +82,7 @@ namespace WebBlazorEmpty.AHP
                                 var x = nodes[i];
                                 var y = nodes[a];
 
-                                NodeRelation relationA = new NodeRelation(criteria, x, y, 1);
+                                NodeRelation relationA = new NodeRelation(criteria, x, y, 0);
                                 relations.Add(relationA);
                                 relationA.Changed += RelationValue_Changed;
                             }
@@ -113,7 +119,7 @@ namespace WebBlazorEmpty.AHP
         }
         private void RelationValue_Changed(Relation<INode, INode> changedRelation)
         {
-            RecountCoeffsBeta();
+            RecountCoeffs();
             RelationValueChanged?.Invoke();
         }
 
@@ -134,7 +140,7 @@ namespace WebBlazorEmpty.AHP
         
         public IMatrix GetMatrix(INode node) => new Matrix(GetGrouped(node));
 
-        public void RecountCoeffsBeta()
+        public void RecountCoeffs()
         {
             foreach (var group in GroupedByLevel)
             {
@@ -168,6 +174,21 @@ namespace WebBlazorEmpty.AHP
             }
         }
 
+        public int IndexNode(INode node) => Dictionary[node.Level].ToList().IndexOf(node);
+        public void ClearRelations(INode node)
+        {
+            foreach (var relation in RelationsRequired.Where(r => r.Main == node))
+            {
+                relation.Value = 0;
+            }
+        }
+        public void ClearRelations()
+        {
+            foreach (var node in NodesWithRels)
+            {
+                ClearRelations(node);
+            }
+        }
 
         public INode[] Best(int level)
         {
@@ -190,79 +211,25 @@ namespace WebBlazorEmpty.AHP
                 Console.WriteLine("Отношение не найдено!");
             }
         }
-    }
-    
 
-    public interface IRelationsCorrecntess
-    {
-        double Border { get; set; }
-
-        bool AreRelationsCorrect { get; }
-
-        IEnumerable<INodeRelation> RelationsNotConsistent { get; }
-
-
-    }
-    public class RelationsCorrectness : IRelationsCorrecntess
-    {
-        public IProblem Pr { get; set; }
-        public RelationsCorrectness(IProblem problem)
+        public IEnumerable<IMatrix> PossibleMatrixesForRel(INodeRelation relation)
         {
-            Pr = problem;
-        }
-
-        
-
- 
-        public string[] Messages
-        {
-            get
+            IMatrix source = GetMatrix(relation.Main);
+            int x = IndexNode(relation.From);
+            int y = IndexNode(relation.To);
+            List<IMatrix> mtx = new List<IMatrix>();
+            for (double i = -9; i <= 9; i += 2)
             {
-                List<string> msgs = new List<string>();
-                if (!AreRelationsConsistenct)
-                    msgs.Add("Отношения не согласованы.");
-                if (!AreRelationsFilled)
-                    msgs.Add("Некоторые отношения не согласованы");
+                if (i == -1)
+                    continue;
 
-                if (msgs.Count == 0)
-                    msgs.Add("Всё в порядке");
-
-                return msgs.ToArray();
+                double val = i < 0 ? 1 / Math.Abs(i) : i;
+                IMatrix matrix = new Matrix(source.Array);
+                matrix.Array[x, y] = val;
+                matrix.Array[y, x] = 1 / val;
+                mtx.Add(matrix);
             }
+            return mtx;
         }
-
-        public bool AreRelationsCorrect => AreRelationsConsistenct && AreRelationsFilled;
-
-        public bool AreRelationsFilled => RelationsUnknown.Count() == 0;
-        public bool AreRelationsConsistenct => NodesNotConsistent.Count() == 0;
-
-
-        //Список матриц
-        public double Border { get; set; } = 0.15;
-
-
-        //Список критериев, матрицы по которым не согласованы
-        public IEnumerable<INode> NodesNotConsistent
-        {
-            get
-            {
-                Dictionary<INode, IMatrix> pairs = new Dictionary<INode, IMatrix>();
-                foreach (var node in Pr.NodesWithRels)
-                {
-                    pairs.Add(node, Pr.GetMatrix(node));
-                }
-                var badNodes = pairs.Where(p => !p.Value.Consistency.IsCorrect(Border)).Select(p => p.Key);
-                return badNodes;
-            }
-        }
-        public IEnumerable<INodeRelation> RelationsNotConsistent
-        {
-            get
-            {
-                var nodes = NodesNotConsistent.ToArray();
-                return Pr.RelationsRequired.Where(r => nodes.Contains(r.Main));
-            }
-        }
-        public IEnumerable<INodeRelation> RelationsUnknown => Pr.RelationsRequired.Where(r => r.Unknown);
     }
 }

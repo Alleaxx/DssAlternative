@@ -10,7 +10,6 @@ namespace WebBlazorEmpty.AHP
         IEnumerable<INode> Hierarchy { get; set; }
         IEnumerable<IGrouping<int, INode>> GroupedByLevel { get; }
         
-        //Узлы
         public INode MainGoal { get; }
         public IEnumerable<INode> Criterias { get; }
         public IEnumerable<INode> Alternatives { get; }
@@ -22,12 +21,14 @@ namespace WebBlazorEmpty.AHP
         public int LevelsCount { get; }
         public int RelationsCount { get; }
         public int MaxLevel { get; }
+
+        TimeSpan EstTime { get; }
     }
 
-    public class HierarchyNodes : IHierarchy
+    public class HierarchyN : IHierarchy
     {
         public override string ToString() => $"{MainGoal.Name} [{GroupedByLevel.Count()}] ({Hierarchy.Count()})";
-        public HierarchyNodes(IEnumerable<INode> nodes)
+        public HierarchyN(IEnumerable<INode> nodes)
         {
             Hierarchy = nodes;
         }
@@ -53,6 +54,7 @@ namespace WebBlazorEmpty.AHP
                 return amount;
             }
         }
+        public TimeSpan EstTime => new TimeSpan(0, 0, RelationsCount * 8);
         public int MaxLevel => Hierarchy.Select(s => s.Level).Max();
 
 
@@ -78,8 +80,6 @@ namespace WebBlazorEmpty.AHP
         public IEnumerable<INode> Alternatives => Hierarchy.Where(h => h.Level == LevelsCount - 1);
         public IEnumerable<INode> NodesWithRels => Criterias.Prepend(MainGoal);
         
-        //Сложность?
-        //Ожидаемое время решения проблемы
 
         public static string GetTextInfo(IHierarchy hier,int level)
         {
@@ -114,85 +114,4 @@ namespace WebBlazorEmpty.AHP
         }
     }
 
-
-
-
-    public interface ICorrectness
-    {
-        bool Result { get; }
-        List<string> Comments { get; }
-    }
-
-    public class HierarchyCorrectness : ICorrectness
-    {
-        private IHierarchy Hierarchy { get; set; }
-
-        public HierarchyCorrectness(IHierarchy hierarchy)
-        {
-            Hierarchy = hierarchy;
-            Check();
-        }
-        public void Check()
-        {
-            Result = true;
-            Comments.Clear();
-
-            CheckElementsExisting();
-            CheckElementsPlacement();
-            CheckElementsAmount();
-
-            if(Result)
-                SetSuccess();
-
-        }
-        private void CheckElementsExisting()
-        {
-            if (Hierarchy.MainGoal == null)
-                SetFailed("Отсутствует главная цель проблемы");
-            if (Hierarchy.Criterias.Count() == 0)
-                SetFailed("Отсутствуют критерии");
-            if (Hierarchy.Alternatives.Count() == 0)
-                SetFailed("Отсутствуют альтернативы");
-
-        }
-        private void CheckElementsPlacement()
-        {
-            if (Hierarchy.Hierarchy.Where(n => n.Level == 0).Count() > 1)
-                SetFailed("Больше одного узла на главном уровне проблемы");
-            if (Hierarchy.GroupedByLevel.Last().Key != Hierarchy.GroupedByLevel.Count() - 1)
-                SetFailed("Нарушена последовательность уровней");
-        }
-        private void CheckElementsAmount()
-        {
-            foreach (var group in Hierarchy.GroupedByLevel)
-            {
-                int level = group.Key;
-
-                if (level == 0)
-                    continue;
-                else if (group.Count() < 2)
-                    SetFailed($"На {level} уровне иерархии меньше 2-х элементов");
-            }
-        }
-
-        
-        private void SetFailed(string comment)
-        {
-            Set(false, comment);
-        }
-        private void SetSuccess()
-        {
-            Set(true, "Проверка прошла успешно");
-        }
-
-        private void Set(bool correct, string commentary)
-        {
-            Result = correct;
-            Comments.Add(commentary);
-        }
-
-
-        public bool Result { get; set; }
-        public List<string> Comments { get; set; } = new List<string>();
-    }
 }

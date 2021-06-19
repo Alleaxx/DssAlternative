@@ -26,9 +26,7 @@ namespace WebBlazorEmpty.AHP
         [JsonIgnore]
         public double Coefficient { get; set; }
 
-        public double Rating { get; set; }
-
-        public Node() : this(0, "Узел") { }
+        public Node() { }
         public Node(int level, string name) : this(level, name, "Описание узла") { }
         public Node(int level, string name, string descr)
         {

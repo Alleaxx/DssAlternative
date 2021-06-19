@@ -7,11 +7,27 @@ using Microsoft.AspNetCore.Components;
 
 namespace WebBlazorEmpty.AHP
 {
+    public interface IStyled
+    {
+        string GetClass();
+        string GetStyle();
+    }
 
     public class DSSComponent : ComponentBase
     {
         protected IProject Project { get; private set; }
         protected IProblem Problem => Project.Problem;
+
+        protected IStage Hier => Project.StageHier;
+        protected IStage View => Project.StageView;
+        protected IStage Res => Project.StageResults;
+
+
+        protected IProblemNode[] Nodes => Project.Problem.Hierarchy.Select(n => new ProblemNode(Project.Problem, n)).ToArray();
+
+
+        protected ICorrectness HierEditState => Project.ProblemEditing.Correctness;
+        protected IRelationsCorrecntess RelState => Project.Problem.CorrectnessRels;
 
         protected override void OnParametersSet()
         {
@@ -46,12 +62,6 @@ namespace WebBlazorEmpty.AHP
                 Node = Problem.Dictionary[Level].Where(n => n.Name == NodeName).FirstOrDefault();
             }
 
-        }
-
-
-        public static string GetRoute(INode node)
-        {
-            return $"{node.Level}/{node.Name}";
         }
     }
 

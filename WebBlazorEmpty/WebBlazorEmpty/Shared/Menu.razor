@@ -46,22 +46,22 @@
         <h2>Этапы решения</h2>
         <ul>
             <li>
-                <NavLink class="@(GetProgressStyle(DSS.Ex.Project.StageHier))" href="hierarchy">
+                <NavLink class="@(DSS.Ex.Project.StageHier.GetClass())" href="hierarchy">
                     <img class="icon" src="Images/Иерархия.png" />
-                    <span class="text-stage">I - ИЕРАРХИЯ</span>
+                    <span class="text-stage">I ИЕРАРХИЯ</span>
                 </NavLink>
             </li>
             <li>
-                <NavLink class="@(GetProgressStyle(DSS.Ex.Project.StageView))" href="view">
+                <NavLink class="@(DSS.Ex.Project.StageView.GetClass())" href="view">
                     <img class="icon" src="Images/Отношения.png" />
-                    <span class="text-stage">II - ОБЗОР</span>
+                    <span class="text-stage">II ОБЗОР</span>
                 </NavLink>
             </li>
             <li>
                 <ul class="relations row center">
                     @foreach (var criteria in DSS.Ex.Problem.NodesWithRels)
                     {
-                        <NavLink class="@(GetProgressStyle(DSS.Ex.Project.StageRelations[FirstReqRelation(criteria)]))" href="@($"relation-new/{DSS.Ex.Problem.RelationsAll.ToList().IndexOf(FirstReqRelation(criteria))}")">
+                        <NavLink class="@(DSS.Ex.Project.StageRelations[FirstReqRelation(criteria)].GetClass())" href="@($"relation-new/{DSS.Ex.Problem.RelationsAll.ToList().IndexOf(FirstReqRelation(criteria))}")">
                             @criteria.Name
                         </NavLink>
                     }
@@ -81,9 +81,9 @@
                 </ul>
             </li>
             <li>
-                <NavLink class="@(GetProgressStyle(DSS.Ex.Project.StageResults))" href="results">
+                <NavLink class="@(DSS.Ex.Project.StageResults.GetClass())" href="results">
                     <img class="icon" src="Images/Результаты.png" />
-                    <span class="text-stage">III - РЕЗУЛЬТАТЫ</span>
+                    <span class="text-stage">III РЕЗУЛЬТАТЫ</span>
                 </NavLink>
             </li>
         </ul>
@@ -95,7 +95,7 @@
             @foreach (var project in DSS.Ex.Problems)
             {
                 <li>
-                    <a class="@(project.Problem == DSS.Ex.Problem ? "active" : "")" @onclick="@(() => { DSS.Ex.SelectProblem(project); })" href="/view">
+                    <a class="@(project.Problem == DSS.Ex.Problem ? "active" : "")" @onclick="@(() => { DSS.Ex.SelectProblem(project); })" href="view">
                         <WebBlazorEmpty.Pages.HierSheme Project="@project" />
                         <header>
                             <h4>@project.Problem.MainGoal.Name</h4>
@@ -111,21 +111,6 @@
 @code{
     private INodeRelation FirstReqRelation(INode criteria) => DSS.Ex.Problem.RelationsRequired.Where(r => r.Main == criteria).First();
 
-    private string GetProgressStyle(IStage stage)
-    {
-        string classes = "";
-
-        if (stage.Warning)
-            classes += "warning ";
-        if (stage.Error)
-            classes += "error ";
-        if (stage.Hidden)
-            classes += "none ";
-
-        classes += "normal";
-
-        return classes;
-    }
 
     protected override void OnInitialized()
     {

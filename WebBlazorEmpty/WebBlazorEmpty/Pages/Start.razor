@@ -75,17 +75,21 @@
 
     .preset {
         display: grid;
-        grid-template-columns: 8fr 1fr;
+        grid-template-columns: auto 8fr 1fr;
         grid-template-rows: auto auto;
         padding: 5px 0;
         border-top: 1px solid gainsboro;
         border-bottom: 1px solid gainsboro;
         grid-template-areas:
-            "name load"
-            "descr load";
+            "img name load"
+            "img descr load";
     }
 
-
+    .preset-img{
+        grid-area: img;
+        height: 30px;
+        margin: 5px;
+    }
 
     .preset-name {
         grid-area: name;
@@ -160,6 +164,10 @@
         color: gray;
         font-size: 0.9em;
     }
+
+    .load-json{
+        width: 90%;
+    }
 </style>
 
 <div class="load-task-grid">
@@ -176,7 +184,13 @@
         <p class="load-note">
             Образцовая задача показывает возможности системы на примере уже решенной проблемы.
         </p>
-        <input type="button" @onclick="LoadSample"  value="Загрузить" />
+        <input type="button" @onclick="LoadSample" value="Загрузить" />
+        <h3>Загрузка сохраненной задачи</h3>
+
+        <p class="load-note">
+            <span>@JSONLoadResult</span>
+        </p>
+        <textarea class="load-json" rows="5" @onchange="LoadJSON"></textarea>
     </section>
     <section class="load-preset">
         <h3>Модификация шаблона</h3>
@@ -184,13 +198,14 @@
             Позволяет задать типовую задачу, которую можно изменить под свои условия.
         </p>
         <ul class="presets">
-            @foreach (var problem in Templates)
+            @foreach (var template in Templates)
             {
                 <li>
                     <section class="preset">
-                        <h4 class="preset-name">@problem.MainGoal.Name</h4>
-                        <p class="preset-descr">@problem.Criterias.Count() КР, @problem.Alternatives.Count() АЛЬТ</p>
-                        <input class="preset-load" type="button" value="->" @onclick="@(() => LoadTemplate(problem))" />
+                        <img class="preset-img" title="@template.Name" src="@template.Img" />
+                        <h4 class="preset-name">@template.Name</h4>
+                        <p class="preset-descr">@template.Description</p>
+                        <input class="preset-load" type="button" value="→" @onclick="@(() => LoadTemplate(template))" />
                     </section>
                 </li>
             }
@@ -202,12 +217,10 @@
             Список уже загруженных задач выбора.
         </p>
         <ul class="problems">
-
             @foreach (var project in DSS.Ex.Problems)
             {
                 <li>
                     <NavLink @onclick="@(() => DSS.Ex.SelectProblem(project))" class="problem" href="hierarchy">
-                        @*<img class="problem-img" src="Images/Отношения.png" />*@
                         <div class="problem-img">
                             <WebBlazorEmpty.Pages.HierSheme Project="@project" />
                         </div>
@@ -221,15 +234,8 @@
 </div>
 
 
-@*<details>
-    <summary>Вставить JSON для загрузки</summary>
-    @JSONLoadResult <br />
-    <textarea rows="5" cols="50" @onchange="LoadJSON"></textarea>
-</details>*@
-
 
 @code {
-    //Загрузка шаблонов
     protected override async Task OnInitializedAsync()
     {
         if (DSS.Ex.Templates == null)
@@ -237,46 +243,53 @@
         else
             Templates = DSS.Ex.Templates;
     }
-    public List<IHierarchy> Templates { get; set; } = new List<IHierarchy>();
+
+    List<ITemplate> Templates { get; set; } = new List<ITemplate>();
     private async Task LoadTemplates()
     {
-        Templates = new List<IHierarchy>();
-        string[] pathes = new string[]
-        {
-                "alpha-problem.json",
-                "small-problem.json",
-                "analyze-problem.json",
-                "work-problem.json",
-                "project-team-problem.json",
-                "project-riscs-problem.json",
-                "project-tools-problem.json",
-        };
+        Templates = new List<ITemplate>();
 
-        var options = new JsonSerializerOptions()
+        foreach (var path in Pathes)
         {
-            WriteIndented = true,
-            IgnoreNullValues = true,
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-        };
-
-        foreach (var path in pathes)
-        {
-            string json = await Http.GetStringAsync($"sample-data/{path}");
-            Node[] nodes = JsonSerializer.Deserialize<Node[]>(json, options);
-
-            Templates.Add(new HierarchyNodes(nodes));
+            ITemplate template = await LoadTemplate($"sample-data/{path}");
+            Templates.Add(template);
         }
+
         DSS.Ex.Templates = Templates;
         Console.WriteLine("Шаблоны загружены");
     }
-    private void LoadTemplate(IHierarchy hier)
+    private async Task<Template> LoadTemplate(string path)
     {
-        DSS.Ex.AddProblem(hier.Hierarchy);
+        string json = await Http.GetStringAsync($"{path}");
+        Template template = JsonSerializer.Deserialize<Template>(json, JsonOptions);
+        return template;
+    }
+
+    string[] Pathes = new string[]
+    {
+        "analyze-task.json",
+        "project-team-task.json",
+        "project-riscs-task.json",
+        "project-tools-task.json",
+        "work-task.json",
+        "study-task.json",
+    };
+    JsonSerializerOptions JsonOptions = new JsonSerializerOptions()
+    {
+        WriteIndented = true,
+        IgnoreNullValues = true,
+        Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+    };
+
+
+    private void LoadTemplate(ITemplate template)
+    {
+        var nodes = template.Nodes;
+        DSS.Ex.AddProblem(nodes);
     }
 
 
 
-    //Загрузка своих проблем
     private void LoadSample()
     {
         DSS.Ex.AddSample();
@@ -286,13 +299,9 @@
         INode[] nodes = new INode[]
         {
             new Node(0,"Задача выбора"),
-
             new Node(1,"К1"),
-
             new Node(1,"К2"),
-
             new Node(2,"А1"),
-
             new Node(2,"А2")
         };
         DSS.Ex.AddProblem(nodes);
@@ -300,14 +309,14 @@
 
 
     //Загрузка JSON
-    private string JSONLoadResult = "";
+    private string JSONLoadResult = "Вставка JSON-текста";
     private void LoadJSON(ChangeEventArgs e)
     {
         string json = e.Value.ToString();
         try
         {
-            Node[] obj = JsonSerializer.Deserialize<Node[]>(json);
-            var list = new List<INode>(obj);
+            ITemplate obj = JsonSerializer.Deserialize<Template>(json);
+            var list = new List<INode>(obj.Nodes);
             DSS.Ex.AddProblem(list);
             JSONLoadResult = "Проблема успешно загружена";
         }
@@ -318,4 +327,9 @@
         }
     }
 
+
+    private void SingleUpload()
+        {
+
+        }
 }

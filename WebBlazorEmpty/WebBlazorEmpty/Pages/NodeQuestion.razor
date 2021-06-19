@@ -62,6 +62,8 @@
     .matrix a {
         text-decoration: none;
         color: black;
+        font-size: 1.1em;
+        font-weight: 400;
     }
 
     .matrix a:hover {
@@ -109,8 +111,10 @@
     .selectable {
         color: #4a4a4a;
     }
-    .selected{
-        background-color: whitesmoke;
+    .selected {
+        border-right: 3px solid orange;
+        border-left: 3px solid orange;
+        border-radius: 5px;
     }
     
     
@@ -126,6 +130,12 @@
     .ratings-tr{
 
     }
+        .ratings-tr .safe {
+            background-color: #dfffdf;
+        }
+        .ratings-tr .dangerous {
+            background-color: #ffebee;
+        }
 
     .new-system{
         padding: 10px 0;
@@ -163,9 +173,6 @@
 
 
             </th>
-            <td class="value-cell">
-                <input class="clear-relation" type="button" value="X" />
-            </td>
             <th class="name-cell left">
                 <NavLink href="@($"/node/{Relation.To.Level}/{Relation.To.Name}")">
                     @Relation.To.Name
@@ -173,79 +180,39 @@
             </th>
         </tr>
         <tr class="ratings-tr">
-            <td></td>
-            <td rowspan="5" style="@((Relation.Value == 1) ? RatingEqual.Style : "")" class="@( (Relation.Value == 1) ? "selected" : "selectable")" @onclick="@(() => Relation.SetRating(Relation.From, 1))">@RatingEqual.Name</td>
+            <td colspan="2" style="@((Relation.Value == 1) ? RatingEqual.Style : "")" class="@( (Relation.Value == 1) ? $"selected {GetClass(Relation.From, RatingEqual)}" : $"selectable {GetClass(Relation.From,RatingEqual)}")" @onclick="@(() => Relation.SetRating(Relation.From, 1))">@RatingEqual.Name</td>
         </tr>
         @foreach (var rating in Ratings)
         {
             <tr class="ratings-tr">
-                <td style="@((Relation.Node == Relation.From && rating.Value == Relation.Rating) ? rating.Style : "")" class="@( (Relation.Node == Relation.From && rating.Value == Relation.Rating) ? "selected" : "selectable")" @onclick="@(() => Relation.SetRating(Relation.From, rating.Value))">
+                <td style="@((Relation.Node == Relation.From && rating.Value == Relation.Rating) ? rating.Style : "")" class="@( (Relation.Node == Relation.From && rating.Value == Relation.Rating) ? $"selected {GetClass(Relation.From, rating)}" : $"selectable {GetClass(Relation.From, rating)}")" @onclick="@(() => Relation.SetRating(Relation.From, rating.Value))">
                     @rating.Name
                 </td>
                 <!--<td>-->@*@rating.Value*@<!--</td>-->
-                <td style="@((Relation.Node == Relation.To && rating.Value == Relation.Rating) ? rating.Style : "")" class="@( (Relation.Node == Relation.To && rating.Value == Relation.Rating) ? "selected" : "selectable")" @onclick="@(() => Relation.SetRating(Relation.To, rating.Value))">
+                <td style="@((Relation.Node == Relation.To && rating.Value == Relation.Rating) ? rating.Style : "")" class="@( (Relation.Node == Relation.To && rating.Value == Relation.Rating) ? $"selected {GetClass(Relation.To, rating)}" : $"selectable {GetClass(Relation.To, rating)}")" @onclick="@(() => Relation.SetRating(Relation.To, rating.Value))">
                     @rating.Name
                 </td>
             </tr>
         }
-    <tr>
-        <td colspan="3" class="results-text">
-            '@Relation.From.Name' @NodeRelation.GetTextRelationFor(Relation) '@Relation.To.Name'
-        </td>
-    </tr>
+        <tr>
+            <td colspan="2" class="results-text">
+                '@Relation.From.Name' @NodeRelation.GetTextRelationFor(Relation) '@Relation.To.Name'
+            </td>
+        </tr>
+
+        <tr class="ratings-tr">
+            <td colspan="2" style="@((Relation.Value == 0) ? RatingNone.Style : "")" class="@( (Relation.Value == 0) ? "selected" : "selectable")" @onclick="@(() => Relation.SetRating(Relation.From, 0))">@RatingNone.Name</td>
+        </tr>
     </tbody>
 </table>
 
-@*<section class="new-system">
-    <div>
-        <NavLink class="main-node" href="@($"/node/{Relation.Main.Level}/{Relation.Main.Name}")">
-            <h4>
-            Сравнение по критерию '@Relation.Main.Name'
-            </h4>
-        </NavLink>
-
-    </div>
-    <div class="special-row nodes">
-        <NavLink class="node" href="@($"/node/{Relation.From.Level}/{Relation.From.Name}")">
-            @Relation.From.Name
-        </NavLink>
-
-        <div class="node-relation">
-            @NodeRelation.GetTextRelationFor(Relation.Value)
-        </div>
-
-        <NavLink class="node" href="@($"/node/{Relation.To.Level}/{Relation.To.Name}")">
-            @Relation.To.Name
-        </NavLink>
-    </div>
-    <div class="special-row ratings">
-        @foreach (var rating in Ratings.Reverse())
-        {
-            <div style="@((Relation.Node == Relation.From && rating.Value == Relation.Rating) ? rating.Style : "")" class="@( (Relation.Node == Relation.From && rating.Value == Relation.Rating) ? "selected node-rating" : "selectable node-rating")" @onclick="@(() => Relation.SetRating(Relation.From, rating.Value))">
-                @rating.Name
-            </div>
-        }
-        <div style="@((Relation.Value == 1) ? RatingEqual.Style : "")" class="@( (Relation.Value == 1) ? "selected node-rating" : "selectable node-rating")" @onclick="@(() => Relation.SetRating(Relation.From, 1))">@RatingEqual.Name</div>
-
-        @foreach (var rating in Ratings)
-        {
-
-            <div style="@((Relation.Node == Relation.To && rating.Value == Relation.Rating) ? rating.Style : "")" class="@( (Relation.Node == Relation.To && rating.Value == Relation.Rating) ? "selected node-rating" : "selectable node-rating")" @onclick="@(() => Relation.SetRating(Relation.To, rating.Value))">
-                @rating.Name
-            </div>
-        }
-    </div>
-</section>*@
-
-
-
-
-@*<input type="text" @bind-value="@System" />*@
 
 @code {
     [Parameter]
     public EventCallback RelationUpdated { get; set; }
 
+
+    private Rating RatingNone => new Rating(0);
     private Rating RatingEqual => new Rating(1);
     private Rating[] Ratings
     {
@@ -258,6 +225,55 @@
             }
             return ratings.ToArray();
         }
+    }
+
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        FromMtx.Clear();
+        ToMtx.Clear();
+        if (!Problem.GetMatrix(Relation.Main).WithZeros())
+        {
+            CreateMatrixes();
+        }
+    }
+    private void CreateMatrixes()
+    {
+        for (double i = 1; i <= 9; i += 2)
+        {
+            FromMtx.Add(i, GetMatrixForRating(i));
+        }
+        for (double i = 3; i <= 9; i += 2)
+        {
+            ToMtx.Add(i, GetMatrixForRating(1 / i));
+        }
+    }
+    private IMatrix GetMatrixForRating(double value)
+    {
+        IMatrix source = Problem.GetMatrix(Relation.Main);
+        IMatrix mtx = new Matrix(source.Array);
+
+        int x = Problem.IndexNode(Relation.From);
+        int y = Problem.IndexNode(Relation.To);
+
+        mtx.Array[x, y] = value;
+        mtx.Array[y, x] = 1 / value;
+
+        return mtx;
+    }
+
+    Dictionary<double, IMatrix> FromMtx { get; set; } = new Dictionary<double, IMatrix>();
+    Dictionary<double, IMatrix> ToMtx { get; set; } = new Dictionary<double, IMatrix>();
+
+    private string GetClass(INode node, Rating r)
+    {
+        Dictionary<double, IMatrix> dictionary = node == Relation.From ? FromMtx : ToMtx;
+        if (dictionary.ContainsKey(r.Value))
+        {
+            return dictionary[r.Value].Consistency.IsCorrect() ? "safe " : "dangerous ";
+        }
+        return "usual ";
     }
 
 }

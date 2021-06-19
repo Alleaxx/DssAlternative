@@ -95,7 +95,7 @@
                     <h4>
                         <b>@Node.Name</b>  @(Mtx.Consistency.IsCorrect() ? "✓" : "X")
                     </h4>
-                    <input class="clear-relations" type="button" value="X" />
+                    <input class="clear-relations" type="button" value="X" @onclick="@(() => Problem.ClearRelations(Node))" />
                 </td>
 
                 @foreach (var node in Problem.CriteriasFurther[Node])

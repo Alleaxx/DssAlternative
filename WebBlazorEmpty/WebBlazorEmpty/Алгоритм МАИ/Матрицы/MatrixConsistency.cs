@@ -73,6 +73,8 @@ namespace WebBlazorEmpty.AHP
         {
             if (Size < 3)
                 return true;
+            else if (Mtx.WithZeros())
+                return true;
             else if (Size >= 3 && Cr <= border)
                 return true;
             else

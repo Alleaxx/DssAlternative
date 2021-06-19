@@ -34,20 +34,18 @@ namespace WebBlazorEmpty.AHP
         public override string ToString() => Problem.ToString();
         public string Status => Problem.CorrectnessRels.AreRelationsCorrect ? "Готово к анализу" : "Требуется корректировка данных";
 
-
-
         //Иерархия проблемы
         public List<INode> NodesEditing { get; set; }
-        public IHierarchy ProblemEditing => new HierarchyNodes(NodesEditing);
+        public IHierarchy ProblemEditing => new HierarchyN(NodesEditing);
 
         public IStage StageHier { get; private set; }
 
-        public bool UnsavedChanged => !HierarchyNodes.CompareEqual(Problem, ProblemEditing);
+        public bool UnsavedChanged => !HierarchyN.CompareEqual(Problem, ProblemEditing);
 
         //Текущая проблема
         public IProblem Problem { get; private set; }
 
-        public string ViewFilter { get; set; } = "По согласованности отношений";
+        public string ViewFilter { get; set; } = "По отношениям";
 
         public Project(IEnumerable<INode> nodes)
         {
@@ -56,52 +54,18 @@ namespace WebBlazorEmpty.AHP
 
         private void SetStages()
         {
-            StageHier = new Stage("Формирование иерархии");
-            StageView = new Stage("Обзор проблемы");
-            StageResults = new Stage("Анализ результатов");
-
-            if (StageHier is Stage stH)
-            {
-                stH.GetWarning = () => UnsavedChanged || Problem == null;
-                stH.GetError = () => ProblemEditing.Correctness.Result;
-            }
-            if (StageView is Stage st)
-            {
-                st.GetWarning = WarnView;
-                st.GetHidden = () => Problem == null;
-            }
-            if (StageResults is Stage stR)
-            {
-                stR.GetHidden = WarnView;
-            }
-
-            bool WarnView()
-            {
-                return !Problem.CorrectnessRels.AreRelationsCorrect;
-            }
+            StageHier = new StageHierarchy(this);
+            StageView = new StageView(this);
+            StageResults = new StageResults(this);
 
             StageRelations.Clear();
-            int counter = 0;
             foreach (var relation in Problem.RelationsRequired)
             {
-                Stage relStage = new Stage($"{counter}-е определение связей ");
-                counter++;
+                IStage relStage = new StageRelation(this, relation);
                 StageRelations.Add(relation, relStage);
-
-                relStage.GetWarning = IsWarned;
-                relStage.GetError = IsErrored;
-
-                bool IsErrored()
-                {
-                    return !Problem.GetMatrix(relation.Main).Consistency.IsCorrect();
-                }
-                bool IsWarned()
-                {
-                    return relation.Unknown;
-                }
             }
-            StageHier = new Stage("");
         }
+
 
         public Dictionary<INodeRelation, IStage> StageRelations { get; private set; } = new Dictionary<INodeRelation, IStage>();
         public IStage StageView { get; private set; }
@@ -131,7 +95,6 @@ namespace WebBlazorEmpty.AHP
                 Updated?.Invoke();
             }
         }
-
     }
 
 }

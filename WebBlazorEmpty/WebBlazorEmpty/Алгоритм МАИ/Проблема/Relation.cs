@@ -40,15 +40,20 @@ namespace WebBlazorEmpty.AHP
                     value = MaxValue;
 
                 this.value = value;
-                Unknown = false;
+
                 if (Mirrored != null)
-                    Mirrored.SetValueMirror(1 / value);
+                {
+                    if (value == 0)
+                        Mirrored.value = 0;
+                    else
+                        Mirrored.value = 1 / value;
+                }
 
                 Changed?.Invoke(this);
             }
         }
         protected double value;
-        public bool Unknown { get; private set; }
+        public bool Unknown => value == 0;
 
         private static double MinValue { get; set; } = 0;
         private static double MaxValue { get; set; } = 100;
@@ -57,11 +62,6 @@ namespace WebBlazorEmpty.AHP
 
         public Relation<T,C> Mirrored { get; set; }
 
-        public void SetValueMirror(double mirrored)
-        {
-            Unknown = false;
-            value = mirrored;
-        }
 
         public Relation(C main,T from, T to, double val)
         {
@@ -69,7 +69,6 @@ namespace WebBlazorEmpty.AHP
             From = from;
             To = to;
             Value = val;
-            Unknown = !Self;
         }
     }
     public interface INodeRelation
@@ -184,6 +183,10 @@ namespace WebBlazorEmpty.AHP
             Value = val;
             switch (val)
             {
+                case 0:
+                    Name = "Неизвестное отношение";
+                    Style = "color:Black";
+                    break;
                 case 1:
                     Name = "Одинаковы по значимости";
                     Style = "color:Black";

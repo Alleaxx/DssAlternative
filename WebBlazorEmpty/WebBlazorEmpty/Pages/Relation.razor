@@ -67,16 +67,16 @@
         padding: 5px;
         display: block;
     }
-        .rel-menu-element.normal {
-            border-right: 2px solid lightgreen;
+        .rel-menu-element.safe {
+            border-right: 3px solid lightgreen;
             border-bottom: 1px solid lightgreen;
         }
         .rel-menu-element.warning {
-            border-right: 2px solid #cccc10;
+            border-right: 3px solid #cccc10;
             border-bottom: 1px solid #cccc10;
         }
         .rel-menu-element.error {
-            border-right: 2px solid red;
+            border-right: 3px solid red;
             border-bottom: 1px solid red;
         }
 
@@ -101,20 +101,18 @@
 
         <h2 class="relation-current-header">
             @Relation.Main.Name
-            <NavLink class="node-edit navigation-link" href="@($"/node/{Relation.Main.Level}/{Relation.Main.Name}")" title="Отредактировать критерий">
-                [ Р ] 
-            </NavLink>
         </h2>
+        <b>Индикатор состояния матрицы - не заполнена, не известна</b>
         <NodeQuestion Relation="@Relation" />
 
-        @*<nav class="stage-area">
-            <NavLink href="#">
-                Назад
-            </NavLink>
-            <NavLink href="#">
-                Далее
-            </NavLink>
-        </nav>*@
+        <h4>Доступные действия</h4>
+        <ul>
+            <li>
+                <NavLink class="node-edit navigation-link" href="@($"/node/{Relation.Main.Level}/{Relation.Main.Name}")" title="Отредактировать критерий">
+                    Редактирование критерия
+                </NavLink>
+            </li>
+        </ul>
     </div>
 
     <nav class="menu-area">
@@ -122,11 +120,15 @@
         @foreach (var criteria in Problem.NodesWithRels)
         {
             <h3 class="rel-menu-list-header">@criteria.Name</h3>
+            if(Problem.CorrectnessRels.CheckNodeConsistenct(criteria))
+            {
+
+            }
             <ul class="rel-menu-list">
                 @foreach (var relation in Problem.RelationsRequired.Where(r => r.Main == criteria))
                 {
                     <li>
-                        <NavLink class="@(GetProgressStyle(Project.StageRelations[relation]) + " rel-menu-element")" href="@($"relation-new/{Problem.RelationsAll.ToList().IndexOf(relation)}")">
+                        <NavLink class="@($"{Project.StageRelations[relation].GetClass()} rel-menu-element")" href="@($"relation-new/{Problem.RelationsAll.ToList().IndexOf(relation)}")">
                             @relation.From.Name - @relation.To.Name
                         </NavLink>
                     </li>
@@ -134,27 +136,8 @@
             </ul>
         }
     </nav>
-
 </div>
 
 @code {
-    private string GetProgressStyle(IStage stage)
-    {
-        string classes = "";
 
-        if (stage.Warning)
-            classes += "warning ";
-        if (stage.Error)
-            classes += "error ";
-        if (stage.Hidden)
-            classes += "none ";
-
-        classes += "normal";
-
-        return classes;
-    }
-
-    //private int RelationIndex => Project.StageRelations.ToList().IndexOf(Relation);
-
-    //private INodeRelation NextRelation => Project.StageRelations.ToList().IndexOf(Relation)
 }

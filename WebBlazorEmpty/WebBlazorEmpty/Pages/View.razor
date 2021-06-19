@@ -110,6 +110,10 @@
         background-color: lightpink;
     }
 
+    .good-rel {
+        background-color: #c7ffc7;
+    }
+
     .warn{
         background-color: antiquewhite;
     }
@@ -140,7 +144,7 @@
         <ul class="filters">
             @foreach (var filter in Filters)
             {
-                <li class="@(filter == Filter ? "selected" : "") " @onclick="@(() => Select(filter))">
+                <li class="@(filter == Filter ? "selected" : "") " @onclick="@(() => SelectFilter(filter))">
                     @filter
                 </li>
             }
@@ -152,7 +156,7 @@
             <div class="level-name">
                 <span style="font-size:1.05em">Уровень @levelGroup.Key</span>
                 <br>
-                <span style="font-size:1.15em">@(HierarchyNodes.GetTextInfo(Problem,levelGroup.Key))</span>
+                <span style="font-size:1.15em">@(HierarchyN.GetTextInfo(Problem,levelGroup.Key))</span>
             </div>
             <div class="level-elements">
                 @foreach (var node in levelGroup)
@@ -161,19 +165,6 @@
                         <span>@node.Name</span>
                         <br />
                         <span style="font-size:0.9em; color: gray"> @(GetTag(node).Text)</span>
-                        @if (Filter == Relations && node.Level != 0)
-                        {
-                            <ol>
-                                @foreach (var rel in Problem.RelationsAll.Where(r => r.From == node && r.To != node))
-                                {
-                                    <li style="font-size: 0.8em" class="@(!Problem.CorrectnessRels.RelationsNotConsistent.Contains(rel) ? "good-g" : "bad-b")">
-                                        <NavLink href="@($"relation/{GetIndexOf(rel)}")">
-                                            [@(Math.Round(rel.Value,2))] @rel.Main.Name - @rel.To.Name
-                                        </NavLink>
-                                    </li>
-                                }
-                            </ol>
-                        }
                     </a>
                 }
             </div>
@@ -195,17 +186,9 @@
         {
             <ViewConsistency />
         }
-        else if (Filter == Description)
-        {
-
-        }
         else if (Filter == FilterRating)
         {
             <ViewRating />
-        }
-        else if (Filter == Relations)
-        {
-            <ViewRelations />
         }
     </section>
     @*<section>
@@ -221,10 +204,8 @@
 
 
 
-    const string Description = "По описанию";
     const string FilterRating = "По рейтингу критериев";
-    const string Constistency = "По согласованности отношений";
-    const string Relations = "По связанным отношениям";
+    const string Constistency = "По отношениям";
 
 
     public string[] Filters { get; set; } = new string[]
@@ -232,19 +213,12 @@
             FilterRating,
             Constistency,
         };
-    private string Filter
-    {
-        get => Project.ViewFilter;
-        set
-        {
-            Project.ViewFilter = value;
-        }
-    }
+    private string Filter => Project.ViewFilter;
 
 
-    private void Select(string text)
+    private void SelectFilter(string text)
     {
-        Filter = text;
+        Project.ViewFilter = text;
     }
 
 
@@ -258,9 +232,9 @@
 
 
         if (rel == null)
-            return $"/node/{node.Level}/{node.Name}";
+            return $"node/{node.Level}/{node.Name}";
         else
-            return $"/relation-new/{GetIndexOf(rel)}";
+            return $"relation-new/{GetIndexOf(rel)}";
 
     }
     private Tag GetTag(INode node)
@@ -286,10 +260,6 @@
                     return new Tag($"{Math.Round(res, 5)}", "bad");
                 else
                     return new Tag($"{Math.Round(res, 5)}", "good");
-            case Relations:
-                return new Tag($"{Problem.RelationsRequired.Where(r => r.From == node).Count()}", "usual");
-            case Description:
-                return new Tag(node.Description, "");
             default:
                 return info;
         }

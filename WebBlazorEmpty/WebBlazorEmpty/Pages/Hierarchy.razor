@@ -5,9 +5,6 @@
 
 
 <style>
-
-
-
     .basic-border {
         border: 1px solid gainsboro;
         border-radius: 3px;
@@ -15,17 +12,10 @@
         padding: 5px;
     }
 
-    .info-sheme {
-        flex-basis: 25%;
-        display: none;
-    }
-
-    .info-node {
-        flex-basis: 15%
-    }
-
     .sheme {
-        flex-basis: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
 
@@ -35,21 +25,11 @@
         flex-direction: column;
     }
 
-    .row-own {
-        display: flex;
-        flex-direction: row;
-    }
-
     .level {
+        display: flex;
         justify-content: space-between;
         align-items: center;
         border-bottom: 1px solid gainsboro;
-    }
-
-
-
-    .space-between {
-        justify-content: space-between;
     }
 
 
@@ -57,34 +37,38 @@
         text-align: center;
         width: 150px;
     }
-    .level-index{
+
+    .level-index {
         color: gray;
+        font-size: 0.9em;
     }
 
     .level-elements {
         display: flex;
         flex-flow: row wrap;
+        justify-content: center;
         margin: 5px 0;
     }
-    .level-add{
 
+    .level-add {
     }
 
     .node-element {
+        display: flex;
         padding: 2px 5px;
         padding-right: 0;
         margin: 8px;
         border: 1px solid gray;
-        width: 15%;
-        min-width: 125px;
+        min-width: 15%;
         border-radius: 2px;
     }
 
     .add {
         color: green;
-        border: 1px solid lightgreen;
+        border: 2px solid lightgreen;
         background: transparent;
         padding: 5px 30px;
+        font-size: 1em;
     }
 
         .add:hover {
@@ -94,13 +78,12 @@
 
     .remove {
         color: red;
-        /* height: 2em; */
-        font-size: 0.75em;
+        font-size: 1em;
         margin: 0;
-        
         padding: 5px 8px;
         background-color: transparent;
         border: 0;
+        border-left: 1px solid gainsboro;
     }
 
         .remove:hover {
@@ -113,155 +96,200 @@
         width: 100%;
         font-size: 0.7em;
         border: 0;
-        border-right: 1px solid gainsboro;
         padding: 10px 0;
         text-align: center;
     }
 
-    .confirm{
+    .confirm {
         margin: 10px;
+        display: flex;
+        align-items: center;
     }
 
-    .new-level{
-        margin: 10px 0;
+        .confirm .add {
+            margin: 0 2em;
+        }
+
+        .hier-fails{
+            display: flex;
+            margin: 0 10px;
+        }
+        .hier-fail{
+            border: 2px solid red;
+            border-radius: 3px;
+            font-size: 0.8em;
+            width: 2em;
+            cursor: pointer;
+            text-align: center;
+            padding: 1px 4px;
+            margin: 0 4px;
+        }
+        .hier-fail:hover{
+            background-color: lightpink;
+        }
+
+    .main-goal-level {
+
     }
-    .main-goal-level{
-        flex-basis: 35%;
+    .main-goal-level .level-index{
+        display:none;
     }
+    .main-goal-level .level-name{
+        font-size: 1.4em;
+    }
+    .main-goal-level br{
+        display: none;
+    }
+    .main-goal-level .level-add{
+        visibility: hidden;
+    }
+        .main-goal-level .node-element {
+            min-width: 14em;
+            font-size: 1.25em;
+        }
+        .main-goal-level .remove{
+            display: none;
+        }
 
 
+
+
+    .new-level {
+        padding: 10px 0;
+    }
+        .new-level .level-name{
+            color: gray;
+        }
+
+    .information {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        border-top: 1px solid whitesmoke;
+        border-bottom: 1px solid whitesmoke;
+        padding: 14px 0;
+        margin: 5px 10px;
+        font-size: 0.9em;
+    }
+
+    .property-name {
+        color: gray;
+    }
+
+    .property-value {
+        margin-right: 2em;
+        margin-left: 4px;
+    }
+
+    .not-saved, .all-saved, .warning {
+    }
+
+    .not-saved {
+        color: darkgoldenrod;
+    }
+
+    .warning {
+        color: darkred;
+    }
+
+    .all-saved {
+        color: green;
+    }
 </style>
 
 <h2 class="content-header-h">Редактирование иерархии задачи выбора</h2>
-<div class="row-own">
-    <div class="col-own sheme basic-border space-between">
-
-
-        <div class="confirm">
-            @if (Project.UnsavedChanged && Project.ProblemEditing.Correctness.Result)
+<div class="sheme basic-border">
+    <div class="confirm">
+        <div>
+            @if (Project.UnsavedChanged && HierEditState.Result)
             {
-                <b>Есть несохраненные изменения</b>
+                @*<span class="not-saved">Есть несохраненные изменения</span>*@
                 <input class="add" type="button" value="Подтвердить текущую иерархию" @onclick="UpdateHierarchy" />
             }
-            else if(Project.UnsavedChanged && !Project.ProblemEditing.Correctness.Result)
+            else if (Project.UnsavedChanged && !HierEditState.Result)
             {
-                <b>Некорректная структура иерархии</b>
+                <span class="warning">В структуре иерархии обнаружены ошибки:</span>
             }
             else
             {
-                <b @onclick="UpdateHierarchy">Все изменения сохранены</b>
-                <NavLink class="navigation-link" href="/view">
-                    [ Обзор задачи ]
+                <span class="all-saved">Все изменения сохранены</span>
+                <NavLink class="navigation-link" href="@View.Href">
+                    Обзор задачи
                 </NavLink>
             }
         </div>
-        <div>
-            @foreach (var levelGroup in Hierarchies.GroupedByLevel)
+        <div class="hier-fails">
+            @foreach (var check in HierEditState.Checks)
             {
-                <div class="row-own level">
-                    <div class="level-name">
-                        <span class="level-index" style="font-size:1em">Уровень @levelGroup.Key</span>
-                        <br>
-                        <span style="font-size:1.1em">@(HierarchyNodes.GetTextInfo(Hierarchies,levelGroup.Key))</span>
-                        <br />
-
-                    </div>
-                    <div class="level-elements">
-                        @foreach (var node in levelGroup)
-                        {
-                            <div class="node-element row-own @(levelGroup.Key == 0 ? "main-goal-level" : "")">
-                                <input class="input-text" type="text" @bind-value="@node.Name" @onfocus="@( () => SelectedNode = node )" />
-                                <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
-                            </div>
-                        }
-                    </div>
-                    <div class="level-add">
-                        <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
-                    </div>
-
+                <div class="@check.GetClass()" title="@check.Message">
+                    @check.Name
                 </div>
             }
-            <div class="row-own level">
-                <div class="level-name" style="color:gray">
-                    <span style="font-size:1.1em">Уровень @Hierarchies.LevelsCount</span>
-                    <br>
-                </div>
-                <div>
-                    <div class="row-own">
-                        <input class="add new-level" type="button" value="+" @onclick="@(() => AddNode(Hierarchies.LevelsCount))" />
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
-    <div class="info-sheme basic-border">
-        @if (SelectedNode != null)
+
+    <div class="information">
+        <div>
+            <span class="property-name">Уровней: </span>
+            <span class="property-value">@ProblemEditing.LevelsCount</span>
+        </div>
+        <div>
+            <span class="property-name">Узлов: </span>
+            <span class="property-value">@ProblemEditing.NodesCount</span>
+        </div>
+        <div>
+            <span class="property-name">Отношений: </span>
+            <span class="property-value">@ProblemEditing.RelationsCount</span>
+        </div>
+        <div>
+            <span class="property-name">~ Времени на решение: </span>
+            <span class="property-value">@ProblemEditing.EstTime.Minutes мин. @ProblemEditing.EstTime.Seconds сек.</span>
+        </div>
+    </div>
+
+    <div>
+        @foreach (var levelGroup in ProblemEditing.GroupedByLevel)
         {
-            <h5>Редактирование узла</h5>
-            <div class="col">
-                <input type="text" @bind-value="@SelectedNode.Name" />
-                <input type="button" value="/\" @onclick="@(() => MoveNode(SelectedNode, -1))" />
-                <input type="button" value="\/" @onclick="@(() => MoveNode(SelectedNode, 1))" />
-            </div>
+            <section class="level @(levelGroup.Key == 0 ? "main-goal-level" : "")">
+                <div class="level-name">
+                    <span class="level-index">Уровень @levelGroup.Key</span>
+                    <br>
+                    <span>@(HierarchyN.GetTextInfo(ProblemEditing,levelGroup.Key))</span>
+                    <br />
+
+                </div>
+                <div class="level-elements">
+                    @foreach (var node in levelGroup)
+                    {
+                    <div class="node-element">
+                        <input class="input-text" type="text" @bind-value="@node.Name" />
+                        <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
+                    </div>
+                    }
+                </div>
+
+                <div class="level-add">
+                    <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
+                </div>
+
+            </section>
         }
-        <h5>Информация</h5>
-        <dl>
-            <dt>Уровней иерархии:</dt>
-            <dl>@Hierarchies.LevelsCount</dl>
+    <section class="level new-level">
+        <div class="level-name">
+            <span>Уровень @ProblemEditing.LevelsCount</span>
+        </div>
+        <input class="add " type="button" value="++" @onclick="@(() => AddNode(ProblemEditing.LevelsCount))" />
+        <input class="add" type="button" value="+" style="visibility:hidden"/>
+    </section>
 
-            <dt>Узлов:</dt>
-            <dl>@Hierarchies.NodesCount</dl>
-
-            <dt>Отношений:</dt>
-            <dd>@Hierarchies.RelationsCount</dd>
-
-            <dt>Максимальный уровень:</dt>
-            <dd>@Hierarchies.MaxLevel</dd>
-
-            <dt>Пригодна для использования:</dt>
-            <dd>
-                @(Hierarchies.Correctness.Result ? "ДА" : "НЕТ")
-                @if (Hierarchies.Correctness.Comments.Count > 0)
-                {
-                    <ol>
-                        @foreach (var comment in Hierarchies.Correctness.Comments)
-                        {
-                            <li>@comment</li>
-                        }
-                    </ol>
-
-                }
-            </dd>
-
-            <dt>Главная цель</dt>
-            <dd>@Hierarchies.MainGoal.Name</dd>
-
-            <dt>Критерии:</dt>
-            <dd>@string.Join(',', Hierarchies.Criterias.Select(c => c.Name))</dd>
-
-            <dt>Альтернативы:</dt>
-            <dd>@string.Join(',', Hierarchies.Alternatives.Select(c => c.Name))</dd>
-        </dl>
     </div>
 </div>
 
 
 
 @code {
-    private IHierarchy Hierarchies => Project.ProblemEditing;
-    private List<INode> Nodes => Project.NodesEditing;
-
-    const string Sheme = "По описанию";
-    const string Information = "По рейтингу критериев";
-
-
-    public string[] Filters { get; set; } = new string[]
-    {
-            Sheme,
-            Information,
-            };
-    private string Filter { get; set; }
+    private IHierarchy ProblemEditing => Project.ProblemEditing;
+    private List<INode> NodesEditing => Project.NodesEditing;
 
 
     //Подтверждение иерархии
@@ -269,23 +297,15 @@
 
 
     //Редактирование иерархии
-    private INode SelectedNode { get; set; }
     private void AddNode(int level = -1)
     {
-        level = level == -1 ? Hierarchies.LevelsCount - 1 : level;
+        level = level == -1 ? ProblemEditing.LevelsCount - 1 : level;
         INode newNode = new Node(level, "Узел");
-        Nodes.Add(newNode);
-    }
-    private void MoveNode(INode node, int inc)
-    {
-        int newLevel = node.Level + inc;
-        if (newLevel >= 0)
-            node.Level = newLevel;
+        NodesEditing.Add(newNode);
     }
     private void RemoveNode(INode e)
     {
-        SelectedNode = Nodes.First();
-        if (e != Hierarchies.MainGoal)
-            Nodes.Remove(e);
+        if (e != ProblemEditing.MainGoal)
+            NodesEditing.Remove(e);
     }
 }

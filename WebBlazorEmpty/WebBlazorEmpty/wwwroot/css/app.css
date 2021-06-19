@@ -5,13 +5,11 @@
 
 .grid {
     display: grid;
-    grid-template-columns: 25fr 75fr;
-    grid-template-rows: auto auto 1fr auto;
+    grid-template-columns: 25% 75%;
+    grid-template-rows: auto 1fr auto;
     grid-template-areas:
         "logo header"
-        "navside upper-menu"
         "navside content"
-        "navside lower-menu"
         "footer footer";
 }
 
@@ -53,7 +51,7 @@
     }
 
         .main-header a:hover {
-            text-decoration: underline;
+            color: black;
         }
 
 
@@ -167,14 +165,15 @@
         }
 
             .navside ul a h4 {
-                color: black;
                 font-size: 0.85em;
                 margin: 0;
             }
 
             .navside ul a.active {
                 background-color: white;
-                border-right: 3px solid orange;
+                border-right: 5px solid orange;
+                color: black;
+                font-weight: 600;
             }
 
             .navside ul a p {
@@ -185,6 +184,7 @@
 
             .navside ul a:hover {
                 background-color: white;
+                color: black;
             }
 
         .navside ul img {
@@ -200,6 +200,7 @@ main {
     grid-area: content;
     padding: 0px 10px;
     margin: 0;
+    max-width: 2000px;
 }
 
 .grid > footer {
@@ -257,7 +258,6 @@ ul.relations {
 
 .task-menu a {
     border-bottom: 1px solid gainsboro;
-    color: black;
 }
 .task-menu p{
     color: gray;
@@ -275,36 +275,27 @@ ul.relations {
     text-align: center;
 }
 
-.next-menu {
-    display: flex;
+
+.navigation-link {
+    text-decoration: none;
+    font-family: "Calibri Light";
+    margin: 3px 12px;
+    text-align: center;
+    font-size: 1.1em;
+    border: 1px solid transparent;
+    border-radius: 5px 5px;
+/*    border-left: 2px solid #fdc300;
+    border-right: 2px solid #fdc300;
+*/    
+
+border-bottom: 1px solid;
+    padding: 0 4px;
 }
-
-    .next-menu a {
-        width: 50%;
-        border-top: 1px solid gainsboro;
-        border-bottom: 1px solid gainsboro;
-        border-left: 1px solid gainsboro;
-        border-right: 3px solid gainsboro;
-        padding: 5px 10px;
-        text-decoration: none;
-        color: black;
-        text-align: center;
-    }
-
-        .next-menu a:hover {
-            background-color: white;
-        }
-
-
-        .navigation-link{
-            text-decoration: none;
-            font-family: "Calibri Light";
-            margin: 3px 12px;
-            text-align: center;
-            font-size:1.1em;
-        }
-        .navigation-link:hover{
-            text-decoration: underline;
+        .navigation-link:hover{/*
+            border-top: 1px solid orange;
+            border-bottom: 1px solid orange;*/
+            font-weight: 600;
+            color: black;
         }
 
 
@@ -327,3 +318,11 @@ ul.relations {
             font-size: 0.9em;
             font-family: Consolas;
         }
+
+        .warning, .error{
+            color: darkred;
+        }
+
+a.warning, a.error {
+    color: darkred;
+}

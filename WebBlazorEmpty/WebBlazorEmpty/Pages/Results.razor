@@ -3,10 +3,47 @@
 @layout EditorLayout
 
 <style>
-    .green {
-        height: 6px;
-        background-color: green;
-        border: 2px solid #246600;
+    .level-header{
+
+    }
+    .node-name{
+        flex-basis: 22%;
+    }
+    .node-rating{
+        flex-basis: 8%;
+    }
+    .level-best-nodes {
+
+    }
+    .node-best{
+        font-weight: 600;
+    }
+
+    .node-progress{
+        flex-basis: 70%;
+        height: 5px;
+        position: relative;
+    }
+    .progress-bar {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        border: 1px solid rgb(188,188,188);
+        border-radius: 1px;
+        background-color: rgb(230,230,230);
+        border-left: 0;
+        border-right:0;
+    }
+    .progress-filler {
+        height: 100%;
+        position: absolute;
+
+        background-color: rgb(6,176,37);
+        margin: 1px;
+    }
+
+    .res {
+        font-size: 0.9em;
     }
 
     .results {
@@ -17,71 +54,91 @@
         .results li {
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
+            .results li:before {
+                content: "—";
+                position: relative;
+                left: -5px;
+            }
 
         .results span {
-            min-width: 15%;
             margin-bottom: 5px;
         }
 </style>
 <h2 class="content-header-h">
     Анализ результатов
 </h2>
-@if (Problem.CorrectnessRels.AreRelationsCorrect)
-{
-    @foreach (var levelGroup in Problem.GroupedByLevel)
+<section class="res">
+
+    @if (RelState.AreRelationsCorrect)
     {
-        @if (levelGroup.Key != 0)
+        @foreach (var levelGroup in Problem.GroupedByLevel)
         {
-            <h4>Уровень @levelGroup.Key</h4>
-            <ul class="results">
-                @foreach (var node in levelGroup)
-                {
-                    <li>
-                        <span>
-                            @node.Name
-                        </span>
-                        <span>
-                            @(Math.Round(node.Coefficient,5))
-                        </span>
-                        <div class="green" style="width:@(Math.Round(node.Coefficient * 100))%"></div>
-                    </li>
-                }
-            </ul>
-            <p>
-                ЛУЧШИЙ ВЫБОР -
-                @foreach (var test in Problem.Best(levelGroup.Key))
-                {
-                    <b>@test.Name</b>;
-                }
-            </p>
+            @if (levelGroup.Key != 0)
+            {
+                <h4 class="level-header">@HierarchyN.GetTextInfo(Problem, levelGroup.Key) ур. @levelGroup.Key</h4>
+                <ul class="results">
+                    @foreach (var node in levelGroup)
+                    {
+                        <li>
+                            <span class="node-name">
+                                @node.Name
+                            </span>
+                            <span class="node-rating">
+                                @(Math.Round(node.Coefficient * 100,1))
+                            </span>
+                            <div class="node-progress">
+                                <div class="progress-bar" />
+                                <div class="progress-filler" style="width:@(Math.Round(node.Coefficient * 100))%"/>
+                            </div>
+                        </li>
+                    }
+                </ul>
+                <p class="level-best-nodes">
+                    ЛУЧШИЙ ВЫБОР –
+                    @foreach (var bestNode in Problem.Best(levelGroup.Key))
+                    {
+                        <span class="node-best">@bestNode.Name</span>
+                    }
+                </p>
+            }
         }
+
+        <h4>Доступные действия</h4>
+        <ul>
+            <li>
+                <NavLink class="navigation-link" href="hier">
+                    Модификация иерархии
+                </NavLink>
+            </li>
+            <li>
+                <NavLink class="navigation-link" href="view" @onclick="@(() => Problem.ClearRelations() )">
+                    Сброс отношений
+                </NavLink>
+            </li>
+            <li>
+                <NavLink class="navigation-link" href="hier">
+                    Создать новую задачу на основе
+                </NavLink>
+            </li>
+            <li>
+                <NavLink class="navigation-link" href="hier">
+                    Сохранить
+                </NavLink>
+            </li>
+        </ul>
+    }
+    else
+    {
+        <p>
+            <b>Внимание!</b>
+            Есть некоторые проблемы
+        </p>
+        <NavLink @onclick="@(() => Project.ViewFilter = "По отношениям")" href="view">
+            Перейти для исправления связей
+        </NavLink>
     }
 
-    <NavLink class="navigation-link" href="hier">
-        [ Модификация иерархии ]
-    </NavLink>
 
-    <input type="button" value="Создать новую проблему на основе" />
-
-    <input type="button" value="Очистить все отношения и начать заново" />
-
-    <br />
-}
-else
-{
-
-    <p>
-        <b>Внимание!</b>
-        Есть некоторые проблемы
-    </p>
-    <NavLink @onclick="@(() => DSS.Ex.Project.ViewFilter = "По согласованности отношений")" href="view">
-        Перейти для исправления связей
-    </NavLink>
-}
-
-
-
-@code {
-
-}
+</section>
