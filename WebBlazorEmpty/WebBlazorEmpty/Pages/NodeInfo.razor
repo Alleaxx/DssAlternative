@@ -3,25 +3,23 @@
 @layout EditorLayout
 
 <style>
-    .row-flex-flex{
-        display: flex;
-        flex-flow: row;
-    }
     .edit{
-        flex-basis: 25%;
+        width: 35%;
         padding-right: 20px;
     }
     .rels{
-        flex-basis: 45%;
-        margin-left: 20px;
+
     }
     .structure {
-        flex-basis: 30%;
-        border-right: 1px solid gainsboro;
-        border-left: 1px solid gainsboro;
+        width: 65%;
+        padding: 0 5px;
     }
     .structure a{
         text-decoration: none;
+        font-size: 0.95em;
+    }
+    .structure h5{
+        margin: 5px 0;
     }
     .structure a:hover{
         text-decoration: underline;
@@ -40,11 +38,29 @@
     dt{
         margin-bottom: 5px;
     }
+
+    .structure-list{
+        margin: 4px 0;
+    }
+    .structure-list .active{
+        color: black;
+    }
+
+    .main-criteria-element{
+        font-size: 0.9em;
+    }
+    .relations-all-list{
+        padding-left: 1em;
+    }
+    .relations-criteria-list{
+        font-size: 0.8em;
+        padding-left: 2em;
+    }
 </style>
 
-<section class="row-flex-flex">
+<section class="row">
     <div class="edit">
-        <h4>Редактирование узла</h4>
+        <h3>Редактирование</h3>
         <dl>
             <dt>
                 Название:
@@ -52,101 +68,64 @@
             <dd>
                 <input type="text" @bind-value="@Node.Name" />
             </dd>
-            @*<dt>
-                Описание
-            </dt>
-            <dd>
-                <input type="text" @bind-value="@Node.Description" />
-            </dd>*@
         </dl>
-    </div>
-    <div class="rels">
-        <h4>Отношения</h4>
-        @if (Problem.RelationsAll.Where(r => r.From == Node).Count() > 0)
-        {
-            <ul>
-                @foreach (var relGroup in Problem.RelationsAll.Where(r => r.From == Node && r.To != Node).GroupBy(r => r.Main))
-                {
-                    <li>
-                        По '@relGroup.Key.Name':
-                        <ul>
-                            @foreach (var rel in relGroup)
-                            {
 
-                                <li>
-                                    <NavLink href="@($"relation-new/{Problem.RelationsAll.ToList().IndexOf(rel)}")">
-                                        @NodeRelation.GetTextRelationFor(rel) <i>@rel.To.Name</i>
-                                    </NavLink>
-                                </li>
-                            }
-                        </ul>
-                    </li>
-                }
-            </ul>
-        }
-        else
-        {
-            <p>Отношений с элементами этого же уровня нет</p>
-        }
-    </div>
-    <div class="structure">
-        <h4>Выше</h4>
-        <ul>
-            @if (Problem.Dictionary.ContainsKey(Node.Level - 1))
+        <div class="rels">
+            <h4>Отношения</h4>
+            @if (Problem.RelationsAll.Where(r => r.From == Node).Count() > 0)
             {
-
-                @foreach (var node in Problem.Dictionary[Node.Level - 1])
-                {
-                    @if (node != Node)
+                <ul class="relations-all-list">
+                    @foreach (var relGroup in Problem.RelationsRequired.Where(r => r.From == Node || r.To == Node).GroupBy(r => r.Main))
                     {
-                        <li>
-                            <NavLink href="@($"/node/{node.Level}/{node.Name}")">
-                                @node.Name
-                            </NavLink>
+                        <li class="main-criteria-element">
+                            <span>По '@relGroup.Key.Name':</span>
+                            <ul class="relations-criteria-list">
+                                @foreach (var rel in relGroup)
+                                {
+                                    <li>
+                                        <NavLink href="@(Project.StageRelations[rel].Href)">
+                                            @rel.From.Name @NodeRelation.GetTextRelationFor(rel) @rel.To.Name
+                                        </NavLink>
+                                    </li>
+                                }
+                            </ul>
                         </li>
                     }
-                }
+                </ul>
             }
-        </ul>
-        <h4>Соседние узлы</h4>
-        <ul>
-            @foreach (var node in Problem.Dictionary[Node.Level])
+            else
             {
-                @if (node != Node)
-                {
-                    <li>
-                        <NavLink href="@($"/node/{node.Level}/{node.Name}")">
-                            @node.Name
-                        </NavLink>
-                    </li>
-                }
+                <p style="font-size:0.9em">Отношений с элементами этого же уровня нет</p>
             }
-        </ul>
-        <h4>Ниже</h4>
-        <ul>
-            @if (Problem.Dictionary.ContainsKey(Node.Level + 1))
-            {
+        </div>
 
-                @foreach (var node in Problem.Dictionary[Node.Level + 1])
-                {
-                    @if (node != Node)
-                    {
-                        <li>
-                            <NavLink href="@($"/node/{node.Level}/{node.Name}")">
-                                @node.Name
-                            </NavLink>
-                        </li>
-                    }
-                }
+
+        <div class="structure">
+            <h4>Структура</h4>
+            @foreach (var levelGroup in Problem.Dictionary)
+            {
+                <div style="@($"margin-left:{levelGroup.Key}em")">
+                    <h5>@levelGroup.Key</h5>
+                    <ul class="structure-list">
+                        @foreach (var node in levelGroup.Value)
+                        {
+                            <li>
+                                <NavLink href="@Nodes.Where(n => n.Node == node).First().Href">
+                                    @node.Name
+                                </NavLink>
+                            </li>
+                        }
+                    </ul>
+                </div>
             }
-        </ul>
+        </div>
     </div>
-</section>
 
-<section>
-    <h4>Матрица коэффициентов для уровня данного критерия</h4>
+    <section class="structure">
+        <h4>Матрица отношений данного критерия</h4>
+        <NodeMatrixAlpha Node="@Node" />
+    </section>
 </section>
-<NodeMatrixAlpha Node="@Node" />
 
 
 @code {

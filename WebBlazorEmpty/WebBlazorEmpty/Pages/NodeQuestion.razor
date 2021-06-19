@@ -36,7 +36,8 @@
     }
 
     .name-cell {
-        width: 40%
+        width: 40%;
+        font-size: 1.1em;
     }
     .name-cell a:hover{
         text-decoration: underline;
@@ -44,14 +45,6 @@
 
     .value-cell {
         text-align: center;
-    }
-
-    .left {
-        text-align: left;
-    }
-
-    .right {
-        text-align: right;
     }
 
 
@@ -109,12 +102,13 @@
     }
 
     .selectable {
-        color: #4a4a4a;
+        color: #5f5f5f;
     }
     .selected {
-        border-right: 3px solid orange;
-        border-left: 3px solid orange;
+        border-right: 5px solid orange;
+        border-left: 5px solid orange;
         border-radius: 5px;
+        color: black;
     }
     
     
@@ -159,49 +153,206 @@
         border-top: 1px solid gray;
         text-align: center;
     }
+
+    .prev-next-stages a{
+        color: blue;
+    }
+    .prev-next-stages a:hover{
+        color: black;
+        text-decoration: none;
+    }
+    .next, .prev{
+        display: block;
+        margin: auto;
+    }
+
+    .errors-list{
+        display: flex;
+        justify-content: center;
+        margin: 10px 0;
+    }
+
+    .hier-fail {
+        border: 2px solid red;
+        border-radius: 3px;
+        font-size: 0.8em;
+        cursor: pointer;
+        text-align: center;
+        padding: 4px;
+        margin: 0 4px;
+    }
+
+        .hier-fail.known {
+            border: 1px solid #c1c100;
+        }
+    .hier-fail.consistent{
+        border: 1px solid darkred;
+    }
+
+        .hier-fail:hover {
+            background-color: lightpink;
+        }
+
+    .unknown {
+        background-color: whitesmoke;
+    }
+
+    .more-options {
+        margin-top: 2em;
+    }
+    .more-options-header{
+
+    }
+
+
+</style>
+
+<style>
+    .actions-section {
+        padding: 2px 5px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .action {
+        display: flex;
+        padding: 5px 2px;
+        border: 1px solid gray;
+        border-radius: 2px;
+        font-size: 0.7em;
+        margin: auto;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        width: 75%;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .action-header {
+        padding: 10px 0;
+        border-bottom: 1px solid gainsboro;
+    }
+
+    .action-icon {
+        height: 20px;
+        margin: auto;
+        opacity: 50%;
+    }
+
+    .more-options a.action:hover {
+        color: black;
+        text-decoration: none;
+    }
+
+        .action:hover .action-icon {
+            opacity: 100%;
+        }
+
+    .more-options-add {
+        font-size: 0.9em;
+        color: gray;
+    }
+    .action-name {
+        width: 80%;
+        color: black;
+        font-size: 0.8em;
+    }
+    .clear-relations:hover{
+        border: 1px solid red;
+    }
+    .clear-relations:hover .action-name{
+        color: red;
+    }
 </style>
 
 
 
 <table class="matrix" @onclick="@RelationUpdated">
     <tbody>
-        <tr class="border-bottom-t" style="font-size: 1.2em">
-            <th class="name-cell right">
-                <NavLink href="@($"/node/{Relation.From.Level}/{Relation.From.Name}")">
+        <tr>
+            <th class="name-cell border-bottom-t">
+                <NavLink href="@(Nodes.Where(n => n.Node == Relation.From).First().Href)">
                     @Relation.From.Name
                 </NavLink>
-
-
             </th>
-            <th class="name-cell left">
-                <NavLink href="@($"/node/{Relation.To.Level}/{Relation.To.Name}")">
+            <th class="name-cell border-bottom-t">
+                <NavLink href="@(Nodes.Where(n => n.Node == Relation.To).First().Href)">
                     @Relation.To.Name
                 </NavLink>
             </th>
         </tr>
+
         <tr class="ratings-tr">
-            <td colspan="2" style="@((Relation.Value == 1) ? RatingEqual.Style : "")" class="@( (Relation.Value == 1) ? $"selected {GetClass(Relation.From, RatingEqual)}" : $"selectable {GetClass(Relation.From,RatingEqual)}")" @onclick="@(() => Relation.SetRating(Relation.From, 1))">@RatingEqual.Name</td>
+            <td colspan="2" style="@((Relation.Value == 1) ? RatingEqual.Style : "")" class="@(GetClassSel(Relation.From, RatingEqual))" @onclick="@(() => Relation.SetRating(Relation.From, 1))">@RatingEqual.Name</td>
         </tr>
         @foreach (var rating in Ratings)
         {
             <tr class="ratings-tr">
-                <td style="@((Relation.Node == Relation.From && rating.Value == Relation.Rating) ? rating.Style : "")" class="@( (Relation.Node == Relation.From && rating.Value == Relation.Rating) ? $"selected {GetClass(Relation.From, rating)}" : $"selectable {GetClass(Relation.From, rating)}")" @onclick="@(() => Relation.SetRating(Relation.From, rating.Value))">
+                <td style="@((Relation.Node == Relation.From && rating.Value == Relation.Rating) ? rating.Style : "")" class="@(GetClassSel(Relation.From, rating))" @onclick="@(() => Relation.SetRating(Relation.From, rating.Value))">
                     @rating.Name
                 </td>
-                <!--<td>-->@*@rating.Value*@<!--</td>-->
-                <td style="@((Relation.Node == Relation.To && rating.Value == Relation.Rating) ? rating.Style : "")" class="@( (Relation.Node == Relation.To && rating.Value == Relation.Rating) ? $"selected {GetClass(Relation.To, rating)}" : $"selectable {GetClass(Relation.To, rating)}")" @onclick="@(() => Relation.SetRating(Relation.To, rating.Value))">
+
+                <td style="@((Relation.Node == Relation.To && rating.Value == Relation.Rating) ? rating.Style : "")" class="@(GetClassSel(Relation.To, rating))" @onclick="@(() => Relation.SetRating(Relation.To, rating.Value))">
                     @rating.Name
                 </td>
             </tr>
         }
+
+        <tr class="ratings-tr">
+            <td colspan="2" style="@((Relation.Value == 0) ? RatingNone.Style : "")" class="@GetClassSel(Relation.From, RatingNone)" @onclick="@(() => Relation.SetRating(Relation.From, 0))">
+                Отношения между ними неизвестны
+            </td>
+        </tr>
+
         <tr>
             <td colspan="2" class="results-text">
                 '@Relation.From.Name' @NodeRelation.GetTextRelationFor(Relation) '@Relation.To.Name'
             </td>
         </tr>
 
-        <tr class="ratings-tr">
-            <td colspan="2" style="@((Relation.Value == 0) ? RatingNone.Style : "")" class="@( (Relation.Value == 0) ? "selected" : "selectable")" @onclick="@(() => Relation.SetRating(Relation.From, 0))">@RatingNone.Name</td>
+        <tr class="prev-next-stages">
+            <td>
+                <a class="prev" href="@Prev.Href">
+                    ← предыдущее
+                </a>
+            </td>
+            <td>
+                <a class="next" href="@Next.Href">
+                    следующее →
+                </a>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                <details class="more-options">
+                    <summary class="more-options-header">
+                        Дополнительно
+                    </summary>
+                    <span class="more-options-add">Состояние</span><br/>
+                    <div class="errors-list">
+                        @foreach (var error in RelState.Errors(Relation.Main))
+                        {
+                            <div class="hier-fail @(error.GetClass())" title="@error.Message">X @error.Name</div>
+                        }
+                        @if(RelState.Errors(Relation.Main).Count() == 0)
+                        {
+                            <span>Матрица согласована и заполнена, всё отлично</span><br />
+                        }
+                    </div>
+                    <span class="more-options-add">Действия</span><br/>
+                    <div class="actions-section">
+                        <a class="action edit-criteria" href="@Nodes.Where(n => n.Node == Relation.Main).First().Href">
+                            <span class="action-name">Редактировать критерий и матрицу сравнения</span>
+                            <img class="action-icon" src="Images/pencil.png" />
+                        </a>
+                        <a class="action clear-relations" @onclick="@(() => Problem.ClearRelations(Relation.Main))">
+                            <span class="action-name">Сброс всех отношений по данному критерию</span>
+                            <img class="action-icon" src="Images/tech.png" />
+                        </a>
+                    </div>
+                </details>
+            </td>
         </tr>
     </tbody>
 </table>
@@ -211,9 +362,8 @@
     [Parameter]
     public EventCallback RelationUpdated { get; set; }
 
-
-    private Rating RatingNone => new Rating(0);
-    private Rating RatingEqual => new Rating(1);
+    private Rating RatingNone => new Rating(Relation.From, 0);
+    private Rating RatingEqual => new Rating(Relation.From, 1);
     private Rating[] Ratings
     {
         get
@@ -221,11 +371,26 @@
             List<Rating> ratings = new List<Rating>();
             for (int i = 3; i <= 9; i += 2)
             {
-                ratings.Add(new Rating(i));
+                ratings.Add(new Rating(Relation.From,i));
             }
             return ratings.ToArray();
         }
     }
+
+
+    private string GetClassSel(INode node, Rating rating)
+    {
+        string selState = "selectable";
+        if(Relation.Node == node && rating.Value == Relation.Rating)
+        {
+            selState = "selected";
+        }
+        return $"{selState} {GetClass(node, rating)}";
+    }
+
+
+    private IStage Prev => Project.StageRelations[Problem.PrevRequiredRel(Relation)];
+    private IStage Next => Project.StageRelations[Problem.NextRequiredRel(Relation)];
 
 
     protected override void OnParametersSet()

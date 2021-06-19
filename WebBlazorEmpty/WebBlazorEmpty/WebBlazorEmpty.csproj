@@ -28,4 +28,10 @@
     <None Include="Pages\AboutSystem.razor" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Информация\" />
+    <Folder Include="Pages\Дополнительно\" />
+    <Folder Include="Pages\Этапы\" />
+  </ItemGroup>
+
 </Project>

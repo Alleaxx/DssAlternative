@@ -22,6 +22,7 @@ namespace WebBlazorEmpty.AHP
         IStage StageResults { get; }
 
         Dictionary<INodeRelation, IStage> StageRelations { get; }
+        IStage GetRelation(INode node);
 
 
         void UpdateProblem();
@@ -32,13 +33,26 @@ namespace WebBlazorEmpty.AHP
         public event Action Updated;
 
         public override string ToString() => Problem.ToString();
-        public string Status => Problem.CorrectnessRels.AreRelationsCorrect ? "Готово к анализу" : "Требуется корректировка данных";
+        public string Status
+        {
+            get
+            {
+                string status = "Готова";
+                if (!Problem.CorrectnessRels.AreRelationsKnown)
+                    status = "Нужна информация";
+                if (!Problem.CorrectnessRels.AreRelationsConsistenct)
+                    status = "Нужна корректировка";
+                return status;
+            }
+        }
 
         //Иерархия проблемы
         public List<INode> NodesEditing { get; set; }
         public IHierarchy ProblemEditing => new HierarchyN(NodesEditing);
 
         public IStage StageHier { get; private set; }
+
+        public IStage GetRelation(INode node) => StageRelations[Problem.FirstRequiredRelation(node)];
 
         public bool UnsavedChanged => !HierarchyN.CompareEqual(Problem, ProblemEditing);
 

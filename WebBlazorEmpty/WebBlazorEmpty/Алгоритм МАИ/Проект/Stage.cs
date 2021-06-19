@@ -15,7 +15,7 @@ namespace WebBlazorEmpty.AHP
         private List<string> Classes { get; set; } = new List<string>();
 
         public virtual string Href => "home";
-
+        
         protected void Add(string str) => Classes.Add(str);
 
         public string GetClass()
@@ -90,7 +90,7 @@ namespace WebBlazorEmpty.AHP
         {
             Project = project;
         }
-        public override string Href => "results";
+        public override string Href => "/results";
         protected override void AddRules()
         {
             if (!Project.Problem.CorrectnessRels.AreRelationsCorrect)

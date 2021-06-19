@@ -79,7 +79,7 @@
             {
                 <h4 class="level-header">@HierarchyN.GetTextInfo(Problem, levelGroup.Key) ур. @levelGroup.Key</h4>
                 <ul class="results">
-                    @foreach (var node in levelGroup)
+                    @foreach (var node in levelGroup.OrderBy(n => n.Coefficient).Reverse())
                     {
                         <li>
                             <span class="node-name">

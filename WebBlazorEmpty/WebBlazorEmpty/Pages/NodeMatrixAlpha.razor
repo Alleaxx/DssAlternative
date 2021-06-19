@@ -12,13 +12,13 @@
 
     .counts {
         flex-basis: 50%;
+        font-size: 0.85em;
     }
 
     .relation-sel {
     }
 
     .mtx table {
-        width: 100%;
         padding: 5px;
         border: 1px solid gainsboro;
     }
@@ -71,6 +71,10 @@
         border-right: 1px solid gainsboro;
     }
 
+    .mtx input[type="text"]{
+        max-width: 6em;
+    }
+
     .clear-relations {
         background: transparent;
         border: 1px solid whitesmoke;
@@ -95,7 +99,6 @@
                     <h4>
                         <b>@Node.Name</b>  @(Mtx.Consistency.IsCorrect() ? "✓" : "X")
                     </h4>
-                    <input class="clear-relations" type="button" value="X" @onclick="@(() => Problem.ClearRelations(Node))" />
                 </td>
 
                 @foreach (var node in Problem.CriteriasFurther[Node])
@@ -119,7 +122,7 @@
                     @foreach (var relation in node)
                     {
                         <td class="@(relation == RelationSelected ? "selected-cell" : "")">
-                    <input class="@(relation.Unknown)" disabled="@relation.Self" type="text" @onfocus="@(() => RelationSelected = relation)" @bind-value="@relation.Value" />
+                            <input class="@(relation.Unknown)" disabled="@relation.Self" type="text" @onfocus="@(() => RelationSelected = relation)" @bind-value="@relation.Value" />
                         </td>
                     }
                 </tr>

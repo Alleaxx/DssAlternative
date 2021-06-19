@@ -1,0 +1,43 @@
+﻿a:visited{
+    color: blue;
+}
+
+.content-header-h {
+    margin: auto;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+
+.navigation-link {
+    text-decoration: none;
+    font-family: "Calibri Light";
+    margin: 3px 12px;
+    text-align: center;
+    font-size: 1.1em;
+    border: 1px solid transparent;
+    border-radius: 5px 5px;
+    border-bottom: 1px solid;
+    padding: 0 4px;
+}
+
+    .navigation-link:hover {
+        font-weight: 600;
+        color: black;
+    }
+
+.warning {
+    color: #986b00;
+}
+.error {
+    color: darkred;
+}
+
+a.warning {
+    color: #986b00;
+}
+
+a.error {
+    color: darkred;
+}

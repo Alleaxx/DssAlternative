@@ -19,7 +19,8 @@
 
     .relation-current-header{
         text-align: center;
-        font-size: 1.2em;
+        font-size: 1.15em;
+        margin-bottom: 0;
     }
     .stage-area{
         display: flex;
@@ -49,12 +50,23 @@
         font-size: 1.2em;
     }
     .rel-menu-list-header{
-        display: inline;
         font-size: 1em;
         font-weight: 400;
         margin: 4px 0;
-
+        padding-bottom: 3px;
+        margin-bottom: 0;
     }
+        .rel-menu-list-header.safe {
+            border-bottom: 1px solid gainsboro;
+        }
+
+        .rel-menu-list-header.warning {
+            border-bottom: 1px solid #cccc10;
+        }
+
+        .rel-menu-list-header.error {
+            border-bottom: 1px solid red;
+        }
     .rel-menu-element {
         font-size: 0.8em;
         color: black;
@@ -63,20 +75,21 @@
         text-decoration: none;
         cursor: pointer;
         border-left: 2px solid gainsboro;
-        border-right: 2px solid gainsboro;
+        border-right: 1px solid gainsboro;
         padding: 5px;
         display: block;
     }
+
         .rel-menu-element.safe {
-            border-right: 3px solid lightgreen;
+            border-right: 1px solid lightgreen;
             border-bottom: 1px solid lightgreen;
         }
         .rel-menu-element.warning {
-            border-right: 3px solid #cccc10;
+            border-right: 1px solid #cccc10;
             border-bottom: 1px solid #cccc10;
         }
         .rel-menu-element.error {
-            border-right: 3px solid red;
+            border-right: 1px solid red;
             border-bottom: 1px solid red;
         }
 
@@ -87,12 +100,32 @@
     .rel-menu-list{
         list-style: none;
         margin: 5px 0;
+        margin-top: 0;
     }
 
     .menu-area .active{
         border-left: 5px solid orange;
     }
 
+
+    .criteria-state{
+        font-size: 0.85em;
+        color: black;
+        margin-left: 2em;
+    }
+
+    .criteria-relatons{
+
+    }
+
+    .inner-matrix{
+
+    }
+    .inner-matrix-name{
+        display:inline;
+        font-weight:500;
+        font-size: 1.1em;
+    }
 </style>
 
 <div class="relations-grid">
@@ -102,38 +135,40 @@
         <h2 class="relation-current-header">
             @Relation.Main.Name
         </h2>
-        <b>Индикатор состояния матрицы - не заполнена, не известна</b>
         <NodeQuestion Relation="@Relation" />
-
-        <h4>Доступные действия</h4>
-        <ul>
-            <li>
-                <NavLink class="node-edit navigation-link" href="@($"/node/{Relation.Main.Level}/{Relation.Main.Name}")" title="Отредактировать критерий">
-                    Редактирование критерия
-                </NavLink>
-            </li>
-        </ul>
     </div>
 
     <nav class="menu-area">
         <h2 class="rel-menu-header">Список отношений</h2>
-        @foreach (var criteria in Problem.NodesWithRels)
+        @foreach (var node in Problem.NodesWithRels)
         {
-            <h3 class="rel-menu-list-header">@criteria.Name</h3>
-            if(Problem.CorrectnessRels.CheckNodeConsistenct(criteria))
-            {
-
-            }
-            <ul class="rel-menu-list">
-                @foreach (var relation in Problem.RelationsRequired.Where(r => r.Main == criteria))
-                {
-                    <li>
-                        <NavLink class="@($"{Project.StageRelations[relation].GetClass()} rel-menu-element")" href="@($"relation-new/{Problem.RelationsAll.ToList().IndexOf(relation)}")">
-                            @relation.From.Name - @relation.To.Name
-                        </NavLink>
-                    </li>
-                }
-            </ul>
+            <section class="criteria-relatons">
+                <h3 class="@($"rel-menu-list-header {Project.StageRelations[Problem.FirstRequiredRelation(node)].GetClass()}")">@node.Name</h3>
+                <ul class="rel-menu-list">
+                    @foreach (var relation in Problem.RelationsRequired.Where(r => r.Main == node))
+                    {
+                        <li>
+                            <NavLink class="@($"{Project.StageRelations[relation].GetClass()} rel-menu-element")" href="@($"{Project.StageRelations[relation].Href}")">
+                                @relation.From.Name - @relation.To.Name
+                            </NavLink>
+                        </li>
+                    }
+                </ul>
+                <p class="criteria-state">
+                    @if (!RelState.IsNodeConsistenct(node))
+                    {
+                        <span><b>↑</b> Нужна корректировка согласованности</span>
+                    }
+                    else if (RelState.IsNodeUnknown(node))
+                    {
+                        <span><b>↑</b> Нужно заполнение</span>
+                    }
+                    else
+                    {
+                        <span><b>✓</b>  Всё в порядке</span>
+                    }
+                </p>
+            </section>
         }
     </nav>
 </div>

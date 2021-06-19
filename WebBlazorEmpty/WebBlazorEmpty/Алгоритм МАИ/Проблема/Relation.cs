@@ -56,7 +56,7 @@ namespace WebBlazorEmpty.AHP
         public bool Unknown => value == 0;
 
         private static double MinValue { get; set; } = 0;
-        private static double MaxValue { get; set; } = 100;
+        private static double MaxValue { get; set; } = 9;
 
 
 
@@ -85,12 +85,19 @@ namespace WebBlazorEmpty.AHP
         INode Node { get; }
         double Rating { get; }
         void SetRating(INode node, double val);
+
+        Rating CreateRating();
     }
     public class NodeRelation : Relation<INode, INode>, INodeRelation
     {
         public NodeRelation(INode criteria, INode from, INode to, double val) : base(criteria, from, to, val)
         {
 
+        }
+
+        public Rating CreateRating()
+        {
+            return null;
         }
 
 
@@ -174,11 +181,12 @@ namespace WebBlazorEmpty.AHP
 
     public class Rating
     {
+        public INode Node { get; set; }
         public string Name { get; private set; }
         public int Value { get; private set; }
         public string Style { get; set; }
 
-        public Rating(int val)
+        public Rating(INode node, int val)
         {
             Value = val;
             switch (val)

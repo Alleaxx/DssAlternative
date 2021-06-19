@@ -28,6 +28,10 @@ namespace WebBlazorEmpty.AHP
         void ClearRelations(INode node);
         int IndexNode(INode node);
 
+        INodeRelation FirstRequiredRelation(INode node);
+        INodeRelation NextRequiredRel(INodeRelation from);
+        INodeRelation PrevRequiredRel(INodeRelation from);
+
         IEnumerable<IMatrix> PossibleMatrixesForRel(INodeRelation relation);
     }
     public class Problem : HierarchyN, IProblem
@@ -57,8 +61,6 @@ namespace WebBlazorEmpty.AHP
                 CriteriasFurther.Add(mainNode, Hierarchy.Where(n => n.Level == mainNode.Level + 1).ToArray());
             }
         }
-
-
 
         private void CreateRelations()
         {
@@ -127,7 +129,7 @@ namespace WebBlazorEmpty.AHP
 
         public INodeRelation[] RelationsAll { get; private set; }
 
-        //Для опросника
+        //Необходимые отношения для заполнения
         public INodeRelation[] RelationsRequired { get; private set; }
 
         //Для матриц и коэффициентов
@@ -148,18 +150,6 @@ namespace WebBlazorEmpty.AHP
                 if(level > 0)
                 {
                     var coeffs = Matrix.GetGlobalCoeffs(this, level - 1);
-                    Console.WriteLine();
-                    foreach (var item in group)
-                    {
-                        Console.Write(item);
-                    }
-                    Console.WriteLine();
-                    foreach (var item in coeffs)
-                    {
-                        Console.Write(item);
-                    }
-                    Console.WriteLine();
-
                     for (int i = 0; i < group.Count(); i++)
                     {
                         group.ElementAt(i).Coefficient = coeffs[i];
@@ -169,10 +159,9 @@ namespace WebBlazorEmpty.AHP
                 {
                     MainGoal.Coefficient = 1;
                 }
-
-
             }
         }
+
 
         public int IndexNode(INode node) => Dictionary[node.Level].ToList().IndexOf(node);
         public void ClearRelations(INode node)
@@ -200,6 +189,8 @@ namespace WebBlazorEmpty.AHP
 
 
 
+
+
         public void SetRelationBetween(INode main, INode from, INode to, double value)
         {
             if(RelationsAll.ToList().Find(r => r.Main == main && r.From == from && r.To == to) is INodeRelation relation)
@@ -212,6 +203,8 @@ namespace WebBlazorEmpty.AHP
             }
         }
 
+
+        //Все возможные матрицы сравнения по указанному отношению
         public IEnumerable<IMatrix> PossibleMatrixesForRel(INodeRelation relation)
         {
             IMatrix source = GetMatrix(relation.Main);
@@ -231,5 +224,25 @@ namespace WebBlazorEmpty.AHP
             }
             return mtx;
         }
+
+
+        //Первое заполняемое отношение для узла
+        public INodeRelation FirstRequiredRelation(INode node) => RelationsRequired.ToList().Find(r => r.Main == node);
+
+        //Предыдущее и следующее заполняемое отношение относительно заданного
+        private INodeRelation GetRequiredRel(INodeRelation from, int inc)
+        {
+            int index = RelationsRequired.ToList().IndexOf(from);
+            Console.WriteLine(index);
+
+            if (index + inc >= RelationsRequired.Length)
+                return RelationsRequired.First();
+            if (index + inc < 0)
+                return RelationsRequired.Last();
+
+            return RelationsRequired[index + inc];
+        }
+        public INodeRelation NextRequiredRel(INodeRelation from) => GetRequiredRel(from, 1);
+        public INodeRelation PrevRequiredRel(INodeRelation from) => GetRequiredRel(from, -1);
     }
 }

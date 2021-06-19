@@ -1,10 +1,10 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
+
     <style>
         .grid {
             display: grid;
-            grid-template-columns: 25fr 75fr;
-            grid-template-rows: auto auto 1fr auto;
+            grid-template-columns: 25% 75%;
+            grid-template-rows: auto 1fr auto;
             grid-template-areas: "logo header" "content content" "footer footer";
         }
 
@@ -26,5 +26,6 @@
         <main>
             @Body
         </main>
+
         <Footer />
     </section>

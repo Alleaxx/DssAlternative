@@ -13,8 +13,8 @@ namespace WebBlazorEmpty.AHP
 
         IEnumerable<ICheck> Errors(INode node);
 
-        bool CheckNodeUnknown(INode node);
-        bool CheckNodeConsistenct(INode node);
+        bool IsNodeUnknown(INode node);
+        bool IsNodeConsistenct(INode node);
     }
     public class RelationsCorrectness : IRelationsCorrecntess
     {
@@ -38,18 +38,18 @@ namespace WebBlazorEmpty.AHP
         public IEnumerable<ICheck> Errors(INode node)
         {
             List<ICheck> checks = new List<ICheck>();
-            if (CheckNodeUnknown(node))
-                checks.Add(new CheckResult("Известность","known",false,$"Не все отношения по критерию '{node.Name}' заполнены"));
-            if (CheckNodeConsistenct(node))
-                checks.Add(new CheckResult("Согласованность","consistent",false, $"Отношения по критерию '{node.Name}' не согласованы"));
+            if (IsNodeUnknown(node))
+                checks.Add(new CheckResult("Матрица не заполнена","known",false,$"Не все отношения по критерию '{node.Name}' заполнены"));
+            if (!IsNodeConsistenct(node))
+                checks.Add(new CheckResult("Матрица не согласована","consistent",false, $"Отношения по критерию '{node.Name}' не согласованы"));
             return checks;
         }
 
-        public bool CheckNodeUnknown(INode node)
+        public bool IsNodeUnknown(INode node)
         {
             return Pr.RelationsRequired.Where(r => r.Main == node && r.Unknown).Count() > 0;
         }
-        public bool CheckNodeConsistenct(INode node)
+        public bool IsNodeConsistenct(INode node)
         {
             return Pr.GetMatrix(node).Consistency.IsCorrect();
         }
