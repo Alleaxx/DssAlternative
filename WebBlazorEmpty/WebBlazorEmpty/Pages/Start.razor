@@ -217,7 +217,7 @@
             Список уже загруженных задач выбора.
         </p>
         <ul class="problems">
-            @foreach (var project in DSS.Ex.Problems)
+            @foreach (var project in DSS.Ex.Projects)
             {
                 <li>
                     <NavLink @onclick="@(() => DSS.Ex.SelectProblem(project))" class="problem" href="hierarchy">
@@ -261,7 +261,7 @@
     private async Task<Template> LoadTemplate(string path)
     {
         string json = await Http.GetStringAsync($"{path}");
-        Template template = JsonSerializer.Deserialize<Template>(json, JsonOptions);
+        Template template = JsonSerializer.Deserialize<Template>(json, DSS.Ex.JsonOptions);
         return template;
     }
 
@@ -274,12 +274,7 @@
         "work-task.json",
         "study-task.json",
     };
-    JsonSerializerOptions JsonOptions = new JsonSerializerOptions()
-    {
-        WriteIndented = true,
-        IgnoreNullValues = true,
-        Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-    };
+
 
 
     private void LoadTemplate(ITemplate template)
@@ -287,8 +282,6 @@
         var nodes = template.Nodes;
         DSS.Ex.AddProblem(nodes);
     }
-
-
 
     private void LoadSample()
     {
@@ -326,10 +319,4 @@
             Console.WriteLine(ex.Message);
         }
     }
-
-
-    private void SingleUpload()
-        {
-
-        }
 }

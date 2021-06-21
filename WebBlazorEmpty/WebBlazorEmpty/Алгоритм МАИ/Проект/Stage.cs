@@ -90,7 +90,7 @@ namespace WebBlazorEmpty.AHP
         {
             Project = project;
         }
-        public override string Href => "/results";
+        public override string Href => "results";
         protected override void AddRules()
         {
             if (!Project.Problem.CorrectnessRels.AreRelationsCorrect)

@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Text.Json;
 
 using Microsoft.AspNetCore.Components;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 namespace WebBlazorEmpty.AHP
 {
@@ -55,11 +57,7 @@ namespace WebBlazorEmpty.AHP
 
         public List<ITemplate> Templates { get; set; }
         //Все проблемы
-        public List<IProject> Problems { get; private set; } = new List<IProject>();
-        public IProject Find(string name)
-        {
-            return Problems.Find(p => p.Problem.MainGoal.Name == name);
-        }
+        public List<IProject> Projects { get; private set; } = new List<IProject>();
 
         //Выбранная проблема
         public IProject Project { get; private set; }
@@ -86,11 +84,20 @@ namespace WebBlazorEmpty.AHP
 
         public void AddProblem(IEnumerable<INode> nodes)
         {
-            Problems.Add(new Project(nodes));
+            Projects.Add(new Project(nodes));
+            Project = Projects.Last();
         }
         public void AddSample()
         {
-            Problems.Add(CreateSampleProblem());
+            Projects.Add(CreateSampleProblem());
         }
+
+
+        public JsonSerializerOptions JsonOptions = new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+            IgnoreNullValues = true,
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+        };
     }
 }

@@ -4,7 +4,6 @@
 
 <style>
     table.matrix {
-        border: 1px solid gainsboro;
         border-radius: 3px;
         padding: 5px;
         margin: 5px;
@@ -71,10 +70,12 @@
     }
     .main-node {
         text-align: center;
-        text-decoration: none;
+    }
+    .main-node h3{
+        margin: 5px 0;
     }
     .main-node:hover{
-        text-decoration: underline;
+
     }
     .node-relation{
 
@@ -102,7 +103,7 @@
     }
 
     .selectable {
-        color: #5f5f5f;
+        color: #323232;
     }
     .selected {
         border-right: 5px solid orange;
@@ -125,11 +126,13 @@
 
     }
         .ratings-tr .safe {
-            background-color: #dfffdf;
+            background-color: #efffef;
         }
         .ratings-tr .dangerous {
-            background-color: #ffebee;
+            background-color: #fff7f8;
         }
+
+        .
 
     .new-system{
         padding: 10px 0;
@@ -270,6 +273,13 @@
 <table class="matrix" @onclick="@RelationUpdated">
     <tbody>
         <tr>
+            <th class="main-node border-bottom-t" colspan="2">
+                <h3>
+                    @Relation.Main.Name
+                </h3>
+            </th>
+        </tr>
+        <tr>
             <th class="name-cell border-bottom-t">
                 <NavLink href="@(Nodes.Where(n => n.Node == Relation.From).First().Href)">
                     @Relation.From.Name
@@ -282,6 +292,12 @@
             </th>
         </tr>
 
+
+        <tr class="ratings-tr">
+            <td colspan="2" style="@((Relation.Value == 0) ? RatingNone.Style : "")" class="@GetClassSel(Relation.From, RatingNone)" @onclick="@(() => Relation.SetRating(Relation.From, 0))">
+                Отношения между ними неизвестны
+            </td>
+        </tr>
         <tr class="ratings-tr">
             <td colspan="2" style="@((Relation.Value == 1) ? RatingEqual.Style : "")" class="@(GetClassSel(Relation.From, RatingEqual))" @onclick="@(() => Relation.SetRating(Relation.From, 1))">@RatingEqual.Name</td>
         </tr>
@@ -297,12 +313,6 @@
                 </td>
             </tr>
         }
-
-        <tr class="ratings-tr">
-            <td colspan="2" style="@((Relation.Value == 0) ? RatingNone.Style : "")" class="@GetClassSel(Relation.From, RatingNone)" @onclick="@(() => Relation.SetRating(Relation.From, 0))">
-                Отношения между ними неизвестны
-            </td>
-        </tr>
 
         <tr>
             <td colspan="2" class="results-text">
@@ -329,18 +339,18 @@
                     <summary class="more-options-header">
                         Дополнительно
                     </summary>
-                    <span class="more-options-add">Состояние</span><br/>
+                    <span class="more-options-add">Состояние</span><br />
                     <div class="errors-list">
                         @foreach (var error in RelState.Errors(Relation.Main))
                         {
                             <div class="hier-fail @(error.GetClass())" title="@error.Message">X @error.Name</div>
                         }
-                        @if(RelState.Errors(Relation.Main).Count() == 0)
+                        @if (RelState.Errors(Relation.Main).Count() == 0)
                         {
                             <span>Матрица согласована и заполнена, всё отлично</span><br />
                         }
                     </div>
-                    <span class="more-options-add">Действия</span><br/>
+                    <span class="more-options-add">Действия</span><br />
                     <div class="actions-section">
                         <a class="action edit-criteria" href="@Nodes.Where(n => n.Node == Relation.Main).First().Href">
                             <span class="action-name">Редактировать критерий и матрицу сравнения</span>

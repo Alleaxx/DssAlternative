@@ -185,7 +185,7 @@
     <section class="task-menu">
         <h2 class="task-menu-header">Открытые задачи</h2>
         <ul>
-            @foreach (var project in DSS.Ex.Problems)
+            @foreach (var project in DSS.Ex.Projects)
             {
                 <li>
                     <a class="task-menu-element @(project.Problem == DSS.Ex.Problem ? "active" : "")" @onclick="@(() => { DSS.Ex.SelectProblem(project); })" href="view">

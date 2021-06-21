@@ -1,7 +1,7 @@
 {
   "Name": "Выбор работы",
   "Description": "Подбор подходящего места работы",
-  "Img": "Images/Знак.png",
+  "Img": "Images/info.png",
 
   "Nodes": [
     {

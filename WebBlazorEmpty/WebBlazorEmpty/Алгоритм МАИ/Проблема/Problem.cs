@@ -32,6 +32,8 @@ namespace WebBlazorEmpty.AHP
         INodeRelation NextRequiredRel(INodeRelation from);
         INodeRelation PrevRequiredRel(INodeRelation from);
 
+
+        Dictionary<INode, double> GetRatingFor(INode node);
         IEnumerable<IMatrix> PossibleMatrixesForRel(INodeRelation relation);
     }
     public class Problem : HierarchyN, IProblem
@@ -64,10 +66,10 @@ namespace WebBlazorEmpty.AHP
 
         private void CreateRelations()
         {
-            List<INodeRelation> relations = new List<INodeRelation>();   
+            List<INodeRelation> relations = new List<INodeRelation>();
             foreach (var level in Dictionary.Keys)
             {
-                if(level != MaxLevel)
+                if (level != MaxLevel)
                 {
                     var mainNodes = Dictionary[level];
                     var nodes = Dictionary[level + 1];
@@ -139,7 +141,7 @@ namespace WebBlazorEmpty.AHP
         //Для рейтинга критериев
         public Dictionary<INode, INode[]> CriteriasFurther { get; private set; }
 
-        
+
         public IMatrix GetMatrix(INode node) => new Matrix(GetGrouped(node));
 
         public void RecountCoeffs()
@@ -147,7 +149,7 @@ namespace WebBlazorEmpty.AHP
             foreach (var group in GroupedByLevel)
             {
                 int level = group.Key;
-                if(level > 0)
+                if (level > 0)
                 {
                     var coeffs = Matrix.GetGlobalCoeffs(this, level - 1);
                     for (int i = 0; i < group.Count(); i++)
@@ -193,7 +195,7 @@ namespace WebBlazorEmpty.AHP
 
         public void SetRelationBetween(INode main, INode from, INode to, double value)
         {
-            if(RelationsAll.ToList().Find(r => r.Main == main && r.From == from && r.To == to) is INodeRelation relation)
+            if (RelationsAll.ToList().Find(r => r.Main == main && r.From == from && r.To == to) is INodeRelation relation)
             {
                 relation.Value = value;
             }
@@ -226,6 +228,25 @@ namespace WebBlazorEmpty.AHP
         }
 
 
+
+
+        public Dictionary<INode, double> GetRatingFor(INode node)
+        {
+            Dictionary<INode, double> dictionary = new Dictionary<INode, double>();
+            foreach (var rel in RelationsRequired.Where(r => r.Main == node))
+            {
+                if(rel.Node != null)
+                {
+                    if (!dictionary.ContainsKey(rel.Node))
+                    {
+                        dictionary.Add(rel.Node, 0);
+                    }
+                    dictionary[rel.Node] += rel.Rating;
+                }
+            }
+            return dictionary;
+        }
+
         //Первое заполняемое отношение для узла
         public INodeRelation FirstRequiredRelation(INode node) => RelationsRequired.ToList().Find(r => r.Main == node);
 
@@ -242,7 +263,15 @@ namespace WebBlazorEmpty.AHP
 
             return RelationsRequired[index + inc];
         }
-        public INodeRelation NextRequiredRel(INodeRelation from) => GetRequiredRel(from, 1);
+        public INodeRelation NextRequiredRel(INodeRelation from)
+        {
+            if (GetMatrix(from.Main).Consistency.IsCorrect())
+                return GetRequiredRel(from, 1);
+            else if (from == RelationsRequired.ToList().FindLast(r => r.Main == from.Main))
+                return RelationsRequired.ToList().Find(r => r.Main == from.Main);
+            else
+                return GetRequiredRel(from, 1);
+        }
         public INodeRelation PrevRequiredRel(INodeRelation from) => GetRequiredRel(from, -1);
     }
 }

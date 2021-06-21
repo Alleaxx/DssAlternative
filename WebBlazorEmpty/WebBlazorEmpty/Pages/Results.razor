@@ -108,22 +108,22 @@
         <h4>Доступные действия</h4>
         <ul>
             <li>
-                <NavLink class="navigation-link" href="hier">
+                <NavLink class="navigation-link" href="@Hier.Href">
                     Модификация иерархии
                 </NavLink>
             </li>
             <li>
-                <NavLink class="navigation-link" href="view" @onclick="@(() => Problem.ClearRelations() )">
+                <NavLink class="navigation-link" href="@View.Href" @onclick="@(() => Problem.ClearRelations() )">
                     Сброс отношений
                 </NavLink>
             </li>
             <li>
-                <NavLink class="navigation-link" href="hier">
+                <NavLink class="navigation-link" href="@Hier.Href">
                     Создать новую задачу на основе
                 </NavLink>
             </li>
             <li>
-                <NavLink class="navigation-link" href="hier">
+                <NavLink class="navigation-link" href="@Hier.Href">
                     Сохранить
                 </NavLink>
             </li>

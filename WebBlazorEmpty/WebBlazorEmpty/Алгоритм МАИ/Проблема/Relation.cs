@@ -200,19 +200,19 @@ namespace WebBlazorEmpty.AHP
                     Style = "color:Black";
                     break;
                 case 3:
-                    Name = "Немного важнее";
+                    Name = "Немного приоритетнее";
                     Style = "color:green";
                     break;
                 case 5:
-                    Name = "Важнее";
+                    Name = "Приоритетнее";
                     Style = "color:#0070dd";
                     break;
                 case 7:
-                    Name = "Значительно важнее";
+                    Name = "Значительно приоритетнее";
                     Style = "color:#9345ff";
                     break;
                 case 9:
-                    Name = "Абсолютно важнее";
+                    Name = "Абсолютно приоритетнее";
                     Style = "color:#ff8000";
                     break;
             }

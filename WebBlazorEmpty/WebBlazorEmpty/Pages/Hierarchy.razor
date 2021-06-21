@@ -195,6 +195,10 @@
     .all-saved {
         color: green;
     }
+
+    .json-sheme{
+        margin: 20px 0;
+    }
 </style>
 
 <h2 class="content-header-h">Редактирование иерархии задачи выбора</h2>
@@ -285,9 +289,23 @@
     </div>
 </div>
 
+<section class="json-sheme">
+    <details>
+        <summary rows="25" cols="25">
+            JSON-схема
+        </summary>
+        <textarea>
+        @JsonCurrent
+    </textarea>
+    </details>
+</section>
 
 
 @code {
+    private Template TemplateCurrent => new Template() { Name = ProblemEditing.MainGoal.Name, Nodes = NodesEditing.OfType<Node>().ToArray(), Img = "Images/tech.png", Description = "Сохраненная задача выбора" };
+    private string JsonCurrent => JsonSerializer.Serialize<Template>(TemplateCurrent, DSS.Ex.JsonOptions);
+
+
     private IHierarchy ProblemEditing => Project.ProblemEditing;
     private List<INode> NodesEditing => Project.NodesEditing;
 

@@ -4,19 +4,19 @@
 
 
 <style>
-        .sheme {
-        }
+    .sheme {
+    }
 
-        .level {
-            display: flex;
-            align-items: center;
-            border: 1px solid gainsboro;
-        }
+    .level {
+        display: flex;
+        align-items: center;
+        border: 1px solid gainsboro;
+    }
 
-        .level-name {
-            width: 20%;
-            text-align: center;
-        }
+    .level-name {
+        width: 20%;
+        text-align: center;
+    }
 
     .level-index {
         font-size: 0.9em;
@@ -27,70 +27,69 @@
         font-size: 1.2em;
     }
 
-        .level-elements {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
+    .level-elements {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+    }
 
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-        }
+    .node-element {
+        padding: 10px;
+        margin: 10px;
+        border: 1px solid gray;
+        text-align: center;
+        border-radius: 4px;
+        padding: 0;
+        text-decoration: none;
+    }
 
-        .node-element {
-            padding: 10px;
-            margin: 10px;
-            border: 1px solid gray;
-            text-align: center;
-            border-radius: 4px;
-            padding: 0;
+        .node-element a {
             text-decoration: none;
         }
 
-            .node-element a {
-                text-decoration: none;
-            }
+    .node-element-name {
+        font-size: 0.9em;
+    }
 
-        .node-element-name {
-            font-size: 0.9em;
+    .filters {
+        list-style: none;
+        display: flex;
+    }
+
+        .filters li {
+            padding: 5px 15px;
+            border-bottom: 1px solid gainsboro;
         }
 
-        .filters {
-            list-style: none;
-            display: flex;
-        }
-
-            .filters li {
-                padding: 5px 15px;
-                border-bottom: 1px solid gainsboro;
-            }
-
-                .filters li:hover {
-                    background-color: gainsboro;
-                    cursor: pointer;
-                }
-
-            .filters .selected {
+            .filters li:hover {
                 background-color: gainsboro;
+                cursor: pointer;
             }
 
-
-
-        .good {
-            background-color: #dfffdf;
+        .filters .selected {
+            background-color: gainsboro;
         }
 
-        .bad {
-            background-color: #ffdee3;
-        }
 
-        .warn {
-            background-color: antiquewhite;
-        }
 
-        .best {
-            background-color: #dfffdf;
-        }
+    .good {
+        background-color: #dfffdf;
+    }
+
+    .bad {
+        background-color: #ffdee3;
+    }
+
+    .warn {
+        background-color: antiquewhite;
+    }
+
+    .best {
+        background-color: #dfffdf;
+    }
 
 
 
@@ -101,82 +100,90 @@
         height: 3em;
         display: none;
     }
-        .action {
-            display: flex;
-            padding: 3px 5px;
-            border: 1px solid gray;
-            border-radius: 2px;
-            font-size: 0.7em;
-            margin: 5px 1px;
-            align-items: center;
-            cursor: pointer;
+
+    .action {
+        display: flex;
+        padding: 3px 5px;
+        border: 1px solid gray;
+        border-radius: 2px;
+        font-size: 0.7em;
+        margin: 5px 1px;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .action-header {
+        padding: 10px 0;
+        border-bottom: 1px solid gainsboro;
+    }
+
+    .node-element:hover .actions-section {
+        display: flex;
+    }
+
+    .action-values-section {
+        padding: 2px 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 3em;
+    }
+
+    .node-element:hover .action-values-section {
+        display: none;
+    }
+
+    .action-icon {
+        height: 16px;
+        margin: auto;
+        opacity: 50%;
+    }
+
+    .action:hover {
+        color: black;
+    }
+
+        .action:hover .action-icon {
+            opacity: 100%;
         }
 
-        .action-header {
-            padding: 10px 0;
-            border-bottom: 1px solid gainsboro;
-        }
+    .action-name {
+        width: 80%;
+        color: black;
+    }
 
-        .node-element:hover .actions-section {
-            display: flex;
-        }
+    .edit-criteria:hover {
+    }
 
-        .action-values-section {
-            padding: 2px 5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 3em;
-        }
+    .edit-relations:hover {
+    }
 
-        .node-element:hover .action-values-section {
-            display: none;
-        }
+    .clear-relations:hover {
+        border: 1px solid red;
+    }
 
-        .action-icon {
-            height: 16px;
-            margin: auto;
-            opacity: 50%;
-        }
+    .clear-relations a:hover {
+        color: red;
+    }
 
-        .action:hover {
-            color: black;
-        }
-            .action:hover .action-icon {
-                opacity: 100%;
-            }
+    .property {
+        font-size: 0.9em;
+        margin: 0 6px;
+    }
 
-        .action-name {
-            width: 80%;
-            color: black;
-        }
+    .property-name {
+        color: gray;
+    }
 
-        .edit-criteria:hover {
+    .property-value {
+        color: black;
+    }
 
-        }
-
-        .edit-relations:hover {
-
-        }
-
-        .clear-relations:hover {
-            border: 1px solid red;
-        }
-        .clear-relations a:hover {
-            color: red;
-        }
-
-        .property {
-            font-size: 0.9em;
-            margin: 0 6px;
-        }
-        .property-name {
-            color: gray;
-        }
-
-        .property-value {
-            color: black;
-        }
+    .filters-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 </style>
 
 <section class="sheme">
@@ -185,71 +192,75 @@
         <ul class="filters">
             @foreach (var filter in Filters)
             {
-                <li class="@(filter == Filter ? "selected" : "") " @onclick="@(() => SelectFilter(filter))">
-                    @filter
-                </li>
+            <li class="@(filter == Filter ? "selected" : "") " @onclick="@(() => SelectFilter(filter))">
+                @filter
+            </li>
             }
         </ul>
+        <div class="size-edit">
+            <span>Размер элементов %: </span>
+            <input type="number" @bind-value="@NodeSize" />
+        </div>
     </div>
 
     @foreach (var levelGroup in Problem.GroupedByLevel)
     {
-        <div class="level">
-            <div class="level-name">
-                <span class="level-index">Уровень @levelGroup.Key</span>
-                <br>
-                <span class="level-text">@(HierarchyN.GetTextInfo(Problem,levelGroup.Key))</span>
-            </div>
-            <div class="level-elements">
-                @foreach (var node in levelGroup)
+    <div class="level">
+        <div class="level-name">
+            <span class="level-index">Уровень @levelGroup.Key</span>
+            <br>
+            <span class="level-text">@(HierarchyN.GetTextInfo(Problem,levelGroup.Key))</span>
+        </div>
+        <div class="level-elements">
+            @foreach (var node in levelGroup)
                 {
-                    <details open class="node-element" style="@($"width:{NodeSize}%")">
-                        <summary class="action-header @(GetClass(node))">
-                            <span class="node-element-name">@node.Name</span>
-                        </summary>
-                        <div class="actions-section">
-                            <a class="action edit-criteria" title="Редактировать критерий" href="@Nodes.Where(n => n.Node == node).First().Href">
-                                <span class="action-name"></span>
-                                <img class="action-icon" src="Images/pencil.png" />
-                            </a>
-                            @if (Problem.NodesWithRels.Contains(node))
+            <details open class="node-element" style="@($"width:{NodeSize}%")">
+                <summary class="action-header @(GetClass(node))">
+                    <span class="node-element-name">@node.Name</span>
+                </summary>
+                <div class="actions-section">
+                    <a class="action edit-criteria" title="Редактировать критерий" href="@Nodes.Where(n => n.Node == node).First().Href">
+                        <span class="action-name"></span>
+                        <img class="action-icon" src="Images/pencil.png" />
+                    </a>
+                    @if (Problem.NodesWithRels.Contains(node))
                             {
 
-                                <a class="action edit-relations" title="Переход к отношениям по критерию" href="@($"{GetNodeRel(node).Href}")">
-                                    <span class="action-name"></span>
-                                    <img class="action-icon" src="Images/play.png" />
-                                </a>
-                                <a class="action clear-relations" title="Сбросить все отношения критерия" href="@View.Href" @onclick="@(() => Problem.ClearRelations(node))">
-                                    <span class="action-name">X</span>
-                                    <img class="action-icon" src="Images/tech.png" />
-                                </a>
+                    <a class="action edit-relations" title="Переход к отношениям по критерию" href="@($"{GetNodeRel(node).Href}")">
+                        <span class="action-name"></span>
+                        <img class="action-icon" src="Images/play.png" />
+                    </a>
+                    <a class="action clear-relations" title="Сбросить все отношения критерия" href="@View.Href" @onclick="@(() => Problem.ClearRelations(node))">
+                        <span class="action-name">X</span>
+                        <img class="action-icon" src="Images/tech.png" />
+                    </a>
                             }
-                        </div>
-                        <div class="action-values-section">
-                            <div class="property">
-                                <span class="property-name">Cr:</span><br />
-                                <span class="property-value">@ProcessDouble(Problem.GetMatrix(node).Consistency.Cr)</span>
-                            </div>
-                            <div class="property">
-                                <span class="property-name">Рейт:</span><br />
-                                <span class="property-value">@ProcessDouble(node.Coefficient)</span>
-                            </div>
-                        </div>
-                    </details>
+                </div>
+                <div class="action-values-section">
+                    <div class="property">
+                        <span class="property-name">Cr:</span><br />
+                        <span class="property-value">@ProcessDouble(Problem.GetMatrix(node).Consistency.Cr)</span>
+                    </div>
+                    <div class="property">
+                        <span class="property-name">Рейт:</span><br />
+                        <span class="property-value">@ProcessDouble(node.Coefficient)</span>
+                    </div>
+                </div>
+            </details>
                 }
-            </div>
         </div>
+    </div>
     }
 </section>
 
 <section>
     @if (Filter == Constistency)
     {
-        <ViewConsistency />
+    <ViewConsistency />
     }
     else if (Filter == FilterRating)
     {
-        <ViewRating />
+    <ViewRating />
     }
 </section>
 
