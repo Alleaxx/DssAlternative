@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebBlazorEmpty.AHP
+namespace DSSAlternative.AHP
 {
     public interface IConsistency
     {
@@ -102,7 +102,7 @@ namespace WebBlazorEmpty.AHP
             }
             double sumAll = rowSum.Sum();
 
-            return AHP.Matrix.Normalise(rowSum, sumAll);
+            return Matrix.Normalise(rowSum, sumAll);
         }
 
         public MatrixConsistenct(IMatrix matrix)

@@ -6,32 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Pages\AboutSystem.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.1" PrivateAssets="all" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Pages\AboutSystem.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Pages\AboutSystem.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Pages\AboutSystem.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\Информация\" />
-    <Folder Include="Pages\Дополнительно\" />
-    <Folder Include="Pages\Этапы\" />
   </ItemGroup>
 
 </Project>

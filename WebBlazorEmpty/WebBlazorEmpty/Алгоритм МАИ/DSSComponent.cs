@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Components;
 
-namespace WebBlazorEmpty.AHP
+namespace DSSAlternative.AHP
 {
     public interface IStyled
     {

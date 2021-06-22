@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
-namespace WebBlazorEmpty.AHP
+namespace DSSAlternative.AHP
 {
     public class DSS
     {

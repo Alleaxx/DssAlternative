@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebBlazorEmpty.AHP
+namespace DSSAlternative.AHP
 {
     public class Relation<T,C> where T:class
     {

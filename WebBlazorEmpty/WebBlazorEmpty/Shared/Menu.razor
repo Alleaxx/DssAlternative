@@ -190,7 +190,7 @@
                 <li>
                     <a class="task-menu-element @(project.Problem == DSS.Ex.Problem ? "active" : "")" @onclick="@(() => { DSS.Ex.SelectProblem(project); })" href="view">
                         <div class="task-element-sheme">
-                            <WebBlazorEmpty.Pages.HierSheme Project="@project" />
+                            <DSSAlternative.Pages.Дополнительно.HierSheme Project="@project" />
                         </div>
                         <header class="task-element-header">
                             <h4 class="task-element-name">@project.Problem.MainGoal.Name</h4>

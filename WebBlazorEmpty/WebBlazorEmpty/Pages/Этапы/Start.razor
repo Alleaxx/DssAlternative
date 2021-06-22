@@ -222,7 +222,7 @@
                 <li>
                     <NavLink @onclick="@(() => DSS.Ex.SelectProblem(project))" class="problem" href="hierarchy">
                         <div class="problem-img">
-                            <WebBlazorEmpty.Pages.HierSheme Project="@project" />
+                            <DSSAlternative.Pages.Дополнительно.HierSheme Project="@project" />
                         </div>
                         <h4 class="problem-name">@project.Problem.MainGoal.Name</h4>
                         <p class="problem-status">@project.Status</p>
@@ -267,12 +267,12 @@
 
     string[] Pathes = new string[]
     {
-        "analyze-task.json",
         "project-team-task.json",
         "project-riscs-task.json",
         "project-tools-task.json",
         "work-task.json",
         "study-task.json",
+        "buy-task.json",
     };
 
 
