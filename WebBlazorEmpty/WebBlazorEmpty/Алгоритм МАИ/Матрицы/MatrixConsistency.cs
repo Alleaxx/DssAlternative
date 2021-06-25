@@ -8,17 +8,13 @@ namespace DSSAlternative.AHP
 {
     public interface IConsistency
     {
-        bool IsCorrect(double border);
         bool IsCorrect();
         double Cr { get; }
 
         public double Nmax { get; }
-        public double NmaxAlpha { get; }
 
         public double CI { get; }
 
-
-        //Стохастический индекс согласованности
         public double RI { get; }
 
         double[] MultiMatrixLocalCoeffs { get; }
@@ -34,7 +30,7 @@ namespace DSSAlternative.AHP
 
         public double Nmax => NmaxAlpha;
         public double NmaxOld => MultiMatrixLocalCoeffs.Sum();
-        public double NmaxAlpha => Matrix.MatrixMultiplication(Mtx.Array, MultiChecker()).Sum();
+        public double NmaxAlpha => MtxActions.MatrixMultiplication(Mtx.Array, MultiChecker()).Sum();
 
 
 
@@ -84,8 +80,7 @@ namespace DSSAlternative.AHP
         public static double BorderConsistenct { get; set; } = 0.2;
 
 
-        //Порог 0.1
-        public double[] MultiMatrixLocalCoeffs => AHP.Matrix.MatrixMultiplication(Mtx.Array, Mtx.Coeffiients);
+        public double[] MultiMatrixLocalCoeffs => MtxActions.MatrixMultiplication(Mtx.Array, Mtx.Coeffiients);
 
 
         public double[] MultiChecker()
@@ -102,7 +97,7 @@ namespace DSSAlternative.AHP
             }
             double sumAll = rowSum.Sum();
 
-            return Matrix.Normalise(rowSum, sumAll);
+            return MtxActions.Normalise(rowSum, sumAll);
         }
 
         public MatrixConsistenct(IMatrix matrix)

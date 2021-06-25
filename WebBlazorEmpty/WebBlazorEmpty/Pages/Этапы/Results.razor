@@ -1,29 +1,32 @@
 ﻿@page "/results"
-@inherits DSSComponent
+@inherits DSSProject
 @layout EditorLayout
 
 <style>
-    .level-header{
-
+    .level-header {
     }
-    .node-name{
+
+    .node-name {
         flex-basis: 22%;
     }
-    .node-rating{
+
+    .node-rating {
         flex-basis: 8%;
     }
-    .level-best-nodes {
 
+    .level-best-nodes {
     }
-    .node-best{
+
+    .node-best {
         font-weight: 600;
     }
 
-    .node-progress{
+    .node-progress {
         flex-basis: 70%;
         height: 5px;
         position: relative;
     }
+
     .progress-bar {
         width: 100%;
         height: 100%;
@@ -32,12 +35,12 @@
         border-radius: 1px;
         background-color: rgb(230,230,230);
         border-left: 0;
-        border-right:0;
+        border-right: 0;
     }
+
     .progress-filler {
         height: 100%;
         position: absolute;
-
         background-color: rgb(6,176,37);
         margin: 1px;
     }
@@ -56,6 +59,7 @@
             align-items: center;
             justify-content: space-between;
         }
+
             .results li:before {
                 content: "—";
                 position: relative;
@@ -90,7 +94,7 @@
                             </span>
                             <div class="node-progress">
                                 <div class="progress-bar" />
-                                <div class="progress-filler" style="width:@(Math.Round(node.Coefficient * 100))%"/>
+                                <div class="progress-filler" style="width:@(Math.Round(node.Coefficient * 100))%" />
                             </div>
                         </li>
                     }

@@ -12,10 +12,13 @@ namespace DSSAlternative.AHP
         string GetClass();
         string GetStyle();
     }
-
     public class DSSComponent : ComponentBase
     {
-        protected IProject Project { get; private set; }
+        public DSS DSS => DSS.Ex;
+    }
+    public class DSSProject : DSSComponent
+    {
+        protected IProject Project => DSS.Project;
         protected IProblem Problem => Project.Problem;
 
         protected IStage Hier => Project.StageHier;
@@ -28,14 +31,9 @@ namespace DSSAlternative.AHP
 
         protected ICorrectness HierEditState => Project.ProblemEditing.Correctness;
         protected IRelationsCorrecntess RelState => Project.Problem.CorrectnessRels;
-
-        protected override void OnParametersSet()
-        {
-            Project = DSS.Ex.Project;
-        }
     }
 
-    public class DSSComponentNode : DSSComponent
+    public class DSSComponentNode : DSSProject
     {
         [Parameter]
         public INode Node { get; set; }
@@ -65,7 +63,7 @@ namespace DSSAlternative.AHP
         }
     }
 
-    public class DSSComponentRelation : DSSComponent
+    public class DSSComponentRelation : DSSProject
     {
         
         [Parameter]

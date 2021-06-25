@@ -426,11 +426,16 @@
     }
     private IMatrix GetMatrixForRating(double value)
     {
-        IMatrix source = Problem.GetMatrix(Relation.Main);
+        IMatrixRelations source = Problem.GetMatrix(Relation.Main);
         IMatrix mtx = new Matrix(source.Array);
 
-        int x = Problem.IndexNode(Relation.From);
-        int y = Problem.IndexNode(Relation.To);
+
+        //int x =  Problem.IndexNode(Relation.From);
+        //int y = Problem.IndexNode(Relation.To);
+
+
+        int x = source.Nodes.ToList().IndexOf(Relation.From);
+        int y = source.Nodes.ToList().IndexOf(Relation.To);
 
         mtx.Array[x, y] = value;
         mtx.Array[y, x] = 1 / value;

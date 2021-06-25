@@ -21,9 +21,9 @@ namespace DSSAlternative.AHP
         public double[,] Array { get; set; }
         public int Size => Array.GetLength(0);
 
-        public IConsistency Consistency { get; set; }
+        public IConsistency Consistency { get; protected set; }
 
-        public double[] Coeffiients => LocalCoefficients(Array);
+        public double[] Coeffiients => MtxActions.LocalCoefficients(Array);
 
         public bool WithZeros()
         {
@@ -38,117 +38,8 @@ namespace DSSAlternative.AHP
             return false;
         }
 
-        public static double[] GeometricMultiVector(double[,] mtx)
-        {
-            int size = mtx.GetLength(0);
 
-            double[] vector = new double[size];
-            for (int r = 0; r < size; r++)
-            {
-                double multi = 1;
-                for (int c = 0; c < size; c++)
-                {
-                    multi *= mtx[r,c];
-                }
-                vector[r] = multi;
-
-            }
-            return vector;
-        }
-        public static double[] MatrixMultiplication(double[,] mtx, double[] vector)
-        {
-            int rsize = mtx.GetLength(0);
-            int size = vector.Length;
-            double[] results = new double[rsize];
-            for (int r = 0; r < rsize; r++)
-            {
-                double res = 0;
-                for (int c = 0; c < size; c++)
-                {
-                    res += mtx[r, c] * vector[c];
-                }
-                results[r] = res;
-            }
-            return results;
-        }
-        public static double[] Normalise(double[] vector, double? max = null)
-        {
-            int size = vector.Length;
-            max = max ?? size;
-
-            var results = new double[size];
-            vector.CopyTo(results,0);
-            for (int i = 0; i < size; i++)
-            {
-                results[i] = vector[i] / max.Value;
-            }
-            return results;
-        }
-
-        public static double[] LocalCoefficients(double[,] mtx)
-        {
-            int size = mtx.GetLength(0);
-            var geometricMulti = GeometricMultiVector(mtx);
-
-            var multiPowed = new double[size];
-            for (int i = 0; i < size; i++)
-            {
-                multiPowed[i] = Math.Pow(geometricMulti[i], 1 / (double)size);
-            }
-            var coeffs = Normalise(multiPowed,multiPowed.Sum());
-
-            return coeffs;
-        }
-
-
-        public static double[,] GetRelationMatrixForNode(IProblem problem, INode node)
-        {
-            var grouped = problem.RelationsAll.Where(g => g.Main == node).GroupBy(r => r.From).ToArray();
-            return GetArrayFromRelations(grouped);
-        }
-        private static double[,] GetArrayFromRelations(IGrouping<INode, INodeRelation>[] grouped)
-        {
-            int size = grouped.Length;
-            var arr = new double[size, size];
-            for (int x = 0; x < size; x++)
-            {
-                for (int y = 0; y < size; y++)
-                {
-                    arr[x, y] = grouped[x].ElementAt(y).Value;
-                }
-            }
-            return arr;
-        }
-        public static double[,] GetCoeffMatrixForLevel(IProblem problem, int level)
-        {
-            var nodes = problem.Dictionary[level];
-            var nodeCoeffs = nodes.Select(n => LocalCoefficients(GetRelationMatrixForNode(problem, n))).ToArray();
-
-            int rowSize = nodes.Length;           //Кол-во столбцов, соответствует количесту узлов
-            int colSize = nodeCoeffs.First().Length;   //Кол-во строк, соответствует длине вектора коэффициентов этого уровня
-
-            var mtx = new double[colSize, rowSize];
-            for (int r = 0; r < colSize; r++)
-            {
-                for (int c = 0; c < rowSize; c++)
-                {
-                    //Console.WriteLine($"[{r}][{c}] = {nodeCoeffs[c][r]}");
-                    mtx[r, c] = nodeCoeffs[c][r];
-                }
-            }
-
-            return mtx;
-        }
-        public static double[] GetGlobalCoeffs(IProblem problem, int level)
-        {
-            var localCoeffMatrix = GetCoeffMatrixForLevel(problem, level);
-            var globalCoeffMatrix = problem.Hierarchy.Where(node => node.Level == level).Select(n => n.Coefficient).ToArray();
-
-            return MatrixMultiplication(localCoeffMatrix, globalCoeffMatrix);
-        }
-
-
-        public Matrix(IGrouping<INode, INodeRelation>[] grouped) : this(GetArrayFromRelations(grouped))
+        protected Matrix()
         {
 
         }
@@ -163,6 +54,166 @@ namespace DSSAlternative.AHP
                 }
             }
             Consistency = new MatrixConsistenct(this);
+        }
+
+
+        public virtual string GetText()
+        {
+            string text = "";
+            for (int x = 0; x < Array.GetLength(0); x++)
+            {
+                text += "\n";
+                for (int y = 0; y < Array.GetLength(1); y++)
+                {
+                    text += $"{Math.Round(Array[x, y], 3),-7}";
+                }
+            }
+            return text;
+        }
+    }
+
+
+
+    public interface IMatrixRelations : IMatrix
+    {
+        INode Main { get; set; }
+        INode[] Nodes { get; set; }
+
+    }
+
+
+    //Матрица отношений для узла (сравнение нижестоящих узлов)
+    public class MtxRelations : Matrix, IMatrixRelations
+    {
+        public INode Main { get; set; }
+        public INode[] Nodes { get; set; }
+
+
+        public MtxRelations()
+        {
+
+        }
+        public MtxRelations(IProblem problem, INode node)
+        {
+            Main = node;
+            Nodes = problem.Hierarchy.Where(n => n.Contents.Contains(node)).ToArray();
+            var rels = problem.RelationsAll.Where(r => r.Main == Main).GroupBy(r => r.From);
+            int length = rels.Count();
+
+            Array = new double[length,length];
+            for (int i = 0; i < length; i++)
+            {
+                var row = rels.ElementAt(i);
+                for (int a = 0; a < length; a++)
+                {
+                    Array[i, a] = row.ElementAt(a).Value;
+                }
+            }
+
+            Consistency = new MatrixConsistenct(this);
+        }
+    }
+
+    //Матрица -1 локальных коэффициентов для узла
+    public class MtxLocalCoeffs : MtxRelations, IMatrixRelations
+    {
+        public MtxLocalCoeffs(IProblem problem, INode node)
+        {
+            Nodes = node.Criterias.Group;
+            if(Nodes.Length > 0)
+            {
+                var coeffs = Nodes.Select(n => new MtxRelations(problem, n).Coeffiients);
+                int rows = coeffs.First().Length;
+                int cols = coeffs.Count();
+
+                Array = new double[rows, cols];
+                for (int c = 0; c < cols; c++)
+                {
+                    var coeffsNow = coeffs.ElementAt(c);
+                    for (int r = 0; r < rows; r++)
+                    {
+                        Array[r, c] = coeffsNow[r];
+                    }
+                }
+            }
+            else
+            {
+                Array = new double[1, 1];
+                Array[0, 0] = 1;
+            }
+        }
+    }
+
+
+
+    interface IVectorNode : IMatrixRelations
+    {
+        double Get(INode node);
+        double[] GetVector();
+    }
+    public class MtxVector : MtxRelations, IVectorNode
+    {
+        public double Get(INode node) => Array[Nodes.ToList().IndexOf(node), 0];
+
+        public double[] GetVector()
+        {
+            double[] nums = new double[Size];
+            for (int i = 0; i < Size; i++)
+            {
+                nums[i] = Array[i, 0];
+            }
+            return nums;
+        }
+    }
+
+    //Вектор -1 глобальных коэффициентов для узла
+    public class MtxGlobalCoeffs : MtxVector
+    {
+        public double[] GetArr()
+        {
+            double[] nums = new double[Size];
+            for (int i = 0; i < Size; i++)
+            {
+                nums[i] = Array[i, 0];
+            }
+            return nums;
+        }
+        public MtxGlobalCoeffs(IProblem problem, INode node)
+        {
+            Nodes = node.Contents.ToArray();
+            if(Nodes.Length > 0)
+            {
+                Array = new double[Nodes.Length, 1];
+                for (int i = 0; i < Nodes.Length; i++)
+                {
+                    Array[i, 0] = Nodes[i].Coefficient;
+                }
+            }
+            else
+            {
+                Array = new double[1, 1];
+                Array[0, 0] = 1;
+            }
+        }
+
+    }
+    //Вектор коэффициентов для узла
+    public class MtxCoeffs : MtxVector
+    {
+        public MtxCoeffs(IProblem problem, INode node)
+        {
+            Nodes = node.NeighborsComp;
+            var local = new MtxLocalCoeffs(problem, node);
+            var global = new MtxGlobalCoeffs(problem, node);
+            var res = MtxActions.MatrixMultiplication(local.Array, global.GetArr());
+            Console.WriteLine(node);
+            res.ToList().ForEach(r => Console.Write(r + "  "));
+            Console.WriteLine($"\nSize [{Nodes.Length},{1}]");
+            Array = new double[Nodes.Length, 1];
+            for (int i = 0; i < Nodes.Length; i++)
+            {
+                Array[i, 0] = res[i];
+            }
         }
     }
 }

@@ -12,39 +12,6 @@ namespace DSSAlternative.AHP
 {
     public class DSS
     {
-        private static IProject CreateSampleProblem()
-        {
-            List<INode> nodes = new List<INode>();
-            INode main = new Node(0, "Выбор места учебы");
-
-            INode Place = new Node(1, "Местоположение");
-            INode Reputation = new Node(1, "Репутация");
-
-            INode A = new Node(2, "Вариант А");
-            INode B = new Node(2, "Вариант B");
-            INode C = new Node(2, "Вариант C");
-
-            INode F1 = new Node(3, "Факультет ПИ");
-            INode F2 = new Node(3, "Факультет БИ");
-
-            nodes.AddRange(new INode[] { main ,Reputation, Place, A, B, C, F1, F2 });
-
-            IProject project = new Project(nodes);
-            IProblem sampleProblem = project.Problem;
-
-            sampleProblem.SetRelationBetween(main, Reputation, Place, 5);
-            sampleProblem.SetRelationBetween(Reputation, A, B, 2);
-            sampleProblem.SetRelationBetween(Reputation, A, C, 3);
-            sampleProblem.SetRelationBetween(Reputation, B, C, 1.5);
-            sampleProblem.SetRelationBetween(Place, B, A, 2);
-            sampleProblem.SetRelationBetween(Place, C, A, 5);
-            sampleProblem.SetRelationBetween(Place, C, B, 2);
-            sampleProblem.SetRelationBetween(A, F1, F2, 2);
-            sampleProblem.SetRelationBetween(B, F1, F2, 4);
-            sampleProblem.SetRelationBetween(C, F1, F2, 6);
-
-            return project;
-        }
         static DSS()
         {
             Ex = new DSS();
@@ -61,8 +28,6 @@ namespace DSSAlternative.AHP
 
         //Выбранная проблема
         public IProject Project { get; private set; }
-        public IProblem Problem => Project.Problem;
-
 
         public void SelectProblem(IProject project)
         {
@@ -82,16 +47,12 @@ namespace DSSAlternative.AHP
             }
         }
 
-        public void AddProblem(IEnumerable<INode> nodes)
+        public void AddProblem(ITemplate template) => AddProblem(new Project(template));
+        public void AddProblem(IProject project)
         {
-            Projects.Add(new Project(nodes));
+            Projects.Add(project);
             Project = Projects.Last();
         }
-        public void AddSample()
-        {
-            Projects.Add(CreateSampleProblem());
-        }
-
 
         public JsonSerializerOptions JsonOptions = new JsonSerializerOptions()
         {

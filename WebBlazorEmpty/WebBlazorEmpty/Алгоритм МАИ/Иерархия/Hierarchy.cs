@@ -7,6 +7,7 @@ namespace DSSAlternative.AHP
 {
     public interface IHierarchy
     {
+        IEnumerable<IEnumerable<INode>> Groups { get; }
         IEnumerable<INode> Hierarchy { get; set; }
         IEnumerable<IGrouping<int, INode>> GroupedByLevel { get; }
         
@@ -28,11 +29,15 @@ namespace DSSAlternative.AHP
     public class HierarchyN : IHierarchy
     {
         public override string ToString() => $"{MainGoal.Name} [{GroupedByLevel.Count()}] ({Hierarchy.Count()})";
-        public HierarchyN(IEnumerable<INode> nodes)
+        public HierarchyN(ITemplate template)
         {
-            Hierarchy = nodes;
+            Hierarchy = template.Nodes;
+            Hierarchy.ToList().ForEach(n => n.UpdateStructure(template.Nodes, template.Groups));
         }
 
+
+
+        public IEnumerable<IEnumerable<INode>> Groups { get; }
         public IEnumerable<INode> Hierarchy { get; set; }
 
         //Всего узлов

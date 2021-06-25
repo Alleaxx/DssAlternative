@@ -11,7 +11,7 @@ namespace DSSAlternative.AHP
         INodeRelation[] RelationsAll { get; }
         INodeRelation[] RelationsRequired { get; }
         void SetRelationBetween(INode main, INode from, INode to, double value);
-        IMatrix GetMatrix(INode node);
+        IMatrixRelations GetMatrix(INode node);
 
         //Для рейтинга критериев
         Dictionary<INode, INode[]> CriteriasFurther { get; }
@@ -40,7 +40,7 @@ namespace DSSAlternative.AHP
     {
         public event Action RelationValueChanged;
 
-        public Problem(IEnumerable<INode> nodes) : base(nodes)
+        public Problem(ITemplate template) : base(template)
         {
             UpdateStructure();
             RecountCoeffs();
@@ -66,37 +66,7 @@ namespace DSSAlternative.AHP
 
         private void CreateRelations()
         {
-            List<INodeRelation> relations = new List<INodeRelation>();
-            foreach (var level in Dictionary.Keys)
-            {
-                if (level != MaxLevel)
-                {
-                    var mainNodes = Dictionary[level];
-                    var nodes = Dictionary[level + 1];
-                    for (int b = 0; b < mainNodes.Length; b++)
-                    {
-                        var criteria = mainNodes[b];
-                        for (int i = 0; i < nodes.Count(); i++)
-                        {
-                            bool onlyRequired = false;
-
-                            int startIndex = onlyRequired ? i + 1 : 0;
-                            for (int a = startIndex; a < nodes.Count(); a++)
-                            {
-                                var x = nodes[i];
-                                var y = nodes[a];
-
-                                NodeRelation relationA = new NodeRelation(criteria, x, y, 0);
-                                relations.Add(relationA);
-                                relationA.Changed += RelationValue_Changed;
-                            }
-
-
-                        }
-                    }
-
-                }
-            }
+            var relations = GetRelationsAdvanced();
             RelationsAll = relations.ToArray();
 
             foreach (var rel in relations)
@@ -121,11 +91,91 @@ namespace DSSAlternative.AHP
 
             CorrectnessRels = new RelationsCorrectness(this);
         }
+        private List<INodeRelation> GetRelations()
+        {
+            List<INodeRelation> relations = new List<INodeRelation>();
+            foreach (var level in Dictionary.Keys)
+            {
+                if (level != MaxLevel)
+                {
+                    var mainNodes = Dictionary[level];
+                    var nodes = Dictionary[level + 1];
+                    for (int b = 0; b < mainNodes.Length; b++)
+                    {
+                        var criteria = mainNodes[b];
+                        for (int i = 0; i < nodes.Count(); i++)
+                        {
+                            bool onlyRequired = false;
+
+                            int startIndex = onlyRequired ? i + 1 : 0;
+                            for (int a = startIndex; a < nodes.Count(); a++)
+                            {
+                                var x = nodes[i];
+                                var y = nodes[a];
+
+                                NodeRelation relation = new NodeRelation(criteria, x, y, 0);
+                                relations.Add(relation);
+                                relation.Changed += RelationValue_Changed;
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            relations.Clear();
+            foreach (var node in Hierarchy)
+            {
+                var neigbors = Hierarchy.Where(n => Enumerable.SequenceEqual(n.Contents, node.Contents));
+                foreach (var criteria in node.Contents)
+                {
+                    foreach (var nodeNeighbor in neigbors)
+                    {
+                        if(!relations.Exists(r => r.Main == criteria && r.From == node && r.To == nodeNeighbor))
+                        {
+                            NodeRelation relation = new NodeRelation(criteria, node, nodeNeighbor, 0);
+                            relations.Add(relation);
+                            relation.Changed += RelationValue_Changed;
+                        }
+                    }
+                }
+            }
+
+
+            return relations;
+        }
+        private List<INodeRelation> GetRelationsAdvanced()
+        {
+            List<INodeRelation> relations = new List<INodeRelation>();
+            foreach (var node in Hierarchy)
+            {
+                var neigbors = Hierarchy.Where(n => Enumerable.SequenceEqual(n.Contents, node.Contents));
+                foreach (var criteria in node.Contents)
+                {
+                    foreach (var nodeNeighbor in neigbors)
+                    {
+                        if (!relations.Exists(r => r.Main == criteria && r.From == node && r.To == nodeNeighbor))
+                        {
+                            NodeRelation relation = new NodeRelation(criteria, node, nodeNeighbor, 0);
+                            relations.Add(relation);
+                            relation.Changed += RelationValue_Changed;
+                        }
+                    }
+                }
+            }
+
+
+            return relations;
+
+        }
+
+
         private void RelationValue_Changed(Relation<INode, INode> changedRelation)
         {
             RecountCoeffs();
             RelationValueChanged?.Invoke();
         }
+
 
         public Dictionary<int, INode[]> Dictionary { get; set; }
 
@@ -142,7 +192,7 @@ namespace DSSAlternative.AHP
         public Dictionary<INode, INode[]> CriteriasFurther { get; private set; }
 
 
-        public IMatrix GetMatrix(INode node) => new Matrix(GetGrouped(node));
+        public IMatrixRelations GetMatrix(INode node) => new MtxRelations(this,node);
 
         public void RecountCoeffs()
         {
@@ -151,10 +201,10 @@ namespace DSSAlternative.AHP
                 int level = group.Key;
                 if (level > 0)
                 {
-                    var coeffs = Matrix.GetGlobalCoeffs(this, level - 1);
-                    for (int i = 0; i < group.Count(); i++)
+                    foreach (var node in group)
                     {
-                        group.ElementAt(i).Coefficient = coeffs[i];
+                        var coeffs = new MtxCoeffs(this, node);
+                        node.Coefficient = coeffs.Get(node);
                     }
                 }
                 else
@@ -254,16 +304,16 @@ namespace DSSAlternative.AHP
         private INodeRelation GetRequiredRel(INodeRelation from, int inc)
         {
             int index = RelationsRequired.ToList().IndexOf(from);
-            Console.WriteLine(index);
+        Console.WriteLine(index);
 
             if (index + inc >= RelationsRequired.Length)
                 return RelationsRequired.First();
-            if (index + inc < 0)
+            if (index + inc< 0)
                 return RelationsRequired.Last();
 
             return RelationsRequired[index + inc];
         }
-        public INodeRelation NextRequiredRel(INodeRelation from)
+    public INodeRelation NextRequiredRel(INodeRelation from)
         {
             if (GetMatrix(from.Main).Consistency.IsCorrect())
                 return GetRequiredRel(from, 1);

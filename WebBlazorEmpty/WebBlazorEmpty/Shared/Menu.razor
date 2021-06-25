@@ -1,4 +1,4 @@
-﻿@inherits DSSComponent
+﻿@inherits DSSProject
 
 <style>
 
@@ -188,7 +188,7 @@
             @foreach (var project in DSS.Ex.Projects)
             {
                 <li>
-                    <a class="task-menu-element @(project.Problem == DSS.Ex.Problem ? "active" : "")" @onclick="@(() => { DSS.Ex.SelectProblem(project); })" href="view">
+                    <a class="task-menu-element @(project == DSS.Ex.Project ? "active" : "")" @onclick="@(() => { DSS.Ex.SelectProblem(project); })" href="view">
                         <div class="task-element-sheme">
                             <DSSAlternative.Pages.Дополнительно.HierSheme Project="@project" />
                         </div>
@@ -207,7 +207,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        DSS.Ex.Problem.RelationValueChanged += Updated;
+        DSS.Ex.Project.Problem.RelationValueChanged += Updated;
         DSS.Ex.ProjectChanged += (IProject proj) => Updated();
     }
     private void RelationValue_Changed(Relation<INode, INode> changedRelation)

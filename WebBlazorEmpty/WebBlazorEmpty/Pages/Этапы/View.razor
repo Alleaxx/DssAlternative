@@ -1,5 +1,6 @@
 ﻿@page "/view"
-@inherits DSSComponent
+@inherits DSSProject
+
 @layout EditorLayout
 
 
@@ -192,9 +193,9 @@
         <ul class="filters">
             @foreach (var filter in Filters)
             {
-            <li class="@(filter == Filter ? "selected" : "") " @onclick="@(() => SelectFilter(filter))">
-                @filter
-            </li>
+                <li class="@(filter == Filter ? "selected" : "") " @onclick="@(() => SelectFilter(filter))">
+                    @filter
+                </li>
             }
         </ul>
         <div class="size-edit">
@@ -205,51 +206,51 @@
 
     @foreach (var levelGroup in Problem.GroupedByLevel)
     {
-    <div class="level">
-        <div class="level-name">
-            <span class="level-index">Уровень @levelGroup.Key</span>
-            <br>
-            <span class="level-text">@(HierarchyN.GetTextInfo(Problem,levelGroup.Key))</span>
-        </div>
-        <div class="level-elements">
-            @foreach (var node in levelGroup)
+        <div class="level">
+            <div class="level-name">
+                <span class="level-index">Уровень @levelGroup.Key</span>
+                <br>
+                <span class="level-text">@(HierarchyN.GetTextInfo(Problem,levelGroup.Key))</span>
+            </div>
+            <div class="level-elements">
+                @foreach (var node in levelGroup)
                 {
-            <details open class="node-element" style="@($"width:{NodeSize}%")">
-                <summary class="action-header @(GetClass(node))">
-                    <span class="node-element-name">@node.Name</span>
-                </summary>
-                <div class="actions-section">
-                    <a class="action edit-criteria" title="Редактировать критерий" href="@Nodes.Where(n => n.Node == node).First().Href">
-                        <span class="action-name"></span>
-                        <img class="action-icon" src="Images/pencil.png" />
-                    </a>
-                    @if (Problem.NodesWithRels.Contains(node))
+                    <details open class="node-element" style="@($"width:{NodeSize}%")" @onmousedown="@(() => Console.WriteLine())">
+                        <summary class="action-header @(GetClass(node))">
+                            <span class="node-element-name">@node.Name</span>
+                        </summary>
+                        <div class="actions-section">
+                            <a class="action edit-criteria" title="Редактировать критерий" href="@Nodes.Where(n => n.Node == node).First().Href">
+                                <span class="action-name"></span>
+                                <img class="action-icon" src="Images/pencil.png" />
+                            </a>
+                            @if (Problem.NodesWithRels.Contains(node))
                             {
 
-                    <a class="action edit-relations" title="Переход к отношениям по критерию" href="@($"{GetNodeRel(node).Href}")">
-                        <span class="action-name"></span>
-                        <img class="action-icon" src="Images/play.png" />
-                    </a>
-                    <a class="action clear-relations" title="Сбросить все отношения критерия" href="@View.Href" @onclick="@(() => Problem.ClearRelations(node))">
-                        <span class="action-name">X</span>
-                        <img class="action-icon" src="Images/tech.png" />
-                    </a>
+                                <a class="action edit-relations" title="Переход к отношениям по критерию" href="@($"{GetNodeRel(node).Href}")">
+                                    <span class="action-name"></span>
+                                    <img class="action-icon" src="Images/play.png" />
+                                </a>
+                                <a class="action clear-relations" title="Сбросить все отношения критерия" href="@View.Href" @onclick="@(() => Problem.ClearRelations(node))">
+                                    <span class="action-name">X</span>
+                                    <img class="action-icon" src="Images/tech.png" />
+                                </a>
                             }
-                </div>
-                <div class="action-values-section">
-                    <div class="property">
-                        <span class="property-name">Cr:</span><br />
-                        <span class="property-value">@ProcessDouble(Problem.GetMatrix(node).Consistency.Cr)</span>
-                    </div>
-                    <div class="property">
-                        <span class="property-name">Рейт:</span><br />
-                        <span class="property-value">@ProcessDouble(node.Coefficient)</span>
-                    </div>
-                </div>
-            </details>
+                        </div>
+                        <div class="action-values-section">
+                            <div class="property">
+                                <span class="property-name">Cr:</span><br />
+                                <span class="property-value">@ProcessDouble(Problem.GetMatrix(node).Consistency.Cr)</span>
+                            </div>
+                            <div class="property">
+                                <span class="property-name">Рейт:</span><br />
+                                <span class="property-value">@ProcessDouble(node.Coefficient)</span>
+                            </div>
+                        </div>
+                    </details>
                 }
+            </div>
         </div>
-    </div>
     }
 </section>
 
@@ -289,7 +290,7 @@
 {
             FilterRating,
             Constistency,
-    };
+        };
     private string Filter => Project.ViewFilter;
 
     private void SelectFilter(string text)

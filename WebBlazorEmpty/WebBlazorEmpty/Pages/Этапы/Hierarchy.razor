@@ -1,5 +1,5 @@
 ﻿@page "/hierarchy"
-@inherits DSSComponent
+@inherits DSSProject
 @layout EditorLayout
 
 
@@ -199,118 +199,174 @@
     .json-sheme{
         margin: 20px 0;
     }
+
+    .node-main-element{
+        border: 3px solid orange;
+    }
+
+    .node-controlled-element {
+        border: 3px solid red;
+    }
 </style>
 
-<h2 class="content-header-h">Редактирование иерархии задачи выбора</h2>
-<div class="sheme basic-border">
-    <div class="confirm">
-        <div>
-            @if (Project.UnsavedChanged && HierEditState.Result)
-            {
-                @*<span class="not-saved">Есть несохраненные изменения</span>*@
+<section>
+    <h2 class="content-header-h">Редактирование иерархии задачи выбора</h2>
+    <div class="sheme basic-border">
+        <div class="confirm">
+            <div>
                 <input class="add" type="button" value="Подтвердить текущую иерархию" @onclick="UpdateHierarchy" />
-            }
-            else if (Project.UnsavedChanged && !HierEditState.Result)
-            {
-                <span class="warning">В структуре иерархии обнаружены ошибки:</span>
-            }
-            else
-            {
-                <span class="all-saved">Все изменения сохранены</span>
-                <NavLink class="navigation-link" href="@Project.StageRelations.ElementAt(0).Value.Href">
-                    Перейти к определению связей
-                </NavLink>
-                <NavLink class="navigation-link" href="@View.Href">
-                    Обзор задачи
-                </NavLink>
-            }
-        </div>
-        <div class="hier-fails">
-            @foreach (var check in HierEditState.Checks)
-            {
-                <div class="@check.GetClass()" title="@check.Message">
-                    @check.Name
-                </div>
-            }
-        </div>
-    </div>
-
-    <div class="information">
-        <div>
-            <span class="property-name">Уровней: </span>
-            <span class="property-value">@ProblemEditing.LevelsCount</span>
-        </div>
-        <div>
-            <span class="property-name">Узлов: </span>
-            <span class="property-value">@ProblemEditing.NodesCount</span>
-        </div>
-        <div>
-            <span class="property-name">Отношений: </span>
-            <span class="property-value">@ProblemEditing.RelationsCount</span>
-        </div>
-        <div>
-            <span class="property-name">~ Времени на решение: </span>
-            <span class="property-value">@ProblemEditing.EstTime.Minutes мин. @ProblemEditing.EstTime.Seconds сек.</span>
-        </div>
-    </div>
-
-    <div>
-        @foreach (var levelGroup in ProblemEditing.GroupedByLevel)
-        {
-            <section class="level @(levelGroup.Key == 0 ? "main-goal-level" : "")">
-                <div class="level-name">
-                    <span class="level-index">Уровень @levelGroup.Key</span>
-                    <br>
-                    <span>@(HierarchyN.GetTextInfo(ProblemEditing,levelGroup.Key))</span>
-                    <br />
-
-                </div>
-                <div class="level-elements">
-                    @foreach (var node in levelGroup)
-                    {
-                    <div class="node-element">
-                        <input class="input-text" type="text" @bind-value="@node.Name" />
-                        <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
+                @if (Project.UnsavedChanged && HierEditState.Result)
+                {
+                    @*<span class="not-saved">Есть несохраненные изменения</span>*@
+                    <input class="add" type="button" value="Подтвердить текущую иерархию" @onclick="UpdateHierarchy" />
+                }
+                else if (Project.UnsavedChanged && !HierEditState.Result)
+                {
+                    <span class="warning">В структуре иерархии обнаружены ошибки:</span>
+                }
+                else
+                {
+                    <span class="all-saved">Все изменения сохранены</span>
+                    <NavLink class="navigation-link" href="@Project.StageRelations.ElementAt(0).Value.Href">
+                        Перейти к определению связей
+                    </NavLink>
+                    <NavLink class="navigation-link" href="@View.Href">
+                        Обзор задачи
+                    </NavLink>
+                    <input type="button" value="Вывести новую структуру" @onclick="ShowStructure" />
+                }
+            </div>
+            <div class="hier-fails">
+                @foreach (var check in HierEditState.Checks)
+                {
+                    <div class="@check.GetClass()" title="@check.Message">
+                        @check.Name
                     </div>
-                    }
-                </div>
-
-                <div class="level-add">
-                    <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
-                </div>
-
-            </section>
-        }
-    <section class="level new-level">
-        <div class="level-name">
-            <span>Уровень @ProblemEditing.LevelsCount</span>
+                }
+            </div>
         </div>
-        <input class="add " type="button" value="++" @onclick="@(() => AddNode(ProblemEditing.LevelsCount))" />
-        <input class="add" type="button" value="+" style="visibility:hidden"/>
+
+        <div class="information">
+            <div>
+                <span class="property-name">Уровней: </span>
+                <span class="property-value">@ProblemEditing.LevelsCount</span>
+            </div>
+            <div>
+                <span class="property-name">Узлов: </span>
+                <span class="property-value">@ProblemEditing.NodesCount</span>
+            </div>
+            <div>
+                <span class="property-name">Отношений: </span>
+                <span class="property-value">@ProblemEditing.RelationsCount</span>
+            </div>
+            <div>
+                <span class="property-name">~ Времени на решение: </span>
+                <span class="property-value">@ProblemEditing.EstTime.Minutes мин. @ProblemEditing.EstTime.Seconds сек.</span>
+            </div>
+        </div>
+
+        <div>
+            @foreach (var levelGroup in ProblemEditing.GroupedByLevel)
+            {
+                <section class="level @(levelGroup.Key == 0 ? "main-goal-level" : "")">
+                    <div class="level-name">
+                        <span class="level-index">Уровень @levelGroup.Key</span>
+                        <br>
+                        <span>@(HierarchyN.GetTextInfo(ProblemEditing, levelGroup.Key))</span>
+                        <br />
+
+                    </div>
+                    <div class="level-elements">
+                        @foreach (var node in levelGroup)
+                        {
+                            <div class="@($"{(NodeHovered != null && NodeHovered.Contents.Contains(node) ? "node-main-element" : "")} node-element")" @onclick="@(() => NodeHovered = node)">
+                                <input class="input-text" type="text" @bind-value="@node.Name" />
+                                <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
+                            </div>
+                        }
+                    </div>
+
+                    <div class="level-add">
+                        <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
+                    </div>
+
+                </section>
+            }
+            <section class="level new-level">
+                <div class="level-name">
+                    <span>Уровень @ProblemEditing.LevelsCount</span>
+                </div>
+                <input class="add " type="button" value="++" @onclick="@(() => AddNode(ProblemEditing.LevelsCount))" />
+                <input class="add" type="button" value="+" style="visibility:hidden" />
+            </section>
+
+        </div>
+    </div>
+
+    <h3>Группы критериев</h3>
+    <section>
+        <ul>
+            @foreach (var group in Template.Groups)
+            {
+                <li>
+                    <ul class="row" style="list-style:none">
+                        <b>@group.Index</b>:
+                        @foreach (var node in group.Group)
+                        {
+                            <li>@node.Name,  </li>
+                        }
+                    </ul>
+                </li>
+
+            }
+        </ul>
+        <table>
+            <tr>
+                <th>Имя</th>
+                <th>Группа</th>
+                <th>Критерии</th>
+            </tr>
+            @foreach (var node in Problem.Hierarchy)
+            {
+            <tr>
+                <td>@node.Name</td>
+                <td>
+                    <input type="number" @bind-value="@node.Group" />
+                </td>
+                <td>
+                    <input type="number" @bind-value="@node.GroupIndex" />
+                </td>
+            </tr>
+
+            }
+        </table>
+
     </section>
 
-    </div>
-</div>
+    @*<section class="json-sheme">
+        <details>
+            <summary rows="25" cols="25">
+                JSON-схема
+            </summary>
+            <textarea>
+                @JsonCurrent
+            </textarea>
+        </details>
+    </section>*@
 
-<section class="json-sheme">
-    <details>
-        <summary rows="25" cols="25">
-            JSON-схема
-        </summary>
-        <textarea>
-        @JsonCurrent
-    </textarea>
-    </details>
 </section>
 
 
 @code {
-    private Template TemplateCurrent => new Template() { Name = ProblemEditing.MainGoal.Name, Nodes = NodesEditing.OfType<Node>().ToArray(), Img = "Images/tech.png", Description = "Сохраненная задача выбора" };
-    private string JsonCurrent => JsonSerializer.Serialize<Template>(TemplateCurrent, DSS.Ex.JsonOptions);
+    //private Template TemplateCurrent => new Template(NodesEditing.OfType<Node>().ToArray()) { Name = ProblemEditing.MainGoal.Name, Img = "Images/tech.png", Description = "Сохраненная задача выбора" };
+    //private string JsonCurrent => JsonSerializer.Serialize<Template>(TemplateCurrent, DSS.Ex.JsonOptions);
+
+    private INode NodeHovered { get; set; }
 
 
     private IHierarchy ProblemEditing => Project.ProblemEditing;
-    private List<INode> NodesEditing => Project.NodesEditing;
+    private ITemplate Template => Project.Template;
+    private List<Node> NodesEditing => Template.Nodes;
 
 
     //Подтверждение иерархии
@@ -321,12 +377,35 @@
     private void AddNode(int level = -1)
     {
         level = level == -1 ? ProblemEditing.LevelsCount - 1 : level;
-        INode newNode = new Node(level, "Узел");
-        NodesEditing.Add(newNode);
+        INode newNode = new Node(level, "Узел", level, level - 1);
+        NodesEditing.Add(newNode as Node);
     }
     private void RemoveNode(INode e)
     {
         if (e != ProblemEditing.MainGoal)
-            NodesEditing.Remove(e);
+            NodesEditing.Remove(e as Node);
+    }
+
+
+    private void ShowStructure()
+    {
+        Console.WriteLine("Новая структура");
+        foreach (var node in Problem.Hierarchy)
+        {
+            Console.WriteLine($"{node.Level} - {node.Name}:");
+            Console.Write("Расчет: ");
+            foreach (var countNode in node.Contents)
+            {
+                Console.Write($"{countNode.Name}, ");
+            }
+            Console.WriteLine(new MtxRelations(Problem, node).GetText());
+            Console.WriteLine("Матрица локальных");
+            Console.WriteLine(new MtxLocalCoeffs(Problem, node).GetText());
+            Console.WriteLine("Матрица глобальных");
+            Console.WriteLine(new MtxGlobalCoeffs(Problem, node).GetText());
+            Console.WriteLine("Матрица коэфф.");
+            Console.WriteLine(new MtxCoeffs(Problem, node).GetText());
+            Console.WriteLine();
+        }
     }
 }

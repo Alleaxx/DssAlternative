@@ -13,7 +13,7 @@ namespace DSSAlternative.AHP
         string ViewFilter { get; set; }
         bool UnsavedChanged { get; }
 
-        List<INode> NodesEditing { get; set; }
+        ITemplate Template { get; set; }
         IHierarchy ProblemEditing { get; }
         IProblem Problem { get; }
         
@@ -47,8 +47,8 @@ namespace DSSAlternative.AHP
         }
 
         //Иерархия проблемы
-        public List<INode> NodesEditing { get; set; }
-        public IHierarchy ProblemEditing => new HierarchyN(NodesEditing);
+        public ITemplate Template { get; set; }
+        public IHierarchy ProblemEditing => new HierarchyN(Template);
 
         public IStage StageHier { get; private set; }
 
@@ -61,9 +61,9 @@ namespace DSSAlternative.AHP
 
         public string ViewFilter { get; set; } = "По отношениям";
 
-        public Project(IEnumerable<INode> nodes)
+        public Project(ITemplate template)
         {
-            SetProblem(nodes);      
+            SetProblem(template);      
         }
 
         private void SetStages()
@@ -73,7 +73,7 @@ namespace DSSAlternative.AHP
             StageResults = new StageResults(this);
 
             StageRelations.Clear();
-            foreach (var relation in Problem.RelationsRequired)
+            foreach (var relation in Problem.RelationsAll)
             {
                 IStage relStage = new StageRelation(this, relation);
                 StageRelations.Add(relation, relStage);
@@ -88,14 +88,14 @@ namespace DSSAlternative.AHP
 
         public void UpdateProblem()
         {
-            SetProblem(NodesEditing);
+            SetProblem(Template);
             Updated?.Invoke();
         }
-        public void SetProblem(IEnumerable<INode> nodes)
+        public void SetProblem(ITemplate template)
         {
-            NodesEditing = nodes.ToList();
+            Template = template;
             IProblem old = Problem;
-            Problem = new Problem(nodes);
+            Problem = new Problem(template);
             SetStages();
 
             if(old != null)

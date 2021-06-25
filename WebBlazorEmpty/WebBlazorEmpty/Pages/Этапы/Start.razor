@@ -1,9 +1,7 @@
 ﻿@page "/start"
+@inherits DSSComponent
 
 @inject HttpClient Http
-
-@using System.Text.Unicode;
-@using System.Text.Encodings.Web;
 
 <style>
     .load-task-grid {
@@ -175,22 +173,45 @@
         <h2>Формирование задачи выбора</h2>
     </header>
     <section class="load-own">
-        <h3>Создание с нуля</h3>
-        <p class="load-note">
-            Формирование иерархии проблемы с нуля. Подходит для нетипичных задач.
-        </p>
-        <input type="button" @onclick="LoadOwn" value="Создать" />
-        <h3>Загрузка образца</h3>
-        <p class="load-note">
-            Образцовая задача показывает возможности системы на примере уже решенной проблемы.
-        </p>
-        <input type="button" @onclick="LoadSample" value="Загрузить" />
-        <h3>Загрузка сохраненной задачи</h3>
+        <section>
+            <h3>Создание с нуля</h3>
+            <p class="load-note">
+                Формирование иерархии проблемы с нуля. Подходит для нетипичных задач.
+            </p>
+            <input type="button" @onclick="LoadOwn" value="Создать" />
 
-        <p class="load-note">
-            <span>@JSONLoadResult</span>
-        </p>
-        <textarea class="load-json" rows="5" @onchange="LoadJSON"></textarea>
+        </section>
+
+        <section>
+            <h3>Загрузка образца</h3>
+            <p class="load-note">
+                Образцовая задача показывает возможности системы на примере уже решенной проблемы.
+            </p>
+            <input type="button" @onclick="@(() => DSS.Ex.AddProblem(DSSExample.CreateSampleProblem()))" value="Загрузить" />
+        </section>
+        <section>
+            <h3>Загрузка пр. образца</h3>
+            <p class="load-note">
+                Образцовая задача с подкритериями.
+            </p>
+            <input type="button" @onclick="@(() => DSS.Ex.AddProblem(DSSExample.CreateSampleTreeProblem()))" value="Загрузить" />
+        </section>
+        <section>
+            <h3>Загрузка пр. образца 2</h3>
+            <p class="load-note">
+                Образцовая задача с подкритериями.
+            </p>
+            <input type="button" @onclick="@(() => DSS.Ex.AddProblem(DSSExample.CreateSampleTree2Problem()))" value="Загрузить" />
+        </section>
+
+
+        <section>
+            <h3>Загрузка сохраненной задачи</h3>
+            <p class="load-note">
+                <span>@JSONLoadResult</span>
+            </p>
+            <textarea class="load-json" rows="5" @onchange="LoadJSON"></textarea>
+        </section>
     </section>
     <section class="load-preset">
         <h3>Модификация шаблона</h3>
@@ -267,37 +288,37 @@
 
     string[] Pathes = new string[]
     {
-        "project-team-task.json",
-        "project-riscs-task.json",
-        "project-tools-task.json",
-        "work-task.json",
-        "study-task.json",
-        "buy-task.json",
+        //"project-team-task.json",
+        //"project-riscs-task.json",
+        //"project-tools-task.json",
+        //"work-task.json",
+        //"study-task.json",
+        //"buy-task.json",
     };
 
 
 
     private void LoadTemplate(ITemplate template)
     {
-        var nodes = template.Nodes;
-        DSS.Ex.AddProblem(nodes);
+        DSS.Ex.AddProblem(template);
     }
 
-    private void LoadSample()
-    {
-        DSS.Ex.AddSample();
-    }
+
     private void LoadOwn()
     {
-        INode[] nodes = new INode[]
+        Node main = new Node(0, "Задача выбора", 0, -1);
+        Node k1 = new Node(1, "К1", 1, 0);
+        Node k2 = new Node(1, "К2", 1, 0);
+        Node a1 = new Node(2, "А1", 2, 1);
+        Node a2 = new Node(2, "А2", 2, 1);
+
+        Node[] nodes = new Node[]
         {
-            new Node(0,"Задача выбора"),
-            new Node(1,"К1"),
-            new Node(1,"К2"),
-            new Node(2,"А1"),
-            new Node(2,"А2")
+            main, k1, k2, a1, a2
         };
-        DSS.Ex.AddProblem(nodes);
+
+        ITemplate template = new Template(nodes);
+        DSS.Ex.AddProblem(template);
     }
 
 
@@ -309,8 +330,7 @@
         try
         {
             ITemplate obj = JsonSerializer.Deserialize<Template>(json);
-            var list = new List<INode>(obj.Nodes);
-            DSS.Ex.AddProblem(list);
+            DSS.Ex.AddProblem(obj);
             JSONLoadResult = "Проблема успешно загружена";
         }
         catch (Exception ex)
