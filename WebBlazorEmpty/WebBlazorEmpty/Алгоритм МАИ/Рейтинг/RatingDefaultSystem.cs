@@ -19,6 +19,7 @@ namespace DSSAlternative.AHP
         IEnumerable<(IRating from, IRating to)> RatingsFor(INodeRelation relation);
 
         IRatingRule GetRuleForRating(IRating rating);
+        IRatingRule GetRuleForRelation(INodeRelation relation);
     }
 
     public class RatingDefaultSystem : IRatingSystem
@@ -101,9 +102,13 @@ namespace DSSAlternative.AHP
 
         public IRatingRule GetRuleForRating(IRating rating)
         {
-
-
             var rule = Rules.Find(rule => ((rating.Value >= rule.FromVal && rating.Value < rule.ToVal) ));
+            return rule ?? DefaultRule;
+        }
+
+        public IRatingRule GetRuleForRelation(INodeRelation relation)
+        {
+            var rule = Rules.Find(rule => relation.Value >= rule.FromVal && relation.Value < rule.ToVal);
             return rule ?? DefaultRule;
         }
     }

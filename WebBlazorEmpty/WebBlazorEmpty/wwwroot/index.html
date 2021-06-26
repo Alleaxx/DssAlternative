@@ -13,6 +13,33 @@
 </head>
 
 <body>
+
+    <style>
+        #blazor-error-ui {
+            display: none;
+            background-color: #ffd4db;
+            border: 1px solid #d71010;
+            border-radius: 5px;
+            padding: 2em 1em;
+            text-align: center; 
+        }
+        .reload{
+            text-decoration: none;
+        }
+        .reload:hover{
+            color: black;
+            text-decoration: underline;
+        }
+        .dismiss{
+            cursor:pointer;
+        }
+    </style>
+    <div id="blazor-error-ui">
+        Необработанное исключение в приложении.
+        <a href="#" class="reload">Перезагрузить страницу</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
     <app>
         Загрузка...
     </app>
@@ -46,17 +73,6 @@
             }
         }(window.location))
     </script>
-
-    <style>
-        #blazor-error-ui {
-            display: none;
-        }
-    </style>
-    <div id="blazor-error-ui">
-        Необработанное исключение в приложении.
-        <a href="#" class="reload">Перезагрузить страницу</a>
-        <a class="dismiss">🗙</a>
-    </div>
 
     <script src="_framework/blazor.webassembly.js"></script>
 </body>

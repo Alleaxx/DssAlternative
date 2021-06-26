@@ -28,5 +28,11 @@
         if (DSS.Ex.Project == null)
             NavigationManager.NavigateTo("start");
     }
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if(DSS.Ex.Project == null)
+            NavigationManager.NavigateTo("start");
+    }
 }
 

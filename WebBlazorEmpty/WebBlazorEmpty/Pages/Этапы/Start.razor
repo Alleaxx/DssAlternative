@@ -187,21 +187,21 @@
             <p class="load-note">
                 Образцовая задача показывает возможности системы на примере уже решенной проблемы.
             </p>
-            <input type="button" @onclick="@(() => DSS.Ex.AddProblem(DSSExample.CreateSampleProblem()))" value="Загрузить" />
+            <input type="button" @onclick="@(() => DSS.Ex.AddProject(DSSExample.CreateSampleProblem()))" value="Загрузить" />
         </section>
         <section>
             <h3>Загрузка пр. образца</h3>
             <p class="load-note">
                 Образцовая задача с подкритериями.
             </p>
-            <input type="button" @onclick="@(() => DSS.Ex.AddProblem(DSSExample.CreateSampleTreeProblem()))" value="Загрузить" />
+            <input type="button" @onclick="@(() => DSS.Ex.AddProject(DSSExample.CreateSampleTreeProblem()))" value="Загрузить" />
         </section>
         <section>
             <h3>Загрузка пр. образца 2</h3>
             <p class="load-note">
                 Образцовая задача с подкритериями.
             </p>
-            <input type="button" @onclick="@(() => DSS.Ex.AddProblem(DSSExample.CreateSampleTree2Problem()))" value="Загрузить" />
+            <input type="button" @onclick="@(() => DSS.Ex.AddProject(DSSExample.CreateSampleTree2Problem()))" value="Загрузить" />
         </section>
 
 
@@ -298,27 +298,12 @@
 
 
 
-    private void LoadTemplate(ITemplate template)
-    {
-        DSS.Ex.AddProblem(template);
-    }
+    private void LoadTemplate(ITemplate template) => DSS.Ex.AddProject(new Project(template));
 
 
     private void LoadOwn()
     {
-        Node main = new Node(0, "Задача выбора", 0, -1);
-        Node k1 = new Node(1, "К1", 1, 0);
-        Node k2 = new Node(1, "К2", 1, 0);
-        Node a1 = new Node(2, "А1", 2, 1);
-        Node a2 = new Node(2, "А2", 2, 1);
-
-        Node[] nodes = new Node[]
-        {
-            main, k1, k2, a1, a2
-        };
-
-        ITemplate template = new Template(nodes);
-        DSS.Ex.AddProblem(template);
+        DSS.Ex.AddProject(DSSExample.CreateNewProblem());
     }
 
 
@@ -330,7 +315,7 @@
         try
         {
             ITemplate obj = JsonSerializer.Deserialize<Template>(json);
-            DSS.Ex.AddProblem(obj);
+            DSS.Ex.AddProject(new Project(obj));
             JSONLoadResult = "Проблема успешно загружена";
         }
         catch (Exception ex)

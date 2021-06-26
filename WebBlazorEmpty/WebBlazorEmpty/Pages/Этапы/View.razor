@@ -285,10 +285,10 @@
     const string Constistency = "По отношениям";
 
     public string[] Filters { get; set; } = new string[]
-{
+    {
             FilterRating,
             Constistency,
-        };
+    };
     private string Filter => Project.ViewFilter;
 
     private void SelectFilter(string text)

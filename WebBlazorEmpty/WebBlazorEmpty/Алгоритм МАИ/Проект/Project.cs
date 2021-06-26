@@ -37,11 +37,11 @@ namespace DSSAlternative.AHP
 
 
         public ITemplate Template { get; private set; }
-        public IHierarchy ProblemEditing => new HierarchyN(Template);
+        public IHierarchy ProblemEditing => new HierarchySheme(Template);
         public IProblem Problem { get; private set; }
 
 
-        public bool UnsavedChanged => !HierarchyN.CompareEqual(Problem, ProblemEditing);
+        public bool UnsavedChanged => !HierarchySheme.CompareEqual(Problem, ProblemEditing);
         public string Status
         {
             get

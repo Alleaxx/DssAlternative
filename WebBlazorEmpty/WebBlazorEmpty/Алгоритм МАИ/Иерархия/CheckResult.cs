@@ -17,10 +17,8 @@ namespace DSSAlternative.AHP
         public bool Passed { get; private set; }
         public string Message { get; private set; }
         private string Class { get; set; }
-        public CheckResult(string name, string cl) : this(name, cl, true, "Проверка прошла успешно")
-        {
 
-        }
+
         public CheckResult(string name, string cl, bool passed, string message)
         {
             Name = name;

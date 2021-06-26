@@ -42,9 +42,12 @@ namespace DSSAlternative.AHP
         public override string Href => "hierarchy";
         protected override void AddRules()
         {
-            if (Project.UnsavedChanged)
+            bool unsaved = Project.UnsavedChanged;
+            bool isCorrectHierarchy = Project.ProblemEditing.Correctness.Result;
+
+            if (unsaved)
                 Add("warning");
-            if (!Project.ProblemEditing.Correctness.Result)
+            if (!isCorrectHierarchy)
                 Add("error");
         }
     }
@@ -58,9 +61,12 @@ namespace DSSAlternative.AHP
         public override string Href => "view";
         protected override void AddRules()
         {
-            if (!Project.Problem.CorrectnessRels.AreRelationsKnown)
+            bool areRelationsKnown = Project.Problem.CorrectnessRels.AreRelationsKnown;
+            bool areRelationsConsistent = Project.Problem.CorrectnessRels.AreRelationsConsistenct;
+
+            if (!areRelationsKnown)
                 Add("warning");
-            if (!Project.Problem.CorrectnessRels.AreRelationsConsistenct)
+            if (!areRelationsConsistent)
                 Add("error");
         }
     }
@@ -73,13 +79,19 @@ namespace DSSAlternative.AHP
             Project = project;
             Relation = rel;
         }
-        public override string Href => $"relation-edit/{Project.Problem.RelationsAll.ToList().IndexOf(Relation)}";
+
+        private int IndexOfRelation => Project.Problem.RelationsAll.ToList().IndexOf(Relation);
+        public override string Href => $"relation-edit/{IndexOfRelation}";
+
         protected override void AddRules()
         {
+            bool relationsUnknown = Relation.Unknown;
+            bool relationConsistent = Project.Problem.GetMtxRelations(Relation.Main).Consistency.IsCorrect();
+
             Add("safe");
-            if (Relation.Unknown)
+            if (relationsUnknown)
                 Add("warning");
-            if (!Project.Problem.GetMtxRelations(Relation.Main).Consistency.IsCorrect())
+            if (!relationConsistent)
                 Add("error");
         }
     }
@@ -93,7 +105,9 @@ namespace DSSAlternative.AHP
         public override string Href => "results";
         protected override void AddRules()
         {
-            if (!Project.Problem.CorrectnessRels.AreRelationsCorrect)
+            bool areRelationsCorrect = Project.Problem.CorrectnessRels.AreRelationsCorrect;
+
+            if (!areRelationsCorrect)
                 Add("none");
         }
     }

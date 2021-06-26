@@ -40,20 +40,22 @@ namespace DSSAlternative.AHP
         }
         private void CheckElementsPlacement()
         {
-            if (Hierarchy.GroupedByLevel.Last().Key != Hierarchy.GroupedByLevel.Count() - 1)
+            int lastLevel = Hierarchy.GroupedByLevel.Last().Key;
+            int levelsAmount = Hierarchy.GroupedByLevel.Count();
+
+            if (lastLevel != levelsAmount - 1)
                 SetFailed("Нарушена последовательность уровней");
         }
         private void CheckElementsAmount()
         {
-            if (Hierarchy.Hierarchy.Where(n => n.Level == 0).Count() > 1)
-                SetFailed("Больше одного узла на главном уровне проблемы");
             foreach (var group in Hierarchy.GroupedByLevel)
             {
                 int level = group.Key;
+                int levelAmount = group.Count();
 
-                if (level == 0)
-                    continue;
-                else if (group.Count() < 2)
+                if (level == 0 && levelAmount != 1)
+                    SetFailed("На главном уровне иерархии не 1 элемент");
+                else if (level > 0 && levelAmount < 2)
                     SetFailed($"На {level} уровне иерархии меньше 2-х элементов");
             }
         }
@@ -61,7 +63,8 @@ namespace DSSAlternative.AHP
 
         private void SetFailed(string comment)
         {
-            Checks.Add(new CheckResult(comment[0].ToString(), "hier-fail", false, comment));
+            string shortName = comment[0].ToString();
+            Checks.Add(new CheckResult(shortName, "hier-fail", false, comment));
         }
 
 

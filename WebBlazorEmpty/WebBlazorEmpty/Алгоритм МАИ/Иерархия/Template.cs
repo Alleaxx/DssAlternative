@@ -13,7 +13,7 @@ namespace DSSAlternative.AHP
         string Img { get; }
 
         List<Node> Nodes { get; }
-        INodeGroup[] Groups { get; }
+        IEnumerable<INodeGroup> Groups { get; }
     }
 
     public class Template : ITemplate
@@ -23,18 +23,21 @@ namespace DSSAlternative.AHP
         public string Img { get; set; }
         public List<Node> Nodes { get; set; }
 
+
         [JsonIgnore]
-        public INodeGroup[] Groups
+        public IEnumerable<INodeGroup> Groups
         {
             get
             {
-                var groupIndexes = Nodes.GroupBy(n => n.Group).OrderBy(g => g.Key).Select(g => g.Key).ToArray();
+                var groupedNodes = Nodes.GroupBy(n => n.Group).OrderBy(g => g.Key);
+                var groupIndexes = groupedNodes.Select(g => g.Key);
+
                 List<NodeGroup> groups = new List<NodeGroup>();
                 foreach (var index in groupIndexes)
                 {
                     groups.Add(new NodeGroup(index,Nodes.Where(n => n.Group == index).ToArray()));
                 }
-                return groups.ToArray();
+                return groups;
             }
         }
 

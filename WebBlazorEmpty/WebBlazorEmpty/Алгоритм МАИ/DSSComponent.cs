@@ -86,7 +86,8 @@ namespace DSSAlternative.AHP
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            if (RelIndex > -1 && RelIndex < Problem.RelationsAll.Count())
+            int relationsCount = Problem.RelationsAll.Count();
+            if (RelIndex > -1 && RelIndex < relationsCount)
             {
                 Relation = Problem.RelationsAll.ElementAt(RelIndex);
             }

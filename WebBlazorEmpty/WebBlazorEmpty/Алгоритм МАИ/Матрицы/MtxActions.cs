@@ -28,12 +28,12 @@ namespace DSSAlternative.AHP
         public static double[] MatrixMultiplication(double[,] mtx, double[] vector)
         {
             int rsize = mtx.GetLength(0);
-            int size = vector.Length;
+            int vsize = vector.Length;
             double[] results = new double[rsize];
             for (int r = 0; r < rsize; r++)
             {
                 double res = 0;
-                for (int c = 0; c < size; c++)
+                for (int c = 0; c < vsize; c++)
                 {
                     res += mtx[r, c] * vector[c];
                 }
@@ -45,7 +45,7 @@ namespace DSSAlternative.AHP
         public static double[] Normalise(double[] vector, double? max = null)
         {
             int size = vector.Length;
-            max = max ?? size;
+            max ??= size;
 
             var results = new double[size];
             vector.CopyTo(results, 0);

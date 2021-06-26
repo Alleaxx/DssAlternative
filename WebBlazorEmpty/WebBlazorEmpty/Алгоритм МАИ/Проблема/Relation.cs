@@ -55,10 +55,8 @@ namespace DSSAlternative.AHP
         protected double value;
         public bool Unknown => value == 0;
 
-        private static double MinValue { get; set; } = 0;
-        private static double MaxValue { get; set; } = 9;
-
-
+        private double MinValue { get; set; } = 0;
+        private double MaxValue { get; set; } = 9;
 
         public Relation<T,C> Mirrored { get; set; }
 
@@ -82,8 +80,12 @@ namespace DSSAlternative.AHP
         bool Unknown { get;  }
         double Value { get; set; }
 
+        void Clear();
+
         IRating Rating { get; }
         void SetRating(IRating rating);
+
+        string GetTextRelation();
     }
     public class NodeRelation : Relation<INode, INode>, INodeRelation
     {
@@ -94,7 +96,9 @@ namespace DSSAlternative.AHP
         private IRating rating;
         private IRating CreateRating()
         {
-            if (Value < 1)
+            if (Value == 0)
+                return new Rating(0);
+            else if (Value < 1)
                 return new Rating(To, Mirrored.Value);
             else
                 return new Rating(From, Value);
@@ -112,10 +116,15 @@ namespace DSSAlternative.AHP
 
         }
 
-        public static string GetTextRelationFor(INodeRelation relation)
+        public void Clear()
         {
-            double Value = relation.Value;
-            if (relation.Unknown)
+            value = 0;
+            rating = CreateRating();
+        }
+
+        public string GetTextRelation()
+        {
+            if (Unknown)
                 return "??????";
 
             if (Value == 1)
@@ -169,5 +178,4 @@ namespace DSSAlternative.AHP
 
         INodeRelation INodeRelation.Mirrored { get => Mirrored as INodeRelation; set => Mirrored = value as NodeRelation; }
     }
-
 }

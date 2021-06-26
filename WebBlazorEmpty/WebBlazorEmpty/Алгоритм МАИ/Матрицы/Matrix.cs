@@ -50,10 +50,13 @@ namespace DSSAlternative.AHP
         }
         public Matrix(double[,] arr)
         {
-            Array = new double[arr.GetLength(0), arr.GetLength(1)];
-            for (int i = 0; i < arr.GetLength(0); i++)
+            int rows = arr.GetLength(0);
+            int cols = arr.GetLength(1);
+
+            Array = new double[rows, cols];
+            for (int i = 0; i < rows; i++)
             {
-                for (int a = 0; a < arr.GetLength(1); a++)
+                for (int a = 0; a < cols; a++)
                 {
                     Array[i, a] = arr[i,a];
                 }
@@ -194,7 +197,7 @@ namespace DSSAlternative.AHP
             }
             return nums;
         }
-        public MtxGlobalCoeffs(IProblem problem, INode node)
+        public MtxGlobalCoeffs(INode node)
         {
             Nodes = node.Criterias.Group.ToArray();
             if(Nodes.Length > 0)
@@ -220,7 +223,7 @@ namespace DSSAlternative.AHP
         {
             Nodes = node.NeighborsGroup;
             var local = new MtxLocalCoeffs(problem, node);
-            var global = new MtxGlobalCoeffs(problem, node);
+            var global = new MtxGlobalCoeffs(node);
             var res = MtxActions.MatrixMultiplication(local.Array, global.GetArr());
 
             Array = new double[Nodes.Length, 1];

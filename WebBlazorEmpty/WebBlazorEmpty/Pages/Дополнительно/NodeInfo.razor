@@ -84,7 +84,7 @@
                                 {
                                     <li>
                                         <NavLink href="@(Project.StageRelations[rel].Href)">
-                                            @rel.From.Name @NodeRelation.GetTextRelationFor(rel) @rel.To.Name
+                                            @rel.From.Name @rel.GetTextRelation() @rel.To.Name
                                         </NavLink>
                                     </li>
                                 }

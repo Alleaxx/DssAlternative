@@ -9,7 +9,10 @@ namespace DSSAlternative.AHP
     {
         IEnumerable<INode> Hierarchy { get; set; }
         IEnumerable<IGrouping<int, INode>> GroupedByLevel { get; }
-        
+        Dictionary<int, INode[]> Dictionary { get; }
+        IEnumerable<INode> Best(int level);
+
+
         public INode MainGoal { get; }
         public IEnumerable<INode> Criterias { get; }
         public IEnumerable<INode> Alternatives { get; }
@@ -26,20 +29,42 @@ namespace DSSAlternative.AHP
         public int MaxLevel { get; }
     }
 
-    public class HierarchyN : IHierarchy
+    public class HierarchySheme : IHierarchy
     {
         public override string ToString() => $"{MainGoal.Name} [{GroupedByLevel.Count()}] ({Hierarchy.Count()})";
-        public HierarchyN(ITemplate template)
+        public HierarchySheme(ITemplate template)
         {
-            Hierarchy = template.Nodes;
-            Hierarchy.ToList().ForEach(n => n.UpdateStructure(template.Nodes, template.Groups));
+            Hierarchy = template.Nodes.ToArray();
+            foreach (var node in Hierarchy)
+            {
+                node.UpdateStructure(template.Nodes, template.Groups);
+            }
+            Dictionary = GetDictionary();
         }
 
 
-
+        //Структура
         public IEnumerable<INode> Hierarchy { get; set; }
         public IEnumerable<IGrouping<int, INode>> GroupedByLevel => Hierarchy.OrderBy(n => n.Level).GroupBy(h => h.Level);
         public ICorrectness Correctness => new HierarchyCorrectness(this);
+        public Dictionary<int, INode[]> Dictionary { get; private set; }
+        private Dictionary<int, INode[]> GetDictionary()
+        {
+            Dictionary<int, INode[]> dictionary = new Dictionary<int, INode[]>();
+            foreach (var nodeGroup in GroupedByLevel)
+            {
+                int level = nodeGroup.Key;
+                INode[] nodes = nodeGroup.ToArray();
+                dictionary.Add(level, nodes);
+            }
+            return dictionary;
+        }
+        public IEnumerable<INode> Best(int level)
+        {
+            double maxCoefficient = Dictionary[level].Select(c => c.Coefficient).Max();
+            return Dictionary[level].Where(n => n.Coefficient == maxCoefficient);
+        }
+
 
 
         //Всего узлов
@@ -49,16 +74,16 @@ namespace DSSAlternative.AHP
         {
             get
             {
-                var groupedLevel = GroupedByLevel;
-                int amount = 0;
+                int relsAmount = 0;
 
                 int prevAmount = 1;
-                foreach (var group in groupedLevel)
+                foreach (var group in GroupedByLevel)
                 {
-                    amount += prevAmount * (group.Count() * group.Count() / 3 );
-                    prevAmount = group.Count();
+                    int groupAmount = group.Count();
+                    relsAmount += prevAmount * (groupAmount * groupAmount / 3 );
+                    prevAmount = groupAmount;
                 }
-                return amount;
+                return relsAmount;
             }
         }
         public TimeSpan EstTime => new TimeSpan(0, 0, RelationsCount * 8);
@@ -80,7 +105,10 @@ namespace DSSAlternative.AHP
             var aNodes = a.Hierarchy.ToList();
             var bNodes = b.Hierarchy.ToList();
 
-            if (aNodes.Count() != bNodes.Count())
+            int aCount = aNodes.Count();
+            int bCount = bNodes.Count();
+
+            if (aCount != bCount)
                 return false;
 
             foreach (var aNode in a.Hierarchy)

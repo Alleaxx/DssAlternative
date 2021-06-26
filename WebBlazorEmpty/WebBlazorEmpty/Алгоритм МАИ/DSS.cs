@@ -49,11 +49,21 @@ namespace DSSAlternative.AHP
             }
         }
 
-        public void AddProblem(ITemplate template) => AddProblem(new Project(template));
-        public void AddProblem(IProject project)
+        public void AddProject(IProject project)
         {
             Projects.Add(project);
-            Project = Projects.Last();
+            Project = project;
+        }
+
+        public void RemoveProject(IProject project)
+        {
+            Projects.Remove(project);
+            bool anotherProjectAvail = Projects.Count() > 0;
+
+            if (anotherProjectAvail)
+                SelectProblem(Projects.First());
+            else
+                Project = null;
         }
 
         public JsonSerializerOptions JsonOptions = new JsonSerializerOptions()

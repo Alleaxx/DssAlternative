@@ -33,7 +33,7 @@ namespace DSSAlternative.AHP
         INode[] LowerNodes { get; }
         INode[] LowerNodesControlled { get; }
 
-        void UpdateStructure(IEnumerable<INode> allNodes, INodeGroup[] groups);
+        void UpdateStructure(IEnumerable<INode> allNodes, IEnumerable<INodeGroup> groups);
     }
 
     public class Node : INode
@@ -76,14 +76,14 @@ namespace DSSAlternative.AHP
 
 
 
-        public void UpdateStructure(IEnumerable<INode> allNodes, INodeGroup[] groups)
+        public void UpdateStructure(IEnumerable<INode> allNodes, IEnumerable<INodeGroup> groups)
         {
             LevelName = GetLevelName(allNodes);
 
             if (GroupIndex == -1)
                 Criterias = new NodeGroup(-1);
-            else if (GroupIndex < groups.Length)
-                Criterias = groups[GroupIndex];
+            else if (GroupIndex < groups.Count())
+                Criterias = groups.ElementAt(GroupIndex);
 
             UpperNodes = allNodes.Where(n => n.Level == Level - 1).ToArray();
             Neighbors = allNodes.Where(n => n.Level == Level).ToArray();
@@ -128,7 +128,7 @@ namespace DSSAlternative.AHP
         public int Index { get; private set; }
         public INode[] Group { get; } = new INode[0];
 
-        public NodeGroup(int index,params INode[] nodes)
+        public NodeGroup(int index, params INode[] nodes)
         {
             Index = index;
             Group = nodes;
