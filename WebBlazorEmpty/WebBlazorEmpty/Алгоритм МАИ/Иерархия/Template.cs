@@ -21,8 +21,9 @@ namespace DSSAlternative.AHP
         public string Name { get; set; }
         public string Description { get; set; }
         public string Img { get; set; }
-        public virtual List<Node> Nodes { get; set; }
+        public List<Node> Nodes { get; set; }
 
+        [JsonIgnore]
         public INodeGroup[] Groups
         {
             get

@@ -1,42 +1,46 @@
-﻿@page "/relation-new/{relIndex:int}"
+﻿@page "/relation-edit/{relIndex:int}"
 @inherits DSSComponentRelation
 @layout EditorLayout
 
 
 <style>
-    .relations-grid{
+    .relations-grid {
         display: grid;
         grid-template-columns: 7fr 3fr;
         grid-template-areas: "relation menu";
     }
-    .relation-area{
+
+    .relation-area {
         grid-area: relation;
         padding: 10px;
     }
-/*    .relation-area .matrix{
+    /*    .relation-area .matrix{
         border: 0;
     }*/
 
-    .relation-current-header{
+    .relation-current-header {
         text-align: center;
         font-size: 1.15em;
         margin-bottom: 0;
     }
-    .stage-area{
+
+    .stage-area {
         display: flex;
     }
-    .stage-area a{
-        flex-basis: 50%;
-        text-align: center;
-        color: black;
-        padding: 8px 0;
-        border: 1px solid lightgreen;
-    }
-    .stage-area a:hover{
-        background-color: lightgreen;
-    }
-    
-    .node-edit{
+
+        .stage-area a {
+            flex-basis: 50%;
+            text-align: center;
+            color: black;
+            padding: 8px 0;
+            border: 1px solid lightgreen;
+        }
+
+            .stage-area a:hover {
+                background-color: lightgreen;
+            }
+
+    .node-edit {
         font-size: 0.9em;
     }
 
@@ -45,16 +49,19 @@
         grid-area: menu;
         padding: 10px;
     }
-    .rel-menu-header{
+
+    .rel-menu-header {
         font-size: 1.2em;
     }
-    .rel-menu-list-header{
+
+    .rel-menu-list-header {
         font-size: 1em;
         font-weight: 400;
         margin: 4px 0;
         padding-bottom: 3px;
         margin-bottom: 0;
     }
+
         .rel-menu-list-header.safe {
             border-bottom: 1px solid gainsboro;
         }
@@ -66,6 +73,7 @@
         .rel-menu-list-header.error {
             border-bottom: 1px solid red;
         }
+
     .rel-menu-element {
         font-size: 0.8em;
         color: black;
@@ -83,66 +91,60 @@
             border-right: 1px solid lightgreen;
             border-bottom: 1px solid lightgreen;
         }
+
         .rel-menu-element.warning {
             border-right: 1px solid #cccc10;
             border-bottom: 1px solid #cccc10;
         }
+
         .rel-menu-element.error {
             border-right: 1px solid red;
             border-bottom: 1px solid red;
         }
 
 
-    .rel-menu-element:hover{
-        background-color: whitesmoke;
-    }
-    .rel-menu-list{
+        .rel-menu-element:hover {
+            background-color: whitesmoke;
+        }
+
+    .rel-menu-list {
         list-style: none;
         margin: 5px 0;
         margin-top: 0;
     }
 
-    .menu-area .active{
+    .menu-area .active {
         border-left: 5px solid orange;
     }
 
 
-    .criteria-state{
+    .criteria-state {
         font-size: 0.85em;
         color: black;
         margin-left: 2em;
     }
 
-    .criteria-relatons{
-
+    .criteria-relatons {
     }
 
-    .inner-matrix{
-
+    .inner-matrix {
     }
-    .inner-matrix-name{
-        display:inline;
-        font-weight:500;
+
+    .inner-matrix-name {
+        display: inline;
+        font-weight: 500;
         font-size: 1.1em;
     }
 </style>
 
 <div class="relations-grid">
 
-    <div class="relation-area">
-
-        @*<h2 class="relation-current-header">
-            @Relation.Main.Name
-        </h2>*@
-        <NodeQuestion Relation="@Relation" />
-    </div>
-
     <nav class="menu-area">
         <h2 class="rel-menu-header">Список отношений</h2>
         @foreach (var node in Problem.NodesWithRels)
         {
             <section class="criteria-relatons">
-                <h3 class="@($"rel-menu-list-header {Project.StageRelations[Problem.FirstRequiredRelation(node)].GetClass()}")">@node.Name</h3>
+                <h3 class="@($"rel-menu-list-header {Project.GetRelation(node).GetClass()}")">@node.Name</h3>
                 <ul class="rel-menu-list">
                     @foreach (var relation in Problem.RelationsRequired.Where(r => r.Main == node))
                     {
@@ -170,6 +172,10 @@
             </section>
         }
     </nav>
+
+    <div class="relation-area">
+        <NodeQuestion Relation="@Relation" />
+    </div>
 </div>
 
 @code {

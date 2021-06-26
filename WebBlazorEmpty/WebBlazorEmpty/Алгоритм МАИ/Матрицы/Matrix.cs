@@ -8,18 +8,23 @@ namespace DSSAlternative.AHP
 {
     public interface IMatrix
     {
-        int Size { get; }
+        int RSize { get; }
+        int CSize { get; }
+
         double[,] Array { get; }
         double[] Coeffiients { get; }
         IConsistency Consistency { get; }
         bool WithZeros();
+
+        string GetText();
     }
     public class Matrix : IMatrix 
     {
-        public override string ToString() => $"Матрица ({Array.GetLength(0)}x{Array.GetLength(1)})";
+        public override string ToString() => $"Матрица ({RSize}x{CSize})";
         
         public double[,] Array { get; set; }
-        public int Size => Array.GetLength(0);
+        public int RSize => Array.GetLength(0);
+        public int CSize => Array.GetLength(1);
 
         public IConsistency Consistency { get; protected set; }
 
@@ -27,9 +32,9 @@ namespace DSSAlternative.AHP
 
         public bool WithZeros()
         {
-            for (int x = 0; x < Array.GetLength(0); x++)
+            for (int x = 0; x < RSize; x++)
             {
-                for (int y = 0; y < Array.GetLength(1); y++)
+                for (int y = 0; y < CSize; y++)
                 {
                     if (Array[x, y] == 0)
                         return true;
@@ -41,7 +46,7 @@ namespace DSSAlternative.AHP
 
         protected Matrix()
         {
-
+            Consistency = new MatrixConsistenct(this);
         }
         public Matrix(double[,] arr)
         {
@@ -57,13 +62,13 @@ namespace DSSAlternative.AHP
         }
 
 
-        public virtual string GetText()
+        public string GetText()
         {
             string text = "";
-            for (int x = 0; x < Array.GetLength(0); x++)
+            for (int x = 0; x < RSize; x++)
             {
                 text += "\n";
-                for (int y = 0; y < Array.GetLength(1); y++)
+                for (int y = 0; y < CSize; y++)
                 {
                     text += $"{Math.Round(Array[x, y], 3),-7}";
                 }
@@ -76,8 +81,10 @@ namespace DSSAlternative.AHP
 
     public interface IMatrixRelations : IMatrix
     {
-        INode Main { get; set; }
-        INode[] Nodes { get; set; }
+        INode Main { get;}
+        INode[] Nodes { get; }
+
+        void Change(INode a, INode b, double rating);
 
     }
 
@@ -85,22 +92,23 @@ namespace DSSAlternative.AHP
     //Матрица отношений для узла (сравнение нижестоящих узлов)
     public class MtxRelations : Matrix, IMatrixRelations
     {
-        public INode Main { get; set; }
-        public INode[] Nodes { get; set; }
+        public INode Main { get; protected set; }
+        public INode[] Nodes { get; protected set; }
 
 
-        public MtxRelations()
+        protected MtxRelations()
         {
 
         }
         public MtxRelations(IProblem problem, INode node)
         {
             Main = node;
-            Nodes = problem.Hierarchy.Where(n => n.Contents.Contains(node)).ToArray();
-            var rels = problem.RelationsAll.Where(r => r.Main == Main).GroupBy(r => r.From);
+            Nodes = node.LowerNodesControlled;
+
+            var rels = problem.RelationsGroupedMain(node);
             int length = rels.Count();
 
-            Array = new double[length,length];
+            Array = new double[length, length];
             for (int i = 0; i < length; i++)
             {
                 var row = rels.ElementAt(i);
@@ -109,8 +117,15 @@ namespace DSSAlternative.AHP
                     Array[i, a] = row.ElementAt(a).Value;
                 }
             }
+        }
 
-            Consistency = new MatrixConsistenct(this);
+        public void Change(INode a, INode b, double value)
+        {
+            int x = a.OrderIndexGroup;
+            int y = b.OrderIndexGroup;
+
+            Array[x, y] = value;
+            Array[y, x] = 1 / value;
         }
     }
 
@@ -120,16 +135,17 @@ namespace DSSAlternative.AHP
         public MtxLocalCoeffs(IProblem problem, INode node)
         {
             Nodes = node.Criterias.Group;
+
             if(Nodes.Length > 0)
             {
-                var coeffs = Nodes.Select(n => new MtxRelations(problem, n).Coeffiients);
+                var coeffs = Nodes.Select(n => new MtxRelations(problem, n).Coeffiients).ToArray();
                 int rows = coeffs.First().Length;
-                int cols = coeffs.Count();
+                int cols = coeffs.Length;
 
                 Array = new double[rows, cols];
                 for (int c = 0; c < cols; c++)
                 {
-                    var coeffsNow = coeffs.ElementAt(c);
+                    var coeffsNow = coeffs[c];
                     for (int r = 0; r < rows; r++)
                     {
                         Array[r, c] = coeffsNow[r];
@@ -157,8 +173,8 @@ namespace DSSAlternative.AHP
 
         public double[] GetVector()
         {
-            double[] nums = new double[Size];
-            for (int i = 0; i < Size; i++)
+            double[] nums = new double[RSize];
+            for (int i = 0; i < RSize; i++)
             {
                 nums[i] = Array[i, 0];
             }
@@ -171,8 +187,8 @@ namespace DSSAlternative.AHP
     {
         public double[] GetArr()
         {
-            double[] nums = new double[Size];
-            for (int i = 0; i < Size; i++)
+            double[] nums = new double[RSize];
+            for (int i = 0; i < RSize; i++)
             {
                 nums[i] = Array[i, 0];
             }
@@ -180,7 +196,7 @@ namespace DSSAlternative.AHP
         }
         public MtxGlobalCoeffs(IProblem problem, INode node)
         {
-            Nodes = node.Contents.ToArray();
+            Nodes = node.Criterias.Group.ToArray();
             if(Nodes.Length > 0)
             {
                 Array = new double[Nodes.Length, 1];
@@ -202,13 +218,11 @@ namespace DSSAlternative.AHP
     {
         public MtxCoeffs(IProblem problem, INode node)
         {
-            Nodes = node.NeighborsComp;
+            Nodes = node.NeighborsGroup;
             var local = new MtxLocalCoeffs(problem, node);
             var global = new MtxGlobalCoeffs(problem, node);
             var res = MtxActions.MatrixMultiplication(local.Array, global.GetArr());
-            Console.WriteLine(node);
-            res.ToList().ForEach(r => Console.Write(r + "  "));
-            Console.WriteLine($"\nSize [{Nodes.Length},{1}]");
+
             Array = new double[Nodes.Length, 1];
             for (int i = 0; i < Nodes.Length; i++)
             {

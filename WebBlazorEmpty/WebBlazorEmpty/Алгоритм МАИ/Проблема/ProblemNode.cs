@@ -8,14 +8,13 @@ namespace DSSAlternative.AHP
     public interface IProblemNode : IStyled
     {
         INode Node { get; }
-        IProblem Problem { get; }
         string Href { get; }
     }
 
-    public class ProblemNode : IProblemNode, IStyled
+    public class ProblemNode : IProblemNode
     {
         public INode Node { get; set; }
-        public IProblem Problem { get; set; }
+        private IProblem Problem { get; set; }
 
         public string Href => $"node/{Node.Level}/{Node.Name}";
 

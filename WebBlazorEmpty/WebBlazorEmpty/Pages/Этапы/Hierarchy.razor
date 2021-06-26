@@ -214,10 +214,9 @@
     <div class="sheme basic-border">
         <div class="confirm">
             <div>
-                <input class="add" type="button" value="Подтвердить текущую иерархию" @onclick="UpdateHierarchy" />
                 @if (Project.UnsavedChanged && HierEditState.Result)
                 {
-                    @*<span class="not-saved">Есть несохраненные изменения</span>*@
+                    <span class="not-saved">Есть несохраненные изменения</span>
                     <input class="add" type="button" value="Подтвердить текущую иерархию" @onclick="UpdateHierarchy" />
                 }
                 else if (Project.UnsavedChanged && !HierEditState.Result)
@@ -272,14 +271,14 @@
                     <div class="level-name">
                         <span class="level-index">Уровень @levelGroup.Key</span>
                         <br>
-                        <span>@(HierarchyN.GetTextInfo(ProblemEditing, levelGroup.Key))</span>
+                        <span>@levelGroup.ElementAt(0).LevelName</span>
                         <br />
 
                     </div>
                     <div class="level-elements">
                         @foreach (var node in levelGroup)
                         {
-                            <div class="@($"{(NodeHovered != null && NodeHovered.Contents.Contains(node) ? "node-main-element" : "")} node-element")" @onclick="@(() => NodeHovered = node)">
+                            <div class="@($"{(NodeHovered != null && NodeHovered.Criterias.Group.Contains(node) ? "node-main-element" : "")} node-element")" @onclick="@(() => NodeHovered = node)">
                                 <input class="input-text" type="text" @bind-value="@node.Name" />
                                 <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
                             </div>
@@ -303,7 +302,7 @@
         </div>
     </div>
 
-    <h3>Группы критериев</h3>
+    <h3>Критерии</h3>
     <section>
         <ul>
             @foreach (var group in Template.Groups)
@@ -320,24 +319,69 @@
 
             }
         </ul>
-        <table>
-            <tr>
+
+        <style>
+            .node-table-edit {
+                border: 1px solid gainsboro;
+                padding: 10px;
+                font-size: 0.9em;
+            }
+            .node-table-edit-header{
+
+            }
+            .node-table-edit-header th{
+                border-bottom: 1px solid gainsboro;
+            }
+            .node-table-edit-node{
+
+            }
+                .node-table-edit-node .edit-text {
+                    border-right: 1px solid gainsboro;
+                }
+
+            .edit-cell input[type="number"] {
+                text-align:center;
+                padding: 5px 10px;
+                border: 0;
+                border-bottom: 1px solid gainsboro;
+            }
+            .edit-cell input[type="text"] {
+                padding: 5px 10px;
+                border: 0;
+                border-bottom: 1px solid gainsboro;
+            }
+        </style>
+        <table class="node-table-edit">
+            <tr class="node-table-edit-header">
+                <th>Тип</th>
                 <th>Имя</th>
+                <th>Уровень</th>
                 <th>Группа</th>
                 <th>Критерии</th>
+                <th>Описание</th>
             </tr>
-            @foreach (var node in Problem.Hierarchy)
+            @foreach (var node in Problem.Hierarchy.OrderBy(n => n.Level))
             {
-            <tr>
-                <td>@node.Name</td>
-                <td>
-                    <input type="number" @bind-value="@node.Group" />
-                </td>
-                <td>
-                    <input type="number" @bind-value="@node.GroupIndex" />
-                </td>
-            </tr>
-
+                <tr class="node-table-edit-node">
+                    <td class="edit-text" style="text-align:center">
+                        <span class="node-text">@node.LevelName</span> 
+                    </td>
+                    <td class="edit-cell">
+                        <input type="text" @bind-value="@node.Name" />
+                    </td>
+                    <td class="edit-cell">
+                        <input type="number" @bind-value="@node.Level" />
+                    </td>
+                    <td class="edit-cell">
+                        <input type="number" @bind-value="@node.Group" />
+                    </td>
+                    <td class="edit-cell">
+                        <input type="number" @bind-value="@node.GroupIndex" />
+                    </td>
+                    <td class="edit-cell">
+                        <input type="text" @bind-value="@node.Description" />
+                    </td>
+                </tr>
             }
         </table>
 
@@ -394,7 +438,7 @@
         {
             Console.WriteLine($"{node.Level} - {node.Name}:");
             Console.Write("Расчет: ");
-            foreach (var countNode in node.Contents)
+            foreach (var countNode in node.Criterias.Group)
             {
                 Console.Write($"{countNode.Name}, ");
             }

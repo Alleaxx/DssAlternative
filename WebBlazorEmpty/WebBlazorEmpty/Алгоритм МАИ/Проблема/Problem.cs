@@ -8,33 +8,27 @@ namespace DSSAlternative.AHP
     public interface IProblem : IHierarchy
     {
         Dictionary<int, INode[]> Dictionary { get; }
+
         INodeRelation[] RelationsAll { get; }
         INodeRelation[] RelationsRequired { get; }
-        void SetRelationBetween(INode main, INode from, INode to, double value);
-        IMatrixRelations GetMatrix(INode node);
+        IEnumerable<IGrouping<INode, INodeRelation>> RelationsGroupedMain(INode node);
 
-        //Для рейтинга критериев
-        Dictionary<INode, INode[]> CriteriasFurther { get; }
-
-        IGrouping<INode, INodeRelation>[] GetGrouped(INode node);
-
-        INode[] Best(int level);
-
-        IRelationsCorrecntess CorrectnessRels { get; set; }
 
         event Action RelationValueChanged;
+        void SetRelationBetween(INode main, INode from, INode to, double value);
+        IRelationsCorrectness CorrectnessRels { get; }
 
-        void ClearRelations();
-        void ClearRelations(INode node);
-        int IndexNode(INode node);
 
         INodeRelation FirstRequiredRelation(INode node);
         INodeRelation NextRequiredRel(INodeRelation from);
         INodeRelation PrevRequiredRel(INodeRelation from);
 
+        void ClearRelations();
+        void ClearRelations(INode node);
 
-        Dictionary<INode, double> GetRatingFor(INode node);
-        IEnumerable<IMatrix> PossibleMatrixesForRel(INodeRelation relation);
+        IMatrixRelations GetMtxRelations(INode node);
+
+        IEnumerable<INode> Best(int level);
     }
     public class Problem : HierarchyN, IProblem
     {
@@ -46,27 +40,24 @@ namespace DSSAlternative.AHP
             RecountCoeffs();
         }
 
+        //Конструирование задачи и отношений
         private void UpdateStructure()
         {
-            SetFurtherCriterias();
-
             Dictionary = GetDictionary();
-
             CreateRelations();
         }
-
-        private void SetFurtherCriterias()
+        private Dictionary<int, INode[]> GetDictionary()
         {
-            CriteriasFurther = new Dictionary<INode, INode[]>();
-            foreach (var mainNode in Hierarchy)
+            Dictionary<int, INode[]> dictionary = new Dictionary<int, INode[]>();
+            foreach (var nodeGroup in GroupedByLevel)
             {
-                CriteriasFurther.Add(mainNode, Hierarchy.Where(n => n.Level == mainNode.Level + 1).ToArray());
+                dictionary.Add(nodeGroup.Key, nodeGroup.ToArray());
             }
+            return dictionary;
         }
-
         private void CreateRelations()
         {
-            var relations = GetRelationsAdvanced();
+            var relations = GetRelationsNew();
             RelationsAll = relations.ToArray();
 
             foreach (var rel in relations)
@@ -82,16 +73,9 @@ namespace DSSAlternative.AHP
             }
             RelationsRequired = onlyReq.ToArray();
 
-
-            RelationCriteriasGrouped = new Dictionary<INode, INodeRelation[]>();
-            foreach (var node in Hierarchy)
-            {
-                RelationCriteriasGrouped.Add(node, RelationsAll.Where(r => r.Main == node).ToArray());
-            }
-
             CorrectnessRels = new RelationsCorrectness(this);
         }
-        private List<INodeRelation> GetRelations()
+        private List<INodeRelation> GetRelationsOld()
         {
             List<INodeRelation> relations = new List<INodeRelation>();
             foreach (var level in Dictionary.Keys)
@@ -126,8 +110,8 @@ namespace DSSAlternative.AHP
             relations.Clear();
             foreach (var node in Hierarchy)
             {
-                var neigbors = Hierarchy.Where(n => Enumerable.SequenceEqual(n.Contents, node.Contents));
-                foreach (var criteria in node.Contents)
+                var neigbors = Hierarchy.Where(n => Enumerable.SequenceEqual(n.Criterias.Group, node.Criterias.Group));
+                foreach (var criteria in node.Criterias.Group)
                 {
                     foreach (var nodeNeighbor in neigbors)
                     {
@@ -144,13 +128,13 @@ namespace DSSAlternative.AHP
 
             return relations;
         }
-        private List<INodeRelation> GetRelationsAdvanced()
+        private List<INodeRelation> GetRelationsNew()
         {
             List<INodeRelation> relations = new List<INodeRelation>();
             foreach (var node in Hierarchy)
             {
-                var neigbors = Hierarchy.Where(n => Enumerable.SequenceEqual(n.Contents, node.Contents));
-                foreach (var criteria in node.Contents)
+                var neigbors = Hierarchy.Where(n => Enumerable.SequenceEqual(n.Criterias.Group, node.Criterias.Group));
+                foreach (var criteria in node.Criterias.Group)
                 {
                     foreach (var nodeNeighbor in neigbors)
                     {
@@ -176,25 +160,22 @@ namespace DSSAlternative.AHP
             RelationValueChanged?.Invoke();
         }
 
+        public Dictionary<int, INode[]> Dictionary { get; private set; }
+        public IEnumerable<INode> Best(int level)
+        {
+            var max = Dictionary[level].Select(c => c.Coefficient).Max();
+            return Dictionary[level].Where(n => n.Coefficient == max);
+        }
 
-        public Dictionary<int, INode[]> Dictionary { get; set; }
 
         public INodeRelation[] RelationsAll { get; private set; }
-
-        //Необходимые отношения для заполнения
         public INodeRelation[] RelationsRequired { get; private set; }
-
-        //Для матриц и коэффициентов
-        public IGrouping<INode, INodeRelation>[] GetGrouped(INode node) => RelationsAll.Where(g => g.Main == node).GroupBy(r => r.From).ToArray();
-        public Dictionary<INode, INodeRelation[]> RelationCriteriasGrouped { get; private set; }
-
-        //Для рейтинга критериев
-        public Dictionary<INode, INode[]> CriteriasFurther { get; private set; }
+        public IEnumerable<IGrouping<INode, INodeRelation>> RelationsGroupedMain(INode node) => RelationsAll.Where(g => g.Main == node).GroupBy(r => r.From).ToArray();
+        
+        public IMatrixRelations GetMtxRelations(INode node) => new MtxRelations(this,node);
 
 
-        public IMatrixRelations GetMatrix(INode node) => new MtxRelations(this,node);
-
-        public void RecountCoeffs()
+        private void RecountCoeffs()
         {
             foreach (var group in GroupedByLevel)
             {
@@ -214,8 +195,6 @@ namespace DSSAlternative.AHP
             }
         }
 
-
-        public int IndexNode(INode node) => Dictionary[node.Level].ToList().IndexOf(node);
         public void ClearRelations(INode node)
         {
             foreach (var relation in RelationsRequired.Where(r => r.Main == node))
@@ -231,16 +210,8 @@ namespace DSSAlternative.AHP
             }
         }
 
-        public INode[] Best(int level)
-        {
-            var max = Dictionary[level].Select(c => c.Coefficient).Max();
-            return Dictionary[level].Where(n => n.Coefficient == max).ToArray();
-        }
 
-        public IRelationsCorrecntess CorrectnessRels { get; set; }
-
-
-
+        public IRelationsCorrectness CorrectnessRels { get; private set; }
 
 
         public void SetRelationBetween(INode main, INode from, INode to, double value)
@@ -255,47 +226,6 @@ namespace DSSAlternative.AHP
             }
         }
 
-
-        //Все возможные матрицы сравнения по указанному отношению
-        public IEnumerable<IMatrix> PossibleMatrixesForRel(INodeRelation relation)
-        {
-            IMatrix source = GetMatrix(relation.Main);
-            int x = IndexNode(relation.From);
-            int y = IndexNode(relation.To);
-            List<IMatrix> mtx = new List<IMatrix>();
-            for (double i = -9; i <= 9; i += 2)
-            {
-                if (i == -1)
-                    continue;
-
-                double val = i < 0 ? 1 / Math.Abs(i) : i;
-                IMatrix matrix = new Matrix(source.Array);
-                matrix.Array[x, y] = val;
-                matrix.Array[y, x] = 1 / val;
-                mtx.Add(matrix);
-            }
-            return mtx;
-        }
-
-
-
-
-        public Dictionary<INode, double> GetRatingFor(INode node)
-        {
-            Dictionary<INode, double> dictionary = new Dictionary<INode, double>();
-            foreach (var rel in RelationsRequired.Where(r => r.Main == node))
-            {
-                if(rel.Node != null)
-                {
-                    if (!dictionary.ContainsKey(rel.Node))
-                    {
-                        dictionary.Add(rel.Node, 0);
-                    }
-                    dictionary[rel.Node] += rel.Rating;
-                }
-            }
-            return dictionary;
-        }
 
         //Первое заполняемое отношение для узла
         public INodeRelation FirstRequiredRelation(INode node) => RelationsRequired.ToList().Find(r => r.Main == node);
@@ -313,9 +243,9 @@ namespace DSSAlternative.AHP
 
             return RelationsRequired[index + inc];
         }
-    public INodeRelation NextRequiredRel(INodeRelation from)
+        public INodeRelation NextRequiredRel(INodeRelation from)
         {
-            if (GetMatrix(from.Main).Consistency.IsCorrect())
+            if (GetMtxRelations(from.Main).Consistency.IsCorrect())
                 return GetRequiredRel(from, 1);
             else if (from == RelationsRequired.ToList().FindLast(r => r.Main == from.Main))
                 return RelationsRequired.ToList().Find(r => r.Main == from.Main);
@@ -323,5 +253,24 @@ namespace DSSAlternative.AHP
                 return GetRequiredRel(from, 1);
         }
         public INodeRelation PrevRequiredRel(INodeRelation from) => GetRequiredRel(from, -1);
+
+
+        private IEnumerable<IMatrixRelations> PossibleMatrixesForRel(INodeRelation relation)
+        {
+            List<IMatrixRelations> mtxes = new List<IMatrixRelations>();
+            for (double i = -9; i <= 9; i += 2)
+            {
+                if (i == -1)
+                    continue;
+
+                double value = i < 0 ? 1 / Math.Abs(i) : i;
+
+                IMatrixRelations source = GetMtxRelations(relation.Main);
+                source.Change(relation.Main, relation.To, value);
+
+                mtxes.Add(source);
+            }
+            return mtxes;
+        }
     }
 }

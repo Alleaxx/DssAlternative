@@ -210,7 +210,7 @@
             <div class="level-name">
                 <span class="level-index">Уровень @levelGroup.Key</span>
                 <br>
-                <span class="level-text">@(HierarchyN.GetTextInfo(Problem,levelGroup.Key))</span>
+                <span class="level-text">@levelGroup.First().LevelName</span>
             </div>
             <div class="level-elements">
                 @foreach (var node in levelGroup)
@@ -227,7 +227,7 @@
                             @if (Problem.NodesWithRels.Contains(node))
                             {
 
-                                <a class="action edit-relations" title="Переход к отношениям по критерию" href="@($"{GetNodeRel(node).Href}")">
+                                <a class="action edit-relations" title="Переход к отношениям по критерию" href="@($"{Project.GetRelation(node).Href}")">
                                     <span class="action-name"></span>
                                     <img class="action-icon" src="Images/play.png" />
                                 </a>
@@ -240,7 +240,7 @@
                         <div class="action-values-section">
                             <div class="property">
                                 <span class="property-name">Cr:</span><br />
-                                <span class="property-value">@ProcessDouble(Problem.GetMatrix(node).Consistency.Cr)</span>
+                                <span class="property-value">@ProcessDouble(Problem.GetMtxRelations(node).Consistency.Cr)</span>
                             </div>
                             <div class="property">
                                 <span class="property-name">Рейт:</span><br />
@@ -269,8 +269,6 @@
 
 @code {
     private int NodeSize { get; set; } = 20;
-
-    private IStage GetNodeRel(INode node) => Project.StageRelations[Problem.FirstRequiredRelation(node)];
 
     private string ProcessDouble(double num)
     {
@@ -311,7 +309,7 @@
                 return "usual";
 
             case Constistency:
-                double res = Problem.GetMatrix(node).Consistency.Cr;
+                double res = Problem.GetMtxRelations(node).Consistency.Cr;
                 if (RelState.IsNodeUnknown(node))
                     return "warn";
                 if (!RelState.IsNodeConsistenct(node))

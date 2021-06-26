@@ -294,22 +294,22 @@
 
 
         <tr class="ratings-tr">
-            <td colspan="2" style="@((Relation.Value == 0) ? RatingNone.Style : "")" class="@GetClassSel(Relation.From, RatingNone)" @onclick="@(() => Relation.SetRating(Relation.From, 0))">
+            <td colspan="2" style="@((Relation.Value == 0) ? RatingNone.GetStyle() : "")" class="@GetClassSel(Relation.From, RatingNone)" @onclick="@(() => Relation.SetRating(RatingNone))">
                 Отношения между ними неизвестны
             </td>
         </tr>
         <tr class="ratings-tr">
-            <td colspan="2" style="@((Relation.Value == 1) ? RatingEqual.Style : "")" class="@(GetClassSel(Relation.From, RatingEqual))" @onclick="@(() => Relation.SetRating(Relation.From, 1))">@RatingEqual.Name</td>
+            <td colspan="2" style="@((Relation.Value == 1) ? RatingEqual.GetStyle() : "")" class="@(GetClassSel(Relation.From, RatingEqual))" @onclick="@(() => Relation.SetRating(RatingEqual))">@RatingEqual.Name</td>
         </tr>
-        @foreach (var rating in Ratings)
+        @foreach (var group in Ratings)
         {
             <tr class="ratings-tr">
-                <td style="@((Relation.Node == Relation.From && rating.Value == Relation.Rating) ? rating.Style : "")" class="@(GetClassSel(Relation.From, rating))" @onclick="@(() => Relation.SetRating(Relation.From, rating.Value))">
-                    @rating.Name
+                <td style="@((group.forRating.CheckEqual(Relation.Rating)) ? group.forRating.GetStyle() : "")" class="@(GetClassSel(Relation.From, group.forRating))" @onclick="@(() => Relation.SetRating(group.forRating))">
+                    @group.forRating.Name
                 </td>
 
-                <td style="@((Relation.Node == Relation.To && rating.Value == Relation.Rating) ? rating.Style : "")" class="@(GetClassSel(Relation.To, rating))" @onclick="@(() => Relation.SetRating(Relation.To, rating.Value))">
-                    @rating.Name
+                <td style="@((group.toRating.CheckEqual(Relation.Rating)) ? group.toRating.GetStyle() : "")" class="@(GetClassSel(Relation.To, group.toRating))" @onclick="@(() => Relation.SetRating(group.toRating))">
+                    @group.toRating.Name
                 </td>
             </tr>
         }
@@ -372,26 +372,14 @@
     [Parameter]
     public EventCallback RelationUpdated { get; set; }
 
-    private Rating RatingNone => new Rating(Relation.From, 0);
-    private Rating RatingEqual => new Rating(Relation.From, 1);
-    private Rating[] Ratings
-    {
-        get
-        {
-            List<Rating> ratings = new List<Rating>();
-            for (int i = 3; i <= 9; i += 2)
-            {
-                ratings.Add(new Rating(Relation.From,i));
-            }
-            return ratings.ToArray();
-        }
-    }
+    private IRating RatingNone => DSS.RatingSystem.RatingNone;
+    private IRating RatingEqual => DSS.RatingSystem.RatingEqual;
+    private IEnumerable<(IRating forRating, IRating toRating)> Ratings => DSS.RatingSystem.RatingsFor(Relation);
 
-
-    private string GetClassSel(INode node, Rating rating)
+    private string GetClassSel(INode node, IRating rating)
     {
         string selState = "selectable";
-        if(Relation.Node == node && rating.Value == Relation.Rating)
+        if(rating.CheckEqual(Relation.Rating))
         {
             selState = "selected";
         }
@@ -408,45 +396,32 @@
         base.OnParametersSet();
         FromMtx.Clear();
         ToMtx.Clear();
-        if (!Problem.GetMatrix(Relation.Main).WithZeros())
+        if (!Problem.GetMtxRelations(Relation.Main).WithZeros())
         {
             CreateMatrixes();
         }
     }
     private void CreateMatrixes()
     {
-        for (double i = 1; i <= 9; i += 2)
+        FromMtx.Add(1, GetMatrixForRating(1));
+        foreach (var rating in Ratings)
         {
-            FromMtx.Add(i, GetMatrixForRating(i));
-        }
-        for (double i = 3; i <= 9; i += 2)
-        {
-            ToMtx.Add(i, GetMatrixForRating(1 / i));
+            double value = rating.forRating.Value;
+            FromMtx.Add(value, GetMatrixForRating(value));
+            ToMtx.Add(value, GetMatrixForRating(1 / value));
         }
     }
     private IMatrix GetMatrixForRating(double value)
     {
-        IMatrixRelations source = Problem.GetMatrix(Relation.Main);
-        IMatrix mtx = new Matrix(source.Array);
-
-
-        //int x =  Problem.IndexNode(Relation.From);
-        //int y = Problem.IndexNode(Relation.To);
-
-
-        int x = source.Nodes.ToList().IndexOf(Relation.From);
-        int y = source.Nodes.ToList().IndexOf(Relation.To);
-
-        mtx.Array[x, y] = value;
-        mtx.Array[y, x] = 1 / value;
-
-        return mtx;
+        IMatrixRelations source = Problem.GetMtxRelations(Relation.Main);
+        source.Change(Relation.From, Relation.To, value);
+        return source;
     }
 
     Dictionary<double, IMatrix> FromMtx { get; set; } = new Dictionary<double, IMatrix>();
     Dictionary<double, IMatrix> ToMtx { get; set; } = new Dictionary<double, IMatrix>();
 
-    private string GetClass(INode node, Rating r)
+    private string GetClass(INode node, IRating r)
     {
         Dictionary<double, IMatrix> dictionary = node == Relation.From ? FromMtx : ToMtx;
         if (dictionary.ContainsKey(r.Value))
@@ -455,5 +430,4 @@
         }
         return "usual ";
     }
-
 }

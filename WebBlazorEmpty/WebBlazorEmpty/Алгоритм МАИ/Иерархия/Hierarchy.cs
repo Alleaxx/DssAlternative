@@ -7,7 +7,6 @@ namespace DSSAlternative.AHP
 {
     public interface IHierarchy
     {
-        IEnumerable<IEnumerable<INode>> Groups { get; }
         IEnumerable<INode> Hierarchy { get; set; }
         IEnumerable<IGrouping<int, INode>> GroupedByLevel { get; }
         
@@ -16,14 +15,15 @@ namespace DSSAlternative.AHP
         public IEnumerable<INode> Alternatives { get; }
         public IEnumerable<INode> NodesWithRels { get; }
 
+
         public ICorrectness Correctness { get; }
+
 
         public int NodesCount { get; }
         public int LevelsCount { get; }
         public int RelationsCount { get; }
-        public int MaxLevel { get; }
-
         TimeSpan EstTime { get; }
+        public int MaxLevel { get; }
     }
 
     public class HierarchyN : IHierarchy
@@ -37,8 +37,10 @@ namespace DSSAlternative.AHP
 
 
 
-        public IEnumerable<IEnumerable<INode>> Groups { get; }
         public IEnumerable<INode> Hierarchy { get; set; }
+        public IEnumerable<IGrouping<int, INode>> GroupedByLevel => Hierarchy.OrderBy(n => n.Level).GroupBy(h => h.Level);
+        public ICorrectness Correctness => new HierarchyCorrectness(this);
+
 
         //Всего узлов
         public int NodesCount => Hierarchy.Count();
@@ -63,41 +65,12 @@ namespace DSSAlternative.AHP
         public int MaxLevel => Hierarchy.Select(s => s.Level).Max();
 
 
-        //Является ли иерархия корректной для применения в МАИ
-        public ICorrectness Correctness => new HierarchyCorrectness(this);
-
-
-        //Сгруппированные по уровням
-        public IEnumerable<IGrouping<int, INode>> GroupedByLevel => Hierarchy.OrderBy(n => n.Level).GroupBy(h => h.Level);
-        protected Dictionary<int, INode[]> GetDictionary()
-        {
-            Dictionary<int, INode[]> dictionary = new Dictionary<int, INode[]>();
-            foreach (var nodeGroup in GroupedByLevel)
-            {
-                dictionary.Add(nodeGroup.Key, nodeGroup.ToArray());
-            }
-            return dictionary;
-        }
-
         //Узлы
         public INode MainGoal => Hierarchy.Where(h => h.Level == 0).FirstOrDefault();
         public IEnumerable<INode> Criterias => Hierarchy.Where(h => h.Level > 0 && h.Level < LevelsCount - 1);
         public IEnumerable<INode> Alternatives => Hierarchy.Where(h => h.Level == LevelsCount - 1);
         public IEnumerable<INode> NodesWithRels => Criterias.Prepend(MainGoal);
         
-
-        public static string GetTextInfo(IHierarchy hier,int level)
-        {
-            if (level == 0)
-                return "Цель";
-            else if (level == hier.MaxLevel)
-                return "Альтернативы";
-            else if (level == 1)
-                return "Критерии";
-            else
-                return "Подкритерии";
-        }
-
 
         public static bool CompareEqual(IHierarchy a, IHierarchy b)
         {

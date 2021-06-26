@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP
 {
-    public interface IRelationsCorrecntess
+    public interface IRelationsCorrectness
     {
         bool AreRelationsCorrect { get; }
         bool AreRelationsKnown { get; }
@@ -16,7 +16,7 @@ namespace DSSAlternative.AHP
         bool IsNodeUnknown(INode node);
         bool IsNodeConsistenct(INode node);
     }
-    public class RelationsCorrectness : IRelationsCorrecntess
+    public class RelationsCorrectness : IRelationsCorrectness
     {
         private IProblem Pr { get; set; }
         public RelationsCorrectness(IProblem problem)
@@ -32,7 +32,7 @@ namespace DSSAlternative.AHP
         public bool AreRelationsConsistenct => NodesNotConsistent.Count() == 0;
 
         //Список критериев, матрицы по которым не согласованы
-        private IEnumerable<INode> NodesNotConsistent => Pr.NodesWithRels.Where(n => !Pr.GetMatrix(n).Consistency.IsCorrect());
+        private IEnumerable<INode> NodesNotConsistent => Pr.NodesWithRels.Where(n => !Pr.GetMtxRelations(n).Consistency.IsCorrect());
         private IEnumerable<INodeRelation> RelationsUnknown => Pr.RelationsRequired.Where(r => r.Unknown);
 
         public IEnumerable<ICheck> Errors(INode node)
@@ -51,7 +51,7 @@ namespace DSSAlternative.AHP
         }
         public bool IsNodeConsistenct(INode node)
         {
-            return Pr.GetMatrix(node).Consistency.IsCorrect();
+            return Pr.GetMtxRelations(node).Consistency.IsCorrect();
         }
 
     }

@@ -3,13 +3,12 @@
 @inject NavigationManager NavigationManager
 
 <link rel="stylesheet" href="css/app.css" />
+
 <section class="grid">
     <Logo />
     <MainHeader />
 
-    <nav class="upper-menu">
-
-    </nav>
+    <MenuTask />
 
     <Menu />
     <main>
@@ -28,11 +27,6 @@
         base.OnInitialized();
         if (DSS.Ex.Project == null)
             NavigationManager.NavigateTo("start");
-    }
-    private void Changed()
-    {
-        Console.WriteLine("Интерфейс обновлен");
-        StateHasChanged();
     }
 }
 

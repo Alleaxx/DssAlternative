@@ -9,8 +9,15 @@
     grid-template-rows: auto 1fr auto;
     grid-template-areas:
         "logo header"
+        "navside menu"
         "navside content"
         "footer footer";
+}
+
+.menu{
+    grid-area: menu;
+    height: 30px;
+    border-bottom: 1px solid gainsboro;
 }
 
 .logo {

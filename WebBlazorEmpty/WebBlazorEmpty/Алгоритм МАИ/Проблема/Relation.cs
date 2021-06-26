@@ -25,7 +25,7 @@ namespace DSSAlternative.AHP
         public T To { get; private set; }
 
 
-        public bool Inited => From != null && To != null;
+        private bool Inited => From != null && To != null;
         public bool Self => Inited && From == To;
 
 
@@ -82,43 +82,35 @@ namespace DSSAlternative.AHP
         bool Unknown { get;  }
         double Value { get; set; }
 
-        INode Node { get; }
-        double Rating { get; }
-        void SetRating(INode node, double val);
-
-        Rating CreateRating();
+        IRating Rating { get; }
+        void SetRating(IRating rating);
     }
     public class NodeRelation : Relation<INode, INode>, INodeRelation
     {
-        public NodeRelation(INode criteria, INode from, INode to, double val) : base(criteria, from, to, val)
+        public NodeRelation(INode criteria, INode from, INode to, double val) : base(criteria, from, to, val) { }
+
+
+        public IRating Rating => rating ??= CreateRating();
+        private IRating rating;
+        private IRating CreateRating()
         {
-
-        }
-
-        public Rating CreateRating()
-        {
-            return null;
-        }
-
-
-        public INode Node => node ?? (Value >= 1 ? From : To);
-        private INode node;
-        public double Rating => rating ?? (Value >= 1 ? Value : (1 / Value));
-        private double? rating;
-
-        public void SetRating(INode from, double val)
-        {
-            node = from;
-            rating = val;
-
-            if (from == From)
-                Value = val;
+            if (Value < 1)
+                return new Rating(To, Mirrored.Value);
             else
-                Mirrored.Value = val;
+                return new Rating(From, Value);
         }
+        public void SetRating(IRating rating)
+        {
+            this.rating = rating;
+            INodeRelation rel;
+            if (rating.Value == 1 || rating.Value == 0 || rating.Node == From)
+                rel = this;
+            else
+                rel = Mirrored as INodeRelation;
 
+            rel.Value = rating.Value;
 
-
+        }
 
         public static string GetTextRelationFor(INodeRelation relation)
         {
@@ -175,48 +167,7 @@ namespace DSSAlternative.AHP
             }
         }
 
-
-        INodeRelation INodeRelation.Mirrored { get => base.Mirrored as INodeRelation; set => base.Mirrored = value as NodeRelation; }
-    }
-
-    public class Rating
-    {
-        public INode Node { get; set; }
-        public string Name { get; private set; }
-        public int Value { get; private set; }
-        public string Style { get; set; }
-
-        public Rating(INode node, int val)
-        {
-            Value = val;
-            switch (val)
-            {
-                case 0:
-                    Name = "Неизвестное отношение";
-                    Style = "color:Black";
-                    break;
-                case 1:
-                    Name = "Одинаковы по значимости";
-                    Style = "color:Black";
-                    break;
-                case 3:
-                    Name = "Немного приоритетнее";
-                    Style = "color:green";
-                    break;
-                case 5:
-                    Name = "Приоритетнее";
-                    Style = "color:#0070dd";
-                    break;
-                case 7:
-                    Name = "Значительно приоритетнее";
-                    Style = "color:#9345ff";
-                    break;
-                case 9:
-                    Name = "Абсолютно приоритетнее";
-                    Style = "color:#ff8000";
-                    break;
-            }
-        }
+        INodeRelation INodeRelation.Mirrored { get => Mirrored as INodeRelation; set => Mirrored = value as NodeRelation; }
     }
 
 }

@@ -26,11 +26,21 @@ namespace DSSAlternative.AHP
         protected IStage Res => Project.StageResults;
 
 
-        protected IProblemNode[] Nodes => Project.Problem.Hierarchy.Select(n => new ProblemNode(Project.Problem, n)).ToArray();
+        protected IEnumerable<IProblemNode> Nodes => Problem.Hierarchy.Select(n => new ProblemNode(Problem, n));
 
 
         protected ICorrectness HierEditState => Project.ProblemEditing.Correctness;
-        protected IRelationsCorrecntess RelState => Project.Problem.CorrectnessRels;
+        protected IRelationsCorrectness RelState => Project.Problem.CorrectnessRels;
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            DSS.ProjectChanged += DSS_ProjectChanged;
+        }
+        private void DSS_ProjectChanged(IProject obj)
+        {
+            StateHasChanged();
+        }
     }
 
     public class DSSComponentNode : DSSProject
@@ -44,7 +54,7 @@ namespace DSSAlternative.AHP
         public string NodeName { get; set; }
 
 
-        protected IMatrix Mtx => Problem.GetMatrix(Node);
+        protected IMatrix Mtx => Problem.GetMtxRelations(Node);
 
 
         protected override void OnParametersSet()

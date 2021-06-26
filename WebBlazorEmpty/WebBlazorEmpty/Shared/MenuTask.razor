@@ -1,0 +1,106 @@
+﻿@inherits DSSProject
+
+    <style>
+        .task-menu ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 0;
+            display: flex;
+            align-items: stretch;
+            margin-bottom: 0;
+        }
+
+            .task-menu ul a {
+                padding: 0px 8px;
+                border-right: 1px solid gainsboro;
+                text-decoration: none;
+                height: 100%;
+                
+            }
+
+                .task-menu ul a.active {
+                    background-color: white;
+                    background-color: gainsboro;
+                    color: black;
+                    font-weight: 600;
+                }
+
+                .task-menu ul a:hover {
+                    color: black;
+                }
+
+        .task-menu a {
+            cursor: pointer;
+        }
+    </style>
+    <style>
+        .task-menu {
+            border-left: 1px solid gainsboro;
+            border-right: 1px solid gainsboro;
+            border-bottom: 1px solid gainsboro;
+        }
+
+        .task-menu-header {
+            text-align: center;
+            font-size: 1.15em;
+        }
+
+        .task-menu-element {
+            display: flex;
+            align-items: center;
+            opacity: 75%;
+        }
+
+            .task-menu-element.active {
+                opacity: 100%;
+            }
+
+
+        .task-element-sheme {
+            flex-basis: 15%;
+        }
+
+
+        .task-element-header {
+            flex-basis: 85%;
+        }
+
+        .task-element-name {
+            font-size: 0.9em;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .task-element-descr {
+            color: gray;
+            font-size: 0.8em;
+            margin: 3px 0;
+        }
+
+        a.active .task-element-descr {
+            font-weight: normal;
+        }
+
+        .task-menu li {
+            border-bottom: 1px solid gainsboro;
+        }
+    </style>
+
+<nav class="task-menu">
+    <ul>
+        @foreach (var project in DSS.Ex.Projects)
+        {
+            <li>
+                <a class="task-menu-element @(project == DSS.Ex.Project ? "active" : "")" @onclick="@(() => { DSS.Ex.SelectProblem(project); })" href="view">
+                    <div class="task-element-sheme">
+                        <DSSAlternative.Pages.Дополнительно.HierSheme Project="@project" />
+                    </div>
+                    <header class="task-element-header">
+                        <h4 class="task-element-name">@project.Problem.MainGoal.Name</h4>
+                        <p class="task-element-descr">@project.Status</p>
+                    </header>
+                </a>
+            </li>
+        }
+    </ul>
+</nav>

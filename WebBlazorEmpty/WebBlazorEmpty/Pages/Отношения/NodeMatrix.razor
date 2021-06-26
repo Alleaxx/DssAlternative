@@ -1,5 +1,4 @@
-﻿@page "/node/{level:int}/{nodeName}/matrix"
-@inherits DSSComponentNode
+﻿@inherits DSSComponentNode
 @layout EditorLayout
 
 
@@ -22,33 +21,35 @@
         padding: 5px;
         border: 1px solid gainsboro;
     }
-    .mtx table a{
-        text-decoration: none;
-    }
-    .mtx table a:hover{
-        text-decoration: underline;
-    }
-    .mtx table h4{
-        margin: 5px 0;
-    }
+
+        .mtx table a {
+            text-decoration: none;
+        }
+
+            .mtx table a:hover {
+                text-decoration: underline;
+            }
+
+        .mtx table h4 {
+            margin: 5px 0;
+        }
 
     td {
         padding: 5px 8px;
         text-align: center;
     }
 
-    .selected-cell{
+    .selected-cell {
         background-color: whitesmoke;
     }
 
     .good-mtx {
         color: green;
         padding: 10px;
-        
     }
 
 
-    .unknown{
+    .unknown {
         background-color: lightyellow;
     }
 
@@ -57,10 +58,9 @@
         padding: 2px 10px;
     }
 
-    .good-mtx, .bad-mtx{
+    .good-mtx, .bad-mtx {
         display: flex;
         justify-content: center;
-
     }
 
     .lower-border {
@@ -71,7 +71,7 @@
         border-right: 1px solid gainsboro;
     }
 
-    .mtx input[type="text"]{
+    .mtx input[type="text"] {
         max-width: 6em;
     }
 
@@ -101,7 +101,7 @@
                     </h4>
                 </td>
 
-                @foreach (var node in Problem.CriteriasFurther[Node])
+                @foreach (var node in Node.LowerNodesControlled)
                 {
                     <td class="lower-border">
                         <NavLink href="@($"/node/{node.Level}/{node.Name}")">
@@ -110,7 +110,7 @@
                     </td>
                 }
             </tr>
-            @foreach (var node in Problem.GetGrouped(Node))
+            @foreach (var node in Problem.RelationsGroupedMain(Node))
             {
                 <tr>
                     <td class="right-border">
@@ -136,8 +136,8 @@
 @if (RelationSelected != null)
 {
     @*<div class="relation-sel">
-        <NodeQuestion RelationUpdated="@(() => StateHasChanged())" Relation="@RelationSelected" />
-    </div>*@
+            <NodeQuestion RelationUpdated="@(() => StateHasChanged())" Relation="@RelationSelected" />
+        </div>*@
 }
 
 <div class="counts">

@@ -73,13 +73,13 @@ namespace DSSAlternative.AHP
             Project = project;
             Relation = rel;
         }
-        public override string Href => $"relation-new/{Project.Problem.RelationsAll.ToList().IndexOf(Relation)}";
+        public override string Href => $"relation-edit/{Project.Problem.RelationsAll.ToList().IndexOf(Relation)}";
         protected override void AddRules()
         {
             Add("safe");
             if (Relation.Unknown)
                 Add("warning");
-            if (!Project.Problem.GetMatrix(Relation.Main).Consistency.IsCorrect())
+            if (!Project.Problem.GetMtxRelations(Relation.Main).Consistency.IsCorrect())
                 Add("error");
         }
     }

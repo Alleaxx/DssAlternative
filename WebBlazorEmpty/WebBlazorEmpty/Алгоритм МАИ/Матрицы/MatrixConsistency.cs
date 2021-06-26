@@ -9,37 +9,32 @@ namespace DSSAlternative.AHP
     public interface IConsistency
     {
         bool IsCorrect();
-        double Cr { get; }
 
         public double Nmax { get; }
 
         public double CI { get; }
-
         public double RI { get; }
+        double Cr { get; }
 
         double[] MultiMatrixLocalCoeffs { get; }
-
-
     }
     public class MatrixConsistenct : IConsistency
     {
         public override string ToString() => "Согласованность матрицы";
         private IMatrix Mtx { get; set; }
-        private int Size => Mtx.Size;
+        private int Size => Mtx.RSize;
 
 
         public double Nmax => NmaxAlpha;
-        public double NmaxOld => MultiMatrixLocalCoeffs.Sum();
-        public double NmaxAlpha => MtxActions.MatrixMultiplication(Mtx.Array, MultiChecker()).Sum();
-
+        private double NmaxOld => MultiMatrixLocalCoeffs.Sum();
+        private double NmaxAlpha => MtxActions.MatrixMultiplication(Mtx.Array, MultiChecker()).Sum();
 
 
 
         //Индекс согласованности
         public double CI => (Nmax - Size) / (Size - 1);
 
-
-        //Стохастический индекс согласованности
+        //Случайный индекс согласованности
         public double RI => RISize.ContainsKey(Size) ? RISize[Size] : (1.98 * (Size - 2)) / Size;
         private static Dictionary<int, double> RISize { get; set; } = new Dictionary<int, double>
         {
@@ -60,9 +55,10 @@ namespace DSSAlternative.AHP
             [15] = 1.59,
         };
 
-
-        //Коэффициент согласованности (отношение согласованности)
+        //Отношение согласованности
         public double Cr => CI / RI;
+
+
 
         public bool IsCorrect() => IsCorrect(BorderConsistenct);
         public bool IsCorrect(double border)
@@ -83,7 +79,7 @@ namespace DSSAlternative.AHP
         public double[] MultiMatrixLocalCoeffs => MtxActions.MatrixMultiplication(Mtx.Array, Mtx.Coeffiients);
 
 
-        public double[] MultiChecker()
+        private double[] MultiChecker()
         {
             double[] rowSum = new double[Size]; 
             for (int r = 0; r < Size; r++)

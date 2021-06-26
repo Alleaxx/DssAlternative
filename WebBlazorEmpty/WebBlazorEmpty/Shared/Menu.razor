@@ -6,6 +6,7 @@
         list-style: none;
         padding: 0;
         margin-top: 0;
+        margin-right: 1em;
     }
 
         .navside ul a {
@@ -147,7 +148,7 @@
 
 <nav class="navside">
     <section class="stage-menu">
-        <h2 class="stage-menu-header">Этапы решения</h2>
+        <h2 class="stage-menu-header">Этапы решения задачи:</h2>
         <ul>
             <li>
                 <NavLink class="@($"stage-menu-element {Hier.GetClass()}")" href="@Hier.Href">
@@ -166,7 +167,7 @@
                     @foreach (var criteria in Problem.NodesWithRels)
                     {
                         <li>
-                            <NavLink style="@($"margin-left:{criteria.Level * 2}em")" class="@($"{StageRelation(criteria).GetClass()}")" href="@($"{StageRelation(criteria).Href}")">
+                            <NavLink style="@($"margin-left:{criteria.Level * 2}em")" class="@($"{Project.GetRelation(criteria).GetClass()}")" href="@($"{Project.GetRelation(criteria).Href}")">
                                 II - @Problem.NodesWithRels.ToList().IndexOf(criteria): @criteria.Name
                             </NavLink>
                         </li>
@@ -181,45 +182,6 @@
             </li>
         </ul>
     </section>
-
-    <section class="task-menu">
-        <h2 class="task-menu-header">Открытые задачи</h2>
-        <ul>
-            @foreach (var project in DSS.Ex.Projects)
-            {
-                <li>
-                    <a class="task-menu-element @(project == DSS.Ex.Project ? "active" : "")" @onclick="@(() => { DSS.Ex.SelectProblem(project); })" href="view">
-                        <div class="task-element-sheme">
-                            <DSSAlternative.Pages.Дополнительно.HierSheme Project="@project" />
-                        </div>
-                        <header class="task-element-header">
-                            <h4 class="task-element-name">@project.Problem.MainGoal.Name</h4>
-                            <p class="task-element-descr">@project.Status</p>
-                        </header>
-                    </a>
-                </li>
-            }
-        </ul>
-    </section>
 </nav>
-
-@code{
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        DSS.Ex.Project.Problem.RelationValueChanged += Updated;
-        DSS.Ex.ProjectChanged += (IProject proj) => Updated();
-    }
-    private void RelationValue_Changed(Relation<INode, INode> changedRelation)
-    {
-        StateHasChanged();
-    }
-    private void Updated()
-    {
-        StateHasChanged();
-    }
-
-    private IStage StageRelation(INode node) => Project.StageRelations[Problem.FirstRequiredRelation(node)];
-}
 
 

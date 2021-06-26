@@ -29,17 +29,19 @@ namespace DSSAlternative.AHP
         //Выбранная проблема
         public IProject Project { get; private set; }
 
+        public IRatingSystem RatingSystem { get; private set; } = new RatingDefaultSystem();
+
         public void SelectProblem(IProject project)
         {
             IProject old = Project;
             Project = project;
-            ProjectChanged?.Invoke(project);
+            Update();
 
             if(old != null)
             {
-                old.Updated -= Update;
+                old.UpdatedHierOrRelationChanged -= Update;
             }
-            project.Updated += Update;
+            project.UpdatedHierOrRelationChanged += Update;
 
             void Update()
             {

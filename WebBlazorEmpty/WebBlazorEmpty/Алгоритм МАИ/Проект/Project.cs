@@ -8,15 +8,17 @@ namespace DSSAlternative.AHP
 
     public interface IProject
     {
-        event Action Updated;
+        event Action UpdatedHierOrRelationChanged;
 
         string ViewFilter { get; set; }
         bool UnsavedChanged { get; }
 
-        ITemplate Template { get; set; }
+
+        ITemplate Template { get; }
         IHierarchy ProblemEditing { get; }
         IProblem Problem { get; }
         
+
         IStage StageHier { get; }
         IStage StageView { get; }
         IStage StageResults { get; }
@@ -30,9 +32,16 @@ namespace DSSAlternative.AHP
     }
     public class Project : IProject
     {
-        public event Action Updated;
-
         public override string ToString() => Problem.ToString();
+        public event Action UpdatedHierOrRelationChanged;
+
+
+        public ITemplate Template { get; private set; }
+        public IHierarchy ProblemEditing => new HierarchyN(Template);
+        public IProblem Problem { get; private set; }
+
+
+        public bool UnsavedChanged => !HierarchyN.CompareEqual(Problem, ProblemEditing);
         public string Status
         {
             get
@@ -45,26 +54,39 @@ namespace DSSAlternative.AHP
                 return status;
             }
         }
-
-        //Иерархия проблемы
-        public ITemplate Template { get; set; }
-        public IHierarchy ProblemEditing => new HierarchyN(Template);
-
-        public IStage StageHier { get; private set; }
-
-        public IStage GetRelation(INode node) => StageRelations[Problem.FirstRequiredRelation(node)];
-
-        public bool UnsavedChanged => !HierarchyN.CompareEqual(Problem, ProblemEditing);
-
-        //Текущая проблема
-        public IProblem Problem { get; private set; }
-
         public string ViewFilter { get; set; } = "По отношениям";
+
 
         public Project(ITemplate template)
         {
+            Console.WriteLine("Создание проекта и обновление иерархии");
             SetProblem(template);      
         }
+        public void UpdateProblem()
+        {
+            Console.WriteLine("Обновление иерархии");
+            SetProblem(Template);
+        }
+        private void SetProblem(ITemplate template)
+        {
+            Template = template;
+            IProblem old = Problem;
+            Problem = new Problem(Template);
+            SetStages();
+
+            if (old != null)
+            {
+                old.RelationValueChanged -= Update;
+            }
+            Problem.RelationValueChanged += Update;
+            Update();
+
+            void Update()
+            {
+                UpdatedHierOrRelationChanged?.Invoke();
+            }
+        }
+
 
         private void SetStages()
         {
@@ -79,35 +101,19 @@ namespace DSSAlternative.AHP
                 StageRelations.Add(relation, relStage);
             }
         }
-
-
-        public Dictionary<INodeRelation, IStage> StageRelations { get; private set; } = new Dictionary<INodeRelation, IStage>();
+        public IStage StageHier { get; private set; }
         public IStage StageView { get; private set; }
         public IStage StageResults { get; private set; }
 
-
-        public void UpdateProblem()
+        public Dictionary<INodeRelation, IStage> StageRelations { get; private set; } = new Dictionary<INodeRelation, IStage>();
+        public IStage GetRelation(INode node)
         {
-            SetProblem(Template);
-            Updated?.Invoke();
-        }
-        public void SetProblem(ITemplate template)
-        {
-            Template = template;
-            IProblem old = Problem;
-            Problem = new Problem(template);
-            SetStages();
+            var relation = Problem.FirstRequiredRelation(node);
 
-            if(old != null)
-            {
-                old.RelationValueChanged -= Update;
-            }
-            Problem.RelationValueChanged += Update;
-
-            void Update()
-            {
-                Updated?.Invoke();
-            }
+            if (relation != null && StageRelations.ContainsKey(relation))
+                return StageRelations[relation];
+            else
+                return StageRelations.First().Value;
         }
     }
 
