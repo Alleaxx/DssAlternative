@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A0169C07-4D97-4811-AD7C-6CBBB8D06FF4}</ProjectGuid>
+    <ProjectGuid>{19B30F39-F163-4498-B0B0-2E4AD04D61BC}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>DSSView</RootNamespace>
     <AssemblyName>DSSView</AssemblyName>
@@ -56,43 +56,39 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AHPAdvicorWindow.xaml.cs">
-      <DependentUpon>AHPAdvicorWindow.xaml</DependentUpon>
+    <Compile Include="MatrixViewWindow.xaml.cs">
+      <DependentUpon>MatrixViewWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ListCriterias.xaml.cs">
-      <DependentUpon>ListCriterias.xaml</DependentUpon>
+    <Compile Include="NewMatrixWindow.xaml.cs">
+      <DependentUpon>NewMatrixWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\AdviceMatrixRelationSystem.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\Scale.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\AdviceSystemHierarchy.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\AdviceRelations.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\AdviceSystem.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\AdviceSystemResults.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\AdviceSingleChoiceRelations.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Узлы\Node.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Узлы\Relation.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Матрицы\MatrixAHP.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Проблема\Problem.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Проблема\ProblemView.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\AHPView.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\ViewElement.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Узлы\NodeSave.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Узлы\NodeView.cs" />
-    <Compile Include="Метод анализа иерархий\Конвертеры\RoundNumbers.cs" />
-    <Compile Include="Метод анализа иерархий\Конвертеры\ObjectVisibility.cs" />
-    <Page Include="AHPAdvicorWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ListCriterias.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <Compile Include="Критерии принятия решений\Матрица критериев\Case.cs" />
+    <Compile Include="Критерии принятия решений\Матрица критериев\Matrix.cs" />
+    <Compile Include="Критерии принятия решений\Матрица критериев\PayMatrix.cs" />
+    <Compile Include="Критерии принятия решений\Матрица критериев\Report.cs" />
+    <Compile Include="Критерии принятия решений\Отчеты\ReportExcel.cs" />
+    <Compile Include="Критерии принятия решений\Отчеты\ReportHTML.cs" />
+    <Compile Include="Критерии принятия решений\Отчеты\Report.cs" />
+    <Compile Include="Критерии принятия решений\XmlMatrixProvider.cs" />
+    <Compile Include="Критерии принятия решений\Отчеты\ReportXAML.cs" />
+    <Compile Include="Критерии принятия решений\Конвертеры\RoundNumbers.cs" />
+    <Compile Include="Критерии принятия решений\Конвертеры\ObjectVisibility.cs" />
+    <Compile Include="Критерии принятия решений\Матрица критериев\ViewMatrix.cs" />
+    <Compile Include="Критерии принятия решений\Матрица критериев\Criterias.cs" />
+    <Compile Include="Критерии принятия решений\Матрица критериев\ViewMatrixElements.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Метод анализа иерархий\ViewApp.cs" />
+    <Compile Include="Критерии принятия решений\ViewApp.cs" />
+    <Page Include="MatrixViewWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewMatrixWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -127,13 +123,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Отношения.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Результаты.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Иерархия.png" />
+    <Resource Include="Ресурсы\Matrix.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

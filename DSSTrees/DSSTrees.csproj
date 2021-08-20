@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A0169C07-4D97-4811-AD7C-6CBBB8D06FF4}</ProjectGuid>
+    <ProjectGuid>{CAFB3328-411D-4CF7-BC8B-DE0EED442606}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>DSSView</RootNamespace>
     <AssemblyName>DSSView</AssemblyName>
@@ -56,43 +56,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AHPAdvicorWindow.xaml.cs">
-      <DependentUpon>AHPAdvicorWindow.xaml</DependentUpon>
+    <Compile Include="TreeViewWindow.xaml.cs">
+      <DependentUpon>TreeViewWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ListCriterias.xaml.cs">
-      <DependentUpon>ListCriterias.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\AdviceMatrixRelationSystem.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\Scale.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\AdviceSystemHierarchy.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\AdviceRelations.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\AdviceSystem.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\AdviceSystemResults.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Заполнение\AdviceSingleChoiceRelations.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Узлы\Node.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Узлы\Relation.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Матрицы\MatrixAHP.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Проблема\Problem.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Проблема\ProblemView.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\AHPView.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\ViewElement.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Узлы\NodeSave.cs" />
-    <Compile Include="Метод анализа иерархий\МАИ\Узлы\NodeView.cs" />
-    <Compile Include="Метод анализа иерархий\Конвертеры\RoundNumbers.cs" />
-    <Compile Include="Метод анализа иерархий\Конвертеры\ObjectVisibility.cs" />
-    <Page Include="AHPAdvicorWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ListCriterias.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <Compile Include="Деревья решений\TreeDecision.cs" />
+    <Compile Include="Деревья решений\ViewTree.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Метод анализа иерархий\ViewApp.cs" />
+    <Compile Include="Деревья решений\ViewApp.cs" />
+    <Page Include="TreeViewWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -126,14 +103,6 @@
       <Name>DSSLib</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Отношения.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Результаты.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Иерархия.png" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

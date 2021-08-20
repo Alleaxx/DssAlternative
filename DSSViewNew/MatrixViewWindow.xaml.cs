@@ -15,24 +15,14 @@ using System.Windows.Shapes;
 namespace DSSView
 {
     /// <summary>
-    /// Логика взаимодействия для AHPAdvicorWindow.xaml
+    /// Логика взаимодействия для MatrixViewWindow.xaml
     /// </summary>
-    public partial class AHPAdvicorWindow : Window
+    public partial class MatrixViewWindow : Window
     {
-        public AHPAdvicorWindow()
+        public MatrixViewWindow()
         {
             InitializeComponent();
-            View.AHP = DataContext as ViewAHP;
-        }
-
-        private void relationsBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Tab.SelectedIndex = 2;
-        }
-
-        private void hierarchyBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Tab.SelectedIndex = 1;
+            View.Matrix = DataContext as ViewMatrix;
         }
     }
 }

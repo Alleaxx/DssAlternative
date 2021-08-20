@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DSSView;
 using System.Linq;
 using System;
+using DSSView;
 
 namespace DSSViewTests
 {
