@@ -10,7 +10,7 @@ namespace DSSView
 {
     public class ReportCriterias
     {
-        public event Action CriteriasUpdated;
+        public event Action OnCriteriasUpdated;
 
         public ICriteria[] Criterias { get; set; }
         public IOption[] Options { get; set; }
@@ -57,7 +57,7 @@ namespace DSSView
         private void Matrix_Changed()
         {
             Update();
-            CriteriasUpdated?.Invoke();
+            OnCriteriasUpdated?.Invoke();
         }
         private void Update()
         {
@@ -75,7 +75,7 @@ namespace DSSView
             {
                 Priorities[i] = new CriteriasPriorAlternative(dictionary.ElementAt(i).Key, dictionary.ElementAt(i).Value.ToArray());
             }
-            Priorities = Priorities.OrderBy(p => p.Rank).Reverse().ToArray();
+            Priorities = Priorities.OrderByDescending(p => p.Rank).ToArray();
 
         }
         private Dictionary<Alternative, List<ICriteria>> GetCriteriasForAlternatives()
@@ -84,19 +84,22 @@ namespace DSSView
             Dictionary<Alternative, List<ICriteria>> PriorityAlternatives = new Dictionary<Alternative, List<ICriteria>>();
             foreach (ICriteria criteria in Criterias)
             {
-                Alternative[] alternatives = criteria.BestAlts;
+                var alternatives = criteria.BestAlternatives.ToArray();
                 for (int i = 0; i < alternatives.Length; i++)
                 {
                     if (!PriorityAlternatives.ContainsKey(alternatives[i]))
-                        PriorityAlternatives.Add(alternatives[i], new List<ICriteria>() { criteria });
-                    else
-                        PriorityAlternatives[alternatives[i]].Add(criteria);
+                    {
+                        PriorityAlternatives.Add(alternatives[i], new List<ICriteria>() { });
+                    }
+
+                    PriorityAlternatives[alternatives[i]].Add(criteria);
                 }
             }
             return PriorityAlternatives;
         }
     }
 
+    //Суммарный рейтинг альтернативы по всем критериям
     public class CriteriasPriorAlternative
     {
         public Alternative Alternative { get; set; }

@@ -55,6 +55,7 @@
                 <MenuItem Header="HTML" Command="{Binding CreateReportCommand}" CommandParameter="HTML"/>
             </MenuItem>
             <MenuItem Header="Закрыть" Command="{Binding CloseMatrixCommand}"/>
+            <MenuItem Header="Альфа" Click="MenuItem_Click" />
         </Menu>
 
         <Border Grid.Row="1" Grid.Column="0" BorderThickness="0,0,1,0">

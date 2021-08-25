@@ -23,7 +23,7 @@ namespace DSSView
 
 
         public PayMatrixXml() { }
-        public PayMatrixXml(DSSLib.Alternative[] alts, Case[] cases, double[,] values)
+        public PayMatrixXml(Alternative[] alts, Case[] cases, double[,] values)
         {
             Alternatives = alts;
             Cases = cases;

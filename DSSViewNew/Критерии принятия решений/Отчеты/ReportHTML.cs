@@ -10,7 +10,7 @@ namespace DSSView
     {
         private string HTML { get; set; }
 
-        public ReportHTML(PayMatrix matrix) : base(matrix)
+        public ReportHTML(StatGame matrix) : base(matrix)
         {
 
         }

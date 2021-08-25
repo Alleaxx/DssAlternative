@@ -9,7 +9,7 @@ namespace DSSView
 
     public abstract class ReportXAML : Report
     {
-        public ReportXAML(PayMatrix matrix) : base(matrix)
+        public ReportXAML(StatGame matrix) : base(matrix)
         {
 
         }
@@ -23,7 +23,7 @@ namespace DSSView
     }
     public class ReportPDF : ReportXAML
     {
-        public ReportPDF(PayMatrix matrix) : base(matrix)
+        public ReportPDF(StatGame matrix) : base(matrix)
         {
 
         }
@@ -35,7 +35,7 @@ namespace DSSView
     }
     public class ReportWord : ReportXAML
     {
-        public ReportWord(PayMatrix matrix) : base(matrix)
+        public ReportWord(StatGame matrix) : base(matrix)
         {
 
         }

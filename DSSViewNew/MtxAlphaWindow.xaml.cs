@@ -10,19 +10,20 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DSSEditor
+namespace DSSView
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Логика взаимодействия для MtxAlphaWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MtxAlphaWindow : Window
     {
-        public MainWindow()
+        public StatGameView Mtx { get; set; }
+        public MtxAlphaWindow()
         {
             InitializeComponent();
+            Mtx = DataContext as StatGameView;
         }
     }
 }

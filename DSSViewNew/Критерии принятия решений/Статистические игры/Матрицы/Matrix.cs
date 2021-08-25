@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DSSLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -252,12 +253,22 @@ namespace DSSView
     //Ячейки
     public struct Coords
     {
+        public override string ToString() => $"[{X},{Y}]";
+
         public int X { get; set; }
         public int Y { get; set; }
 
         public Coords(int x, int y)
         {
             X = x;
+            Y = y;
+        }
+        public void SetX(int x)
+        {
+            X = x;
+        }
+        public void SetY(int y)
+        {
             Y = y;
         }
     }
@@ -285,8 +296,4 @@ namespace DSSView
         }
         private IMatrix<R, C, V> Matrix { get; set; }
     }
-
-
-
-
 }

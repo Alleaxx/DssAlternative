@@ -1,0 +1,452 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DSSView.App" Collapsed="true">
+    <Position X="24.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>App.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.MatrixViewWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MatrixViewWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DSSView.NewMatrixWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>NewMatrixWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DSSView.View" Collapsed="true">
+    <Position X="31.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\ViewApp.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.PayMatrixXml" Collapsed="true">
+    <Position X="29.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAAAAAAAAAAEAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\XmlMatrixProvider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.MatrixProvider" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEACAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\XmlMatrixProvider.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DSSView.ObjectToVisibilityConverter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="31.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Конвертеры\ObjectVisibility.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DSSView.ObjectToVisibilityInvertedConverter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="33" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Конвертеры\ObjectVisibility.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DSSView.RoundNumbersConverter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Конвертеры\RoundNumbers.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DSSView.Case" Collapsed="true">
+    <Position X="26" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAEAAAAAAQABAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\Case.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.Criteria" Collapsed="true">
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABUBAAAAQCAiAEABABEAAIUAAAAiAIAAQQABAEBAAAQ=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DSSView.Option" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAFAAAAAQAAAAAACAAAAAgAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DSSView.Step" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DSSView.StepArr" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAQAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DSSView.ConditionCriteria" Collapsed="true">
+    <Position X="31.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQCAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CriteriaWald" Collapsed="true">
+    <Position X="6" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CriteriaMinMax" Collapsed="true">
+    <Position X="10.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CriteriaMaxMax" Collapsed="true">
+    <Position X="15" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CriteriaBaies" Collapsed="true">
+    <Position X="17.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CriteriaLaplas" Collapsed="true">
+    <Position X="19.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CriteriaSavige" Collapsed="true">
+    <Position X="21.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAgAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CriteriaGurvits" Collapsed="true">
+    <Position X="1.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CriteriaLeman" Collapsed="true">
+    <Position X="3.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CriteriaMulti" Collapsed="true">
+    <Position X="8.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CriteriaGerr" Collapsed="true">
+    <Position X="12.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.MatrixContainer&lt;R, C, V&gt;" Collapsed="true">
+    <Position X="1.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQQgAQAAAAAABEBAABIAAKCAEkAQgIBJkAAIAQAgAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\Matrix.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DSSView.FillerDefaultMatrix&lt;R, C, V&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAAIAAAAAAAABEAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\Matrix.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DSSView.CellContainer&lt;R, C, V&gt;" Collapsed="true">
+    <Position X="5.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAEgAgAAQAAgAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.PayMatrix" Collapsed="true">
+    <Position X="1.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAABAAAAAAAAACAABBAAAAAEAABAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\PayMatrix.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DSSView.PayMatrixRisc" Collapsed="true">
+    <Position X="0.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\PayMatrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.PayMatrixSafe" Collapsed="true">
+    <Position X="2.75" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\PayMatrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.FillerPayMatrix" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAAIAAAAAAgABEAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\PayMatrix.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DSSView.InfoPayMatrix" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="33" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAEAAAAAAAAAAgAAQAwAEAEAgIAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\PayMatrix.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DSSView.Cell" Collapsed="true">
+    <Position X="5.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\PayMatrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.ReportCriterias" Collapsed="true">
+    <Position X="31.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAIEAAAAIAAABAAAAAAAAIgAAAAAAAAAAAAABEAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Report.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CriteriasPriorAlternative" Collapsed="true">
+    <Position X="33" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAEABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Report.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.ViewMatrix" Collapsed="true">
+    <Position X="33" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CMAAAIAIAAIEAAEABAABBAAAAAgAAQAAABAFAwAAICI=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\ViewMatrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.InfoAboutMatrix" Collapsed="true">
+    <Position X="31.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAIQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\ViewMatrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.PayMatrixView" Collapsed="true">
+    <Position X="27.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAEAAAAAAAAAAEEABAAACAQAAkAAgAsAAKAQAACAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\ViewMatrixElements.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.PayMatrixInfoView" Collapsed="true">
+    <Position X="26" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAgAAAAAIABAAAgAEQAAhAAgAAAAAAEAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\ViewMatrixElements.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.MatrixView" Collapsed="true">
+    <Position X="26" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAABAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\ViewMatrixElements.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CriteriasReportView" Collapsed="true">
+    <Position X="24.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEABAEAAAAIAAAAAAAAAAAAAAAABAAAAAAAAAAAABAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\ViewMatrixElements.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CriteriaView" Collapsed="true">
+    <Position X="26" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABQEAAAAAAAAAABAAAAAQAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\ViewMatrixElements.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CaseView" Collapsed="true">
+    <Position X="27.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAQAAAAAAAAAAABAAQAAAAAAEAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\ViewMatrixElements.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.CellView" Collapsed="true">
+    <Position X="29.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\ViewMatrixElements.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.Report" Collapsed="true">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABCAAAAIAAAAAAAAAAAAAAgAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Отчеты\Report.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DSSView.ReportExcel" Collapsed="true">
+    <Position X="7.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Отчеты\ReportExcel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.ReportHTML" Collapsed="true">
+    <Position X="0.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAIAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Отчеты\ReportHTML.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.ReportXAML" Collapsed="true">
+    <Position X="4" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Отчеты\ReportXAML.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.ReportPDF" Collapsed="true">
+    <Position X="3" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Отчеты\ReportXAML.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.ReportWord" Collapsed="true">
+    <Position X="5.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Отчеты\ReportXAML.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.Properties.Resources" Collapsed="true">
+    <Position X="33" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAgAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DSSView.Properties.Settings" Collapsed="true">
+    <Position X="26" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="DSSView.Coords" Collapsed="true">
+    <Position X="24.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="DSSView.ICriteria" Collapsed="true">
+    <Position X="24.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAAAAAACAAAAAAAAAAQAAAAAAAAAQAAAAABAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DSSView.IStep" Collapsed="true">
+    <Position X="33" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DSSView.IOption" Collapsed="true">
+    <Position X="27.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Критерии\Criterias.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DSSView.IMatrix&lt;R, C, V&gt;" Collapsed="true">
+    <Position X="8.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAQAAAAAABEBAAAIAAKAAEEAAAIAAkAAIAQAgAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DSSView.IMatrixChance&lt;R, C, V&gt;" Collapsed="true">
+    <Position X="8.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DSSView.IInfoMatrix" Collapsed="true">
+    <Position X="26" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAEAAIAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DSSView.IRowColFiller&lt;R, C, V&gt;" Collapsed="true">
+    <Position X="31.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAAIAAAAAAAABEAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Статистические игры\Матрицы\Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DSSView.IReport" Collapsed="true">
+    <Position X="29.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Критерии принятия решений\Отчеты\Report.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="8.77" />
+</ClassDiagram>

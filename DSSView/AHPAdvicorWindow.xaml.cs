@@ -14,9 +14,6 @@ using System.Windows.Shapes;
 
 namespace DSSView
 {
-    /// <summary>
-    /// Логика взаимодействия для AHPAdvicorWindow.xaml
-    /// </summary>
     public partial class AHPAdvicorWindow : Window
     {
         public AHPAdvicorWindow()

@@ -8,7 +8,7 @@ namespace DSSView
 {
     public class Case
     {
-        public event Action ChanceChanged;
+        public event Action OnChanceChanged;
 
         public override string ToString() => Name;
         public string Name { get; set; }
@@ -20,7 +20,7 @@ namespace DSSView
             {
                 double old = chance;
                 chance = value;
-                ChanceChanged?.Invoke();
+                OnChanceChanged?.Invoke();
             }
         }
         private double chance;

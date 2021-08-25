@@ -10,7 +10,7 @@ using DSSLib;
 
 namespace DSSView
 {
-    public abstract class PayMatrix : MatrixContainer<DSSLib.Alternative, Case, double>, IMatrixChance<Alternative, Case,double>
+    public abstract class PayMatrix : MatrixContainer<Alternative, Case, double>, IMatrixChance<Alternative, Case,double>
     {
         public event Action CaseChanceChanged;
 
@@ -21,12 +21,12 @@ namespace DSSView
         {
             base.AddColToList(pos);
             Case last = ColsList.Last();
-            last.ChanceChanged += UpdateChances;
+            last.OnChanceChanged += UpdateChances;
         }
         protected override void RemoveColFromList(Case col)
         {
             base.RemoveColFromList(col);
-            col.ChanceChanged -= UpdateChances;
+            col.OnChanceChanged -= UpdateChances;
         }
         protected void UpdateChances()
         {

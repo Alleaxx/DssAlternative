@@ -105,10 +105,10 @@ namespace DSSView
 
         private void CreateReport(object obj)
         {
-            IReport report = Report.GetReport(Selected.Matrix,$"{obj}");
+            //IReport report = Report.GetReport(Selected.Matrix, (Report.ReportType)obj);
 
-            report.Create();
-            report.Open();
+            //report.Create();
+            //report.Open();
         }
 
 

@@ -14,36 +14,36 @@ namespace DSSView
 
     public abstract class Report : IReport
     {
-        protected PayMatrix Matrix { get; set; }
+        protected StatGame Game { get; set; }
         protected DateTime Creation { get; set; }
 
-        public Report(PayMatrix matrix)
+        public Report(StatGame game)
         {
-            Matrix = matrix;
+            Game = game;
         }
         public abstract void Create();
         public abstract void Open();
 
-
-        public static IReport GetReport(PayMatrix matrix,string text)
+        public enum ReportType { Word, PDF, HTML, Excel }
+        public static IReport GetReport(StatGame game, ReportType type)
         {
             Report report;
-            switch (text)
+            switch (type)
             {
-                case "Word":
-                    report = new ReportWord(matrix);
+                case ReportType.Word:
+                    report = new ReportWord(game);
                     break;
-                case "PDF":
-                    report = new ReportPDF(matrix);
+                case ReportType.PDF:
+                    report = new ReportPDF(game);
                     break;
-                case "HTML":
-                    report = new ReportHTML(matrix);
+                case ReportType.HTML:
+                    report = new ReportHTML(game);
                     break;
-                case "Excel":
-                    report = new ReportExcel(matrix);
+                case ReportType.Excel:
+                    report = new ReportExcel(game);
                     break;
                 default:
-                    throw new Exception($"Отчет типа {text} не распознан");
+                    throw new Exception($"Отчет типа {type} не распознан");
             }
             return report;
         }

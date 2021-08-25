@@ -207,7 +207,7 @@ namespace DSSView
         {
             View = view;
             Criterias = Report.Criterias.Select(c => new CriteriaView(view,c)).ToArray();
-            Report.CriteriasUpdated += Report_Updated;
+            Report.OnCriteriasUpdated += Report_Updated;
 
         }
 
@@ -228,7 +228,7 @@ namespace DSSView
 
         //Обновляемые данные
         public double Result => Criteria.Result;
-        public Alternative[] Choices => Criteria.BestAlts;
+        public IEnumerable<Alternative> Choices => Criteria.BestAlternatives;
         public IStep[] Steps => Criteria.Steps.ToArray();
 
 
@@ -239,7 +239,7 @@ namespace DSSView
             Criteria = criteria;
             Criteria.ResultChanged += Criteria_ResultChanged;
         }
-        private void Criteria_ResultChanged(double result, Alternative[] alternatives)
+        private void Criteria_ResultChanged(double result, IEnumerable<Alternative> alternatives)
         {
             OnPropertyChanged(nameof(Result));
             OnPropertyChanged(nameof(Choices));

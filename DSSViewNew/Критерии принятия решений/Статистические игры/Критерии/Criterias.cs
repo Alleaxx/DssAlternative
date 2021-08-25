@@ -11,284 +11,6 @@ using DSSLib;
 
 namespace DSSView
 {
-    //Критерий
-    public interface ICriteria
-    {
-        event Action<double, Alternative[]> ResultChanged;
-
-        double Rank { get; }
-        double Result { get; }
-        Alternative[] BestAlts { get; }
-        IOption[] Options { get; }
-        List<IStep> Steps { get; }
-
-        void Update();
-
-    }
-
-
-    public abstract class Criteria : ICriteria
-    {
-        public event Action<double, Alternative[]> ResultChanged;
-
-        //Описание критерия
-        public string Name { get; protected set; }
-
-        //Тип и необходимость вероятностей
-        public string Type { get; protected set; }
-        public bool ChancesRequired { get; protected set; }
-
-        //Описание алгоритма
-        public string Description { get; protected set; }
-        public string DecizionAlgoritm { get; protected set; }
-
-
-        //Коэффициенты, если есть
-        public IOption[] Options { get; protected set; }
-
-
-
-        //Быстрый доступ
-        private IInfoMatrix Info => Matrix.Info;
-        private IMatrixChance<Alternative,Case,double> Matrix { get; set; }
-
-
-        protected double[,] Arr
-        {
-            get
-            {
-                double[,] arr = new double[Matrix.Rows, Matrix.Cols];
-                for (int r = 0; r < Rows; r++)
-                {
-                    for (int c = 0; c < Cols; c++)
-                    {
-                        arr[r, c] = Matrix.Get(r, c);
-                    }
-                }
-                return arr;
-            }
-        }
-        protected double Rows => Matrix.Rows;
-        protected double Cols => Matrix.Cols;
-        protected double GetChance(int col) => Info.GetChance(col);
-
-
-        //Условия критерия
-        protected List<Func<ConditionCriteria>> Conditions { get; set; }
-        public List<ConditionCriteria> ConditionsRank { get; set; }
-        public double Rank => ConditionsRank.Select(c => c.Profit).Sum();
-
-
-        //Результаты
-        public double Result { get; protected set; }
-        protected List<int> BestAlternativeIndexes { get; set; }
-
-        protected List<int> GetPositions(double search, IEnumerable<double> arr)
-        {
-            List<int> poses = new List<int>();
-            for (int i = 0; i < arr.Count(); i++)
-            {
-                if (search == arr.ElementAt(i))
-                    poses.Add(i);
-            }
-            return poses;
-        }
-
-        public Alternative[] BestAlts => BestAlternativeIndexes.Select(r => Matrix.GetRow(r)).ToArray();
-        public List<IStep> Steps { get; private set; }
-
-
-        public Criteria(IMatrixChance<Alternative,Case,double> matrix)
-        {
-            Type = "Классический";
-            Description = "Неопознанный критерий без описания";
-            DecizionAlgoritm = "Алгоритм решения не описан";
-
-            Matrix = matrix;
-
-            Steps = new List<IStep>();
-            BestAlternativeIndexes = new List<int>();
-            Options = new IOption[0];
-
-            Conditions = new List<Func<ConditionCriteria>>();
-            ConditionsRank = new List<ConditionCriteria>();
-
-
-            Conditions.Add(GetRiscConditions);
-            Conditions.Add(GetUnknownConditions);
-            ConditionCriteria GetRiscConditions()
-            {
-                if (!ChancesRequired && Info.InUnknownConditions)
-                    return new ConditionCriteria("Применимость в условиях неопределенности", true, 3);
-                else if (ChancesRequired && Info.InUnknownConditions)
-                    return new ConditionCriteria("Применимость в условиях неопределенности", true, 1);
-                else
-                    return new ConditionCriteria("Применимость в условиях неопределенности", false, 1);
-            }
-            ConditionCriteria GetUnknownConditions()
-            {
-                bool passed = ChancesRequired && Info.InRiscConditions;
-                return new ConditionCriteria("Применимость в условиях риска", passed,3);
-            }
-
-            Count();
-
-        }
-
-
-        //Обновить критерий
-        public void Update()
-        {
-            Steps.Clear();
-            Count();
-            UpdateRank();
-            ResultChanged?.Invoke(Result,BestAlts);
-        }
-
-        //Рассчитать критерий
-        protected abstract void Count();
-        protected void UpdateRank()
-        {
-            ConditionsRank.Clear();
-            ConditionsRank = Conditions.Select(c => c.Invoke()).ToList();
-        }        
-
-        protected void AddStep(string name, double res) => Steps.Add(new Step(Steps.Count + 1,name,res));
-        protected void AddStep(string name, IEnumerable<double> res) => Steps.Add(new StepArr(Steps.Count + 1,name,res));
-
-
-
-
-
-
-
-        /// <summary>
-        /// Возвращает минимальное значение из указанной строки
-        /// </summary>
-        /// <param name="r">Номер строки</param>
-        /// <returns>Минимальное значение из строки</returns>
-        protected double GetMinFromRow(int r)
-        {
-            double min = Arr[r, 0];
-            for (int c = 0; c < Cols; c++)
-            {
-                if (Arr[r, c] <= min)
-                    min = Arr[r,c];
-            }
-            return min;
-        }
-
-
-        /// <summary>
-        /// Возвращает максимальное значение из указанной строки
-        /// </summary>
-        /// <param name="r">Номер строки</param>
-        /// <returns>Максимальное значение</returns>
-        protected double GetMaxFromRow(int r)
-        {
-            double max = Arr[r, 0];
-            for (int c = 0; c < Cols; c++)
-            {
-                if (Arr[r, c] >= max)
-                    max = Arr[r, c];
-            }
-            return max;
-        }
-
-
-    }
-
-    public interface IStep
-    {
-        int Order { get; }
-        string Name { get; }
-    }
-    public class Option :  IOption
-    {
-
-        public event Action<double,double> Changed;
-
-        public string Name { get; set; }
-        public double Value
-        {
-            get => value;
-            set
-            {
-                double old = value;
-                if (value < Min)
-                    this.value = Min;
-                else if (value > Max)
-                    this.value = Max;
-                else
-                    this.value = value;
-
-                Changed?.Invoke(old, value);
-            }
-        }
-        private double value;
-
-
-        public double Min { get; set; }
-        public double Max { get; set; }
-
-        public Option(string name, double val, double min = 0, double max = 1)
-        {
-            Name = name;
-            Min = min;
-            Max = max;
-            Value = val;
-        }
-    }
-    public interface IOption
-    {
-        event Action<double, double> Changed;
-        double Value { get; }
-    }
-    public class Step : IStep
-    {
-
-        public int Order { get; set; }
-        public string Name { get; set; }
-        public double Result { get; set; }
-
-        public Step(int count,string name, double result)
-        {
-            Order = count;
-            Name = name;
-            Result = result;
-        }
-    }
-    public class StepArr : IStep
-    {
-        public int Order { get; set; }
-        public string Name { get; set; }
-        public double[] Arr { get; set; }
-
-        public StepArr(int count,string name, IEnumerable<double> arr)
-        {
-            Order = count;
-            Name = name;
-            Arr = arr.ToArray();
-        }
-    }
-
-
-    public class ConditionCriteria
-    {
-        public string Name { get; set; }
-        public bool IsGood { get; set; }
-        public double Profit { get; set; }
-
-        public ConditionCriteria(string name, bool good, double profit)
-        {
-            Name = name;
-            IsGood = good;
-            Profit = profit;
-        }
-    }
-
-
-
     //Классические критерии
     public class CriteriaWald : Criteria
     {
@@ -301,12 +23,11 @@ namespace DSSView
         protected override void Count()
         {
             List<double> mins = new List<double>();
-            for (int i = 0; i < Rows; i++)
+            for (int i = 0; i < RowsCount; i++)
             {
                 mins.Add(GetMinFromRow(i));
             }
-            Result = mins.Max();
-            BestAlternativeIndexes = GetPositions(Result, mins);
+            SetResult(mins.Max(), mins);
 
             AddStep("Минимумы", mins);
             AddStep("Максимум", Result);
@@ -324,12 +45,11 @@ namespace DSSView
         protected override void Count()
         {
             List<double> maxes = new List<double>();
-            for (int i = 0; i < Rows; i++)
+            for (int i = 0; i < RowsCount; i++)
             {
                 maxes.Add(GetMaxFromRow(i));
             }
-            Result = maxes.Min();
-            BestAlternativeIndexes = GetPositions(Result, maxes);
+            SetResult(maxes.Min(), maxes);
 
             AddStep("Максимумы", maxes);
             AddStep("Минимум", Result);
@@ -347,12 +67,11 @@ namespace DSSView
         protected override void Count()
         {
             List<double> maxes = new List<double>();
-            for (int i = 0; i < Rows; i++)
+            for (int i = 0; i < RowsCount; i++)
             {
                 maxes.Add(GetMaxFromRow(i));
             }
-            Result = maxes.Max();
-            BestAlternativeIndexes = GetPositions(Result, maxes);
+            SetResult(maxes.Max(), maxes);
 
             AddStep("Максимумы", maxes);
             AddStep("Максимум", Result);
@@ -370,18 +89,17 @@ namespace DSSView
 
         protected override void Count()
         {
-            double[] averages = new double[(int)Rows];
-            for (int r = 0; r < Rows; r++)
+            double[] averages = new double[(int)RowsCount];
+            for (int r = 0; r < RowsCount; r++)
             {
                 double sum = 0;
-                for (int c = 0; c < Cols; c++)
+                for (int c = 0; c < ColsCount; c++)
                 {
                     sum += Arr[r, c] * GetChance(c);
                 }
                 averages[r] = sum;
             }
-            Result = averages.Max();
-            BestAlternativeIndexes = GetPositions(Result, averages);
+            SetResult(averages.Max(), averages);
 
             AddStep("Средние значения", averages);
             AddStep("Максимум", Result);
@@ -399,18 +117,17 @@ namespace DSSView
 
         protected override void Count()
         {
-            double[] averages = new double[(int)Rows];
-            for (int r = 0; r < Rows; r++)
+            double[] averages = new double[(int)RowsCount];
+            for (int r = 0; r < RowsCount; r++)
             {
                 double sum = 0;
-                for (int c = 0; c < Cols; c++)
+                for (int c = 0; c < ColsCount; c++)
                 {
-                    sum += Arr[r, c] / Cols;
+                    sum += Arr[r, c] / ColsCount;
                 }
                 averages[r] = sum;
             }
-            Result = averages.Max();
-            BestAlternativeIndexes = GetPositions(Result, averages);
+            SetResult(averages.Max(), averages);
 
             AddStep("Средние значения", averages);
             AddStep("Максимум", Result);
@@ -430,20 +147,19 @@ namespace DSSView
 
         protected override void Count()
         {
-            double[] maxInRowsAfter = new double[(int)Rows];
+            double[] maxInRowsAfter = new double[(int)RowsCount];
             double[,] riscMatrix = GetRiscMatrix(Arr);
-            for (int r = 0; r < Rows; r++)
+            for (int r = 0; r < RowsCount; r++)
             {
                 double max = double.MinValue;
-                for (int c = 0; c < Cols; c++)
+                for (int c = 0; c < ColsCount; c++)
                 {
                     if (riscMatrix[r, c] > max)
                         max = riscMatrix[r, c];
                 }
                 maxInRowsAfter[r] = max;
             }
-            Result = maxInRowsAfter.Min();
-            BestAlternativeIndexes = GetPositions(Result, maxInRowsAfter);
+            SetResult(maxInRowsAfter.Min(), maxInRowsAfter);
 
             AddStep("Максимумы по строке в матрице рисков", maxInRowsAfter);
             AddStep("Минимум", Result);
@@ -499,17 +215,16 @@ namespace DSSView
 
         protected override void Count()
         {
-            double[] gurv = new double[(int)Rows];
+            double[] gurv = new double[(int)RowsCount];
 
-            for (int r = 0; r < Rows; r++)
+            for (int r = 0; r < RowsCount; r++)
             {
                 double max = GetMaxFromRow(r);
                 double min = GetMinFromRow(r);
 
                 gurv[r] =  max * GurvitsCoeff.Value + min * (1 - GurvitsCoeff.Value);
             }
-            Result = gurv.Max();
-            BestAlternativeIndexes = GetPositions(Result, gurv);
+            SetResult(gurv.Max(), gurv);
 
             AddStep("Вектор Гурвица", gurv);
             AddStep("Максимум", Result);
@@ -532,13 +247,13 @@ namespace DSSView
 
         protected override void Count()
         {
-            double[] coeff = new double[(int)Rows];
+            double[] coeff = new double[(int)RowsCount];
 
-            for (int r = 0; r < Rows; r++)
+            for (int r = 0; r < RowsCount; r++)
             {
                 double min = Arr[r, 0];
                 double sum = 0;
-                for (int c = 0; c < Cols; c++)
+                for (int c = 0; c < ColsCount; c++)
                 {
                     if (Arr[r, c] < min)
                         min = Arr[r, c];
@@ -546,8 +261,7 @@ namespace DSSView
                 }
                 coeff[r] = sum * LemanCoeff.Value + (1 - LemanCoeff.Value) * min;
             }
-            Result = coeff.Max();
-            BestAlternativeIndexes = GetPositions(Result, coeff);
+            SetResult(coeff.Max(), coeff);
 
             AddStep("Вектор Ходжа-Лемана", coeff);
             AddStep("Максимум", Result);
@@ -566,18 +280,17 @@ namespace DSSView
 
         protected override void Count()
         {
-            double[] multi = new double[(int)Rows];
-            for (int r = 0; r < Rows; r++)
+            double[] multi = new double[(int)RowsCount];
+            for (int r = 0; r < RowsCount; r++)
             {
                 double sum = Arr[r, 0];
-                for (int c = 1; c < Cols; c++)
+                for (int c = 1; c < ColsCount; c++)
                 {
                     sum *= Arr[r, c];
                 }
                 multi[r] = sum;
             }
-            Result = multi.Max();
-            BestAlternativeIndexes = GetPositions(Result, multi);
+            SetResult(multi.Max(), multi);
 
             AddStep("Произведения", multi);
             AddStep("Максимум", Result);
@@ -599,20 +312,20 @@ namespace DSSView
 
         protected override void Count()
         {
-            double[,] newArr = new double[(int)Rows, (int)Cols];
-            for (int r = 0; r < Rows; r++)
+            double[,] newArr = new double[(int)RowsCount, (int)ColsCount];
+            for (int r = 0; r < RowsCount; r++)
             {
-                for (int c = 0; c < Cols; c++)
+                for (int c = 0; c < ColsCount; c++)
                 {
                     newArr[r, c] = Arr[r, c] > 0 ? Arr[r, c] / GetChance(c) : Arr[r, c] * GetChance(c);
                 }
             }
 
-            double[] minInRows = new double[(int)Rows];
-            for (int r = 0; r < Rows; r++)
+            double[] minInRows = new double[(int)RowsCount];
+            for (int r = 0; r < RowsCount; r++)
             {
                 double m = newArr[r, 0];
-                for (int c = 1; c < Cols; c++)
+                for (int c = 1; c < ColsCount; c++)
                 {
                     if (newArr[r, c] < m)
                     {
@@ -621,8 +334,7 @@ namespace DSSView
                 }
                 minInRows[r] = m;
             }
-            Result = minInRows.Max();
-            BestAlternativeIndexes = GetPositions(Result, minInRows);
+            SetResult(minInRows.Max(), minInRows);
 
             AddStep("Вектор", minInRows);
             AddStep("Максимум", Result);

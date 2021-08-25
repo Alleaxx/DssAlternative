@@ -24,5 +24,11 @@ namespace DSSView
             InitializeComponent();
             View.Matrix = DataContext as ViewMatrix;
         }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MtxAlphaWindow w = new MtxAlphaWindow();
+            w.ShowDialog();
+        }
     }
 }
