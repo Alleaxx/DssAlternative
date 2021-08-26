@@ -65,27 +65,43 @@
     <Compile Include="NewMatrixWindow.xaml.cs">
       <DependentUpon>NewMatrixWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Критерии принятия решений\Статистические игры\Критерии\Criteria.cs" />
-    <Compile Include="Критерии принятия решений\Статистические игры\Матрицы\Case.cs" />
-    <Compile Include="Критерии принятия решений\Статистические игры\Матрицы\Matrix.cs" />
-    <Compile Include="Критерии принятия решений\Статистические игры\Матрицы\MatrixAlpha.cs" />
-    <Compile Include="Критерии принятия решений\Статистические игры\Матрицы\PayMatrix.cs" />
-    <Compile Include="Критерии принятия решений\Статистические игры\Критерии\Analysis.cs" />
-    <Compile Include="Критерии принятия решений\Отчеты\ReportExcel.cs" />
-    <Compile Include="Критерии принятия решений\Отчеты\ReportHTML.cs" />
-    <Compile Include="Критерии принятия решений\Отчеты\Report.cs" />
-    <Compile Include="Критерии принятия решений\XmlMatrixProvider.cs" />
-    <Compile Include="Критерии принятия решений\Отчеты\ReportXAML.cs" />
-    <Compile Include="Критерии принятия решений\Конвертеры\RoundNumbers.cs" />
-    <Compile Include="Критерии принятия решений\Конвертеры\ObjectVisibility.cs" />
-    <Compile Include="Критерии принятия решений\Статистические игры\ViewMatrix.cs" />
-    <Compile Include="Критерии принятия решений\Статистические игры\Критерии\Criterias.cs" />
-    <Compile Include="Критерии принятия решений\Статистические игры\ViewMatrixElements.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Criteria.cs" />
+    <Compile Include="Игры с природой\Анализ игры\RankAlternative.cs" />
+    <Compile Include="Игры с природой\Анализ игры\RankCriteria.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Option.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Step.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaBaies.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерии\Производные\CriteriaGerr.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерии\Производные\CriteriaGurvits.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaLaplas.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерии\Производные\CriteriaLeman.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaMaxMax.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaMinMax.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерии\Производные\CriteriaMulti.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaSavige.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaWald.cs" />
+    <Compile Include="Игры с природой\Матрицы\Cell.cs" />
+    <Compile Include="Игры с природой\Матрицы\CellFactory.cs" />
+    <Compile Include="Игры с природой\Матрицы\Coords.cs" />
+    <Compile Include="Игры с природой\Матрицы\Matrix.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Analysis.cs" />
+    <Compile Include="Игры с природой\Матрицы\MtxExtensions.cs" />
+    <Compile Include="Игры с природой\Отчеты\ReportExcel.cs" />
+    <Compile Include="Игры с природой\Отчеты\ReportHTML.cs" />
+    <Compile Include="Игры с природой\Отчеты\Report.cs" />
+    <Compile Include="Игры с природой\XmlMatrixProvider.cs" />
+    <Compile Include="Игры с природой\Отчеты\ReportXAML.cs" />
+    <Compile Include="Конвертеры\RoundNumbers.cs" />
+    <Compile Include="Конвертеры\ObjectVisibility.cs" />
+    <Compile Include="Игры с природой\ViewMatrix.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Критерии принятия решений\ViewApp.cs" />
+    <Compile Include="Игры с природой\ViewApp.cs" />
+    <Compile Include="Игры с природой\Игра\StatGame.cs" />
+    <Compile Include="Игры с природой\Игра\StatGameView.cs" />
+    <Compile Include="Игры с природой\Игра\StatMatrix.cs" />
     <Page Include="MatrixViewWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

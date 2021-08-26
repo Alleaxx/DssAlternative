@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace DSSView
+namespace DSSLib
 {
-    public class Case : DSSLib.NotifyObj
+
+    public class Case : NotifyObj
     {
         public event Action OnChanceChanged;
 

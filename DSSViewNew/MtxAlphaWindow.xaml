@@ -73,7 +73,7 @@
                     <TextBlock Text="{Binding Name}" />
                 </Grid>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type local:Case}">
+            <DataTemplate DataType="{x:Type dsslib:Case}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />

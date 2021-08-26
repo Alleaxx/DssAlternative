@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DSSView"
-        d:DataContext="{d:DesignInstance {x:Type local:NewGameInfo }}"
+        d:DataContext="{d:DesignInstance {x:Type local:NewGameInfo}}"
         mc:Ignorable="d" ResizeMode="NoResize"
         Title="Добавить новую матрицу" Height="250" Width="500">
     <Grid>
@@ -18,7 +18,7 @@
                 <TextBlock Text="X" FontSize="14" VerticalAlignment="Center"/>
                 <TextBox Text="{Binding Cols}" FontSize="18" Width="75" TextAlignment="Center" Margin="5,0" BorderThickness="0,0,0,1" BorderBrush="Orange" />
             </DockPanel>
-            <Button Margin="0,8,0,4" Padding="0,5" Cursor="Hand" Background="LightGreen" Content="Добавить" FontSize="14" CommandParameter="{Binding Info}" Click="Button_Click" />
+            <Button Margin="0,8,0,4" Padding="0,5" Cursor="Hand" Background="LightGreen" Content="Добавить" FontSize="14" Click="Button_Click" />
         </StackPanel>
     </Grid>
 </Window>

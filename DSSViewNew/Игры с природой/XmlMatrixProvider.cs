@@ -11,7 +11,7 @@ using DSSLib;
 namespace DSSView
 {
     //Версии для сохранения
-    public class PayMatrixXml
+    public class StatMtxXml
     {
         public Alternative[] Alternatives { get; set; }
 
@@ -22,8 +22,8 @@ namespace DSSView
 
 
 
-        public PayMatrixXml() { }
-        public PayMatrixXml(Alternative[] alts, Case[] cases, double[,] values)
+        public StatMtxXml() { }
+        public StatMtxXml(Alternative[] alts, Case[] cases, double[,] values)
         {
             Alternatives = alts;
             Cases = cases;
@@ -38,7 +38,7 @@ namespace DSSView
             }
         }
     }
-    public class StatGameXml : PayMatrixXml
+    public class StatGameXml : StatMtxXml
     {
         public string Name { get; set; }
         public bool RiscConditions { get; set; }
@@ -58,32 +58,11 @@ namespace DSSView
         public static ISaver<T> Get<T>()
         {
             Type type = typeof(T);
-            if (type == typeof(PayMatrix))
-            {
-                return new SaverLogged<PayMatrix>(new Saver<PayMatrix>(new MatrixProvider())) as ISaver<T>;
-            }
             if (type == typeof(StatGame))
             {
                 return new SaverLogged<StatGame>(new Saver<StatGame>(new StatGameProvider())) as ISaver<T>;
             }
             return null;
-        }
-    }
-
-
-    public class MatrixProvider : ITextProvider<PayMatrix>
-    {
-        XmlProvider<PayMatrixXml> Provider { get; set; } = new XmlProvider<PayMatrixXml>();
-        public PayMatrix FromTextString(string xml)
-        {
-            PayMatrixXml payMatrix = Provider.FromTextString(xml);
-            return new PayMatrixRisc(payMatrix);
-        }
-
-        public string ToTextString(PayMatrix matrix)
-        {
-            PayMatrixXml payMatrix = new PayMatrixXml(matrix.RowsArr,matrix.ColsArr,matrix.Arr);
-            return Provider.ToTextString(payMatrix);
         }
     }
     public class StatGameProvider : ITextProvider<StatGame>
