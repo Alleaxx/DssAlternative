@@ -13,7 +13,7 @@ namespace DSSView
 
     public class ViewMatrix : NotifyObj
     {
-        public ObservableCollection<PayMatrixView> ListMatrix { get; set; }
+        public ObservableCollection<PayMatrixView> ListMatrix { get; private set; }
         public PayMatrixView Selected
         {
             get => selected;
@@ -25,32 +25,36 @@ namespace DSSView
         }
         private PayMatrixView selected;
 
-        public InfoAboutMatrix InfoNewMatrix { get; set; }
-
-        private IXMLProvider<PayMatrix> XmlProvider { get; set; }
-        private IFileSelector FileSelector { get; set; }
+        private ISaver<PayMatrix> Saver { get; set; }
 
 
 
 
-        public RelayCommand ShowAddMatrixWindowCommand { get; set; }
-        public RelayCommand AddMatrixCommand { get; set; }
-        public RelayCommand SaveAsMatrixCommand { get; set; }
-        public RelayCommand SaveMatrixCommand { get; set; }
-        public RelayCommand OpenMatrixCommand { get; set; }
-        public RelayCommand CloseMatrixCommand { get; set; }
-        public RelayCommand CreateReportCommand { get; set; }
+        public RelayCommand ShowAddMatrixWindowCommand { get; private set; }
+        public RelayCommand AddMatrixCommand { get; private set; }
+        public RelayCommand SaveAsMatrixCommand { get; private set; }
+        public RelayCommand SaveMatrixCommand { get; private set; }
+        public RelayCommand OpenMatrixCommand { get; private set; }
+        public RelayCommand CloseMatrixCommand { get; private set; }
+        public RelayCommand CreateReportCommand { get; private set; }
 
 
         private void ShowAddMatrixWindow(object obj)
         {
-            NewMatrixWindow window = new NewMatrixWindow(this);
-            window.ShowDialog();
+            NewGameInfo info = new NewGameInfo();
+            NewMatrixWindow window = new NewMatrixWindow(info);
+            if(window.ShowDialog() == true)
+            {
+                AddMatrix(info);
+            }
         }
         private void AddMatrix(object obj)
         {
-            ListMatrix.Add(new PayMatrixView(new PayMatrixRisc(InfoNewMatrix.Rows, InfoNewMatrix.Cols)));
-            Selected = ListMatrix.Last();
+            if(obj is NewGameInfo info)
+            {
+                ListMatrix.Add(new PayMatrixView(new PayMatrixRisc(info.Rows, info.Cols)));
+                Selected = ListMatrix.Last();
+            }
         }
         public void AddSafeMatrix(PayMatrix matrix)
         {
@@ -60,46 +64,35 @@ namespace DSSView
         private void CloseMatrix(object obj)
         {
             PayMatrixView oldSelected = Selected;
-            if (ListMatrix.Count > 1)
-                Selected = ListMatrix.First();
+            int index = ListMatrix.IndexOf(oldSelected);
+            if (index > 0)
+                Selected = ListMatrix[index - 1];
             else
                 Selected = null;
             ListMatrix.Remove(oldSelected);
         }
 
-        private void SaveMatrixExe(object obj)
+        private bool IsSavingAvailable(object obj) => Selected != null && Selected.File != null && Selected.File.Exists;
+        private void SaveMatrix(object obj)
         {
-            SaveMatrixToFile(Selected.File.FullName,Selected.Matrix);
-        }
-        private void SaveAsMatrixExe(object obj)
-        {
-            FileInfo file = FileSelector.Save();
-            if(file != null && file.Exists)
-                SaveMatrixToFile(file.FullName,Selected.Matrix);
-        }
-        private void SaveMatrixToFile(string path,PayMatrix matrix)
-        {
-            string xml = XmlProvider.ToXml(matrix);
-            using(FileStream stream = new FileStream(path, FileMode.Create))
+            if(IsSavingAvailable(null))
             {
-                byte[] array = Encoding.Default.GetBytes(xml);
-                stream.Write(array, 0, array.Length);
+                string path = selected.File.FullName;
+                var matrix = selected.Matrix;
+                Saver.Save(path, matrix);
             }
         }
-        private void OpenMatrixExe(object obj)
+        private void SaveAsMatrix(object obj)
         {
-            FileInfo fromFile = FileSelector.Open();
-            if (fromFile != null && fromFile.Exists)
+            Saver.Save(Selected.Matrix);
+        }
+        private void OpenMatrix(object obj)
+        {
+            var newMatrix = Saver.Open();
+            if (newMatrix != null)
             {
-                using(FileStream stream = File.OpenRead(fromFile.FullName))
-                {
-                    byte[] array = new byte[stream.Length];
-                    stream.Read(array, 0, array.Length);
-                    string xml = Encoding.Default.GetString(array);
-                    PayMatrix newMatrix = XmlProvider.FromXml(xml);
-                    ListMatrix.Add(new PayMatrixView(newMatrix,fromFile));
-                    Selected = ListMatrix.Last();
-                }
+                ListMatrix.Add(new PayMatrixView(newMatrix));
+                Selected = ListMatrix.Last();
             }
         }
 
@@ -114,31 +107,27 @@ namespace DSSView
 
         public ViewMatrix()
         {
-            XmlProvider = new MatrixProvider();
-            FileSelector = new DialogFileSelector();
+            Saver = XmlProvider.Get<PayMatrix>();
 
             ShowAddMatrixWindowCommand = new RelayCommand(ShowAddMatrixWindow, obj => true);
-            AddMatrixCommand = new RelayCommand(AddMatrix, obj => InfoNewMatrix != null);
+            AddMatrixCommand = new RelayCommand(AddMatrix, obj => true);
             CloseMatrixCommand = new RelayCommand(CloseMatrix, obj => Selected != null);
-            OpenMatrixCommand = new RelayCommand(OpenMatrixExe, obj => true);
-            SaveMatrixCommand = new RelayCommand(SaveMatrixExe, obj => Selected != null && Selected.File != null && Selected.File.Exists);
-            SaveAsMatrixCommand = new RelayCommand(SaveAsMatrixExe, obj => Selected != null);
+            OpenMatrixCommand = new RelayCommand(OpenMatrix, obj => true);
+            SaveMatrixCommand = new RelayCommand(SaveMatrix, obj => Selected != null && Selected.File != null && Selected.File.Exists);
+            SaveAsMatrixCommand = new RelayCommand(SaveAsMatrix, obj => Selected != null);
             CreateReportCommand = new RelayCommand(CreateReport, obj => Selected != null);
 
-            
-            InfoNewMatrix = new InfoAboutMatrix() { Name = "Матрица", Rows = 3, Cols = 3 };
-            ListMatrix = new ObservableCollection<PayMatrixView>()
-            {
-                new PayMatrixView(new PayMatrixRisc(3,3))
-            };
+
+            ListMatrix = new ObservableCollection<PayMatrixView>();
+            AddMatrix(new NewGameInfo());
             Selected = ListMatrix.Last();
         }
     }
     
-    public class InfoAboutMatrix
+    public class NewGameInfo
     {
-        public string Name { get; set; }
-        public int Rows { get; set; }
-        public int Cols { get; set; }
+        public string Name { get; set; } = "Матрица";
+        public int Rows { get; set; } = 3;
+        public int Cols { get; set; } = 3;
     }
 }

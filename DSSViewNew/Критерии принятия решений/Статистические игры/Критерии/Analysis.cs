@@ -8,49 +8,48 @@ using DSSLib;
 
 namespace DSSView
 {
-    public class ReportCriterias
+    public class StatGameAnalysis
     {
         public event Action OnCriteriasUpdated;
 
-        public ICriteria[] Criterias { get; set; }
-        public IOption[] Options { get; set; }
+        public IEnumerable<ICriteria> Criterias { get; private set; }
+        public IEnumerable<IOption> Options { get; private set; }
 
 
-        public Alternative[] BestAlternatives => Priorities.Where(c => c.Rank == Priorities.Select(a => a.Rank).Max()).Select(f => f.Alternative).ToArray();
-        public CriteriasPriorAlternative[] Priorities { get; set; }
+        public IEnumerable<Alternative> BestAlternatives => Priorities.Where(c => c.Rating == MaxRank).Select(f => f.Alternative);
+        private double MaxRank => Priorities.Max(a => a.Rating);
+        public CriteriasPriorAlternative[] Priorities { get; private set; }
 
 
-        public ReportCriterias(IMatrixChance<Alternative,Case,double> matrix)
+        public StatGameAnalysis(IStatGame game)
         {
-            SetCriterias(matrix);
-            matrix.Info.ChancesChanged += Matrix_Changed;
-            matrix.RowChanged += a => Matrix_Changed();
-            matrix.ColChanged += c => Matrix_Changed();
-            matrix.ValuesChanged += c => Matrix_Changed();
+            SetCriterias(game);
+            game.OnInfoUpdated += Matrix_Changed;
+
+            if(game is IMatrixChance<Alternative, Case, double> matrix)
+            {
+                matrix.Info.ChancesChanged += Matrix_Changed;
+                matrix.RowChanged += a => Matrix_Changed();
+                matrix.ColChanged += c => Matrix_Changed();
+                matrix.ValuesChanged += c => Matrix_Changed();
+            }
         }
-        private void SetCriterias(IMatrixChance<Alternative, Case, double> matrix)
+        private void SetCriterias(IStatGame game)
         {
             Criterias = new ICriteria[]
             {
-                new CriteriaWald(matrix),
-                new CriteriaMinMax(matrix),
-                new CriteriaMaxMax(matrix),
-                new CriteriaLaplas(matrix),
-                new CriteriaBaies(matrix),
-                new CriteriaSavige(matrix),
-                new CriteriaGurvits(matrix),
-                new CriteriaLeman(matrix),
-                new CriteriaMulti(matrix),
-                new CriteriaGerr(matrix),
+                new CriteriaWald(game),
+                new CriteriaMinMax(game),
+                new CriteriaMaxMax(game),
+                new CriteriaLaplas(game),
+                new CriteriaBaies(game),
+                new CriteriaSavige(game),
+                new CriteriaGurvits(game),
+                new CriteriaLeman(game),
+                new CriteriaMulti(game),
+                new CriteriaGerr(game),
             };
-
-            List<IOption> options = new List<IOption>();
-            for (int i = 0; i < Criterias.Length; i++)
-            {
-                options.AddRange(Criterias[i].Options);
-            }
-            Options = options.ToArray();
-
+            Options = Criterias.SelectMany(c => c.Options).ToList();
             Update();
         }
 
@@ -75,7 +74,7 @@ namespace DSSView
             {
                 Priorities[i] = new CriteriasPriorAlternative(dictionary.ElementAt(i).Key, dictionary.ElementAt(i).Value.ToArray());
             }
-            Priorities = Priorities.OrderByDescending(p => p.Rank).ToArray();
+            Priorities = Priorities.OrderByDescending(p => p.Rating).ToArray();
 
         }
         private Dictionary<Alternative, List<ICriteria>> GetCriteriasForAlternatives()
@@ -106,7 +105,7 @@ namespace DSSView
         public ICriteria[] Criterias { get; set; }
 
         //Ранг для альтернативы
-        public double Rank => Criterias.Select(c => c.Rank).Sum();
+        public double Rating => Criterias.Sum(c => c.Rank);
 
         public CriteriasPriorAlternative(Alternative alternative, ICriteria[] criterias)
         {
@@ -114,5 +113,4 @@ namespace DSSView
             Criterias = criterias;
         }
     }
-
 }

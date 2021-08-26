@@ -193,13 +193,13 @@ namespace DSSView
         public PayMatrixView View { get; set; }
 
         //Источник
-        public ReportCriterias Report => View.Matrix.Report;
+        public StatGameAnalysis Report => View.Matrix.Report;
         
         //Данные
         public CriteriaView[] Criterias { get; set; }
         
         //Данные
-        public Alternative[] BestAlternatives => Report.BestAlternatives;
+        public Alternative[] BestAlternatives => Report.BestAlternatives.ToArray();
         public CriteriasPriorAlternative[] Priorities => Report.Priorities;
 
 

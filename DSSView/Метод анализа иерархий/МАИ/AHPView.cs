@@ -47,8 +47,8 @@ namespace DSSView
         }
         private void OpenProblem(object obj)
         {
-            DefaultSaver<NodeProject> opener = new DefaultSaver<NodeProject>();
-            NodeProject project = opener.OpenFromFile();
+            ISaver<NodeProject> opener = new Saver<NodeProject>();
+            NodeProject project = opener.Open();
 
             if(project != null)
             {
@@ -61,8 +61,8 @@ namespace DSSView
 
         private void SaveProblem(object obj)
         {
-            DefaultSaver<NodeProject> saver = new DefaultSaver<NodeProject>();
-            saver.SaveToFile(Selected.Source.GetSaveVersionAlpha());
+            ISaver<NodeProject> saver = new Saver<NodeProject>();
+            saver.Save(Selected.Source.GetSaveVersionAlpha());
         }
         private void CloseProblem(object obj)
         {

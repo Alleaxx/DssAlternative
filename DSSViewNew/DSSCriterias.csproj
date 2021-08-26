@@ -70,7 +70,7 @@
     <Compile Include="Критерии принятия решений\Статистические игры\Матрицы\Matrix.cs" />
     <Compile Include="Критерии принятия решений\Статистические игры\Матрицы\MatrixAlpha.cs" />
     <Compile Include="Критерии принятия решений\Статистические игры\Матрицы\PayMatrix.cs" />
-    <Compile Include="Критерии принятия решений\Статистические игры\Критерии\Report.cs" />
+    <Compile Include="Критерии принятия решений\Статистические игры\Критерии\Analysis.cs" />
     <Compile Include="Критерии принятия решений\Отчеты\ReportExcel.cs" />
     <Compile Include="Критерии принятия решений\Отчеты\ReportHTML.cs" />
     <Compile Include="Критерии принятия решений\Отчеты\Report.cs" />

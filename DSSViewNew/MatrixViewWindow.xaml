@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DSSView"
         mc:Ignorable="d"
-        Title="Принятие решений в условиях неопределенности и риска" Height="720" Width="1280">
+        Title="Статистические игры" Height="720" Width="1280">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolVisibility" />
@@ -301,20 +301,23 @@
                                             <ItemsControl ItemsSource="{Binding Report.Options}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <DockPanel>
-                                                            <DockPanel Width="300">
-                                                                <TextBlock Text="{Binding Name}" FontSize="14" />
-                                                                <TextBox Text="{Binding ElementName=slider, Path=Value}" Padding="5,0" Margin="5,0" BorderThickness="0,0,0,1" BorderBrush="Orange" FontSize="14" />
-                                                            </DockPanel>
-                                                            <Slider x:Name="slider" Minimum="{Binding Min}" Maximum="{Binding Max}" Value="{Binding Value}" IsSelectionRangeEnabled="True" TickFrequency="0.1" IsSnapToTickEnabled="True" Margin="5,0"/>
-                                                        </DockPanel>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="4*"/>
+                                                                <ColumnDefinition Width="1*"/>
+                                                                <ColumnDefinition Width="6*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="14" />
+                                                            <TextBox Grid.Column="1" Text="{Binding ElementName=slider, Path=Value}" Padding="5,0" Margin="5,0" BorderThickness="0,0,0,1" BorderBrush="Orange" FontSize="14" HorizontalAlignment="Right" MinWidth="30"/>
+                                                            <Slider Grid.Column="2" x:Name="slider" Minimum="{Binding Min}" Maximum="{Binding Max}" Value="{Binding Value}" IsSelectionRangeEnabled="True" TickFrequency="0.1" IsSnapToTickEnabled="True" Margin="5,0"/>
+                                                        </Grid>
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
                                             <Separator Margin="0,10"/>
+                                            <TextBlock Text="Приоритетные альтернативы:" FontSize="14" FontWeight="Medium" Margin="3,0"/>
                                             <DockPanel Margin="0,5">
-                                                <TextBlock Text="Приоритетные альтернативы:" FontSize="14" Margin="3,0"/>
-                                                <ItemsControl ItemsSource="{Binding BestAlternatives}" HorizontalAlignment="Right">
+                                                <ItemsControl ItemsSource="{Binding BestAlternatives}">
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
                                                             <TextBlock Text="{Binding Name}" Margin="5,0" FontStyle="Italic" FontSize="14"/>
@@ -327,6 +330,7 @@
                                                     </ItemsControl.ItemsPanel>
                                                 </ItemsControl>
                                             </DockPanel>
+                                            <TextBlock Text="Знатные прогресс-бары..." />
 
                                             <TabControl Margin="0,4" BorderThickness="0,1,0,0">
                                                 <TabItem>
@@ -356,6 +360,7 @@
                                                                         </DataTemplate>
                                                                     </GridViewColumn.CellTemplate>
                                                                 </GridViewColumn>
+                                                                <GridViewColumn Header="Применимость" DisplayMemberBinding="{Binding Criteria.Rank}"  Width="70"/>
                                                             </GridView>
                                                         </ListView.View>
                                                     </ListView>
@@ -368,7 +373,7 @@
                                                         <ListView.View>
                                                             <GridView>
                                                                 <GridViewColumn Header="Альтернатива" DisplayMemberBinding="{Binding Alternative.Name}" />
-                                                                <GridViewColumn Header="Рейтинг" DisplayMemberBinding="{Binding Rank}"  Width="70"/>
+                                                                <GridViewColumn Header="Рейтинг" DisplayMemberBinding="{Binding Rating}"  Width="70"/>
                                                                 <GridViewColumn Header="Кол-во критериев" DisplayMemberBinding="{Binding Criterias.Length}"  Width="70"/>
                                                                 <GridViewColumn Header="Выборы" Width="500">
                                                                     <GridViewColumn.CellTemplate>

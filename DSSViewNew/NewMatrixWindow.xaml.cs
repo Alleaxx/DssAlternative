@@ -19,14 +19,15 @@ namespace DSSView
     /// </summary>
     public partial class NewMatrixWindow : Window
     {
-        public NewMatrixWindow(object dataContext)
+        public NewMatrixWindow(NewGameInfo info)
         {
-            DataContext = dataContext;
+            DataContext = info;
             InitializeComponent();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            DialogResult = true;
             Close();
         }
     }

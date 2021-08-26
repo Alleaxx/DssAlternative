@@ -13,9 +13,10 @@ namespace DSSView
     public abstract class PayMatrix : MatrixContainer<Alternative, Case, double>, IMatrixChance<Alternative, Case,double>
     {
         public event Action CaseChanceChanged;
+        public event Action OnInfoUpdated;
 
         public IInfoMatrix Info { get; set; }
-        public ReportCriterias Report { get; set; }
+        public StatGameAnalysis Report { get; set; }
 
         protected override void AddColToList(int pos)
         {
@@ -41,7 +42,7 @@ namespace DSSView
         public PayMatrix(int rows, int cols) : base(rows, cols)
         {
             Info = new InfoPayMatrix(this);
-            Report = new ReportCriterias(this);
+            Report = new StatGameAnalysis(this);
         }
         public PayMatrix(PayMatrixXml xml) : base(0,0)
         {
@@ -59,8 +60,19 @@ namespace DSSView
             UpdateCells();
 
             Info = new InfoPayMatrix(this);
-            Report = new ReportCriterias(this);
+            Report = new StatGameAnalysis(this);
         }
+
+
+
+        //Адаптация к IStatGame
+        public double RowsCount => Rows;
+        public double ColsCount => Cols;
+
+        public bool InRiscConditions => Info.InRiscConditions;
+        public bool InUnknownConditions => Info.InUnknownConditions;
+
+        public double GetChance(int col) => Info.GetChance(col);
 
     }
 
@@ -148,7 +160,7 @@ namespace DSSView
     {
         public event Action ChancesChanged;
 
-        private IMatrix<DSSLib.Alternative,Case,double> Matrix { get; set; }
+        private IMatrix<Alternative, Case,double> Matrix { get; set; }
         private Case[] Cases => Matrix.ColsArr;
 
 

@@ -10,6 +10,8 @@ namespace DSSView
 {
     public class Matrix<R, C, V>
     {
+        public override string ToString() => $"Матрица {RowsCount}x{ColsCount} ({typeof(R).Name}-{typeof(C).Name}-{typeof(V).Name})";
+
         public event Action<R> OnRowChanged;
         public event Action<C> OnColChanged;
         public event Action<Coords> OnValuesChanged;
@@ -34,6 +36,12 @@ namespace DSSView
             }
         }
 
+        public bool IsEmpty => Source.Count == 0;
+        protected void Clear()
+        {
+            Source.Clear();
+        }
+
 
 
         //Информация о матрице
@@ -49,19 +57,24 @@ namespace DSSView
         public C[] Cols => Source.Select(r => r.To).Distinct().ToArray();
 
         //Количество строк и столбцов
-        public int RowsCount => Source.Max(s => s.Coords.X) + 1;
-        public int ColsCount => Source.Max(s => s.Coords.Y) + 1;
+        public int RowsCount => !IsEmpty ? Source.Max(s => s.Coords.X) + 1 : 0;
+        public int ColsCount => !IsEmpty ? Source.Max(s => s.Coords.Y) + 1 : 0;
 
         //Позиция строк и столбцов
         private int IndexOf(R row) => Source.First(cell => cell.From.Equals(row)).Coords.X;
         private int IndexOf(C col) => Source.First(cell => cell.To.Equals(col)).Coords.Y;
 
 
+        protected void Add(MtxCell<R, C, V> cell)
+        {
+            Source.Add(cell);
+        }
         //Добавление столбца
         public void AddCol() => AddCol(ColsCount);
-        public void AddCol(C col) => AddCol(IndexOf(col));
-        public void AddCol(int pos) => AddCol(pos, CellFactory.NewCol);
-        public void AddCol(int pos, C col)
+        public void AddColIndex(C col) => AddCol(IndexOf(col));
+        public void AddCol(C col, V val) => AddCol(ColsCount, col, val);
+        public void AddCol(int pos) => AddCol(pos, CellFactory.NewCol, CellFactory.NewValue);
+        public void AddCol(int pos, C col, V val)
         {
             var rows = Rows;
             int colIndex = pos;
@@ -70,7 +83,7 @@ namespace DSSView
             {
                 R row = rows[i];
                 Coords coords = new Coords(i, colIndex);
-                var cell = CellFactory.NewCell(coords, row, col, CellFactory.NewValue);
+                var cell = CellFactory.NewCell(coords, row, col, val);
                 Source.Add(cell);
                 CellAdded(cell);
             }
@@ -79,9 +92,10 @@ namespace DSSView
 
         //Добавление строки
         public void AddRow() => AddRow(RowsCount);
-        public void AddRow(R row) => AddRow(IndexOf(row));
-        public void AddRow(int pos) => AddRow(pos, CellFactory.NewRow);
-        public void AddRow(int pos, R row)
+        public void AddRowIndex(R row) => AddRow(IndexOf(row));
+        public void AddRow(R row, V val) => AddRow(RowsCount, row, val);
+        public void AddRow(int pos) => AddRow(pos, CellFactory.NewRow, CellFactory.NewValue);
+        public void AddRow(int pos, R row, V val)
         {
             var cols = Cols;
             int rowIndex = pos;
@@ -90,7 +104,7 @@ namespace DSSView
             {
                 C col = cols[i];
                 Coords coords = new Coords(rowIndex, i);
-                var cell = CellFactory.NewCell(coords, row, col, CellFactory.NewValue);
+                var cell = CellFactory.NewCell(coords, row, col, val);
                 Source.Add(cell);
                 CellAdded(cell);
             }
@@ -217,6 +231,8 @@ namespace DSSView
     }
     public class MtxCellFactory<R, C, V>
     {
+        public override string ToString() => $"Фабрика ячеек ({typeof(R).Name}-{typeof(C).Name}-{typeof(V).Name})";
+
         public virtual MtxCell<R, C, V> NewCell() => new MtxCell<R, C, V>();
         public virtual MtxCell<R, C, V> NewCell(Coords coords, R r, C c, V v) => new MtxCell<R, C, V>();
         public virtual R NewRow => default;
@@ -229,23 +245,44 @@ namespace DSSView
     //Матрица статистической игры
     public class MtxStat : Matrix<Alternative, Case, double>
     {
+        public override string ToString() => $"{RowsCount}x{ColsCount} матрица статистической игры";
+
         public MtxStat() : base(new MtxStatFactory())
         {
 
         }
-
-        public static MtxStat FromSize(int rows, int cols) => default;
-        public static MtxStat FromArr() => default;
-        public static MtxStat FromSafe() => default;
-        public static MtxStat FromRisc() => default;
+        public static MtxStat CreateDefault() => default;
+        public static MtxStat CreateFromSize(int rows, int cols) => default;
+        public static MtxStat CreateFromArr(double[,] arr) => default;
+        public static MtxStat CreateFromXml(StatGameXml xml)
+        {
+            MtxStat mtx = new MtxStat();
+            mtx.Clear();
+            for (int r = 0; r < xml.Values.Count; r++)
+            {
+                Alternative alt = xml.Alternatives[r];
+                var row = xml.Values[r];
+                for (int c = 0; c < row.Length; c++)
+                {
+                    Case cas = xml.Cases[c];
+                    double val = row[c];
+                    AltCase cell = new AltCase() { Coords = new Coords(r, c), From = alt, To = cas, Value = val };
+                    mtx.Add(cell);
+                }
+            }
+            return mtx;
+        }
+        public static MtxStat CreateFromSafe(MtxStat mtx) => default;
+        public static MtxStat CreateFromRisc(MtxStat mtx) => default;
 
     }
     public class AltCase : MtxCell<Alternative, Case, double>
     {
-
+        public override string ToString() => $"{Coords} ячейка статистической матрицы";
     }
     public class MtxStatFactory : MtxCellFactory<Alternative, Case, double>
     {
+        public override string ToString() => $"Фабрика статистической игры";
         public override MtxCell<Alternative, Case, double> NewCell()
             => new AltCase() { Coords = new Coords(0,0), From = NewRow, To = NewCol, Value = NewValue };
 
@@ -259,30 +296,71 @@ namespace DSSView
     }
 
     //Статистическая игра
-    public class StatGame
+    public class StatGame : IStatGame
     {
-        public event Action OnStateUpdated;
+        public override string ToString() => $"Статистическая игра \"{Name}\"";
 
+        public event Action OnInfoUpdated;
+
+        public string Name { get; set; }
         public MtxStat Mtx { get; set; }
-        public ReportCriterias Report { get; set; }
-        public GameState Conditions { get; set; }
+        public StatGameAnalysis Report { get; set; }
+        public GameState State { get; set; }
 
-        public StatGame()
+
+        public StatGame() : this("Природа", new MtxStat())
         {
-            Mtx = new MtxStat();
-            Conditions = new GameState(this);
-            //Report = new ReportCriterias();
+
+        }
+        private StatGame(string name, MtxStat mtx)
+        {
+            Name = name;
+            Mtx = mtx;
+
+            State = new GameState(this);
+            Report = new StatGameAnalysis(this);
+
             Mtx.OnRowChanged += r => MtxUpdated();
             Mtx.OnColChanged += c => MtxUpdated();
             Mtx.OnValuesChanged += c => MtxUpdated();
+            State.OnCaseChanceChanged += c => StateUpdated();
         }
+        public StatGame(StatGameXml xml) : this(xml.Name, MtxStat.CreateFromXml(xml))
+        {
+            State.Risc = xml.RiscConditions;
+        }
+
+
+
         private void MtxUpdated()
         {
-            OnStateUpdated?.Invoke();
+            OnInfoUpdated?.Invoke();
         }
+        private void StateUpdated()
+        {
+            OnInfoUpdated?.Invoke();
+        }
+        private void Updated()
+        {
+            OnInfoUpdated?.Invoke();
+        }
+
+
+        //Реализация StatGame
+        public double[,] Arr => Mtx.Values;
+        public double RowsCount => Mtx.RowsCount;
+        public double ColsCount => Mtx.ColsCount;
+        public bool InRiscConditions => State.Risc;
+        public bool InUnknownConditions => State.Unknown;
+        public double GetChance(int col) => State.GetChance(col);
+
+
+        public double Get(int r, int c) => Mtx.Get(r, c);
+        public Alternative GetRow(int r) => Mtx.GetRow(r);
     }
     public class GameState
     {
+        public override string ToString() => $"Состояние игры: {Status}";
         public event Action<Case> OnCaseChanceChanged;
 
         private StatGame Game { get; set; }
@@ -309,6 +387,11 @@ namespace DSSView
                 return 1 / (double)Cases.Count();
             else
                 return c.Chance;
+        }
+        public double GetChance(int pos)
+        {
+            Case c = Cases.ElementAt(pos);
+            return GetChance(c);
         }
 
 
@@ -338,7 +421,17 @@ namespace DSSView
     //Вью-модель
     public class View<T> : NotifyObj
     {
-        public T Source { get; private set; }
+        public override string ToString() => $"Представление '{Source}'";
+        public T Source
+        {
+            get => source;
+            protected set
+            {
+                source = value;
+                OnPropertyChanged();
+            }
+        }
+        private T source;
         public View(T source)
         {
             Source = source;
@@ -353,7 +446,7 @@ namespace DSSView
         public double Sum => Mtx.Sum();
 
         //Вероятности
-        public GameState State => Source.Conditions;
+        public GameState State => Source.State;
         public string Status => State.Status;
         public double SumChances => State.SumCases;
         public bool InRiscConditions
@@ -366,6 +459,11 @@ namespace DSSView
             }
         }
         public bool ChancesOk => State.IsOk;
+
+        //Отчет
+        public StatGameAnalysis Report => Source.Report;
+        public IEnumerable<ICriteria> Criterias => Report.Criterias;
+        public IEnumerable<Alternative> BestAlts => Report.BestAlternatives;
 
 
 
@@ -384,6 +482,8 @@ namespace DSSView
             AddRowCommand = new RelayCommand(AddRow);
             AddColCommand = new RelayCommand(AddCol);
             RemoveCommand = new RelayCommand(Remove);
+            SaveCommand = new RelayCommand(Save);
+            OpenCommand = new RelayCommand(Open);
         }
 
         private void State_OnCaseChanceChanged(Case obj)
@@ -397,6 +497,23 @@ namespace DSSView
 
 
 
+        public ICommand SaveCommand { get; private set; }
+        public ICommand OpenCommand { get; private set; }
+
+        private void Save(object obj)
+        {
+            XmlProvider.Get<StatGame>().Save(Source);
+        }
+        private void Open(object obj)
+        {
+            var res = XmlProvider.Get<StatGame>().Open();
+            if (res != null)
+            {
+                Source = res;
+            }
+        }
+
+
         public ICommand AddRowCommand { get; private set; }
         public ICommand AddColCommand { get; private set; }
         public ICommand RemoveCommand { get; private set; }
@@ -408,7 +525,7 @@ namespace DSSView
             }
             else if (obj is Alternative alt)
             {
-                Mtx.AddRow(alt);
+                Mtx.AddRowIndex(alt);
             }
         }
         private void AddCol(object obj)
@@ -419,7 +536,7 @@ namespace DSSView
             }
             else if (obj is Case cas)
             {
-                Mtx.AddCol(cas);
+                Mtx.AddColIndex(cas);
             }
         }
         private void Remove(object obj)
@@ -446,11 +563,14 @@ namespace DSSView
         {
             OnPropertyChanged(nameof(View));
             OnPropertyChanged(nameof(Source));
+            OnPropertyChanged(nameof(Report));
             UpdateValues();
         }
         private void UpdateValues()
         {
             OnPropertyChanged(nameof(Sum));
+            OnPropertyChanged(nameof(Criterias));
+            OnPropertyChanged(nameof(BestAlts));
         }
         private void StateUpdate()
         {

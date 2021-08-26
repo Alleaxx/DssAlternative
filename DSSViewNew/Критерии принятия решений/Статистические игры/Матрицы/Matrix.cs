@@ -38,9 +38,11 @@ namespace DSSView
     }
 
 
-    public interface IMatrixChance<R, C, V> : IMatrix<R,C,V>
+    public interface IMatrixChance<R, C, V> : IMatrix<R,C,V>, IStatGame
     {
         IInfoMatrix Info { get; }
+
+
     }
     public interface IInfoMatrix
     {

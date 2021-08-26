@@ -14,7 +14,7 @@ namespace DSSView
     //Классические критерии
     public class CriteriaWald : Criteria
     {
-        public CriteriaWald(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
+        public CriteriaWald(IStatGame game) : base(game)
         {
             Name = "Критерий Вальда";
             Description = "Критерий крайнего пессимизма. Наиболее осторожный критерий. Ориентирован на наихудшие условия, только среди которых отыскивается наилучший и теперь уже гарантированный результат.";
@@ -35,7 +35,7 @@ namespace DSSView
     }
     public class CriteriaMinMax : Criteria
     {
-        public CriteriaMinMax(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
+        public CriteriaMinMax(IStatGame game) : base(game)
         {
             Name = "Критерий минимакса";
             ChancesRequired = false;
@@ -57,7 +57,7 @@ namespace DSSView
     }    
     public class CriteriaMaxMax : Criteria
     {
-        public CriteriaMaxMax(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
+        public CriteriaMaxMax(IStatGame game) : base(game)
         {
             Name = "Критерий азартного игрока";
             ChancesRequired = false;
@@ -79,7 +79,7 @@ namespace DSSView
     }
     public class CriteriaBaies : Criteria
     {
-        public CriteriaBaies(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
+        public CriteriaBaies(IStatGame game) : base(game)
         {
             Name = "Критерий Байеса";
             ChancesRequired = true;
@@ -107,7 +107,7 @@ namespace DSSView
     }
     public class CriteriaLaplas : Criteria
     {
-        public CriteriaLaplas(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
+        public CriteriaLaplas(IStatGame game) : base(game)
         {
             Name = "Критерий Лапласа";
             ChancesRequired = false;
@@ -136,7 +136,7 @@ namespace DSSView
     public class CriteriaSavige : Criteria
     {
         public PayMatrixRisc RiscMatrix { get; set; }
-        public CriteriaSavige(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
+        public CriteriaSavige(IStatGame game) : base(game)
         {
             Name = "Критерий Сэвиджа";
             ChancesRequired = false;
@@ -201,7 +201,7 @@ namespace DSSView
     public class CriteriaGurvits : Criteria
     {
         public IOption GurvitsCoeff { get; set; } = new Option("Коэффициент оптимизма", 0.4, 0, 1);
-        public CriteriaGurvits(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
+        public CriteriaGurvits(IStatGame game) : base(game)
         {
             Name = "Критерий Гурвица";
             Type = "Производный";
@@ -209,8 +209,7 @@ namespace DSSView
             DecizionAlgoritm = "- Определить минимальное значение по альтернативе\n- Определить максимальное значение по альтернативе\n- Составляется вектор из минимального и максимального значения альтернатив: максимальное умножается на коэффициент, а минимальное на (1-коэффициент)\n- Из вектора выбирается максимальное значение";
             ChancesRequired = false;
 
-            Options = new IOption[] { GurvitsCoeff };
-            GurvitsCoeff.Changed += (double old, double newV) => Update();
+            AddOption(GurvitsCoeff);
         }
 
         protected override void Count()
@@ -233,7 +232,7 @@ namespace DSSView
     public class CriteriaLeman : Criteria
     {
         public IOption LemanCoeff { get; set; } = new Option("Коэффициент доверия к информации", 0.6, 0, 1);
-        public CriteriaLeman(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
+        public CriteriaLeman(IStatGame game) : base(game)
         {
             Name = "Критерий Ходжа-Лемана";
             Type = "Производный";
@@ -241,8 +240,7 @@ namespace DSSView
             DecizionAlgoritm = "- Расчитать среднее значение эффективности по альтернативам\n- Рассчитать минимальное значение эффективности по альтернативам\n- Составить вектор по альтернативам: среднее значение умножается на коэффициент, минимальное на (1-коэффициент)\n- Из вектора выбирается максимальное значение и соотносится с альтернативой";
             ChancesRequired = false;
 
-            Options = new IOption[] { LemanCoeff };
-            LemanCoeff.Changed += (double old, double newV) => Update();
+            AddOption(LemanCoeff);
         }
 
         protected override void Count()
@@ -269,7 +267,7 @@ namespace DSSView
     }
     public class CriteriaMulti : Criteria
     {
-        public CriteriaMulti(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
+        public CriteriaMulti(IStatGame game) : base(game)
         {
             Name = "Критерий произведений";
             Type = "Производный";
@@ -300,7 +298,7 @@ namespace DSSView
 
     public class CriteriaGerr : Criteria
     {
-        public CriteriaGerr(IMatrixChance<Alternative,Case,double> matrix) : base(matrix)
+        public CriteriaGerr(IStatGame game) : base(game)
         {
             Name = "Критерий Гермейера";
             Type = "Производный";

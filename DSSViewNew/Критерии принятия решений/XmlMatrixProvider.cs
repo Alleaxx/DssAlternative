@@ -10,7 +10,7 @@ using DSSLib;
 
 namespace DSSView
 {
-    [Serializable]
+    //Версии для сохранения
     public class PayMatrixXml
     {
         public Alternative[] Alternatives { get; set; }
@@ -38,21 +38,67 @@ namespace DSSView
             }
         }
     }
-
-    public class MatrixProvider : IXMLProvider<PayMatrix>
+    public class StatGameXml : PayMatrixXml
     {
-        public PayMatrix FromXml(string xml)
+        public string Name { get; set; }
+        public bool RiscConditions { get; set; }
+        public StatGameXml()
         {
-            DefaultXmlProvider<PayMatrixXml> provider = new DefaultXmlProvider<PayMatrixXml>();
-            PayMatrixXml payMatrix = provider.FromXml(xml);
+
+        }
+        public StatGameXml(StatGame game) : base(game.Mtx.Rows, game.Mtx.Cols, game.Mtx.Values)
+        {
+            Name = game.Name;
+            RiscConditions = game.InRiscConditions;
+        }
+    }
+
+    public static class XmlProvider
+    {
+        public static ISaver<T> Get<T>()
+        {
+            Type type = typeof(T);
+            if (type == typeof(PayMatrix))
+            {
+                return new SaverLogged<PayMatrix>(new Saver<PayMatrix>(new MatrixProvider())) as ISaver<T>;
+            }
+            if (type == typeof(StatGame))
+            {
+                return new SaverLogged<StatGame>(new Saver<StatGame>(new StatGameProvider())) as ISaver<T>;
+            }
+            return null;
+        }
+    }
+
+
+    public class MatrixProvider : ITextProvider<PayMatrix>
+    {
+        XmlProvider<PayMatrixXml> Provider { get; set; } = new XmlProvider<PayMatrixXml>();
+        public PayMatrix FromTextString(string xml)
+        {
+            PayMatrixXml payMatrix = Provider.FromTextString(xml);
             return new PayMatrixRisc(payMatrix);
         }
 
-        public string ToXml(PayMatrix matrix)
+        public string ToTextString(PayMatrix matrix)
         {
-            DefaultXmlProvider<PayMatrixXml> provider = new DefaultXmlProvider<PayMatrixXml>();
             PayMatrixXml payMatrix = new PayMatrixXml(matrix.RowsArr,matrix.ColsArr,matrix.Arr);
-            return provider.ToXml(payMatrix);
+            return Provider.ToTextString(payMatrix);
+        }
+    }
+    public class StatGameProvider : ITextProvider<StatGame>
+    {
+        private XmlProvider<StatGameXml> Provider { get; set; } = new XmlProvider<StatGameXml>();
+
+        public StatGame FromTextString(string xml)
+        {
+            StatGameXml gameXml = Provider.FromTextString(xml);
+            return new StatGame(gameXml);
+        }
+        public string ToTextString(StatGame game)
+        {
+            StatGameXml gameXml = new StatGameXml(game);
+            return Provider.ToTextString(gameXml);
         }
     }
 }

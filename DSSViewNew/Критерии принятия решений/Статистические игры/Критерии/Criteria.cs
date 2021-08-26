@@ -15,7 +15,7 @@ namespace DSSView
         double Rank { get; }
         double Result { get; }
         IEnumerable<Alternative> BestAlternatives { get; }
-        IOption[] Options { get; }
+        List<IOption> Options { get; }
         List<IStep> Steps { get; }
 
         void Update();
@@ -23,6 +23,8 @@ namespace DSSView
     }
     public abstract class Criteria : ICriteria
     {
+        public override string ToString() => $"{Name} - {Result} ({Rank})";
+
         public event Action<double, IEnumerable<Alternative>> ResultChanged;
 
         //Описание критерия
@@ -38,33 +40,39 @@ namespace DSSView
 
 
         //Коэффициенты, если есть
-        public IOption[] Options { get; protected set; } = new IOption[0];
-
+        public List<IOption> Options { get; private set; } = new List<IOption>();
+        protected void AddOption(IOption option)
+        {
+            Options.Add(option);
+            option.Changed += Option_Changed;
+        }
+        private void Option_Changed(double arg1, double arg2)
+        {
+            Update();
+        }
 
 
         //Быстрый доступ
-        private IInfoMatrix Info => Matrix.Info;
-        private IMatrixChance<Alternative, Case, double> Matrix { get; set; }
+        public IStatGame Game { get; private set; }
 
-
-        protected double[,] Arr
-        {
-            get
-            {
-                double[,] arr = new double[Matrix.Rows, Matrix.Cols];
-                for (int r = 0; r < RowsCount; r++)
-                {
-                    for (int c = 0; c < ColsCount; c++)
-                    {
-                        arr[r, c] = Matrix.Get(r, c);
-                    }
-                }
-                return arr;
-            }
-        }
-        protected double RowsCount => Matrix.Rows;
-        protected double ColsCount => Matrix.Cols;
-        protected double GetChance(int col) => Info.GetChance(col);
+        protected double[,] Arr => Game.Arr;
+        //{
+        //    get
+        //    {
+        //        double[,] arr = new double[Matrix.Rows, Matrix.Cols];
+        //        for (int r = 0; r < RowsCount; r++)
+        //        {
+        //            for (int c = 0; c < ColsCount; c++)
+        //            {
+        //                arr[r, c] = Matrix.Get(r, c);
+        //            }
+        //        }
+        //        return arr;
+        //    }
+        //}
+        protected double RowsCount => Game.RowsCount;
+        protected double ColsCount => Game.ColsCount;
+        protected double GetChance(int col) => Game.GetChance(col);
 
 
         //Применимость критерия
@@ -74,11 +82,11 @@ namespace DSSView
         {
             ConditionsRank.Clear();
 
-            bool isOkUnknown = !ChancesRequired && Info.InUnknownConditions;
-            bool isAnyway = !ChancesRequired && Info.InRiscConditions;
+            bool isOkUnknown = !ChancesRequired && Game.InUnknownConditions;
+            bool isAnyway = !ChancesRequired && Game.InRiscConditions;
 
-            bool isNotOkRisc = ChancesRequired && Info.InUnknownConditions;
-            bool isOkRisc = ChancesRequired && Info.InRiscConditions;
+            bool isNotOkRisc = ChancesRequired && Game.InUnknownConditions;
+            bool isOkRisc = ChancesRequired && Game.InRiscConditions;
 
             if (isOkUnknown)
             {
@@ -124,20 +132,19 @@ namespace DSSView
             }
         }
 
-        public IEnumerable<Alternative> BestAlternatives => BestAlternativeIndexes.Select(r => Matrix.GetRow(r));
+        public IEnumerable<Alternative> BestAlternatives => BestAlternativeIndexes.Select(r => Game.GetRow(r));
         public List<IStep> Steps { get; private set; } = new List<IStep>();
 
 
-        public Criteria(IMatrixChance<Alternative, Case, double> matrix)
+        public Criteria(IStatGame game)
         {
+            Game = game;
 
-            Matrix = matrix;
             Type = "Классический";
             Description = "Неопознанный критерий без описания";
             DecizionAlgoritm = "Алгоритм решения не описан";
 
             ConditionsRank = new List<Note>();
-
 
             UpdateRank();
             Count();
@@ -203,6 +210,25 @@ namespace DSSView
             }
             return max;
         }
+    }
+
+
+    //Информация для критерия
+    public interface IStatGame
+    {
+        event Action OnInfoUpdated;
+
+        double[,] Arr { get; }
+        double RowsCount { get; }
+        double ColsCount { get; }
+
+        bool InRiscConditions { get; }
+        bool InUnknownConditions { get; }
+
+        double GetChance(int col);
+
+        double Get(int r, int c);
+        Alternative GetRow(int r);
     }
 
 

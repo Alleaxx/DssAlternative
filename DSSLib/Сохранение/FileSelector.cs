@@ -10,14 +10,18 @@ namespace DSSLib
     {
         FileInfo Open();
         FileInfo Save();
-        FileInfo SaveAs();
-        FileInfo Create();
     }
+
+
     public class DialogFileSelector : IFileSelector
     {
         private string DefaultExt { get; set; }
         private string DefaultDirectory { get; set; }
         private string DefaultFilter { get; set; }
+        public DialogFileSelector(params FileExtInfo[] infos)
+        {
+
+        }
         public DialogFileSelector(string defaultExt = ".xml", string defaultFolder = @"C:\Users\Alleaxx\Documents\Программы", string filter = "XML-файлы (*.xml) |*.xml| TXT-файлы (*.txt*)|*.txt")
         {
             DefaultExt = defaultExt;
@@ -25,10 +29,6 @@ namespace DSSLib
             DefaultFilter = filter;
         }
 
-        public FileInfo Create()
-        {
-            throw new NotImplementedException();
-        }
 
         public FileInfo Open()
         {
@@ -59,56 +59,20 @@ namespace DSSLib
             }
             return null;
         }
-
-        public FileInfo SaveAs()
-        {
-            throw new NotImplementedException();
-        }
     }
 
-    public interface ISaver<T>
+    public class FileExtInfo
     {
-        T OpenFromFile();
-        void SaveToFile(T obj);
-    }
-    public class DefaultSaver<T> : ISaver<T>
-    {
-        public T OpenFromFile()
+        public string Name { get; private set; }
+        public string Extension { get; private set; }
+        public string Filter { get; private set; }
+        public int Priority { get; private set; }
+
+        public FileExtInfo(string name, string ext, int priority = 1)
         {
-            IXMLProvider<T> provider = new DefaultXmlProvider<T>();
-            IFileSelector selector = new DialogFileSelector();
-            FileInfo file = selector.Open();
-
-            if (file != null && file.Exists)
-            {
-                using (FileStream stream = File.OpenRead(file.FullName))
-                {
-                    byte[] array = new byte[stream.Length];
-                    stream.Read(array, 0, array.Length);
-                    string xml = Encoding.Default.GetString(array);
-
-                    T problemProject = provider.FromXml(xml);
-                    return problemProject;
-                }
-            }
-            return default;
-        }
-
-        public void SaveToFile(T obj)
-        {
-            IXMLProvider<T> provider = new DefaultXmlProvider<T>();
-            IFileSelector selector = new DialogFileSelector();
-            FileInfo file = selector.Save();
-
-            if (file != null)
-            {
-                string xml = provider.ToXml(obj);
-                using (FileStream stream = new FileStream(file.FullName, FileMode.Create))
-                {
-                    byte[] array = Encoding.Default.GetBytes(xml);
-                    stream.Write(array, 0, array.Length);
-                }
-            }
+            Name = name;
+            Extension = ext;
+            Priority = priority;
         }
     }
 }

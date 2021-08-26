@@ -6,12 +6,21 @@ using System.Threading.Tasks;
 
 namespace DSSView
 {
-    public class Case
+    public class Case : DSSLib.NotifyObj
     {
         public event Action OnChanceChanged;
 
-        public override string ToString() => Name;
-        public string Name { get; set; }
+        public override string ToString() => $"Случай \"{Name}\"";
+        public string Name
+        {
+            get => name;
+            set
+            {
+                name = value;
+                OnPropertyChanged();
+            }
+        }
+        private string name;
 
         public double Chance
         {
@@ -21,6 +30,7 @@ namespace DSSView
                 double old = chance;
                 chance = value;
                 OnChanceChanged?.Invoke();
+                OnPropertyChanged();
             }
         }
         private double chance;

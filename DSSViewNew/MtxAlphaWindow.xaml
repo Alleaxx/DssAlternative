@@ -25,8 +25,13 @@
                 <DockPanel>
                     <TextBlock Text="Сумма матрицы" />
                     <TextBlock Text="{Binding Sum}" HorizontalAlignment="Right"/>
-
                 </DockPanel>
+                <DockPanel>
+                    <Button Command="{Binding OpenCommand}" Content="Открыть" />
+                    <Button Command="{Binding SaveCommand}" Content="Сохранить" />
+                </DockPanel>
+                <ItemsControl ItemsSource="{Binding BestAlts}" />
+                <ItemsControl ItemsSource="{Binding Criterias}" />
             </StackPanel>
         </GroupBox>
         <GroupBox Grid.Row="1" Grid.Column="0" Header="Варианты действий (строки)">
@@ -63,6 +68,11 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
         <Grid.Resources>
+            <DataTemplate DataType="{x:Type local:Criteria}">
+                <Grid ToolTip="{Binding Result}">
+                    <TextBlock Text="{Binding Name}" />
+                </Grid>
+            </DataTemplate>
             <DataTemplate DataType="{x:Type local:Case}">
                 <Grid>
                     <Grid.ColumnDefinitions>
