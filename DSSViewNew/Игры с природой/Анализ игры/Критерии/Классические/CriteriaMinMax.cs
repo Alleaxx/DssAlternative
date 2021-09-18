@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using DSSView.Extensions;
 namespace DSSView
 {
     public class CriteriaMinMax : Criteria
@@ -17,7 +18,7 @@ namespace DSSView
         }
         protected override void Count()
         {
-            List<double> maxes = new List<double>();
+            List<double> maxes = new List<double>((int)Rows);
             for (int i = 0; i < Rows; i++)
             {
                 maxes.Add(Arr.MaxFromRow(i));

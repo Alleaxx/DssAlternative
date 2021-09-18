@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 
-using DSSAlternative.AHP;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DSSViewTests

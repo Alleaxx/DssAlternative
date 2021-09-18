@@ -9,7 +9,9 @@
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolVisibility" />
-
+        <ItemsPanelTemplate x:Key="wrap">
+            <WrapPanel />
+        </ItemsPanelTemplate>
         <Style TargetType="{x:Type TreeViewItem}">
 
             <Style.Resources>
@@ -263,28 +265,18 @@
                                                 <StackPanel Grid.Row="4" Grid.ColumnSpan="2" VerticalAlignment="Bottom" >
                                                     <StackPanel>
                                                         <!--<Button Content="Создать матрицу рисков на основе" Margin="4" Padding="5,3" FontSize="14" Background="LightBlue" Cursor="Hand" Command="{Binding AddSafeMatrixCommand}"/>-->
+                                                        <TextBlock Text="Условия" />
+                                                        <ListBox SelectedItem="{Binding Situation.Chances}" ItemsSource="{Binding Chances}" ItemsPanel="{StaticResource wrap}">
 
-                                                    </StackPanel>
-                                                    <StackPanel>
-                                                        <DockPanel>
-                                                            <TextBlock Text="Ошибок нет: " Foreground="Gray" Margin="2,0" FontSize="14"/>
-                                                            <TextBlock Text="{Binding ChancesOk}" Margin="2,0" FontSize="14" HorizontalAlignment="Right"/>
-                                                        </DockPanel>
-                                                        <DockPanel>
-                                                            <TextBlock Text="{Binding Status}" Foreground="Gray" Margin="2,0" FontSize="14"/>
-                                                            <CheckBox IsChecked="{Binding InRiscConditions}" HorizontalAlignment="Right" VerticalContentAlignment="Center">
-                                                                <TextBlock Text="Условия риска" Margin="2,0" FontSize="11" />
-                                                            </CheckBox>
-                                                        </DockPanel>
-                                                        <DockPanel>
-                                                            <TextBlock Text="Сумма известных вероятностей: " Foreground="Gray" Margin="2,0" FontSize="14"/>
-                                                            <TextBlock Text="{Binding SumChances}" Margin="2,0" FontSize="14" HorizontalAlignment="Right"/>
-                                                        </DockPanel>
-                                                        <!--<DockPanel>
-                                                            <TextBlock Text="Вероятность неизвестного исхода: " Foreground="Gray" Margin="2,0" FontSize="14"/>
-                                                            <TextBlock Text="{Binding DefaultChanceUnknown}" Margin="2,0" FontSize="14" HorizontalAlignment="Right"/>
-                                                        </DockPanel>
-                                                        <Button Content="Пересчитать шансы" Margin="4" Padding="5,3" FontSize="14" Background="LightSalmon" Cursor="Hand" Command="{Binding RecoundChancesC}"/>-->
+                                                        </ListBox>
+                                                        <TextBlock Text="Направленность" />
+                                                        <ListBox SelectedItem="{Binding Situation.Goal}" ItemsSource="{Binding Goals}" ItemsPanel="{StaticResource wrap}">
+
+                                                        </ListBox>
+                                                        <TextBlock Text="Применение" />
+                                                        <ListBox SelectedItem="{Binding Situation.Usage}" ItemsSource="{Binding Usages}" ItemsPanel="{StaticResource wrap}">
+
+                                                        </ListBox>
                                                     </StackPanel>
                                                 </StackPanel>
                                             </Grid>
@@ -313,7 +305,6 @@
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
-                                            <Separator Margin="0,10"/>
                                             <TextBlock Text="Приоритетные альтернативы:" FontSize="14" FontWeight="Medium" Margin="3,0"/>
                                             <ItemsControl ItemsSource="{Binding AlternativeRanks}" Margin="5">
                                                 <ItemsControl.ItemTemplate>
@@ -511,7 +502,7 @@
                                                         </ItemsControl>
                                                     </DockPanel>
                                                     <TextBlock Text="Расчеты" FontSize="14" FontWeight="Medium" Margin="0,4"/>
-                                                    <ItemsControl ItemsSource="{Binding Steps}">
+                                                    <ItemsControl ItemsSource="{Binding StepsAlgorythm}">
                                                         <ItemsControl.Resources>
                                                             <DataTemplate DataType="{x:Type local:Step}">
                                                                 <DockPanel>

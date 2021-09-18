@@ -41,7 +41,6 @@ namespace DSSView
     public class StatGameXml : StatMtxXml
     {
         public string Name { get; set; }
-        public bool RiscConditions { get; set; }
         public StatGameXml()
         {
 
@@ -49,7 +48,6 @@ namespace DSSView
         public StatGameXml(StatGame game) : base(game.Mtx.Rows, game.Mtx.Cols, game.Mtx.Values)
         {
             Name = game.Name;
-            RiscConditions = game.InRiscConditions;
         }
     }
 

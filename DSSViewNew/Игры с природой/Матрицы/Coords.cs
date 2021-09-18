@@ -9,15 +9,23 @@ namespace DSSView
     //Ячейки
     public struct Coords
     {
-        public override string ToString() => $"[{X},{Y}]";
+        public override string ToString()
+        {
+            return $"[{X},{Y}]";
+        }
 
-        public int X { get; set; }
-        public int Y { get; set; }
+        public int X { get; private set; }
+        public int Y { get; private set; }
 
         public Coords(int x, int y)
         {
             X = x;
             Y = y;
+        }
+
+        public static Coords Of(int x, int y)
+        {
+            return new Coords(x, y);
         }
     }
 }

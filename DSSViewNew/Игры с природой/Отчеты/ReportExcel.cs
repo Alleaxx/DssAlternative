@@ -8,7 +8,7 @@ namespace DSSView
 {
     public class ReportExcel : Report
     {
-        public ReportExcel(StatGame matrix) : base(matrix)
+        public ReportExcel(IStatGame matrix) : base(matrix)
         {
 
         }

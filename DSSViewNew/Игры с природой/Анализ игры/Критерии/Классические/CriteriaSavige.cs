@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using DSSView.Extensions;
 namespace DSSView
 {
     public class CriteriaSavige : Criteria
@@ -12,13 +13,13 @@ namespace DSSView
         {
             Name = "Критерий Сэвиджа";
             ChancesRequired = false;
-            Description = "Критерий минимизации риска. Как и критерий Вальда, критерий Сэвиджа очень осторожен. Если критерий вальда это минимальный выигрыш, то Сэвидж определяет максимальную потерю выигрыша по сравнению с тем, чего можно было бы достичь в данных условиях";
+            Description = "Критерий минимизации риска. Как и критерий Вальда, критерий Сэвиджа очень осторожен. Оптимальная стратегия та - при которой в худших условиях полученный риск минимален";
             DecizionAlgoritm = "- Необходимо составить матрицу рисков на основе исходной\n- - Определить наилучшую эффективность каждого исхода\n- - Из наилучшей эффективности каждого исхода вычитается оригинальное значение матрицы\n- Определить наибольшие значения по строкам матрицы\n- Выбрать из них наименьшее значение и соотнести с альтернативой ";
         }
 
         protected override void Count()
         {
-            double[] maxInRowsAfter = new double[(int)Rows];
+            double[] maxInRowsAfter = this.NewRows();
             double[,] riscMatrix = Arr.GetRiscMatrix();
             for (int r = 0; r < Rows; r++)
             {

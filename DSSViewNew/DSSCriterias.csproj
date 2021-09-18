@@ -65,21 +65,29 @@
     <Compile Include="NewMatrixWindow.xaml.cs">
       <DependentUpon>NewMatrixWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Игры с природой\Игра\Ситуация\Situation.cs" />
     <Compile Include="Игры с природой\Анализ игры\Criteria.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Note.cs" />
     <Compile Include="Игры с природой\Анализ игры\RankAlternative.cs" />
     <Compile Include="Игры с природой\Анализ игры\RankCriteria.cs" />
     <Compile Include="Игры с природой\Анализ игры\Option.cs" />
     <Compile Include="Игры с природой\Анализ игры\Step.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaBaies.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaBaiesLaplas.cs" />
     <Compile Include="Игры с природой\Анализ игры\Критерии\Производные\CriteriaGerr.cs" />
     <Compile Include="Игры с природой\Анализ игры\Критерии\Производные\CriteriaGurvits.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaLaplas.cs" />
     <Compile Include="Игры с природой\Анализ игры\Критерии\Производные\CriteriaLeman.cs" />
     <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaMaxMax.cs" />
     <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaMinMax.cs" />
     <Compile Include="Игры с природой\Анализ игры\Критерии\Производные\CriteriaMulti.cs" />
     <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaSavige.cs" />
     <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaWald.cs" />
+    <Compile Include="Игры с природой\Игра\Ситуация\State.cs" />
+    <Compile Include="Игры с природой\Игра\View.cs" />
+    <Compile Include="Игры с природой\Игра\Матрица игры\AltCase.cs" />
+    <Compile Include="Игры с природой\Игра\Матрица игры\StatCellFactory.cs" />
+    <Compile Include="Игры с природой\Игра\Ситуация\Состояния\StateChances.cs" />
+    <Compile Include="Игры с природой\Игра\Ситуация\Состояния\StateGoal.cs" />
+    <Compile Include="Игры с природой\Игра\Ситуация\Состояния\StateUsage.cs" />
     <Compile Include="Игры с природой\Матрицы\Cell.cs" />
     <Compile Include="Игры с природой\Матрицы\CellFactory.cs" />
     <Compile Include="Игры с природой\Матрицы\Coords.cs" />
@@ -101,7 +109,7 @@
     <Compile Include="Игры с природой\ViewApp.cs" />
     <Compile Include="Игры с природой\Игра\StatGame.cs" />
     <Compile Include="Игры с природой\Игра\StatGameView.cs" />
-    <Compile Include="Игры с природой\Игра\StatMatrix.cs" />
+    <Compile Include="Игры с природой\Игра\Матрица игры\StatMatrix.cs" />
     <Page Include="MatrixViewWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -133,11 +141,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

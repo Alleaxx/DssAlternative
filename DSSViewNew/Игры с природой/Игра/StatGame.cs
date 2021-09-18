@@ -8,19 +8,47 @@ using System.Threading.Tasks;
 namespace DSSView
 {
     //Статистическая игра
+    public interface IStatGame
+    {
+        event Action OnInfoUpdated;
+        double[,] Arr { get; }
+        Situation Situation { get; }
+        double GetChance(int col);
+        Alternative GetRow(int r);
+    }
+
     public class StatGame : IStatGame
     {
-        public override string ToString() => $"Статистическая игра \"{Name}\"";
+        public override string ToString()
+        {
+            return $"Статистическая игра \"{Name}\"";
+        }
 
         public event Action OnInfoUpdated;
 
         public string Name { get; set; }
-        public MtxStat Mtx { get; set; }
-        public StatGameAnalysis Report { get; set; }
-        public GameState State { get; set; }
+
+        public MtxStat Mtx { get; private set; }
+        public double[,] Arr => Mtx.Values;
+        public Alternative GetRow(int r)
+        {
+            return Mtx.GetRow(r);
+        }
+
+        public GameAnalysis Report { get; private set; }
+
+        public Situation Situation { get; private set; }
+        public double GetChance(int pos)
+        {
+            return Situation.Chances.GetChance(Mtx.Cols, pos);
+        }
 
 
         public StatGame() : this("Природа", new MtxStat())
+        {
+
+        }
+        public StatGame(StatGameXml xml) : this(xml.Name, MtxStat.CreateFromXml(xml))
         {
 
         }
@@ -28,103 +56,47 @@ namespace DSSView
         {
             Name = name;
             Mtx = mtx;
+            Situation = new Situation();
+            Report = new GameAnalysis(this);
 
-            State = new GameState(this);
-            Report = new StatGameAnalysis(this);
+            AddListeners();
+            SetCaseListeners();
 
-            Mtx.OnRowChanged += r => MtxUpdated();
-            Mtx.OnColChanged += c => MtxUpdated();
-            Mtx.OnValuesChanged += c => MtxUpdated();
-            State.OnCaseChanceChanged += c => StateUpdated();
+            void SetCaseListeners()
+            {
+                foreach (Case cas in Mtx.Cols)
+                {
+                    cas.OnChanceChanged += CaseChanceChanged;
+                }
+            }
+            void AddListeners()
+            {
+                Situation.OnChanged += MtxUpdated;
+                Mtx.OnRowAdded += r => MtxUpdated();
+                Mtx.OnColAdded += c => MtxUpdated();
+                Mtx.OnValuesChanged += c => MtxUpdated();
+
+                Mtx.OnColAdded += CaseValueAddListener;
+                Mtx.OnColRemoved += CaseValueRemoveListener;
+            }
         }
-        public StatGame(StatGameXml xml) : this(xml.Name, MtxStat.CreateFromXml(xml))
-        {
-            State.Risc = xml.RiscConditions;
-        }
-
-
 
         private void MtxUpdated()
         {
             OnInfoUpdated?.Invoke();
         }
-        private void StateUpdated()
+
+        private void CaseChanceChanged()
         {
-            OnInfoUpdated?.Invoke();
+            MtxUpdated();
         }
-        private void Updated()
+        private void CaseValueAddListener(Case c)
         {
-            OnInfoUpdated?.Invoke();
+            c.OnChanceChanged += CaseChanceChanged;
         }
-
-
-        //Реализация StatGame
-        public double[,] Arr => Mtx.Values;
-        public bool InRiscConditions => State.Risc;
-        public bool InUnknownConditions => State.Unknown;
-        public double GetChance(int col) => State.GetChance(col);
-
-
-        public double Get(int r, int c) => Mtx.Get(r, c);
-        public Alternative GetRow(int r) => Mtx.GetRow(r);
-    }
-    public class GameState
-    {
-        public override string ToString() => $"Состояние игры: {Status}";
-        public event Action<Case> OnCaseChanceChanged;
-
-        private StatGame Game { get; set; }
-        private IEnumerable<Case> Cases => Game.Mtx.Cols;
-
-
-        public double SumCases => Cases.Select(c => GetChance(c)).Sum();
-        public bool IsOk => SumCases == 1;
-        public bool Risc
+        private void CaseValueRemoveListener(Case c)
         {
-            get => risc;
-            set
-            {
-                risc = value;
-                OnCaseChanceChanged?.Invoke(null);
-            }
-        }
-        private bool risc;
-        public bool Unknown => !Risc;
-        public string Status => IsOk ? Risc ? "Условия риска" : "Условия неизвестности" : "Некорректные условия";
-        public double GetChance(Case c)
-        {
-            if (Unknown)
-                return 1 / (double)Cases.Count();
-            else
-                return c.Chance;
-        }
-        public double GetChance(int pos)
-        {
-            Case c = Cases.ElementAt(pos);
-            return GetChance(c);
-        }
-
-
-        public GameState(StatGame game)
-        {
-            Game = game;
-            game.Mtx.OnColChanged += Mtx_OnColChanged;
-            foreach (var c in Cases)
-            {
-                c.OnChanceChanged += Case_OnChanceChanged;
-            }
-        }
-
-        private void Case_OnChanceChanged()
-        {
-            OnCaseChanceChanged?.Invoke(null);
-        }
-
-
-        private void Mtx_OnColChanged(Case obj)
-        {
-            obj.OnChanceChanged += Case_OnChanceChanged;
+            c.OnChanceChanged -= CaseChanceChanged;
         }
     }
-
 }

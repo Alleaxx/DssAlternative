@@ -8,7 +8,7 @@ using DSSLib;
 
 namespace DSSView
 {
-    public class StatGameAnalysis : NotifyObj
+    public class GameAnalysis : NotifyObj
     {
         public override string ToString() => $"Анализ статистической игры: ({string.Join(";",BestAlternatives)})";
 
@@ -21,7 +21,7 @@ namespace DSSView
         public IEnumerable<RankAlternative> AlternativeRanks { get; private set; }
 
 
-        public StatGameAnalysis(IStatGame game)
+        public GameAnalysis(IStatGame game)
         {
             SetCriterias(game);
             game.OnInfoUpdated += UpdateSummary;
@@ -53,29 +53,43 @@ namespace DSSView
                 criteria.Update();
             }
 
-            AlternativeRanks = GetAlternativeRanks();
+            AlternativeRanks = GetAltRanks();
             BestAlternatives = AlternativeRanks.Where(c => c.Rating == MaxRank).Select(f => f.Alternative);
-
+            
+            UpdateProperties();
+        }
+        private void UpdateProperties()
+        {
             OnPropertyChanged(nameof(BestAlternatives));
             OnPropertyChanged(nameof(AlternativeRanks));
         }
+
         private double MaxRank => AlternativeRanks.Max(a => a.Rating);
-        private IEnumerable<RankAlternative> GetAlternativeRanks()
+        private IEnumerable<RankAlternative> GetAltRanks()
         {
-            var alts = Criterias.SelectMany(c => c.BestAlternatives).Distinct();
-            var ranks = new List<RankAlternative>(alts.Count());
-            foreach (var alt in alts)
-            {
-                var chosenByCrits = Criterias.Where(c => c.BestAlternatives.Contains(alt));
-                RankAlternative rank = new RankAlternative(alt, chosenByCrits);
-                ranks.Add(rank);
-            }
-            double total = ranks.Sum(r => r.Rating);
-            foreach (var rank in ranks)
-            {
-                rank.RatingTotal = total;
-            }
+            var bestAlts = Criterias.SelectMany(c => c.BestAlternatives).Distinct();
+            var ranks = new List<RankAlternative>(bestAlts.Count());
+            CreateRanks();
+            SetRanksRating();
             return ranks.OrderByDescending(r => r.Rating);
+
+            void CreateRanks()
+            {
+                foreach (Alternative alt in bestAlts)
+                {
+                    var critsWhoChosedAlt = Criterias.Where(c => c.BestAlternatives.Contains(alt));
+                    RankAlternative rank = new RankAlternative(alt, critsWhoChosedAlt);
+                    ranks.Add(rank);
+                }
+            }
+            void SetRanksRating()
+            {
+                double rankRating = ranks.Sum(r => r.Rating);
+                foreach (var rank in ranks)
+                {
+                    rank.RatingTotal = rankRating;
+                }
+            }
         }
     }
 }

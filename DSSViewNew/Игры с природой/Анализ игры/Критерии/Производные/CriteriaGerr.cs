@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using DSSView.Extensions;
 namespace DSSView
 {
     public class CriteriaGerr : Criteria
@@ -29,7 +30,7 @@ namespace DSSView
                 }
             }
 
-            double[] minInRows = new double[(int)Rows];
+            double[] minInRows = this.NewRows();
             for (int r = 0; r < Rows; r++)
             {
                 double m = newArr[r, 0];

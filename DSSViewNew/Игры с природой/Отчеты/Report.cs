@@ -14,10 +14,10 @@ namespace DSSView
 
     public abstract class Report : IReport
     {
-        protected StatGame Game { get; set; }
+        protected IStatGame Game { get; set; }
         protected DateTime Creation { get; set; }
 
-        public Report(StatGame game)
+        public Report(IStatGame game)
         {
             Game = game;
         }
@@ -25,7 +25,7 @@ namespace DSSView
         public abstract void Open();
 
         public enum ReportType { Word, PDF, HTML, Excel }
-        public static IReport GetReport(StatGame game, ReportType type)
+        public static IReport GetReport(IStatGame game, ReportType type)
         {
             Report report;
             switch (type)

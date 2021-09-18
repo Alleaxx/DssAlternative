@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using DSSView.Extensions;
 namespace DSSView
 {
     public class CriteriaGurvits : Criteria
@@ -22,7 +23,7 @@ namespace DSSView
 
         protected override void Count()
         {
-            double[] gurv = new double[(int)Rows];
+            double[] gurv = this.NewRows();
 
             for (int r = 0; r < Rows; r++)
             {

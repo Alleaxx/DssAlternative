@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using DSSView.Extensions;
 namespace DSSView
 {
     public class CriteriaLeman : Criteria
@@ -22,7 +23,7 @@ namespace DSSView
 
         protected override void Count()
         {
-            double[] coeff = new double[(int)Rows];
+            double[] coeff = this.NewRows();
 
             for (int r = 0; r < Rows; r++)
             {
