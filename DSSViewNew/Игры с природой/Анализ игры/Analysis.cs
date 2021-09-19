@@ -10,10 +10,27 @@ namespace DSSView
 {
     public class GameAnalysis : NotifyObj
     {
-        public override string ToString() => $"Анализ статистической игры: ({string.Join(";",BestAlternatives)})";
+        public override string ToString()
+        {
+            return $"Анализ статистической игры: ({string.Join(";", BestAlternatives)})";
+        }
 
         //Критерии для анализа
-        public IEnumerable<ICriteria> Criterias { get; private set; }
+        private IEnumerable<ICriteria> Criterias { get; set; }
+        public IEnumerable<ICriteria> CriteriasConsider
+        {
+            get
+            {
+                if (true)
+                {
+                    return Criterias.Where(c => c.Rank.Rating > 0);
+                }
+                else
+                {
+                    return default;
+                }
+            }
+        }
         public IEnumerable<IOption> Options { get; private set; }
 
         //Результаты анализа
@@ -62,12 +79,13 @@ namespace DSSView
         {
             OnPropertyChanged(nameof(BestAlternatives));
             OnPropertyChanged(nameof(AlternativeRanks));
+            OnPropertyChanged(nameof(CriteriasConsider));
         }
 
         private double MaxRank => AlternativeRanks.Max(a => a.Rating);
         private IEnumerable<RankAlternative> GetAltRanks()
         {
-            var bestAlts = Criterias.SelectMany(c => c.BestAlternatives).Distinct();
+            var bestAlts = CriteriasConsider.SelectMany(c => c.BestAlternatives).Distinct();
             var ranks = new List<RankAlternative>(bestAlts.Count());
             CreateRanks();
             SetRanksRating();
@@ -77,7 +95,7 @@ namespace DSSView
             {
                 foreach (Alternative alt in bestAlts)
                 {
-                    var critsWhoChosedAlt = Criterias.Where(c => c.BestAlternatives.Contains(alt));
+                    var critsWhoChosedAlt = CriteriasConsider.Where(c => c.BestAlternatives.Contains(alt));
                     RankAlternative rank = new RankAlternative(alt, critsWhoChosedAlt);
                     ranks.Add(rank);
                 }

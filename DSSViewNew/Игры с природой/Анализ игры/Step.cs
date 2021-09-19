@@ -14,7 +14,10 @@ namespace DSSView
     }
     public class Step : IStep
     {
-        public override string ToString() => $"Шаг {Order}) {Name} - {Result}";
+        public override string ToString()
+        {
+            return $"Шаг {Order}) {Name} - {Result}";
+        }
 
         public int Order { get; private set; }
         public string Name { get; private set; }
@@ -29,7 +32,11 @@ namespace DSSView
     }
     public class StepArr : IStep
     {
-        public override string ToString() => $"Шаг {Order}) {Name} - [{string.Join(";", Arr)}]";
+        public override string ToString()
+        {
+            return $"Шаг {Order}) {Name} - [{string.Join(";", Arr)}]";
+        }
+
         public int Order { get; private set; }
         public string Name { get; private set; }
         public IEnumerable<double> Arr { get; private set; }

@@ -12,7 +12,9 @@ namespace DSSView
         public CriteriaSavige(IStatGame game) : base(game)
         {
             Name = "Критерий Сэвиджа";
-            ChancesRequired = false;
+            Situation.Goal = StateGoal.Get(Goals.MinRisc);
+            Situation.Usage = StateUsage.Get(Usages.OneTime);
+            Situation.Chances = StateChances.Unknown();
             Description = "Критерий минимизации риска. Как и критерий Вальда, критерий Сэвиджа очень осторожен. Оптимальная стратегия та - при которой в худших условиях полученный риск минимален";
             DecizionAlgoritm = "- Необходимо составить матрицу рисков на основе исходной\n- - Определить наилучшую эффективность каждого исхода\n- - Из наилучшей эффективности каждого исхода вычитается оригинальное значение матрицы\n- Определить наибольшие значения по строкам матрицы\n- Выбрать из них наименьшее значение и соотнести с альтернативой ";
         }

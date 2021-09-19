@@ -147,7 +147,10 @@ namespace DSSView
         protected double[,] Arr => Game.Arr;
         protected double Rows => Arr.Rows();
         protected double Cols => Arr.Cols();
-        protected double ChanceFor(int col) => Game.GetChance(col);
+        protected double ChanceFor(int col)
+        {
+            return Game.GetChance(col);
+        }
     }
 
 

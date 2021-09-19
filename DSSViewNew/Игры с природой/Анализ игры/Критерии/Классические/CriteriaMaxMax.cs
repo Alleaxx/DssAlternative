@@ -12,7 +12,9 @@ namespace DSSView
         public CriteriaMaxMax(IStatGame game) : base(game)
         {
             Name = "Критерий Азартного игрока";
-            ChancesRequired = false;
+            Situation.Goal = StateGoal.Get(Goals.MaxProfit);
+            Situation.Usage = StateUsage.Get(Usages.Couple);
+            Situation.Chances = StateChances.Unknown();
             Description = "Критерий крайнего оптимизма или критерий максимакса. В данном случае ЛПР делает ставку на то, что произойдет наиболее благоприятный исход";
             DecizionAlgoritm = "- Найти наилучшие варианты исхода по каждой альтернативе\n- Из них выбрать наилучший вариант выбора альтернативы";
         }

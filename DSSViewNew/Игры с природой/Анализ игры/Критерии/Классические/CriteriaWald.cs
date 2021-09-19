@@ -12,6 +12,9 @@ namespace DSSView
         public CriteriaWald(IStatGame game) : base(game)
         {
             Name = "Критерий Вальда";
+            Situation.Goal = StateGoal.Get(Goals.MinRisc);
+            Situation.Usage = StateUsage.Get(Usages.OneTime);
+            Situation.Chances = StateChances.Unknown();
             Description = "Критерий крайнего пессимизма. Наиболее осторожный критерий, будто игра ведется не с природой, а с противником. Ориентирован на наихудшие условия, только среди которых отыскивается наилучший и теперь уже гарантированный результат.";
             DecizionAlgoritm = "- Найти наихудшие варианты исхода по каждой альтернативе\n- Из них выбрать наилучший вариант выбора альтернативы";
         }

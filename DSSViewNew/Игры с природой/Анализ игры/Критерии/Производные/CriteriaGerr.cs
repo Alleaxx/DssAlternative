@@ -15,8 +15,10 @@ namespace DSSView
             Type = "Производный";
             Description = "Ориентирован на величину потерь";
             DecizionAlgoritm = "- Определить минимальное значение по альтернативе\n- Определить максимальное значение по альтернативе\n- Составляется вектор из минимального и максимального значения альтернатив: максимальное умножается на коэффициент, а минимальное на (1-коэффициент)\n- Из вектора выбирается максимальное значение";
-            ChancesRequired = false;
 
+            Situation.Goal = StateGoal.Get(Goals.RiscAllowed);
+            Situation.Usage = StateUsage.Get(Usages.Any);
+            Situation.Chances = StateChances.Riscs();
         }
 
         protected override void Count()

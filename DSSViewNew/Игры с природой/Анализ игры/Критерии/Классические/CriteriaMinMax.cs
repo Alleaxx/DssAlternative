@@ -12,7 +12,9 @@ namespace DSSView
         public CriteriaMinMax(IStatGame game) : base(game)
         {
             Name = "Критерий Минимакса";
-            ChancesRequired = false;
+            Situation.Goal = StateGoal.Get(Goals.MinRisc);
+            Situation.Usage = StateUsage.Get(Usages.Couple);
+            Situation.Chances = StateChances.Unknown();
             Description = "...";
             DecizionAlgoritm = "- Найти наилучшие варианты исхода по каждой альтернативе\n- Из них выбрать наихудший вариант выбора альтернативы";
         }

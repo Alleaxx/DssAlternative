@@ -10,24 +10,20 @@ namespace DSSView
 {
     public enum Goals
     {
-        MinRisc, MaxProfit, Any
+        MinRisc, MaxProfit, RiscAllowed
     }
 
     public abstract class StateGoal : State<Goals>
     {
-        public static StateGoal Get(Goals riscs)
+        private static readonly Dictionary<Goals, StateGoal> Values = new Dictionary<Goals, StateGoal>()
         {
-            switch (riscs)
-            {
-                case Goals.MaxProfit:
-                    return new GoalMaxProfit();
-                case Goals.MinRisc:
-                    return new GoalMinRisc();
-                case Goals.Any:
-                    return new GoalAny();
-                default:
-                    throw new Exception("Такой цели нет");
-            }
+            [Goals.MaxProfit]   = new GoalMaxProfit(),
+            [Goals.RiscAllowed] = new GoalAny(),
+            [Goals.MinRisc]     = new GoalMinRisc(),
+        };
+        public static StateGoal Get(Goals chance)
+        {
+            return Values[chance];
         }
 
         protected StateGoal(Goals riscs) : base(riscs)
@@ -54,9 +50,9 @@ namespace DSSView
         }
         public class GoalAny : StateGoal
         {
-            public GoalAny() : base(Goals.Any)
+            public GoalAny() : base(Goals.RiscAllowed)
             {
-                Name = "Всё равно";
+                Name = "Некоторый риск";
             }
         }
     }

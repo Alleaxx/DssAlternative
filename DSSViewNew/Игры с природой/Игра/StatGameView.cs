@@ -29,7 +29,7 @@ namespace DSSView
 
         //Отчет
         public GameAnalysis Report => Source.Report;
-        public IEnumerable<ICriteria> Criterias => Report.Criterias;
+        public IEnumerable<ICriteria> Criterias => Report.CriteriasConsider;
         public IEnumerable<Alternative> BestAlts => Report.BestAlternatives;
 
 
@@ -48,6 +48,7 @@ namespace DSSView
                 Mtx.OnRowAdded += Stat_RowChanged;
                 Mtx.OnColAdded += Stat_ColChanged;
                 Mtx.OnValuesChanged += Stat_ValuesChanged;
+                Source.Situation.OnChanged += () => Stat_ValuesChanged(default);
             }
             void FillSitutationArrs()
             {

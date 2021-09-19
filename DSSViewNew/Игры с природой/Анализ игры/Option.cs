@@ -25,13 +25,19 @@ namespace DSSView
             {
                 double old = value;
                 if (value < Min)
+                {
                     this.value = Min;
+                }
                 else if (value > Max)
+                {
                     this.value = Max;
+                }
                 else
+                {
                     this.value = value;
+                }
 
-                OnValueChanged?.Invoke(old, value);
+                OnValueChanged?.Invoke(old, this.value);
             }
         }
         private double value;

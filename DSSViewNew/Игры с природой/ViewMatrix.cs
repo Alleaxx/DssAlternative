@@ -24,18 +24,6 @@ namespace DSSView
 
     public class ViewMatrix : NotifyObj
     {
-        //public ObservableCollection<PayMatrixView> ListMatrix { get; private set; }
-        //public PayMatrixView Selected
-        //{
-        //    get => selected;
-        //    set
-        //    {
-        //        selected = value;
-        //        OnPropertyChanged();
-        //    }
-        //}
-        //private PayMatrixView selected;
-
         public ObservableCollection<StatGameView> Games { get; private set; }
         public StatGameView SelectedNew
         {
@@ -48,7 +36,7 @@ namespace DSSView
         }
         private StatGameView selectedNew;
 
-        private ISaver<StatGame> Saver { get; set; }
+        private readonly ISaver<StatGame> Saver;
 
 
 
@@ -78,45 +66,27 @@ namespace DSSView
                 StatGame newGame = new StatGame(info.Name, MtxStat.CreateFromSize(info.Rows, info.Cols));
                 Games.Add(new StatGameView(newGame));
                 SelectedNew = Games.Last();
-
-                //ListMatrix.Add(new PayMatrixView(new PayMatrixRisc(info.Rows, info.Cols)));
-                //Selected = ListMatrix.Last();
             }
         }
-        //public void AddSafeMatrix(PayMatrix matrix)
-        //{
-        //    //ListMatrix.Add(new PayMatrixView(matrix));
-        //    //Selected = ListMatrix.Last();
-        //}
         private void CloseMatrix(object obj)
         {
-            var oldSelected = SelectedNew;
+            StatGameView oldSelected = SelectedNew;
             int index = Games.IndexOf(oldSelected);
             if (index > 0)
+            {
                 SelectedNew = Games[index - 1];
+            }
             else
+            {
                 SelectedNew = null;
+            }
             Games.Remove(oldSelected);
-
-
-            //PayMatrixView oldSelected = Selected;
-            //int index = ListMatrix.IndexOf(oldSelected);
-            //if (index > 0)
-            //    Selected = ListMatrix[index - 1];
-            //else
-            //    Selected = null;
-            //ListMatrix.Remove(oldSelected);
         }
 
         private bool IsSavingAvailable(object obj) => false; //SelectedNew != null && SelectedNew.File != null && Selected.File.Exists;
         private void SaveMatrix(object obj)
         {
-            //if(IsSavingAvailable(null))
-            //{
-            //    string path = selected.File.FullName;
-            //    var matrix = selected.Matrix;
-            //    Saver.Save(path, matrix);
-            //}
+
         }
         private void SaveAsMatrix(object obj)
         {
@@ -154,19 +124,8 @@ namespace DSSView
             CreateReportCommand = new RelayCommand(CreateReport, obj => SelectedNew != null);
 
 
-            //ListMatrix = new ObservableCollection<PayMatrixView>();
-            //AddMatrix(new NewGameInfo());
-            //Selected = ListMatrix.Last();
-
             Games = new ObservableCollection<StatGameView>();
             AddMatrix(new NewGameInfo() { Name = "Стартовая", Rows = 3, Cols = 3 });
         }
-    }
-    
-    public class NewGameInfo
-    {
-        public string Name { get; set; } = "Матрица";
-        public int Rows { get; set; } = 3;
-        public int Cols { get; set; } = 3;
     }
 }

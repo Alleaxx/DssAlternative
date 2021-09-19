@@ -16,22 +16,35 @@ namespace DSSView
 
     public abstract class StateChances : State<Chances>
     {
+        private static readonly Dictionary<Chances, StateChances> Values = new Dictionary<Chances, StateChances>()
+        {
+            [Chances.Riscs] = new ChancesRiscs(),
+            [Chances.Unknown] = new ChancesUnknown()
+        };
         public static StateChances Get(Chances chance)
         {
-            switch (chance)
-            {
-                case Chances.Riscs:
-                    return new ChancesRiscs();
-                case Chances.Unknown:
-                    return new ChancesUnknown();
-                default:
-                    throw new Exception("Таких условий не бывает");
-            }
+            return Values[chance];
+        }
+        public static StateChances Unknown()
+        {
+            return new ChancesUnknown();
+        }
+        public static StateChances Riscs()
+        {
+            return new ChancesRiscs();
         }
 
 
-        public abstract double GetChance(IEnumerable<Case> cases, Case c);
-        public abstract double GetChance(IEnumerable<Case> cases, int pos);
+        public double GetChance(IEnumerable<Case> cases, int pos)
+        {
+            return GetChance(cases, cases.ElementAt(pos));
+        }
+        public virtual double GetChance(IEnumerable<Case> cases, Case c)
+        {
+            return DefaultMod(cases);
+        }
+
+
         public double SumCases(IEnumerable<Case> cases)
         {
             return cases.Sum(c => GetChance(cases, c));
@@ -43,7 +56,6 @@ namespace DSSView
 
         protected StateChances(Chances chances) : base(chances)
         {
-
         }
 
         protected double DefaultMod(IEnumerable<Case> cases)
@@ -59,13 +71,10 @@ namespace DSSView
             public ChancesRiscs() : base(Chances.Riscs)
             {
                 Name = "Риски";
+                AddCompare(Chances.Riscs, 1, "Предназначен для условий риска");
+                AddCompare(Chances.Unknown, -10, "Не применяется в условиях неопределенности");
             }
 
-
-            public override double GetChance(IEnumerable<Case> cases, int pos)
-            {
-                return GetChance(cases, cases.ElementAt(pos));
-            }
             public override double GetChance(IEnumerable<Case> cases, Case c)
             {
                 double sum = cases.Sum(cas => cas.Chance);
@@ -84,16 +93,8 @@ namespace DSSView
             public ChancesUnknown() : base(Chances.Unknown)
             {
                 Name = "Неопределенность";
-            }
-
-            public override double GetChance(IEnumerable<Case> cases, Case c)
-            {
-                return DefaultMod(cases);
-            }
-
-            public override double GetChance(IEnumerable<Case> cases, int pos)
-            {
-                return DefaultMod(cases);
+                AddCompare(Chances.Unknown, 1, "Предназначен для условий неопределенности");
+                AddCompare(Chances.Riscs, -10, "Не применяется в условиях риска");
             }
         }
     }

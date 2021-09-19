@@ -95,40 +95,50 @@ namespace DSSView
         private void AddCol(int colIndex, C col, V val)
         {
             OffsetCols(colIndex, 1);
-            for (int r = 0; r < Rows.Length; r++)
-            {
-                R row = Rows[r];
-                Coords coords = Coords.Of(r, colIndex);
-                var cell = CellFactory.NewCell(coords, row, col, val);
-                AddCell(cell);
-            }
+            AddColCells();
             OnColAdded?.Invoke(col);
+
+            void AddColCells()
+            {
+                for (int r = 0; r < Rows.Length; r++)
+                {
+                    R row = Rows[r];
+                    Coords coords = Coords.Of(r, colIndex);
+                    var cell = CellFactory.NewCell(coords, row, col, val);
+                    AddCell(cell);
+                }
+            }
         }
 
         //Добавление строки
-        public void AddRowEnd()                     
+        public void AddRowEnd()
         {
             AddRow(RowsCount);
         }
-        public void AddRowAfter(R row)              
+        public void AddRowAfter(R row)
         {
             AddRow(IndexOf(row));
         }
-        private void AddRow(int pos)                
+        private void AddRow(int pos)
         {
             AddRow(pos, CellFactory.NewRow(pos), CellFactory.NewValue);
         }
         private void AddRow(int rowIndex, R row, V val)  
         {
             OffsetRows(rowIndex, 1);
-            for (int c = 0; c < Cols.Length; c++)
-            {
-                C col = Cols[c];
-                Coords coords = Coords.Of(rowIndex, c);
-                var cell = CellFactory.NewCell(coords, row, col, val);
-                AddCell(cell);
-            }
+            AddRowCells();
             OnRowAdded?.Invoke(row);
+
+            void AddRowCells()
+            {
+                for (int c = 0; c < Cols.Length; c++)
+                {
+                    C col = Cols[c];
+                    Coords coords = Coords.Of(rowIndex, c);
+                    var cell = CellFactory.NewCell(coords, row, col, val);
+                    AddCell(cell);
+                }
+            }
         }
 
 
@@ -156,6 +166,7 @@ namespace DSSView
                 int y = cell.Coords.Y;
                 cell.Coords = Coords.Of(x, y);
             }
+            //Offset(c => c.X, c => c.Y, begin, offset, true);
         }
         private void OffsetCols(int begin, int offset)
         {
@@ -166,8 +177,26 @@ namespace DSSView
                 int y = cell.Coords.Y + offset;
                 cell.Coords = Coords.Of(x, y);
             }
+            //Offset(c => c.Y, c => c.X, begin, offset, false);
         }
 
+        private void Offset(Func<Coords, int> prim, Func<Coords, int> sec, int begin, int offset, bool firstPrimary)
+        {
+            var cells = Source.Where(c => prim.Invoke(c.Coords) >= begin);
+            foreach (var cell in cells)
+            {
+                int secondary = sec.Invoke(cell.Coords);
+                int primary = prim.Invoke(cell.Coords) + offset;
+                if (firstPrimary)
+                {
+                    cell.Coords = Coords.Of(primary, secondary);
+                }
+                else
+                {
+                    cell.Coords = Coords.Of(secondary, primary);
+                }
+            }
+        }
 
         //Получение
         public V Get(int row, int col) => Source.First(s => s.Coords.X == row && s.Coords.Y == col).Value;
@@ -185,16 +214,15 @@ namespace DSSView
         //Удаление
         public void RemoveCol(C col)
         {
-            int index = IndexOf(col);
-            var elems = Source.Where(c => c.To.Equals(col));
             Source.RemoveAll(c => c.To.Equals(col));
+            int index = IndexOf(col);
             OffsetCols(index + 1, -1);
             OnColRemoved?.Invoke(col);
         }
         public void RemoveRow(R row)
         {
-            int index = IndexOf(row);
             Source.RemoveAll(c => c.From.Equals(row));
+            int index = IndexOf(row);
             OffsetRows(index + 1, -1);
             OnRowRemoved?.Invoke(row);
         }

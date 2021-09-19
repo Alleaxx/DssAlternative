@@ -9,7 +9,10 @@ namespace DSSView
     //Применимость критерия
     public class RankCriteria
     {
-        public override string ToString() => $"Рейтинг критерия {Rating}";
+        public override string ToString()
+        {
+            return $"Рейтинг критерия {Rating}";
+        }
 
         public IEnumerable<Note> Notes { get; private set; }
         public double Rating => Notes.Sum(c => c.Profit);

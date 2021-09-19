@@ -65,6 +65,7 @@
     <Compile Include="NewMatrixWindow.xaml.cs">
       <DependentUpon>NewMatrixWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Игры с природой\NewGameInfo.cs" />
     <Compile Include="Игры с природой\Игра\Ситуация\Situation.cs" />
     <Compile Include="Игры с природой\Анализ игры\Criteria.cs" />
     <Compile Include="Игры с природой\Анализ игры\Note.cs" />

@@ -10,24 +10,20 @@ namespace DSSView
 {
     public enum Usages
     {
-        OneTime, ManyTimes, Couple
+        OneTime, Couple, Any
     }
 
     public abstract class StateUsage : State<Usages>
     {
-        public static StateUsage Get(Usages usages)
+        private static readonly Dictionary<Usages, StateUsage> Values = new Dictionary<Usages, StateUsage>()
         {
-            switch (usages)
-            {
-                case Usages.OneTime:
-                    return new UsageOneTime();
-                case Usages.ManyTimes:
-                    return new UsageManyTimes();
-                case Usages.Couple:
-                    return new UsageCouple();
-                default:
-                    throw new Exception("Такого использования нет");
-            }
+            [Usages.Couple] = new UsageCouple(),
+            [Usages.Any] = new UsageAnyTimes(),
+            [Usages.OneTime] = new UsageOneTime()
+        };
+        public static StateUsage Get(Usages usage)
+        {
+            return Values[usage];
         }
 
         protected StateUsage(Usages usage) : base(usage)
@@ -45,9 +41,9 @@ namespace DSSView
                 Name = "Однократно";
             }
         }
-        public class UsageManyTimes : StateUsage
+        public class UsageAnyTimes : StateUsage
         {
-            public UsageManyTimes() : base(Usages.ManyTimes)
+            public UsageAnyTimes() : base(Usages.Any)
             {
                 Name = "Многократно";
             }
@@ -56,7 +52,7 @@ namespace DSSView
         {
             public UsageCouple() : base(Usages.Couple)
             {
-                Name = "Несколько";
+                Name = "Немного";
             }
         }
     }
