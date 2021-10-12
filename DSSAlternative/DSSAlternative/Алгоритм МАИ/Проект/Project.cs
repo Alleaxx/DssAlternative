@@ -14,43 +14,62 @@ namespace DSSAlternative.AHP
         bool UnsavedChanged { get; }
 
 
-        ITemplate Template { get; }
+        ITemplate TemplateEditing { get; }
         IHierarchy ProblemEditing { get; }
-        IProblem Problem { get; }
+        IProblem ProblemActive { get; }
         
 
-        IStage StageHier { get; }
-        IStage StageView { get; }
-        IStage StageResults { get; }
+        StageHierarchy StageHier { get; }
+        StageView StageView { get; }
+        StageResults StageResults { get; }
+        StageRelation GetStageFromNode(INode node);
+        INodeRelation GetRelFromNode(INode node);
+        StageRelation GetStageFromRel(INodeRelation relation);
 
-        Dictionary<INodeRelation, IStage> StageRelations { get; }
-        IStage GetRelation(INode node);
+        INode NodeSelected { get; }
+        INodeRelation RelationSelected { get; }
+        void SetNow(INodeRelation rel);
+        void SetNow(INode node);
+
+        event Action OnRelationChanged;
 
 
-        void UpdateProblem();
+        void UpdateProblemFromEditing();
         string Status { get; }
     }
     public class Project : IProject
     {
-        public override string ToString() => Problem.ToString();
+        public override string ToString()
+        {
+            return ProblemActive.ToString();
+        }
         public event Action UpdatedHierOrRelationChanged;
 
+        public event Action OnStructureUpdated;
+        public event Action OnRelationsUpdated;
 
-        public ITemplate Template { get; private set; }
-        public IHierarchy ProblemEditing => new HierarchySheme(Template);
-        public IProblem Problem { get; private set; }
+        //Редактируемое состояние
+        public ITemplate TemplateEditing { get; private set; }
+        public IHierarchy ProblemEditing => new HierarchySheme(TemplateEditing);
+
+        //Текущая проблема
+        public IProblem ProblemActive { get; private set; }
 
 
-        public bool UnsavedChanged => !HierarchySheme.CompareEqual(Problem, ProblemEditing);
+        public bool UnsavedChanged => !HierarchySheme.CompareEqual(ProblemActive, ProblemEditing);
         public string Status
         {
             get
             {
                 string status = "Готова";
-                if (!Problem.CorrectnessRels.AreRelationsKnown)
-                    status = "Нужна информация";
-                if (!Problem.CorrectnessRels.AreRelationsConsistenct)
-                    status = "Нужна корректировка";
+                if (!ProblemActive.CorrectnessRels.AreKnown)
+                {
+                    return "Нужна информация";
+                }
+                if (!ProblemActive.CorrectnessRels.AreConsistenct)
+                {
+                    return "Нужна корректировка";
+                }
                 return status;
             }
         }
@@ -60,25 +79,26 @@ namespace DSSAlternative.AHP
         public Project(ITemplate template)
         {
             Console.WriteLine("Создание проекта и обновление иерархии");
-            SetProblem(template);      
+            SetActiveProblem(template);      
         }
-        public void UpdateProblem()
+        public void UpdateProblemFromEditing()
         {
             Console.WriteLine("Обновление иерархии");
-            SetProblem(Template);
+            SetActiveProblem(TemplateEditing);
         }
-        private void SetProblem(ITemplate template)
+        private void SetActiveProblem(ITemplate template)
         {
-            Template = template;
-            IProblem old = Problem;
-            Problem = new Problem(Template);
-            SetStages();
+            TemplateEditing = template;
+            IProblem old = ProblemActive;
+            ProblemActive = new Problem(TemplateEditing);
+            CreateStages();
+            SetNow(ProblemActive.MainGoal);
 
             if (old != null)
             {
                 old.RelationValueChanged -= Update;
             }
-            Problem.RelationValueChanged += Update;
+            ProblemActive.RelationValueChanged += Update;
             Update();
 
             void Update()
@@ -88,32 +108,55 @@ namespace DSSAlternative.AHP
         }
 
 
-        private void SetStages()
+
+        //Стадии решения проблемы
+        private void CreateStages()
         {
             StageHier = new StageHierarchy(this);
             StageView = new StageView(this);
             StageResults = new StageResults(this);
-
-            StageRelations.Clear();
-            foreach (var relation in Problem.RelationsAll)
-            {
-                IStage relStage = new StageRelation(this, relation);
-                StageRelations.Add(relation, relStage);
-            }
+            StageRelations = ProblemActive.RelationsAll.Select(r => new StageRelation(this, r)).ToArray();
+            SetNow(StageRelations.First().Relation);
         }
-        public IStage StageHier { get; private set; }
-        public IStage StageView { get; private set; }
-        public IStage StageResults { get; private set; }
 
-        public Dictionary<INodeRelation, IStage> StageRelations { get; private set; } = new Dictionary<INodeRelation, IStage>();
-        public IStage GetRelation(INode node)
+        public StageHierarchy StageHier { get; private set; }
+        public StageView StageView { get; private set; }
+        public StageResults StageResults { get; private set; }
+
+        public INode NodeSelected { get; set; }
+        public INodeRelation RelationSelected { get; set; }
+        public void SetNow(INodeRelation rel)
         {
-            var relation = Problem.FirstRequiredRelation(node);
+            RelationSelected = rel;
+            Console.WriteLine("Обновилось выбранное отношение");
+            OnRelationChanged?.Invoke();
+        }
+        public void SetNow(INode node)
+        {
+            NodeSelected = node;
+        }
 
-            if (relation != null && StageRelations.ContainsKey(relation))
-                return StageRelations[relation];
-            else
-                return StageRelations.First().Value;
+        public event Action OnRelationChanged;
+
+        private IEnumerable<StageRelation> StageRelations { get; set; }
+
+        public StageRelation GetStageFromRel(INodeRelation relation)
+        {
+            var stage = StageRelations.FirstOrDefault(s => s.Relation == relation);
+            if (stage != null)
+            {
+                return stage;
+            }
+            return StageRelations.First();
+        }
+        public StageRelation GetStageFromNode(INode node)
+        {
+            var relation = ProblemActive.FirstRequiredRelation(node);
+            return GetStageFromRel(relation);
+        }
+        public INodeRelation GetRelFromNode(INode node)
+        {
+            return GetStageFromNode(node).Relation;
         }
     }
 

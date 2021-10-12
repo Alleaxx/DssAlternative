@@ -189,6 +189,16 @@
 
 <section class="sheme">
     <h2 class="content-header-h">Схема задачи выбора</h2>
+    <div>
+        @if (!RelationState.AreConsistenct)
+        {
+            <Warning Header="Несогласованность" Message="Некоторые отношения являются несогласованными!"></Warning>
+        }
+        @if (!RelationState.AreKnown)
+        {
+            <Warning Header="Незаполненность!" Message="Некоторые отношения не заполнены"></Warning>
+        }
+    </div>
     <div class="filters-section">
         <ul class="filters">
             @foreach (var filter in Filters)
@@ -215,23 +225,23 @@
             <div class="level-elements">
                 @foreach (var node in levelGroup)
                 {
-                    <details open class="node-element" style="@($"width:{NodeSize}%")" @onmousedown="@(() => Console.WriteLine())">
+                    <details open class="node-element" style="@($"width:{NodeSize}%")">
                         <summary class="action-header @(GetClass(node))">
                             <span class="node-element-name">@node.Name</span>
                         </summary>
                         <div class="actions-section">
-                            <a class="action edit-criteria" title="Редактировать критерий" href="@Nodes.Where(n => n.Node == node).First().Href">
+                            <a class="action edit-criteria" title="Редактировать критерий" href="@NodeLink" @onclick="() => Project.SetNow(node)">
                                 <span class="action-name"></span>
                                 <img class="action-icon" src="Images/pencil.png" />
                             </a>
                             @if (Problem.NodesWithRels.Contains(node))
                             {
 
-                                <a class="action edit-relations" title="Переход к отношениям по критерию" href="@($"{Project.GetRelation(node).Href}")">
+                                <a class="action edit-relations" title="Переход к отношениям по критерию" href="@RelationsLink" @onclick="() => Project.SetNow(Project.GetRelFromNode(node))">
                                     <span class="action-name"></span>
                                     <img class="action-icon" src="Images/play.png" />
                                 </a>
-                                <a class="action clear-relations" title="Сбросить все отношения критерия" href="@View.Href" @onclick="@(() => Problem.ClearRelations(node))">
+                                <a class="action clear-relations" title="Сбросить все отношения критерия" href="@ViewLink" @onclick="@(() => Problem.ClearRelations(node))">
                                     <span class="action-name">X</span>
                                     <img class="action-icon" src="Images/tech.png" />
                                 </a>
@@ -255,6 +265,7 @@
 </section>
 
 <section>
+
     @if (Filter == Constistency)
     {
         <DSSAlternative.Pages.Дополнительно.Фильтры.ViewConsistency />
@@ -310,9 +321,9 @@
 
             case Constistency:
                 double res = Problem.GetMtxRelations(node).Consistency.Cr;
-                if (RelState.IsNodeUnknown(node))
+                if (RelationState.IsNodeUnknown(node))
                     return "warn";
-                if (!RelState.IsNodeConsistenct(node))
+                if (!RelationState.IsNodeConsistenct(node))
                     return "bad";
                 return "good";
 

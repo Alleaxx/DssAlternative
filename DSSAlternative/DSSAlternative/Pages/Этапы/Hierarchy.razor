@@ -226,10 +226,10 @@
                 else
                 {
                     <span class="all-saved">Все изменения сохранены</span>
-                    <NavLink class="navigation-link" href="@Project.StageRelations.ElementAt(0).Value.Href">
+                    <NavLink class="navigation-link" href="@RelationsLink">
                         Перейти к определению связей
                     </NavLink>
-                    <NavLink class="navigation-link" href="@View.Href">
+                    <NavLink class="navigation-link" href="@ViewLink">
                         Обзор задачи
                     </NavLink>
                     <input type="button" value="Вывести новую структуру" @onclick="ShowStructure" />
@@ -238,7 +238,7 @@
             <div class="hier-fails">
                 @foreach (var check in HierEditState.Checks)
                 {
-                    <div class="@check.GetClass()" title="@check.Message">
+                    <div class="@check.CssClass()" title="@check.Message">
                         @check.Name
                     </div>
                 }
@@ -302,21 +302,14 @@
         </div>
     </div>
 
-    <h3>Критерии</h3>
     <section>
+        <h3>Группы критериев</h3>
         <ul>
             @foreach (var group in Template.Groups)
             {
                 <li>
-                    <ul class="row" style="list-style:none">
-                        <b>@group.Index</b>:
-                        @foreach (var node in group.Group)
-                        {
-                            <li>@node.Name,  </li>
-                        }
-                    </ul>
+                    <b>@group.Index</b>: <span>@(string.Join<INode>(',',group.Group))</span>
                 </li>
-
             }
         </ul>
 
@@ -326,25 +319,28 @@
                 padding: 10px;
                 font-size: 0.9em;
             }
-            .node-table-edit-header{
 
+            .node-table-edit-header {
             }
-            .node-table-edit-header th{
-                border-bottom: 1px solid gainsboro;
-            }
-            .node-table-edit-node{
 
+                .node-table-edit-header th {
+                    border-bottom: 1px solid gainsboro;
+                }
+
+            .node-table-edit-node {
             }
+
                 .node-table-edit-node .edit-text {
                     border-right: 1px solid gainsboro;
                 }
 
             .edit-cell input[type="number"] {
-                text-align:center;
+                text-align: center;
                 padding: 5px 10px;
                 border: 0;
                 border-bottom: 1px solid gainsboro;
             }
+
             .edit-cell input[type="text"] {
                 padding: 5px 10px;
                 border: 0;
@@ -356,15 +352,15 @@
                 <th>Тип</th>
                 <th>Имя</th>
                 <th>Уровень</th>
-                <th>Группа</th>
-                <th>Критерии</th>
+                <th>Группа критериев</th>
+                <th>Подчинена группе</th>
                 <th>Описание</th>
             </tr>
             @foreach (var node in Problem.Hierarchy.OrderBy(n => n.Level))
             {
                 <tr class="node-table-edit-node">
                     <td class="edit-text" style="text-align:center">
-                        <span class="node-text">@node.LevelName</span> 
+                        <span class="node-text">@node.LevelName</span>
                     </td>
                     <td class="edit-cell">
                         <input type="text" @bind-value="@node.Name" />
@@ -387,34 +383,39 @@
 
     </section>
 
-    @*<section class="json-sheme">
+    <section class="json-sheme">
         <details>
             <summary rows="25" cols="25">
                 JSON-схема
             </summary>
-            <textarea>
-                @JsonCurrent
+            <textarea rows="20" cols="100">
+                 @JsonCurrent
             </textarea>
         </details>
-    </section>*@
+    </section>
 
 </section>
 
 
 @code {
-    //private Template TemplateCurrent => new Template(NodesEditing.OfType<Node>().ToArray()) { Name = ProblemEditing.MainGoal.Name, Img = "Images/tech.png", Description = "Сохраненная задача выбора" };
-    //private string JsonCurrent => JsonSerializer.Serialize<Template>(TemplateCurrent, DSS.Ex.JsonOptions);
+    private Template TemplateCurrent => new Template(NodesEditing.OfType<Node>().ToArray())
+    {
+        Name = ProblemEditing.MainGoal.Name,
+        Img = "Images/tech.png",
+        Description = "Сохраненная задача выбора"
+    };
+    private string JsonCurrent => JsonSerializer.Serialize<Template>(TemplateCurrent, DSSApp.JsonOptions);
 
     private INode NodeHovered { get; set; }
 
 
     private IHierarchy ProblemEditing => Project.ProblemEditing;
-    private ITemplate Template => Project.Template;
+    private ITemplate Template => Project.TemplateEditing;
     private List<Node> NodesEditing => Template.Nodes;
 
 
     //Подтверждение иерархии
-    private void UpdateHierarchy() => Project.UpdateProblem();
+    private void UpdateHierarchy() => Project.UpdateProblemFromEditing();
 
 
     //Редактирование иерархии

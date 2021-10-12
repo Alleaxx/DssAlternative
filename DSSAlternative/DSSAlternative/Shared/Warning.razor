@@ -1,0 +1,34 @@
+﻿<style>
+    .warning-body{
+        padding: 7px;
+        margin: 6px;
+        border: 1px solid yellow;
+        border-radius: 2px;
+        background-color: rgb(250,250,250);
+    }
+    .warning-header{
+        margin: 3px 0;
+    }
+    .warning-text{
+        margin: 3px 0;
+    }
+</style>
+
+<div class="warning-body" style="border-color:@Color">
+    <b class="warning-header">
+        @Header
+    </b>
+    <br />
+    <p class="warning-text">
+        @Message
+    </p>
+</div>
+
+@code {
+    [Parameter]
+    public string Header { get; set; }
+    [Parameter]
+    public string Message { get; set; }
+    [Parameter]
+    public string Color { get; set; } = "#9e9e00";
+}

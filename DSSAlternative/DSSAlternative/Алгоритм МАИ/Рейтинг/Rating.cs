@@ -15,8 +15,9 @@ namespace DSSAlternative.AHP
     }
     public class Rating : IRating
     {
+        private readonly IRatingSystem RatingSystem = new RatingDefaultSystem();
         public INode Node { get; set; }
-        private IRatingRule Rule => DSS.Ex.RatingSystem.GetRuleForRating(this);
+        private IRatingRule Rule => RatingSystem.GetRuleForRating(this);
 
 
         public double Value { get; private set; }
@@ -24,16 +25,21 @@ namespace DSSAlternative.AHP
 
 
         public Rating(double val) : this(null, val) { }
-        public Rating(INode node, double val)
+        public Rating(INode node, double val, IRatingSystem system = null)
         {
             Node = node;
             Value = val;
+
+            if(system != null)
+            {
+                RatingSystem = system;
+            }
         }
 
 
         public bool CheckEqual(IRating rating) => rating.Node == Node && rating.Value == Value;
 
-        public string GetClass() => "";
-        public string GetStyle() => Rule.Style;
+        public string CssClass() => "";
+        public string CssStyle() => Rule.Style;
     }
 }

@@ -22,6 +22,7 @@ namespace DSSAlternative.AHP
         int OrderIndexGroup { get; }
 
         double Coefficient { get; set; }
+        string GetLevelName(IEnumerable<INode> nodes);
 
 
         INodeGroup Criterias { get; }
@@ -45,14 +46,16 @@ namespace DSSAlternative.AHP
         public string Description { get; set; }
 
         //Уровень узла в иерархии
-        public int Level { get; set; }
+        public int Level { get; set; }                  //Представление уровня иерархии
         //Номер группы узла
-        public int Group { get; set; }
+        public int Group { get; set; }                  //Критерий составляет группу, которой могут принадлежать другие критерии
         //Номер группы критериев для узла
-        public int GroupIndex { get; set; }
+        public int GroupIndex { get; set; }             //Критерий принадлежит группе данных критериев
 
         //Порядковые номера в группе и на уровне
+        [JsonIgnore]
         public int OrderIndexLevel => Neighbors.ToList().IndexOf(this);
+        [JsonIgnore]
         public int OrderIndexGroup => NeighborsGroup.ToList().IndexOf(this);
 
 
@@ -91,7 +94,7 @@ namespace DSSAlternative.AHP
             LowerNodes = allNodes.Where(n => n.Level == Level + 1).ToArray();
             LowerNodesControlled = allNodes.Where(n => n.GroupIndex == Group).ToArray();
         }
-        private string GetLevelName(IEnumerable<INode> nodes)
+        public string GetLevelName(IEnumerable<INode> nodes)
         {
             int maxLevel = nodes.Select(n => n.Level).Max();
             if (Level == 0)
@@ -114,24 +117,6 @@ namespace DSSAlternative.AHP
             Level = level;
             Group = group;
             GroupIndex = groupIndex;
-        }
-    }
-
-
-    public interface INodeGroup
-    {
-        int Index { get; }
-        INode[] Group { get; }
-    }
-    public class NodeGroup : INodeGroup
-    {
-        public int Index { get; private set; }
-        public INode[] Group { get; } = new INode[0];
-
-        public NodeGroup(int index, params INode[] nodes)
-        {
-            Index = index;
-            Group = nodes;
         }
     }
 }

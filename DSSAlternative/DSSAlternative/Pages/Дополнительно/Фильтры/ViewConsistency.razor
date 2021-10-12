@@ -1,35 +1,31 @@
 ﻿@inherits DSSProject
-<h4>Пригодность отношений</h4>
 <section>
-    <div class="example-section">
-        <div class="example-block" style=" background-color: #dfffdf"></div>
-        <span class="example-description">
-            - отношения заполнены и согласованы
-        </span>
+    <h4>Пригодность отношений</h4>
+    <div>
+        <div class="example-section">
+            <div class="example-block" style="background-color: #dfffdf"></div>
+            <span class="example-description">
+                - отношения заполнены и согласованы
+            </span>
+        </div>
+        <div class="example-section">
+            <div class="example-block" style="background-color:lightyellow"></div>
+            <span class="example-description">
+                - отношения не заполнены
+            </span>
+        </div>
+        <div class="example-section">
+            <div class="example-block" style="background-color: #ffdee3"></div>
+            <span class="example-description">
+                - отношения не согласованы
+            </span>
+        </div>
     </div>
-    <div class="example-section">
-        <div class="example-block" style=" background-color:lightyellow"></div>
-        <span class="example-description">
-            - отношения не заполнены
-        </span>
-    </div>
-    <div class="example-section">
-        <div class="example-block" style=" background-color: #ffdee3"></div>
-        <span class="example-description">
-            - отношения не согласованы
-        </span>
+
+    <div>
+        <label for="border-cons">Граница согласованности</label><br />
+        <input id="border-cons" type="number" @bind-value="@MatrixConsistenct.BorderConsistenct" />
     </div>
 </section>
 
-<dl>
-    <dt>Граница согласованности</dt>
-    <dd><input type="number" @bind-value="@MatrixConsistenct.BorderConsistenct" /></dd>
-</dl>
-
-@if (!Problem.CorrectnessRels.AreRelationsCorrect)
-{
-    <p>
-        Некоторые отношения не заполнены или являются несогласованными!
-    </p>
-}
 

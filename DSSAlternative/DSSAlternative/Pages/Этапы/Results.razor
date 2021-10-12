@@ -75,7 +75,7 @@
 </h2>
 <section class="res">
 
-    @if (RelState.AreRelationsCorrect)
+    @if (RelationState.AreCorrect)
     {
         @foreach (var levelGroup in Problem.GroupedByLevel)
         {
@@ -112,12 +112,12 @@
         <h4>Доступные действия</h4>
         <ul>
             <li>
-                <NavLink class="navigation-link" href="@Hier.Href">
+                <NavLink class="navigation-link" href="@HierLink">
                     Модификация иерархии
                 </NavLink>
             </li>
             <li>
-                <NavLink class="navigation-link" href="@View.Href" @onclick="@(() => Problem.ClearRelations() )">
+                <NavLink class="navigation-link" href="@ViewLink" @onclick="@(() => Problem.ClearRelations() )">
                     Сброс отношений
                 </NavLink>
             </li>

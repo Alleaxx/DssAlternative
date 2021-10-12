@@ -105,8 +105,8 @@ namespace DSSAlternative.AHP
             var aNodes = a.Hierarchy.ToList();
             var bNodes = b.Hierarchy.ToList();
 
-            int aCount = aNodes.Count();
-            int bCount = bNodes.Count();
+            int aCount = aNodes.Count;
+            int bCount = bNodes.Count;
 
             if (aCount != bCount)
                 return false;

@@ -1,5 +1,5 @@
-﻿@page "/relation-edit/{relIndex:int}"
-@inherits DSSComponentRelation
+﻿@page "/relation-edit"
+@inherits DSSProject
 @layout EditorLayout
 
 
@@ -135,32 +135,33 @@
         font-weight: 500;
         font-size: 1.1em;
     }
+
+    .rel-menu-list .selected{
+        font-weight: bold;
+    }
 </style>
 
 <div class="relations-grid">
-
     <nav class="menu-area">
         <h2 class="rel-menu-header">Список отношений</h2>
         @foreach (var node in Problem.NodesWithRels)
         {
             <section class="criteria-relatons">
-                <h3 class="@($"rel-menu-list-header {Project.GetRelation(node).GetClass()}")">@node.Name</h3>
+                <h3 class="@($"rel-menu-list-header {Project.GetStageFromNode(node).CssClass()}")">@node.Name</h3>
                 <ul class="rel-menu-list">
                     @foreach (var relation in Problem.RelationsRequired.Where(r => r.Main == node))
                     {
-                        <li>
-                            <NavLink class="@($"{Project.StageRelations[relation].GetClass()} rel-menu-element")" href="@($"{Project.StageRelations[relation].Href}")">
-                                @relation.From.Name - @relation.To.Name
-                            </NavLink>
+                        <li class="@($"{Project.GetStageFromRel(relation).CssClass()} rel-menu-element")" @onclick="() => Project.SetNow(relation as NodeRelation)">
+                            @relation.From.Name - @relation.To.Name
                         </li>
                     }
                 </ul>
                 <p class="criteria-state">
-                    @if (!RelState.IsNodeConsistenct(node))
+                    @if (!RelationState.IsNodeConsistenct(node))
                     {
                         <span><b>↑</b> Нужна корректировка согласованности</span>
                     }
-                    else if (RelState.IsNodeUnknown(node))
+                    else if (RelationState.IsNodeUnknown(node))
                     {
                         <span><b>↑</b> Нужно заполнение</span>
                     }
@@ -173,11 +174,69 @@
         }
     </nav>
 
+
+    <style>
+        .filters {
+            list-style: none;
+            display: flex;
+        }
+
+            .filters li {
+                padding: 5px 15px;
+                border-bottom: 1px solid gainsboro;
+            }
+
+                .filters li:hover {
+                    background-color: gainsboro;
+                    cursor: pointer;
+                }
+
+            .filters .selected {
+                background-color: gainsboro;
+            }
+    </style>
     <div class="relation-area">
-        <NodeQuestion Relation="@Relation" />
+        <ul class="filters">
+            <li @onclick="() => ViewState = RelationViewState.Question">
+                Вопрос
+            </li>
+            <li @onclick="() => ViewState = RelationViewState.Matrix">
+                Матрица
+            </li>
+            <li @onclick="() => ViewState = RelationViewState.Add">
+                Дополнительно
+            </li>
+        </ul>
+        <section>
+            @if (ViewState == RelationViewState.Question)
+            {
+                <NodeQuestion Relation="@RelationSel" />
+            }
+            else if (ViewState == RelationViewState.Matrix)
+            {
+                <NodeMatrix Node="@RelationSel.Main" AllowedRelations="@(new INodeRelation[] { RelationSel, RelationSel.Mirrored })"/>
+            }
+            else if (ViewState == RelationViewState.Add)
+            {
+                <NodeRelMoreOptions Relation="RelationSel"></NodeRelMoreOptions>
+            }
+        </section>
     </div>
 </div>
 
 @code {
+    public enum RelationViewState
+    {
+        Matrix, Question, Add
+    }
 
+    public RelationViewState ViewState { get; set; } = RelationViewState.Question;
+
+    public NodeRelation RelationSel => Project.RelationSelected as NodeRelation;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Project.OnRelationChanged += () => StateHasChanged();
+    }
 }

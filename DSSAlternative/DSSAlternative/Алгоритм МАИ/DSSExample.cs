@@ -9,7 +9,7 @@ namespace DSSAlternative.AHP
     {
         public static IProject CreateSampleProblem()
         {
-            INode main = new Node(0, "Выбор места учебы",0,-1);
+            INode main = new Node(0, "Выбор места учебы", 0, -1);
 
             INode Place = new Node(1, "Местоположение", 1, 0);
             INode Reputation = new Node(1, "Репутация", 1, 0);
@@ -25,7 +25,7 @@ namespace DSSAlternative.AHP
 
             ITemplate template = new Template(nodes.OfType<Node>().ToArray());
             IProject project = new Project(template);
-            IProblem problem = project.Problem;
+            IProblem problem = project.ProblemActive;
 
             problem.SetRelationBetween(main, Reputation, Place, 5);
             problem.SetRelationBetween(Reputation, A, B, 2);
@@ -98,7 +98,7 @@ namespace DSSAlternative.AHP
 
             ITemplate template = new Template(nodes.OfType<Node>().ToArray());
             IProject project = new Project(template);
-            IProblem problem = project.Problem;
+            IProblem problem = project.ProblemActive;
 
             problem.SetRelationBetween(main, F, M, 2);
             problem.SetRelationBetween(main, F, O, 2);

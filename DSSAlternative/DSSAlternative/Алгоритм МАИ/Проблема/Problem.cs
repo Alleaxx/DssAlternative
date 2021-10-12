@@ -33,6 +33,7 @@ namespace DSSAlternative.AHP
         public Problem(ITemplate template) : base(template)
         {
             CreateRelations();
+            FillRelations(template);
             RecountCoeffs();
         }
 
@@ -87,12 +88,26 @@ namespace DSSAlternative.AHP
         }
 
 
-        private void RelationValue_Changed(Relation<INode, INode> changedRelation)
+        private void RelationValue_Changed(INodeRelation changedRelation)
         {
             RecountCoeffs();
             RelationValueChanged?.Invoke();
         }
 
+
+        private void FillRelations(ITemplate template)
+        {
+            foreach (var rel in template.Relations)
+            {
+                INode main = Hierarchy.FirstOrDefault(n => n.Name == rel.Main);
+                INode from = Hierarchy.FirstOrDefault(n => n.Name == rel.From);
+                INode to = Hierarchy.FirstOrDefault(n => n.Name == rel.To);
+                if(main != null && from != null && to != null)
+                {
+                    SetRelationBetween(main, from, to, rel.Value);
+                }
+            }
+        }
 
 
         public INodeRelation[] RelationsAll { get; private set; }

@@ -2,51 +2,54 @@
   "Name": "Оценка рисков проекта",
   "Description": "Задача ранжирования списка рисков для проекта по их опасности",
   "Img": "Images/Riscs.png",
-  "GroupStructure": [
-    [ "Оценка рисков проекта" ],
-    [ "Финансовый" ],
-    [ "Ф1", "Ф2", "Маркетинговый", "Организационный" ],
-    [ "А1","А2" ]
-  ],
   "Nodes": [
     {
       "Name": "Оценка рисков проекта",
-      "Level": 0
+      "Level": 0,
+      "Group": 0,
+      "GroupIndex": -1
     },
     {
       "Name": "Финансовый",
       "Level": 1,
-      "Group": 0
+      "Group": 1,
+      "GroupIndex": 0
     },
     {
       "Name": "Маркетинговый",
       "Level": 1,
-      "Group": 0
+      "Group": 2,
+      "GroupIndex": 0
     },
     {
       "Name": "Организационный",
       "Level": 1,
-      "Group": 0
+      "Group": 2,
+      "GroupIndex": 0
     },
     {
       "Name": "Ф1",
       "Level": 2,
-      "Group": 1
+      "Group": 2,
+      "GroupIndex": 1
     },
     {
       "Name": "Ф2",
       "Level": 2,
-      "Group": 1
+      "Group": 2,
+      "GroupIndex": 1
     },
     {
       "Name": "А1",
       "Level": 3,
-      "Group": 2
+      "Group": 3,
+      "GroupIndex": 2
     },
     {
       "Name": "А2",
       "Level": 3,
-      "Group": 2
+      "Group": 3,
+      "GroupIndex": 2
     }
   ]
 }

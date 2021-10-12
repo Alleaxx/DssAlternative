@@ -117,23 +117,23 @@
 
 <nav class="task-menu">
     <ul>
-        @foreach (var project in DSS.Ex.Projects)
+        @foreach (var project in DSSApp.Projects)
         {
             <li>
-                <a class="task-menu-element @(project == DSS.Ex.Project ? "active" : "")" @onclick="@(() => { DSS.Ex.SelectProblem(project); })" href="view">
+                <a class="task-menu-element @(project == DSSApp.Project ? "active" : "")" @onclick="@(() => { DSSApp.SelectProject(project); })" href="view">
                     <div class="task-element-sheme">
                         <DSSAlternative.Pages.Дополнительно.HierSheme Project="@project" />
                     </div>
                     <header class="task-element-header">
-                        <h4 class="task-element-name">@project.Problem.MainGoal.Name</h4>
+                        <h4 class="task-element-name">@project.ProblemActive.MainGoal.Name</h4>
                         <p class="task-element-descr">@project.Status</p>
                     </header>
-                    <input class="remove-task" type="button" value="X" @onclick="@( () => DSS.RemoveProject(project))" />
+                    <input class="remove-task" type="button" value="X" @onclick="@( () => DSSApp.RemoveProject(project))" />
                 </a>
             </li>
         }
         <li>
-            <input class="add-task" type="button" value="Создать" @onclick="@(() => DSS.Ex.AddProject(DSSExample.CreateNewProblem()))" />
+            <input class="add-task" type="button" value="Создать" @onclick="@(() => DSSApp.AddProject(DSSExample.CreateNewProblem()))" />
         </li>
     </ul>
 </nav>

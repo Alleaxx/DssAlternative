@@ -1,7 +1,6 @@
 ﻿@inherits DSSProject
 
 <style>
-
     .navside ul {
         list-style: none;
         padding: 0;
@@ -144,6 +143,7 @@
     .task-menu li {
         border-bottom: 1px solid gainsboro;
     }
+
 </style>
 
 <nav class="navside">
@@ -151,31 +151,55 @@
         <h2 class="stage-menu-header">Этапы решения задачи:</h2>
         <ul>
             <li>
-                <NavLink class="@($"stage-menu-element {Hier.GetClass()}")" href="@Hier.Href">
+                <NavLink class="@($"stage-menu-element {Hier.CssClass()}")" href="@HierLink">
                     <img class="stage-element-image" src="Images/Иерархия.png" />
                     <span class="stage-element-name">I ИЕРАРХИЯ</span>
                 </NavLink>
             </li>
             <li>
-                <NavLink class="@($"stage-menu-element {View.GetClass()}")" href="@View.Href">
+                <ul class="relations">
+                    <li>
+                        <NavLink style="@($"margin-left:1em")" class="@($"{Hier.CssClass()}")" href="@NodeLink">
+                            I - Редактирование
+                        </NavLink>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <NavLink class="@($"stage-menu-element {View.CssClass()}")" href="@RelationsLink">
                     <img class="stage-element-image" src="Images/Отношения.png" />
-                    <span class="stage-element-name">II ОБЗОР</span>
+                    <span class="stage-element-name">II ОТНОШЕНИЯ</span>
                 </NavLink>
             </li>
             <li>
                 <ul class="relations">
-                    @foreach (var criteria in Problem.NodesWithRels)
+                    <li>
+                        <NavLink style="@($"margin-left:1em")" class="@($"{View.CssClass()}")" href="@ViewLink">
+                            II - Обзор
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink style="@($"margin-left:1em")" class="@($"{View.CssClass()}")" href="@ViewLink">
+                            II - Согласованность
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink style="@($"margin-left:1em")" class="@($"{View.CssClass()}")" href="@ViewLink">
+                            II - Завершенность связей
+                        </NavLink>
+                    </li>
+                    @*@foreach (var criteria in Problem.NodesWithRels)
                     {
                         <li>
-                            <NavLink style="@($"margin-left:{criteria.Level * 2}em")" class="@($"{Project.GetRelation(criteria).GetClass()}")" href="@($"{Project.GetRelation(criteria).Href}")">
+                            <a style="@($"margin-left:{criteria.Level * 2}em")" class="@($"left-relations {Project.GetStageFromNode(criteria).GetClass()}")" href="@RelationsLink">
                                 II - @Problem.NodesWithRels.ToList().IndexOf(criteria): @criteria.Name
-                            </NavLink>
+                            </a>
                         </li>
-                    }
+                    }*@
                 </ul>
             </li>
             <li>
-                <NavLink class="@($"stage-menu-element {Res.GetClass()}")" href="@Res.Href">
+                <NavLink class="@($"stage-menu-element {Res.CssClass()}")" href="@ResultsLink">
                     <img class="stage-element-image" src="Images/Результаты.png" />
                     <span class="stage-element-name">III РЕЗУЛЬТАТЫ</span>
                 </NavLink>

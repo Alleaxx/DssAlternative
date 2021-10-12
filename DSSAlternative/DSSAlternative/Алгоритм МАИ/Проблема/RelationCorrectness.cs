@@ -7,9 +7,9 @@ namespace DSSAlternative.AHP
 {
     public interface IRelationsCorrectness
     {
-        bool AreRelationsCorrect { get; }
-        bool AreRelationsKnown { get; }
-        bool AreRelationsConsistenct { get; }
+        bool AreCorrect { get; }
+        bool AreKnown { get; }
+        bool AreConsistenct { get; }
 
         IEnumerable<ICheck> Errors(INode node);
 
@@ -26,10 +26,10 @@ namespace DSSAlternative.AHP
 
 
 
-        public bool AreRelationsCorrect => AreRelationsConsistenct && AreRelationsKnown;
+        public bool AreCorrect => AreConsistenct && AreKnown;
 
-        public bool AreRelationsKnown => RelationsUnknown.Count() == 0;
-        public bool AreRelationsConsistenct => NodesNotConsistent.Count() == 0;
+        public bool AreKnown => RelationsUnknown.Count() == 0;
+        public bool AreConsistenct => NodesNotConsistent.Count() == 0;
 
         //Список критериев, матрицы по которым не согласованы
         private IEnumerable<INode> NodesNotConsistent => Pr.NodesWithRels.Where(n => !Pr.GetMtxRelations(n).Consistency.IsCorrect());

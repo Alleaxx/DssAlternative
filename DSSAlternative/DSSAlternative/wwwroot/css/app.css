@@ -51,6 +51,7 @@ main {
     padding: 0px 10px;
     margin: 0;
     max-width: initial;
+    min-height: 60vh;
 }
 
 .grid > footer {
@@ -65,11 +66,4 @@ main {
     padding: 20px;
 }
 
-.row {
-    display: flex;
-}
-
-.center {
-    align-items: center;
-}
 

@@ -187,21 +187,21 @@
             <p class="load-note">
                 Образцовая задача показывает возможности системы на примере уже решенной проблемы.
             </p>
-            <input type="button" @onclick="@(() => DSS.Ex.AddProject(DSSExample.CreateSampleProblem()))" value="Загрузить" />
+            <input type="button" @onclick="@(() => DSSApp.AddProject(DSSExample.CreateSampleProblem()))" value="Загрузить" />
         </section>
         <section>
             <h3>Загрузка пр. образца</h3>
             <p class="load-note">
                 Образцовая задача с подкритериями.
             </p>
-            <input type="button" @onclick="@(() => DSS.Ex.AddProject(DSSExample.CreateSampleTreeProblem()))" value="Загрузить" />
+            <input type="button" @onclick="@(() => DSSApp.AddProject(DSSExample.CreateSampleTreeProblem()))" value="Загрузить" />
         </section>
         <section>
             <h3>Загрузка пр. образца 2</h3>
             <p class="load-note">
                 Образцовая задача с подкритериями.
             </p>
-            <input type="button" @onclick="@(() => DSS.Ex.AddProject(DSSExample.CreateSampleTree2Problem()))" value="Загрузить" />
+            <input type="button" @onclick="@(() => DSSApp.AddProject(DSSExample.CreateSampleTree2Problem()))" value="Загрузить" />
         </section>
 
 
@@ -219,7 +219,7 @@
             Позволяет задать типовую задачу, которую можно изменить под свои условия.
         </p>
         <ul class="presets">
-            @foreach (var template in Templates)
+            @foreach (var template in DSSApp.Templates)
             {
                 <li>
                     <section class="preset">
@@ -238,14 +238,14 @@
             Список уже загруженных задач выбора.
         </p>
         <ul class="problems">
-            @foreach (var project in DSS.Ex.Projects)
+            @foreach (var project in DSSApp.Projects)
             {
                 <li>
-                    <NavLink @onclick="@(() => DSS.Ex.SelectProblem(project))" class="problem" href="hierarchy">
+                    <NavLink @onclick="@(() => DSSApp.SelectProject(project))" class="problem" href="hierarchy">
                         <div class="problem-img">
                             <DSSAlternative.Pages.Дополнительно.HierSheme Project="@project" />
                         </div>
-                        <h4 class="problem-name">@project.Problem.MainGoal.Name</h4>
+                        <h4 class="problem-name">@project.ProblemActive.MainGoal.Name</h4>
                         <p class="problem-status">@project.Status</p>
                     </NavLink>
                 </li>
@@ -257,54 +257,11 @@
 
 
 @code {
-    protected override async Task OnInitializedAsync()
-    {
-        if (DSS.Ex.Templates == null)
-            await LoadTemplates();
-        else
-            Templates = DSS.Ex.Templates;
-    }
-
-    List<ITemplate> Templates { get; set; } = new List<ITemplate>();
-    private async Task LoadTemplates()
-    {
-        Templates = new List<ITemplate>();
-
-        foreach (var path in Pathes)
-        {
-            ITemplate template = await LoadTemplate($"sample-data/{path}");
-            Templates.Add(template);
-        }
-
-        DSS.Ex.Templates = Templates;
-        Console.WriteLine("Шаблоны загружены");
-    }
-    private async Task<Template> LoadTemplate(string path)
-    {
-        string json = await Http.GetStringAsync($"{path}");
-        Template template = JsonSerializer.Deserialize<Template>(json, DSS.Ex.JsonOptions);
-        return template;
-    }
-
-    string[] Pathes = new string[]
-    {
-        //"project-team-task.json",
-        //"project-riscs-task.json",
-        //"project-tools-task.json",
-        //"work-task.json",
-        //"study-task.json",
-        //"buy-task.json",
-    };
-
-
-
-    private void LoadTemplate(ITemplate template) => DSS.Ex.AddProject(new Project(template));
-
-
     private void LoadOwn()
     {
-        DSS.Ex.AddProject(DSSExample.CreateNewProblem());
+        DSSApp.AddProject(DSSExample.CreateNewProblem());
     }
+    private void LoadTemplate(ITemplate template) => DSSApp.AddProject(new Project(template));
 
 
     //Загрузка JSON
@@ -315,7 +272,7 @@
         try
         {
             ITemplate obj = JsonSerializer.Deserialize<Template>(json);
-            DSS.Ex.AddProject(new Project(obj));
+            DSSApp.AddProject(new Project(obj));
             JSONLoadResult = "Проблема успешно загружена";
         }
         catch (Exception ex)

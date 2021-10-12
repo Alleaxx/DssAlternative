@@ -1,33 +1,10 @@
-﻿
-<style>
-    .hier-sheme-mini{
-        margin: 4px;
-        width: 50px;
-    }
-
-    .hier-sheme-level{
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-    }
-    .hier-sheme-element{
-        width: 5px;
-        height: 5px;
-        margin: 2px 1px;
-        border: 1px solid black;
-        border-radius: 1px;
-    }
-</style>
-
-<section class="hier-sheme-mini">
-    @foreach (var levelGroup in Problem.GroupedByLevel)
+﻿<section class="hier-sheme-mini">
+    @foreach (var levelGroup in ProblemActive.GroupedByLevel)
     {
         <div class="hier-sheme-level">
             @foreach (var node in levelGroup)
             {
-                <div class="hier-sheme-element">
-                </div>
+                <div class="hier-sheme-element" />
             }
         </div>
     }
@@ -37,5 +14,5 @@
 @code {
     [Parameter]
     public IProject Project { get; set; }
-    private IProblem Problem => Project.Problem;
+    private IProblem ProblemActive => Project.ProblemActive;
 }

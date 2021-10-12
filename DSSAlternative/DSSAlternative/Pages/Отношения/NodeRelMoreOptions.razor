@@ -1,0 +1,172 @@
+﻿@inherits DSSComponentRelation
+
+    <style>
+        .more-options {
+            margin-top: 2em;
+        }
+
+        .more-options-header {
+        }
+    </style>
+
+    <style>
+        .actions-section {
+            padding: 2px 5px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .action {
+            display: flex;
+            padding: 5px 2px;
+            border: 1px solid gray;
+            border-radius: 2px;
+            font-size: 0.7em;
+            margin: auto;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            width: 75%;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .action-header {
+            padding: 10px 0;
+            border-bottom: 1px solid gainsboro;
+        }
+
+        .action-icon {
+            height: 20px;
+            margin: auto;
+            opacity: 50%;
+        }
+
+        .more-options a.action:hover {
+            color: black;
+            text-decoration: none;
+        }
+
+        .action:hover .action-icon {
+            opacity: 100%;
+        }
+
+        .more-options-add {
+            font-size: 0.9em;
+            color: gray;
+        }
+
+        .action-name {
+            width: 80%;
+            color: black;
+            font-size: 0.8em;
+        }
+
+        .clear-relations:hover {
+            border: 1px solid red;
+        }
+
+            .clear-relations:hover .action-name {
+                color: red;
+            }
+
+        .new-system {
+            padding: 10px 0;
+            border: 1px solid gainsboro;
+        }
+
+        .clear-relation {
+            background: transparent;
+            border: 1px solid whitesmoke;
+            padding: 5px 15px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+            .clear-relation:hover {
+                background-color: lightpink;
+            }
+
+        .matrix .results-text {
+            padding: 20px 0;
+            border-bottom: 1px solid gray;
+            border-top: 1px solid gray;
+            text-align: center;
+        }
+
+        .prev-next-stages a {
+            color: blue;
+        }
+
+            .prev-next-stages a:hover {
+                color: black;
+                text-decoration: none;
+            }
+
+        .next, .prev {
+            display: block;
+            margin: auto;
+        }
+
+        .errors-list {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .hier-fail {
+            border: 2px solid red;
+            border-radius: 3px;
+            font-size: 0.8em;
+            cursor: pointer;
+            text-align: center;
+            padding: 4px;
+            margin: 0 4px;
+        }
+
+            .hier-fail.known {
+                border: 1px solid #c1c100;
+            }
+
+            .hier-fail.consistent {
+                border: 1px solid darkred;
+            }
+
+            .hier-fail:hover {
+                background-color: lightpink;
+            }
+
+        .unknown {
+            background-color: whitesmoke;
+        }
+    </style>
+
+    <section class="more-options">
+        <h4 class="more-options-header">
+            Дополнительно
+        </h4>
+        <span class="more-options-add">Состояние</span><br />
+        <div class="errors-list">
+            @foreach (var error in RelationState.Errors(Relation.Main))
+            {
+                <div class="hier-fail @(error.CssClass())" title="@error.Message">X @error.Name</div>
+            }
+            @if (RelationState.Errors(Relation.Main).Count() == 0)
+            {
+                <span>Матрица согласована и заполнена, всё отлично</span>
+            }
+        </div>
+        <span class="more-options-add">Действия</span><br />
+        <div class="actions-section">
+            <a class="action edit-criteria" href="@NodeLink" @onclick="() => Project.SetNow(Relation.Main)">
+                <span class="action-name">Редактировать критерий и матрицу сравнения</span>
+                <img class="action-icon" src="Images/pencil.png" />
+            </a>
+            <a class="action clear-relations" @onclick="@(() => Problem.ClearRelations(Relation.Main))">
+                <span class="action-name">Сброс всех отношений по данному критерию</span>
+                <img class="action-icon" src="Images/tech.png" />
+            </a>
+        </div>
+    </section>
+    @code {
+
+    }

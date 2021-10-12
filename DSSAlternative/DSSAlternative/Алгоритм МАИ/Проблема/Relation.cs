@@ -6,69 +6,6 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP
 {
-    public class Relation<T,C> where T:class
-    {
-        public override string ToString()
-        {
-            if (Value > 1)
-                return $"'{From}' лучше '{To}' в {Value} раз по {Main}";
-            else if (Value == 1)
-                return $"'{From}' и '{To}' равны по {Main}";
-            else
-                return $"'{From}' хуже '{To}' в {1 / Value} раз по {Main}";
-        }
-        public event Action<Relation<T,C>> Changed;
-
-        public C Main { get; private set; }
-
-        public T From { get; private set; }
-        public T To { get; private set; }
-
-
-        private bool Inited => From != null && To != null;
-        public bool Self => Inited && From == To;
-
-
-        public double Value
-        {
-            get => Self ? 1 : value;
-            set
-            {
-                if (value < MinValue)
-                    value = MinValue;
-                else if (value > MaxValue)
-                    value = MaxValue;
-
-                this.value = value;
-
-                if (Mirrored != null)
-                {
-                    if (value == 0)
-                        Mirrored.value = 0;
-                    else
-                        Mirrored.value = 1 / value;
-                }
-
-                Changed?.Invoke(this);
-            }
-        }
-        protected double value;
-        public bool Unknown => value == 0;
-
-        private double MinValue { get; set; } = 0;
-        private double MaxValue { get; set; } = 9;
-
-        public Relation<T,C> Mirrored { get; set; }
-
-
-        public Relation(C main,T from, T to, double val)
-        {
-            Main = main;
-            From = from;
-            To = to;
-            Value = val;
-        }
-    }
     public interface INodeRelation
     {
         INode Main { get; }
@@ -87,9 +24,87 @@ namespace DSSAlternative.AHP
 
         string GetTextRelation();
     }
-    public class NodeRelation : Relation<INode, INode>, INodeRelation
+    public class NodeRelation : INodeRelation
     {
-        public NodeRelation(INode criteria, INode from, INode to, double val) : base(criteria, from, to, val) { }
+        public override string ToString()
+        {
+            if (Value > 1)
+            {
+                return $"'{From}' лучше '{To}' в {Value} раз по {Main}";
+            }
+            else if (Value == 1)
+            {
+                return $"'{From}' и '{To}' равны по {Main}";
+            }
+            else
+            {
+                return $"'{From}' хуже '{To}' в {1 / Value} раз по {Main}";
+            }
+        }
+        public event Action<INodeRelation> Changed;
+
+        public INode Main { get; private set; }
+
+        public INode From { get; private set; }
+        public INode To { get; private set; }
+
+
+
+        private bool Inited => From != null && To != null;
+        public bool Self => Inited && From == To;
+
+
+        public double Value
+        {
+            get => Self ? 1 : value;
+            set
+            {
+                SetValue();
+                SetMirrored();
+                Changed?.Invoke(this);
+
+                void SetValue()
+                {
+
+                    if (value < MinValue)
+                    {
+                        value = MinValue;
+                    }
+                    else if (value > MaxValue)
+                    {
+                        value = MaxValue;
+                    }
+                    this.value = value;
+                }
+                void SetMirrored()
+                {
+                    if (Mirrored != null && Mirrored is NodeRelation rel)
+                    {
+                        if (value == 0)
+                            rel.value = 0;
+                        else
+                            rel.value = 1 / value;
+                    }
+                }
+            }
+        }
+        protected double value;
+        public bool Unknown => value == 0;
+
+        private double MinValue { get; set; } = 0;
+        private double MaxValue { get; set; } = 9;
+
+        public INodeRelation Mirrored { get; set; }
+
+
+
+        public NodeRelation(INode criteria, INode from, INode to, double val)
+        {
+            Main = criteria;
+            From = from;
+            To = to;
+            Value = val;
+        }
 
 
         public IRating Rating => rating ??= CreateRating();
@@ -97,20 +112,31 @@ namespace DSSAlternative.AHP
         private IRating CreateRating()
         {
             if (Value == 0)
+            {
                 return new Rating(0);
+            }
             else if (Value < 1)
+            {
                 return new Rating(To, Mirrored.Value);
+            }
             else
+            {
+
                 return new Rating(From, Value);
+            }
         }
         public void SetRating(IRating rating)
         {
             this.rating = rating;
             INodeRelation rel;
             if (rating.Value == 1 || rating.Value == 0 || rating.Node == From)
+            {
                 rel = this;
+            }
             else
-                rel = Mirrored as INodeRelation;
+            {
+                rel = Mirrored;
+            }
 
             rel.Value = rating.Value;
 
@@ -176,6 +202,5 @@ namespace DSSAlternative.AHP
             }
         }
 
-        INodeRelation INodeRelation.Mirrored { get => Mirrored as INodeRelation; set => Mirrored = value as NodeRelation; }
     }
 }

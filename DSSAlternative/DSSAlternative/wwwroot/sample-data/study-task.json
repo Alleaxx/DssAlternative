@@ -3,54 +3,48 @@
   "Description": "Подбор подходящего учебного заведения для абитуриента",
   "Img": "Images/study.png",
 
-  "Groups": [
-    [
-      "Место учебы"
-    ],
-    [
-      "Расположение"
-    ],
-    [
-      "Маршрут",
-      "Расстояние",
-      "Репутация"
-    ]
-  ],
-
   "Nodes": [
     {
       "Name": "Место учебы",
-      "Level": 0
+      "Level": 0,
+      "Group": 0,
+      "GroupIndex": -1
     },
     {
       "Name": "Расположение",
       "Level": 1,
-      "Group": 0
+      "Group": 1,
+      "GroupIndex": 0
     },
     {
       "Name": "Репутация",
       "Level": 1,
-      "Group": 0
+      "Group": 2,
+      "GroupIndex": 0
     },
     {
       "Name": "Маршрут",
       "Level": 2,
-      "Group": 1
+      "Group": 2,
+      "GroupIndex": 1
     },
     {
       "Name": "Расстояние",
       "Level": 2,
-      "Group": 1
+      "Group": 2,
+      "GroupIndex": 1
     },
     {
       "Name": "Место 1",
       "Level": 3,
-      "Group": 2
+      "Group": 3,
+      "GroupIndex": 2
     },
     {
       "Name": "Место 2",
       "Level": 3,
-      "Group": 2
+      "Group": 3,
+      "GroupIndex": 2
     }
   ]
 }

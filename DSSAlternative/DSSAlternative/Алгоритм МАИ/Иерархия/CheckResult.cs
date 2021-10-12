@@ -27,8 +27,8 @@ namespace DSSAlternative.AHP
             Class = cl;
         }
 
-        public string GetClass() => Passed ? $"passed {Class}" : $"errored {Class}";
-        public string GetStyle() => "";
+        public string CssClass() => Passed ? $"passed {Class}" : $"errored {Class}";
+        public string CssStyle() => "";
     }
 
 }
