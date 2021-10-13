@@ -2,290 +2,183 @@
 @layout EditorLayout
 
 <style>
-    table.matrix {
-        border-radius: 3px;
-        padding: 5px;
+    .matrix {
         margin: 5px;
         width: 100%;
-        table-layout: fixed;
+        border-collapse: collapse;
     }
 
     .matrix th, .matrix td {
         padding: 8px 24px;
         text-align: center;
+        border: 5px solid transparent;
+        border-top: 0;
+        border-bottom: 0;
     }
 
-    .matrix th {
-
+    .matrix .selectable{
+        font-size: 0.9em;
     }
-
     .matrix .selectable:hover {
         cursor: pointer;
-        color: black;
+        border-right: 5px solid gainsboro;
+        border-left: 5px solid gainsboro;
     }
 
     .matrix .selected {
-
+        border-right: 5px solid orange;
+        border-left: 5px solid orange;
+        color: black;
     }
 
+    td.from{
 
-    .value {
-        width: 30px;
+    }
+    td.to{
+
+    }
+    td.united{
+
+    }
+    td.between{
+        border: 0;
     }
 
-    .name-cell {
-        width: 40%;
+    .matrix .main-node{
+        border: 0;
+    }
+    .matrix .side-node{
+        border: 0;
+    }
+
+    .main-node h3 {
+        margin: 5px 0;
+    }
+
+    .side-node {
         font-size: 1.1em;
-    }
-    .name-cell a:hover{
-        text-decoration: underline;
-    }
-
-    .value-cell {
-        text-align: center;
-    }
-
-
-    .border-bottom-t {
-        border-bottom: 1px solid gainsboro;
     }
 
     .matrix a {
         text-decoration: none;
-        color: black;
-        font-size: 1.1em;
-        font-weight: 400;
+        color: royalblue;
     }
-
     .matrix a:hover {
-        text-decoration: underline;
+        color: blue;
     }
 
 
-    .special-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .main-node {
-        text-align: center;
-    }
-    .main-node h3{
-        margin: 5px 0;
-    }
-    .main-node:hover{
-
-    }
-    .node-relation{
-
-    }
-    .node{
-        text-align: center;
-        text-decoration: none;
-        color: black;
-        font-size: 1.35em;
-    }
-    .node:hover{
-        text-decoration: underline;
-    }
-    .node-rating{
-        text-align: center;
-        border-right: 1px solid gainsboro;
-        border-left: 0;
-    }
-    .node-rating:hover{
-        background-color: whitesmoke;
-        cursor: pointer;
-    }
-    .node-rating .selected{
-        background-color: gainsboro;
-    }
-
-    .selectable {
+    .matrix.selectable {
         color: #323232;
     }
-    .selected {
-        border-right: 5px solid orange;
-        border-left: 5px solid orange;
-        border-radius: 5px;
-        color: black;
-    }
     
-    
-
-    .nodes{
-        margin: 15px 5px;
-        justify-content: space-around;
+    .matrix .safe {
+        background-color: #efffef;
     }
-    .ratings {
-        margin: 5px 5px;
-        align-items:stretch;
-    }
-    .ratings-tr{
-
-    }
-        .ratings-tr .safe {
-            background-color: #efffef;
-        }
-        .ratings-tr .dangerous {
-            background-color: #fff7f8;
-        }
-
-    .new-system{
-        padding: 10px 0;
-        border: 1px solid gainsboro;
+    .matrix .dangerous {
+        background-color: #fff7f8;
     }
 
-    .clear-relation {
-        background: transparent;
-        border: 1px solid whitesmoke;
-        padding: 5px 15px;
-        width: 100%;
-        cursor: pointer;
-    }
-    .clear-relation:hover{
-        background-color: lightpink;
-    }
-
-    .matrix .results-text{
+    .matrix .results-message{
         padding: 20px 0;
         border-bottom: 1px solid gray;
         border-top: 1px solid gray;
         text-align: center;
     }
-
-    .prev-next-stages a{
-        color: blue;
-    }
-    .prev-next-stages a:hover{
-        color: black;
-        text-decoration: none;
-    }
-    .next, .prev{
-        display: block;
-        margin: auto;
-    }
-
-    .errors-list{
-        display: flex;
-        justify-content: center;
-        margin: 10px 0;
-    }
-
-    .hier-fail {
-        border: 2px solid red;
-        border-radius: 3px;
-        font-size: 0.8em;
-        cursor: pointer;
-        text-align: center;
-        padding: 4px;
-        margin: 0 4px;
-    }
-
-        .hier-fail.known {
-            border: 1px solid #c1c100;
-        }
-    .hier-fail.consistent{
-        border: 1px solid darkred;
-    }
-
-        .hier-fail:hover {
-            background-color: lightpink;
-        }
-
-    .unknown {
-        background-color: whitesmoke;
-    }
-
-
 </style>
 
 
 
 <section>
-    @if (Relation != null)
-    {
-
-        <table class="matrix" @onclick="@RelationUpdated">
-            <tbody>
-                <tr>
-                    <th class="main-node border-bottom-t" colspan="2">
+    <table class="matrix" @onclick="@RelationUpdated">
+        <colgroup>
+            <col style="width:40%" />
+            <col style="width:20%" />
+            <col style="width:40%" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th class="main-node united" colspan="3">
+                    <a href="@NodeLink" @onclick="() => SetNow(Relation.Main)">
                         <h3>
                             @Relation.Main.Name
                         </h3>
-                    </th>
-                </tr>
+                    </a>
+                </th>
+            </tr>
+            <tr>
+                <th class="side-node from">
+                    <NavLink href="@NodeLink" @onclick="() => SetNow(Relation.From)">
+                        @Relation.From.Name
+                    </NavLink>
+                </th>
+                <td style="@((Relation.Value == 0) ? RatingNone.CssStyle() : "")" class="between @GetClassSel(Relation.From, RatingNone)" @onclick="@(() => Relation.SetRating(RatingNone))">
+                    ???
+                </td>
+                <th class="side-node to">
+                    <NavLink href="@NodeLink" @onclick="() => SetNow(Relation.To)">
+                        @Relation.To.Name
+                    </NavLink>
+                </th>
+            </tr>
+
+
+            <tr>
+                <td colspan="3" style="@((Relation.Value == 1) ? RatingEqual.CssStyle() : "")" class="united @GetClassSel(Relation.From, RatingEqual)" @onclick="() => Relation.SetRating(RatingEqual)">
+                    @RatingEqual.Name
+                </td>
+            </tr>
+            @foreach (var group in Ratings)
+            {
                 <tr>
-                    <th class="name-cell border-bottom-t">
-                        <NavLink href="@NodeLink" @onclick="() => Project.SetNow(Relation.From)">
-                            @Relation.From.Name
-                        </NavLink>
-                    </th>
-                    <th class="name-cell border-bottom-t">
-                        <NavLink href="@NodeLink" @onclick="() => Project.SetNow(Relation.To)">
-                            @Relation.To.Name
-                        </NavLink>
-                    </th>
-                </tr>
-
-
-                <tr class="ratings-tr">
-                    <td colspan="2" style="@((Relation.Value == 0) ? RatingNone.CssStyle() : "")" class="@GetClassSel(Relation.From, RatingNone)" @onclick="@(() => Project.SetNow(Relation.To))">
-                        Отношения между ними неизвестны
+                    <td title="@group.forRating.Value" style="@((group.forRating.CheckEqual(Relation.Rating)) ? group.forRating.CssStyle() : "")" class="from @GetClassSel(Relation.From, group.forRating)" @onclick="@(() => Relation.SetRating(group.forRating))">
+                        @group.forRating.Name
+                    </td>
+                    <td class="between">
+                        &nbsp;
+                    </td>
+                    <td title="@group.forRating.Value" style="@((group.toRating.CheckEqual(Relation.Rating)) ? group.toRating.CssStyle() : "")" class="to @GetClassSel(Relation.To, group.toRating)" @onclick="@(() => Relation.SetRating(group.toRating))">
+                        @group.toRating.Name
                     </td>
                 </tr>
-                <tr class="ratings-tr">
-                    <td colspan="2" style="@((Relation.Value == 1) ? RatingEqual.CssStyle() : "")" class="@(GetClassSel(Relation.From, RatingEqual))" @onclick="@(() => Relation.SetRating(RatingEqual))">@RatingEqual.Name</td>
-                </tr>
-                @foreach (var group in Ratings)
-                {
-                    <tr class="ratings-tr">
-                        <td style="@((group.forRating.CheckEqual(Relation.Rating)) ? group.forRating.CssStyle() : "")" class="@(GetClassSel(Relation.From, group.forRating))" @onclick="@(() => Relation.SetRating(group.forRating))">
-                            @group.forRating.Name
-                        </td>
+            }
 
-                        <td style="@((group.toRating.CheckEqual(Relation.Rating)) ? group.toRating.CssStyle() : "")" class="@(GetClassSel(Relation.To, group.toRating))" @onclick="@(() => Relation.SetRating(group.toRating))">
-                            @group.toRating.Name
-                        </td>
-                    </tr>
-                }
+            <tr>
+                <td colspan="3" class="results-message">
+                    '@Relation.From.Name' @Relation.GetTextRelation() '@Relation.To.Name'
+                </td>
+            </tr>
 
-                <tr>
-                    <td colspan="2" class="results-text">
-                        '@Relation.From.Name' @Relation.GetTextRelation() '@Relation.To.Name'
-                    </td>
-                </tr>
-
-                <tr class="prev-next-stages">
-                    <td>
-                        <a class="prev" @onclick="() => Project.SetNow(Prev)" href="@RelationsLink">
-                            ← предыдущее
-                        </a>
-                    </td>
-                    <td>
-                        <a class="next" @onclick="() => Project.SetNow(Next)" href="@RelationsLink">
-                            следующее →
-                        </a>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td colspan="2">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p>Не удается найти отношение</p>
-    }
+        </tbody>
+    </table>
+    <div style="display:flex; justify-content: center">
+        <div class="example-section">
+            <div class="example-block" style="background-color: #efffef"></div>
+            <span class="example-description">
+                - Согласованность
+            </span>
+        </div>
+        <div class="example-section">
+            <div class="example-block" style="background-color: #fff7f8"></div>
+            <span class="example-description">
+                - Рассогласованность
+            </span>
+        </div>
+        <div class="example-section">
+            <div class="example-block" style="background-color: white"></div>
+            <span class="example-description">
+                - Неизвестно
+            </span>
+        </div>
+    </div>
 </section>
 
 
 @code {
     [Parameter]
     public EventCallback RelationUpdated { get; set; }
+    [Parameter]
+    public bool UseSafeWarnings { get; set; } = true;
 
     private IRating RatingNone => DSSApp.RatingSystem.RatingNone;
     private IRating RatingEqual => DSSApp.RatingSystem.RatingEqual;
@@ -300,10 +193,11 @@
         }
         return $"{selState} {GetClass(node, rating)}";
     }
+    private string CheckNone(INode node)
+    {
+        return GetClassSel(node, RatingNone);
+    }
 
-
-    private INodeRelation Prev => Problem.PrevRequiredRel(Relation);
-    private INodeRelation Next => Problem.NextRequiredRel(Relation);
 
 
     protected override void OnParametersSet()
@@ -311,7 +205,7 @@
         base.OnParametersSet();
         FromMtx.Clear();
         ToMtx.Clear();
-        if (!Problem.GetMtxRelations(Relation.Main).WithZeros())
+        if (UseSafeWarnings && !Problem.GetMtxRelations(Relation.Main).WithZeros())
         {
             CreateMatrixes();
         }

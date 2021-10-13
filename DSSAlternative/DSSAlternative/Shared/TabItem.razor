@@ -1,0 +1,20 @@
+﻿@implements ITabItem
+
+<li class="@(Owner.ActiveTab == this ? "selected" : "") tab-item" @onclick="() => Owner.SetTab(this)">
+    @Title
+</li>
+
+@code {
+    [CascadingParameter]
+    public Tab Owner { get; set; }
+
+    [Parameter]
+    public RenderFragment Title { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Owner.AddTab(this);
+    }
+}

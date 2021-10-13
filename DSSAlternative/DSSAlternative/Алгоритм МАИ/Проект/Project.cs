@@ -32,6 +32,7 @@ namespace DSSAlternative.AHP
         void SetNow(INode node);
 
         event Action OnRelationChanged;
+        event Action OnNodeChanged;
 
 
         void UpdateProblemFromEditing();
@@ -76,10 +77,18 @@ namespace DSSAlternative.AHP
         public string ViewFilter { get; set; } = "По отношениям";
 
 
-        public Project(ITemplate template)
+        public Project(ITemplate template, bool activeInit = true)
         {
             Console.WriteLine("Создание проекта и обновление иерархии");
-            SetActiveProblem(template);      
+
+            if (activeInit)
+            {
+                SetActiveProblem(template);
+            }
+            else
+            {
+                TemplateEditing = template;
+            }
         }
         public void UpdateProblemFromEditing()
         {
@@ -134,9 +143,11 @@ namespace DSSAlternative.AHP
         public void SetNow(INode node)
         {
             NodeSelected = node;
+            OnNodeChanged?.Invoke();
         }
 
         public event Action OnRelationChanged;
+        public event Action OnNodeChanged;
 
         private IEnumerable<StageRelation> StageRelations { get; set; }
 

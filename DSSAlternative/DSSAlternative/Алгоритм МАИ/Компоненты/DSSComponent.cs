@@ -11,5 +11,7 @@ namespace DSSAlternative.AHP
     {
         [Inject]
         public DSS DSSApp { get; set; }
+
+        protected const string OptionsLink = "Options";
     }
 }

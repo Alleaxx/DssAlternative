@@ -144,6 +144,11 @@
         border-bottom: 1px solid gainsboro;
     }
 
+    .navside ul a.options-link{
+        display: block;
+        border: 1px solid gainsboro;
+    }
+
 </style>
 
 <nav class="navside">
@@ -166,36 +171,21 @@
                 </ul>
             </li>
             <li>
-                <NavLink class="@($"stage-menu-element {View.CssClass()}")" href="@RelationsLink">
+                <NavLink class="@($"stage-menu-element {View.CssClass()}")" href="@ViewLink">
                     <img class="stage-element-image" src="Images/Отношения.png" />
                     <span class="stage-element-name">II ОТНОШЕНИЯ</span>
                 </NavLink>
             </li>
             <li>
                 <ul class="relations">
-                    <li>
-                        <NavLink style="@($"margin-left:1em")" class="@($"{View.CssClass()}")" href="@ViewLink">
-                            II - Обзор
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink style="@($"margin-left:1em")" class="@($"{View.CssClass()}")" href="@ViewLink">
-                            II - Согласованность
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink style="@($"margin-left:1em")" class="@($"{View.CssClass()}")" href="@ViewLink">
-                            II - Завершенность связей
-                        </NavLink>
-                    </li>
-                    @*@foreach (var criteria in Problem.NodesWithRels)
+                    @foreach (var criteria in Problem.NodesWithRels)
                     {
                         <li>
-                            <a style="@($"margin-left:{criteria.Level * 2}em")" class="@($"left-relations {Project.GetStageFromNode(criteria).GetClass()}")" href="@RelationsLink">
+                            <a style="@($"margin-left:{criteria.Level * 2}em")" class="@($"{Project.GetStageFromNode(criteria).CssClass()}")" @onclick="() => SetNow(Problem.FirstRequiredRelation(criteria))" href="@RelationsLink">
                                 II - @Problem.NodesWithRels.ToList().IndexOf(criteria): @criteria.Name
                             </a>
                         </li>
-                    }*@
+                    }
                 </ul>
             </li>
             <li>
@@ -205,7 +195,24 @@
                 </NavLink>
             </li>
         </ul>
+        <h2 class="stage-menu-header">Настройки решения:</h2>
+        <ul>
+            <li>
+                <NavLink class="options-link" href="@OptionsLink">
+                    @*<img class="stage-element-image" src="Images/Иерархия.png" />*@
+                    <span>Общие</span>
+                </NavLink>
+            </li>
+        </ul>
     </section>
 </nav>
+
+@code{      
+    //protected override void OnInitialized()
+    //    {
+    //        base.OnInitialized();
+    //    Project.OnRelationChanged += () => StateHasChanged();
+    //    }
+}
 
 

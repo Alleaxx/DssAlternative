@@ -14,8 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DSSView\DSSView.csproj" />
-    <ProjectReference Include="..\WebBlazorEmpty\WebBlazorEmpty\DSSAlternative.csproj" />
+    <ProjectReference Include="..\DSSView\DSSAHP.csproj" />
   </ItemGroup>
 
 </Project>

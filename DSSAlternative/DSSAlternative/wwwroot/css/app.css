@@ -5,8 +5,8 @@
 
 .grid {
     display: grid;
-    grid-template-columns: 25% 75%;
-    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 25fr 75fr;
+    grid-template-rows: auto auto 1fr auto;
     grid-template-areas:
         "logo header"
         "navside menu"
@@ -59,11 +59,12 @@ main {
     background-color: whitesmoke;
     display: flex;
     flex-direction: column;
+    line-height: 1.5;
     align-items: center;
     text-align: center;
     border-top: 1px solid gainsboro;
     border-bottom: 1px solid gainsboro;
-    padding: 20px;
+    padding: 5px 20px;
 }
 
 

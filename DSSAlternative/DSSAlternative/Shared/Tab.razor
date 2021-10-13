@@ -1,0 +1,70 @@
+﻿<style>
+
+    .tabset{
+
+    }
+    .tab-items {
+        list-style: none;
+        display: flex;
+        align-items: flex-end;
+        margin: 0;
+    }
+    .tab-content {
+        border: 1px solid whitesmoke;
+        border-radius: 1px;
+        padding: 0.25em;
+    }
+
+    .tab-item {
+        padding: 5px 10px;
+        border-bottom: 1px solid gainsboro;
+    }
+
+        .tab-item:hover {
+            background-color: gainsboro;
+            cursor: pointer;
+        }
+
+    .tab-item.selected {
+        background-color: silver;
+    }
+
+</style>
+
+<section class="tabset">
+    <CascadingValue Value="this">
+        <ul class="tab-items">
+            @ChildContent
+        </ul>
+        <div class="tab-content">
+            @ActiveTab?.ChildContent
+        </div>
+    </CascadingValue>
+</section>
+
+@code {
+    public IEnumerable<ITabItem> TabItems { get; private set; }
+
+    public ITabItem ActiveTab { get; private set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+
+    public void AddTab(ITabItem tab)
+    {
+        if(ActiveTab == null)
+        {
+            SetTab(tab);
+        }
+    }
+
+    public void SetTab(ITabItem tab)
+    {
+        if(tab != ActiveTab)
+        {
+            ActiveTab = tab;
+            StateHasChanged();
+        }
+    }
+}

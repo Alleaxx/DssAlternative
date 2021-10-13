@@ -11,6 +11,10 @@ th {
     align-items: center;
 }
 
+.tab-header{
+    margin: 4px 0;
+    font-weight: 500;
+}
 
 .hier-sheme-mini {
     margin: 4px;

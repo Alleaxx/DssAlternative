@@ -17,7 +17,7 @@ namespace DSSAlternative.AHP
         bool Unknown { get;  }
         double Value { get; set; }
 
-        void Clear();
+        void SetUnknown();
 
         IRating Rating { get; }
         void SetRating(IRating rating);
@@ -26,6 +26,9 @@ namespace DSSAlternative.AHP
     }
     public class NodeRelation : INodeRelation
     {
+        private const double MinValue = 0;
+        private const double MaxValue = 9;
+
         public override string ToString()
         {
             if (Value > 1)
@@ -41,7 +44,7 @@ namespace DSSAlternative.AHP
                 return $"'{From}' хуже '{To}' в {1 / Value} раз по {Main}";
             }
         }
-        public event Action<INodeRelation> Changed;
+        public event Action<INodeRelation> OnChanged;
 
         public INode Main { get; private set; }
 
@@ -49,9 +52,10 @@ namespace DSSAlternative.AHP
         public INode To { get; private set; }
 
 
-
+        //Свойства
         private bool Inited => From != null && To != null;
         public bool Self => Inited && From == To;
+        public INodeRelation Mirrored { get; set; }
 
 
         public double Value
@@ -61,11 +65,10 @@ namespace DSSAlternative.AHP
             {
                 SetValue();
                 SetMirrored();
-                Changed?.Invoke(this);
+                OnChanged?.Invoke(this);
 
                 void SetValue()
                 {
-
                     if (value < MinValue)
                     {
                         value = MinValue;
@@ -74,16 +77,23 @@ namespace DSSAlternative.AHP
                     {
                         value = MaxValue;
                     }
-                    this.value = value;
+                    else
+                    {
+                        this.value = value;
+                    }
                 }
                 void SetMirrored()
                 {
                     if (Mirrored != null && Mirrored is NodeRelation rel)
                     {
                         if (value == 0)
+                        {
                             rel.value = 0;
+                        }
                         else
+                        {
                             rel.value = 1 / value;
+                        }
                     }
                 }
             }
@@ -91,10 +101,6 @@ namespace DSSAlternative.AHP
         protected double value;
         public bool Unknown => value == 0;
 
-        private double MinValue { get; set; } = 0;
-        private double MaxValue { get; set; } = 9;
-
-        public INodeRelation Mirrored { get; set; }
 
 
 
@@ -107,8 +113,8 @@ namespace DSSAlternative.AHP
         }
 
 
-        public IRating Rating => rating ??= CreateRating();
-        private IRating rating;
+        //Рейтинг на основе значения
+        public IRating Rating => CreateRating();
         private IRating CreateRating()
         {
             if (Value == 0)
@@ -121,37 +127,26 @@ namespace DSSAlternative.AHP
             }
             else
             {
-
                 return new Rating(From, Value);
             }
         }
         public void SetRating(IRating rating)
         {
-            this.rating = rating;
-            INodeRelation rel;
-            if (rating.Value == 1 || rating.Value == 0 || rating.Node == From)
-            {
-                rel = this;
-            }
-            else
-            {
-                rel = Mirrored;
-            }
-
-            rel.Value = rating.Value;
-
+            INodeRelation relation = rating.Node.Equals(From) ? this : Mirrored;
+            relation.Value = rating.Value;
         }
-
-        public void Clear()
+        public void SetUnknown()
         {
-            value = 0;
-            rating = CreateRating();
+            Value = 0;
         }
+
 
         public string GetTextRelation()
         {
             if (Unknown)
+            {
                 return "??????";
+            }
 
             if (Value == 1)
             {
@@ -180,27 +175,53 @@ namespace DSSAlternative.AHP
             }
             else
             {
-                Value = 1 / Value;
-                if (Value >= 9)
+                double testValue = 1 / Value;
+                if (testValue >= 9)
                     return "АБСОЛЮТНО ПРОИГРЫВАЕТ";
-                else if (Value >= 8)
+                else if (testValue >= 8)
                     return "СИЛЬНО ПРОИГРЫВАЕТ";
-                else if (Value >= 7)
+                else if (testValue >= 7)
                     return "СИЛЬНО ПРОИГРЫВАЕТ";
-                else if (Value >= 6)
+                else if (testValue >= 6)
                     return "ПРОИГРЫВАЕТ";
-                else if (Value >= 5)
+                else if (testValue >= 5)
                     return "ПРОИГРЫВАЕТ";
-                else if (Value >= 4)
+                else if (testValue >= 4)
                     return "НЕМНОГО ПРОИГРЫВАЕТ";
-                else if (Value >= 3)
+                else if (testValue >= 3)
                     return "НЕМНОГО ПРОИГРЫВАЕТ";
-                else if (Value >= 2)
+                else if (testValue >= 2)
                     return "СЛЕГКА ПРОИГРЫВАЕТ";
                 else
                     return "СЛЕГКА ПРОИГРЫВАЕТ";
             }
         }
+    }
 
+    public class RelationPair
+    {
+        public readonly NodeRelation FromRelation;
+        public readonly NodeRelation ToRelation;
+
+        public INode MainNode => FromRelation.Main;
+        public INode FromNode => FromRelation.From;
+        public INode ToNode => FromRelation.To;
+
+        public IRating Rating { get; set; }
+        public void SetRating(IRating rating)
+        {
+
+        }
+
+        public RelationPair(NodeRelation from, NodeRelation to)
+        {
+            FromRelation = from;
+            ToRelation = to;
+        }
+        public RelationPair(NodeRelation main)
+        {
+            FromRelation = main;
+            ToRelation = main.Mirrored as NodeRelation;
+        }
     }
 }

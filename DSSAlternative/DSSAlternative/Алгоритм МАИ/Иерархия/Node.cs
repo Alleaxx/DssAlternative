@@ -35,6 +35,8 @@ namespace DSSAlternative.AHP
         INode[] LowerNodesControlled { get; }
 
         void UpdateStructure(IEnumerable<INode> allNodes, IEnumerable<INodeGroup> groups);
+
+        public bool CompareValuesWith(INode node);
     }
 
     public class Node : INode
@@ -117,6 +119,28 @@ namespace DSSAlternative.AHP
             Level = level;
             Group = group;
             GroupIndex = groupIndex;
+        }
+
+
+        public bool CompareValuesWith(INode node)
+        {
+            if (!node.Name.Equals(Name))
+            {
+                return false;
+            }
+            if(Level != node.Level)
+            {
+                return false;
+            }
+            if(Group != node.Group)
+            {
+                return false;
+            }
+            if(GroupIndex != node.GroupIndex)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

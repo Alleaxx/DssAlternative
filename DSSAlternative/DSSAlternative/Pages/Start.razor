@@ -179,7 +179,6 @@
                 Формирование иерархии проблемы с нуля. Подходит для нетипичных задач.
             </p>
             <input type="button" @onclick="LoadOwn" value="Создать" />
-
         </section>
 
         <section>
@@ -188,23 +187,11 @@
                 Образцовая задача показывает возможности системы на примере уже решенной проблемы.
             </p>
             <input type="button" @onclick="@(() => DSSApp.AddProject(DSSExample.CreateSampleProblem()))" value="Загрузить" />
+            <br />
+            <input type="button" @onclick="@(() => DSSApp.AddProject(DSSExample.CreateSampleTreeProblem()))" value="Образец задачи с подкритериями" />
+            <br />
+            <input type="button" @onclick="@(() => DSSApp.AddProject(DSSExample.CreateSampleTree2Problem()))" value="Образец задачи с подкритериям II" />
         </section>
-        <section>
-            <h3>Загрузка пр. образца</h3>
-            <p class="load-note">
-                Образцовая задача с подкритериями.
-            </p>
-            <input type="button" @onclick="@(() => DSSApp.AddProject(DSSExample.CreateSampleTreeProblem()))" value="Загрузить" />
-        </section>
-        <section>
-            <h3>Загрузка пр. образца 2</h3>
-            <p class="load-note">
-                Образцовая задача с подкритериями.
-            </p>
-            <input type="button" @onclick="@(() => DSSApp.AddProject(DSSExample.CreateSampleTree2Problem()))" value="Загрузить" />
-        </section>
-
-
         <section>
             <h3>Загрузка сохраненной задачи</h3>
             <p class="load-note">
@@ -243,7 +230,7 @@
                 <li>
                     <NavLink @onclick="@(() => DSSApp.SelectProject(project))" class="problem" href="hierarchy">
                         <div class="problem-img">
-                            <DSSAlternative.Pages.Дополнительно.HierSheme Project="@project" />
+                            <HierSheme Project="@project" />
                         </div>
                         <h4 class="problem-name">@project.ProblemActive.MainGoal.Name</h4>
                         <p class="problem-status">@project.Status</p>

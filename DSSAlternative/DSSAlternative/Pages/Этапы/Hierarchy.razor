@@ -58,9 +58,21 @@
         padding: 2px 5px;
         padding-right: 0;
         margin: 8px;
-        border: 1px solid gray;
+        border: 2px solid silver;
         min-width: 15%;
         border-radius: 2px;
+    }
+
+
+    .node-main-element {
+        border: 2px solid orange;
+    }
+
+    .node-controlled-element {
+        border: 2px solid red;
+    }
+    .node-own {
+        border: 2px solid gray;
     }
 
     .add {
@@ -98,6 +110,7 @@
         border: 0;
         padding: 10px 0;
         text-align: center;
+        outline-color: transparent;
     }
 
     .confirm {
@@ -199,14 +212,6 @@
     .json-sheme{
         margin: 20px 0;
     }
-
-    .node-main-element{
-        border: 3px solid orange;
-    }
-
-    .node-controlled-element {
-        border: 3px solid red;
-    }
 </style>
 
 <section>
@@ -226,13 +231,13 @@
                 else
                 {
                     <span class="all-saved">Все изменения сохранены</span>
-                    <NavLink class="navigation-link" href="@RelationsLink">
+                    @*<NavLink class="navigation-link" href="@RelationsLink">
                         Перейти к определению связей
                     </NavLink>
                     <NavLink class="navigation-link" href="@ViewLink">
                         Обзор задачи
                     </NavLink>
-                    <input type="button" value="Вывести новую структуру" @onclick="ShowStructure" />
+                    <input type="button" value="Вывести новую структуру" @onclick="ShowStructure" />*@
                 }
             </div>
             <div class="hier-fails">
@@ -244,6 +249,9 @@
                 }
             </div>
         </div>
+
+
+
 
         <div class="information">
             <div>
@@ -263,136 +271,194 @@
                 <span class="property-value">@ProblemEditing.EstTime.Minutes мин. @ProblemEditing.EstTime.Seconds сек.</span>
             </div>
         </div>
-
-        <div>
-            @foreach (var levelGroup in ProblemEditing.GroupedByLevel)
-            {
-                <section class="level @(levelGroup.Key == 0 ? "main-goal-level" : "")">
-                    <div class="level-name">
-                        <span class="level-index">Уровень @levelGroup.Key</span>
-                        <br>
-                        <span>@levelGroup.ElementAt(0).LevelName</span>
-                        <br />
-
-                    </div>
-                    <div class="level-elements">
-                        @foreach (var node in levelGroup)
+        
+        <Tab>
+            <TabItem>
+                <Title>
+                    <h4 class="tab-header">Иерархия</h4>
+                </Title>
+                <ChildContent>
+                    <div>
+                        @foreach (var levelGroup in ProblemEditing.GroupedByLevel)
                         {
-                            <div class="@($"{(NodeHovered != null && NodeHovered.Criterias.Group.Contains(node) ? "node-main-element" : "")} node-element")" @onclick="@(() => NodeHovered = node)">
-                                <input class="input-text" type="text" @bind-value="@node.Name" />
-                                <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
-                            </div>
+                            <section class="level @(levelGroup.Key == 0 ? "main-goal-level" : "")">
+                                <div class="level-name">
+                                    <span class="level-index">Уровень @levelGroup.Key</span>
+                                    <br>
+                                    <span>@levelGroup.ElementAt(0).LevelName</span>
+                                    <br />
+
+                                </div>
+                                <div class="level-elements">
+                                    @foreach (var node in levelGroup)
+                                    {
+                                        <div class="@HierClass(node) node-element" @onclick="@(() => NodeHovered = node)">
+                                            <input class="input-text" type="text" @bind-value="@node.Name" />
+                                            <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="level-add">
+                                    <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
+                                </div>
+
+                            </section>
                         }
+                        <section class="level new-level">
+                            <div class="level-name">
+                                <span>Уровень @ProblemEditing.LevelsCount</span>
+                            </div>
+                            <input class="add " type="button" value="++" @onclick="@(() => AddNode(ProblemEditing.LevelsCount))" />
+                            <input class="add" type="button" value="+" style="visibility:hidden" />
+                        </section>
+
                     </div>
+                </ChildContent>
+            </TabItem>
+            <TabItem>
+                <Title>
+                    <h4 class="tab-header">Подробная структура</h4>
+                </Title>
+                <ChildContent>
+                    <style>
+                        .structure td, .structure th{
+                            text-align: left;
+                        }
+                    </style>
+                    <section style="padding: 1em 0.5em">
+                        <table class="structure">
+                            <tr>
+                                <th>№</th>
+                                <th>Критерии</th>
+                                <th>Зависимые</th>
+                            </tr>
+                            @foreach (var group in Template.Groups)
+                            {
+                                <tr>
+                                    <td>
+                                        <b>Группа @group.Index</b>:
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            @foreach (var node in group.Group)
+                                            {
+                                                <li>@node.Name</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            @foreach (var node in Template.Nodes.Where(n => n.GroupIndex == group.Index))
+                                            {
+                                                <li>@node.Name</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
 
-                    <div class="level-add">
-                        <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
-                    </div>
+                        <style>
+                            .node-table-edit {
+                                border-collapse: collapse;
+                                font-size: 0.9em;
+                            }
+                            .node-table-edit td, .node-table-edit th{
+                                padding: 2px 5px;
+                            }
 
-                </section>
-            }
-            <section class="level new-level">
-                <div class="level-name">
-                    <span>Уровень @ProblemEditing.LevelsCount</span>
-                </div>
-                <input class="add " type="button" value="++" @onclick="@(() => AddNode(ProblemEditing.LevelsCount))" />
-                <input class="add" type="button" value="+" style="visibility:hidden" />
-            </section>
+                            .node-table-edit-header {
+                            }
 
-        </div>
+                                .node-table-edit-header th {
+                                    border-bottom: 1px solid gainsboro;
+                                }
+
+                            .node-table-edit-node {
+                            }
+
+                                .node-table-edit-node .edit-text {
+                                    text-align: left;
+                                    font-style: italic;
+                                }
+
+                                .edit-cell input{
+                                    width: 85%;
+                                }
+
+                            .edit-cell input[type="number"] {
+                                text-align: right;
+                                padding: 5px 10px;
+                                border: 0;
+                                border-bottom: 0px solid gainsboro;
+                            }
+                            .num{
+                                text-align: right;
+                            }
+
+                            .edit-cell input[type="text"] {
+                                text-align: left;
+                                padding: 5px 10px;
+                                border: 0;
+                                border-bottom: 0px solid gainsboro;
+                            }
+                        </style>
+                        <table class="node-table-edit">
+                            <colgroup>
+                                <col style="width:20%"/>
+                                <col style="width:38%"/>
+                                <col style="width:14%"/>
+                                <col style="width:14%"/>
+                                <col style="width:14%" />
+                            </colgroup>
+                            <tr class="node-table-edit-header">
+                                <th>Тип</th>
+                                <th>Имя</th>
+                                <th class="num">Уровень</th>
+                                <th class="num">Группа</th>
+                                <th class="num">Подчинена</th>
+                            </tr>
+                            @foreach (var node in Problem.Hierarchy.OrderBy(n => n.Level))
+                            {
+                                <tr class="node-table-edit-node">
+                                    <td class="edit-text">
+                                        <span class="node-text">@node.LevelName</span>
+                                    </td>
+                                    <td class="edit-cell">
+                                        <input type="text" @bind-value="@node.Name" />
+                                    </td>
+                                    <td class="edit-cell">
+                                        <input type="number" @bind-value="@node.Level" />
+                                    </td>
+                                    <td class="edit-cell">
+                                        <input type="number" @bind-value="@node.Group" />
+                                    </td>
+                                    <td class="edit-cell">
+                                        <input type="number" @bind-value="@node.GroupIndex" />
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+
+                    </section>
+                </ChildContent>
+            </TabItem>
+            <TabItem>
+                <Title>
+                    <h4 class="tab-header">JSON</h4>
+                </Title>
+                <ChildContent>
+                    <textarea rows="20" cols="100">
+                     @JsonCurrent
+                </textarea>
+                </ChildContent>
+            </TabItem>
+        </Tab>
     </div>
 
-    <section>
-        <h3>Группы критериев</h3>
-        <ul>
-            @foreach (var group in Template.Groups)
-            {
-                <li>
-                    <b>@group.Index</b>: <span>@(string.Join<INode>(',',group.Group))</span>
-                </li>
-            }
-        </ul>
 
-        <style>
-            .node-table-edit {
-                border: 1px solid gainsboro;
-                padding: 10px;
-                font-size: 0.9em;
-            }
 
-            .node-table-edit-header {
-            }
-
-                .node-table-edit-header th {
-                    border-bottom: 1px solid gainsboro;
-                }
-
-            .node-table-edit-node {
-            }
-
-                .node-table-edit-node .edit-text {
-                    border-right: 1px solid gainsboro;
-                }
-
-            .edit-cell input[type="number"] {
-                text-align: center;
-                padding: 5px 10px;
-                border: 0;
-                border-bottom: 1px solid gainsboro;
-            }
-
-            .edit-cell input[type="text"] {
-                padding: 5px 10px;
-                border: 0;
-                border-bottom: 1px solid gainsboro;
-            }
-        </style>
-        <table class="node-table-edit">
-            <tr class="node-table-edit-header">
-                <th>Тип</th>
-                <th>Имя</th>
-                <th>Уровень</th>
-                <th>Группа критериев</th>
-                <th>Подчинена группе</th>
-                <th>Описание</th>
-            </tr>
-            @foreach (var node in Problem.Hierarchy.OrderBy(n => n.Level))
-            {
-                <tr class="node-table-edit-node">
-                    <td class="edit-text" style="text-align:center">
-                        <span class="node-text">@node.LevelName</span>
-                    </td>
-                    <td class="edit-cell">
-                        <input type="text" @bind-value="@node.Name" />
-                    </td>
-                    <td class="edit-cell">
-                        <input type="number" @bind-value="@node.Level" />
-                    </td>
-                    <td class="edit-cell">
-                        <input type="number" @bind-value="@node.Group" />
-                    </td>
-                    <td class="edit-cell">
-                        <input type="number" @bind-value="@node.GroupIndex" />
-                    </td>
-                    <td class="edit-cell">
-                        <input type="text" @bind-value="@node.Description" />
-                    </td>
-                </tr>
-            }
-        </table>
-
-    </section>
-
-    <section class="json-sheme">
-        <details>
-            <summary rows="25" cols="25">
-                JSON-схема
-            </summary>
-            <textarea rows="20" cols="100">
-                 @JsonCurrent
-            </textarea>
-        </details>
-    </section>
 
 </section>
 
@@ -431,6 +497,33 @@
             NodesEditing.Remove(e as Node);
     }
 
+    private void DragTest(DragEventArgs dragEventArgs,INode node)
+    {
+        foreach (var item in dragEventArgs.DataTransfer.Items)
+        {
+            Console.WriteLine($"{item.Kind} {item.Type}");
+        }
+    }
+    private string HierClass(INode node)
+    {
+        if(NodeHovered != null)
+        {
+            if(NodeHovered == node)
+            {
+                return "node-own";
+            }
+            if (NodeHovered.Criterias.Group.Contains(node))
+            {
+                return "node-main-element";
+            }
+            var lower = NodeHovered.LowerNodesControlled;
+            if (lower != null && lower.Contains(node))
+            {
+                return "node-controlled-element";
+            }
+        }
+        return "";
+    }
 
     private void ShowStructure()
     {

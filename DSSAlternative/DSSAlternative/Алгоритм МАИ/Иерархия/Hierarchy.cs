@@ -39,7 +39,7 @@ namespace DSSAlternative.AHP
             {
                 node.UpdateStructure(template.Nodes, template.Groups);
             }
-            Dictionary = GetDictionary();
+            Dictionary = CreateDictionary();
         }
 
 
@@ -48,7 +48,7 @@ namespace DSSAlternative.AHP
         public IEnumerable<IGrouping<int, INode>> GroupedByLevel => Hierarchy.OrderBy(n => n.Level).GroupBy(h => h.Level);
         public ICorrectness Correctness => new HierarchyCorrectness(this);
         public Dictionary<int, INode[]> Dictionary { get; private set; }
-        private Dictionary<int, INode[]> GetDictionary()
+        private Dictionary<int, INode[]> CreateDictionary()
         {
             Dictionary<int, INode[]> dictionary = new Dictionary<int, INode[]>();
             foreach (var nodeGroup in GroupedByLevel)
@@ -100,7 +100,9 @@ namespace DSSAlternative.AHP
         public static bool CompareEqual(IHierarchy a, IHierarchy b)
         {
             if (a == null || b == null)
+            {
                 return false;
+            }
 
             var aNodes = a.Hierarchy.ToList();
             var bNodes = b.Hierarchy.ToList();
@@ -109,13 +111,17 @@ namespace DSSAlternative.AHP
             int bCount = bNodes.Count;
 
             if (aCount != bCount)
-                return false;
-
-            foreach (var aNode in a.Hierarchy)
             {
-                if (!bNodes.Exists(n => n.Name == aNode.Name && n.Level == aNode.Level))
-                    return false;
+                return false;
             }
+
+            string aString = string.Join(';', aNodes);
+            string bString = string.Join(';', bNodes);
+            if (!aString.Equals(bString))
+            {
+                return false;
+            }
+
             return true;
         }
     }

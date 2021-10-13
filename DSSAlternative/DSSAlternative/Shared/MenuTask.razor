@@ -122,7 +122,7 @@
             <li>
                 <a class="task-menu-element @(project == DSSApp.Project ? "active" : "")" @onclick="@(() => { DSSApp.SelectProject(project); })" href="view">
                     <div class="task-element-sheme">
-                        <DSSAlternative.Pages.Дополнительно.HierSheme Project="@project" />
+                        <HierSheme Project="@project" />
                     </div>
                     <header class="task-element-header">
                         <h4 class="task-element-name">@project.ProblemActive.MainGoal.Name</h4>

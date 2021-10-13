@@ -113,7 +113,7 @@
         margin-top: 0;
     }
 
-    .menu-area .active {
+    .rel-menu-element.active {
         border-left: 5px solid orange;
     }
 
@@ -139,8 +139,12 @@
     .rel-menu-list .selected{
         font-weight: bold;
     }
-</style>
 
+    .relation-area h4{
+        margin: 3px 0;
+        font-weight: 500;
+    }
+</style>
 <div class="relations-grid">
     <nav class="menu-area">
         <h2 class="rel-menu-header">Список отношений</h2>
@@ -196,42 +200,81 @@
             }
     </style>
     <div class="relation-area">
-        <ul class="filters">
-            <li @onclick="() => ViewState = RelationViewState.Question">
-                Вопрос
-            </li>
-            <li @onclick="() => ViewState = RelationViewState.Matrix">
-                Матрица
-            </li>
-            <li @onclick="() => ViewState = RelationViewState.Add">
-                Дополнительно
-            </li>
-        </ul>
-        <section>
-            @if (ViewState == RelationViewState.Question)
+        <h2>Отношение</h2>
+
+        <Tab>
+            <TabItem>
+                <Title>
+                    <h4>Сравнение</h4>
+                </Title>
+                <ChildContent>
+                    <NodeQuestion Relation="@RelationSel" />
+                </ChildContent>
+            </TabItem>
+            <TabItem>
+                <Title>
+                    <h4>Матрица</h4>
+                </Title>
+                <ChildContent>
+                    <NodeMatrix Node="@RelationSel.Main" />
+                </ChildContent>
+            </TabItem>
+            <TabItem>
+                <Title>
+                    <h4>Настройки</h4>
+                </Title>
+                <ChildContent>
+                    <NodeRelMoreOptions Relation="RelationSel"></NodeRelMoreOptions>
+                </ChildContent>
+            </TabItem>
+        </Tab>
+        <div class="prev-next-stages">
+            <style>
+                .prev-next-stages {
+                    display: flex;
+                    justify-content: space-between;
+                    text-align: center;
+                    margin: 12px 0;
+                }
+                .prev-next-stages a{
+                    text-decoration: none;
+                    cursor: pointer;
+                    display: block;
+                    color: royalblue;
+                }
+                .prev-next-stages a:hover{
+                    color: blue;
+                }
+
+                .prev, .next {
+                    flex: 2;
+                }
+
+                .res {
+                    flex: 1;
+                }
+            </style>
+            <div>
+                <a class="prev" @onclick="() => Project.SetNow(Prev)">
+                    ← предыдущее
+                </a>
+            </div>
+            @if (RelationState.AreCorrect)
             {
-                <NodeQuestion Relation="@RelationSel" />
+                <NavLink class="res" href="@ResultsLink">
+                    ПРОСМОТРЕТЬ РЕЗУЛЬТАТ
+                </NavLink>
             }
-            else if (ViewState == RelationViewState.Matrix)
-            {
-                <NodeMatrix Node="@RelationSel.Main" AllowedRelations="@(new INodeRelation[] { RelationSel, RelationSel.Mirrored })"/>
-            }
-            else if (ViewState == RelationViewState.Add)
-            {
-                <NodeRelMoreOptions Relation="RelationSel"></NodeRelMoreOptions>
-            }
-        </section>
+            <div>
+                <a class="next" @onclick="() => Project.SetNow(Next)">
+                    следующее →
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
 @code {
-    public enum RelationViewState
-    {
-        Matrix, Question, Add
-    }
-
-    public RelationViewState ViewState { get; set; } = RelationViewState.Question;
-
     public NodeRelation RelationSel => Project.RelationSelected as NodeRelation;
 
     protected override void OnInitialized()
@@ -239,4 +282,7 @@
         base.OnInitialized();
         Project.OnRelationChanged += () => StateHasChanged();
     }
+
+    private INodeRelation Prev => Problem.PrevRequiredRel(RelationSel);
+    private INodeRelation Next => Problem.NextRequiredRel(RelationSel);
 }

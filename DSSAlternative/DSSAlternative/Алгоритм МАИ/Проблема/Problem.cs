@@ -50,41 +50,42 @@ namespace DSSAlternative.AHP
             RelationsRequired = GetRequiredRelations().ToArray();
 
             CorrectnessRels = new RelationsCorrectness(this);
-        }
-        private List<INodeRelation> GetRelations()
-        {
-            List<INodeRelation> relations = new List<INodeRelation>();
-            foreach (var node in Hierarchy)
+
+
+            List<INodeRelation> GetRelations()
             {
-                var neigbors = Hierarchy.Where(n => Enumerable.SequenceEqual(n.Criterias.Group, node.Criterias.Group));
-                foreach (var criteria in node.Criterias.Group)
+                List<INodeRelation> relations = new List<INodeRelation>();
+                foreach (var node in Hierarchy)
                 {
-                    foreach (var nodeNeighbor in neigbors)
+                    var neigbors = Hierarchy.Where(n => Enumerable.SequenceEqual(n.Criterias.Group, node.Criterias.Group));
+                    foreach (var criteria in node.Criterias.Group)
                     {
-                        bool relationExists = relations.Exists(r => r.Main == criteria && r.From == node && r.To == nodeNeighbor);
-                        if (!relationExists)
+                        foreach (var nodeNeighbor in neigbors)
                         {
-                            NodeRelation relation = new NodeRelation(criteria, node, nodeNeighbor, 0);
-                            relations.Add(relation);
-                            relation.Changed += RelationValue_Changed;
+                            bool relationExists = relations.Exists(r => r.Main == criteria && r.From == node && r.To == nodeNeighbor);
+                            if (!relationExists)
+                            {
+                                NodeRelation relation = new NodeRelation(criteria, node, nodeNeighbor, 0);
+                                relations.Add(relation);
+                                relation.OnChanged += RelationValue_Changed;
+                            }
                         }
                     }
                 }
+                return relations;
             }
 
-            return relations;
-
-        }
-        private List<INodeRelation> GetRequiredRelations()
-        {
-            List<INodeRelation> onlyRequired = RelationsAll.Where(r => r.From != r.To).ToList();
-            for (int i = 0; i < onlyRequired.Count; i++)
+            List<INodeRelation> GetRequiredRelations()
             {
-                var relMirrored = onlyRequired[i].Mirrored;
-                if (onlyRequired.Remove(relMirrored))
-                    i--;
+                List<INodeRelation> onlyRequired = RelationsAll.Where(r => r.From != r.To).ToList();
+                for (int i = 0; i < onlyRequired.Count; i++)
+                {
+                    var relMirrored = onlyRequired[i].Mirrored;
+                    if (onlyRequired.Remove(relMirrored))
+                        i--;
+                }
+                return onlyRequired;
             }
-            return onlyRequired;
         }
 
 
@@ -109,7 +110,7 @@ namespace DSSAlternative.AHP
             }
         }
 
-
+        public RelationPair[] Relations { get; private set; }
         public INodeRelation[] RelationsAll { get; private set; }
         public INodeRelation[] RelationsRequired { get; private set; }
         public IEnumerable<IGrouping<INode, INodeRelation>> RelationsGroupedMain(INode node) => RelationsAll.Where(g => g.Main == node).GroupBy(r => r.From);
@@ -140,7 +141,7 @@ namespace DSSAlternative.AHP
         {
             foreach (var relation in RelationsRequired.Where(r => r.Main == node))
             {
-                relation.Clear();
+                relation.SetUnknown();
             }
             RelationValueChanged?.Invoke();
         }

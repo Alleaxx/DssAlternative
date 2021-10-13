@@ -29,7 +29,7 @@ namespace DSSAlternative.AHP
             }
             if(Project.RelationSelected == Relation)
             {
-                AddClass("selected");
+                AddClass("active");
             }
         }
     }

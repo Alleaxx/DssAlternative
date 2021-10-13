@@ -46,5 +46,19 @@ namespace DSSAlternative.AHP
         {
             StateHasChanged();
         }
+
+
+        protected string FormatNumber(double num)
+        {
+            if (double.IsNaN(num))
+            {
+                return "~";
+            }
+            if (double.IsInfinity(num))
+            {
+                return "∞";
+            }
+            return num.ToString("0.00");
+        }
     }
 }

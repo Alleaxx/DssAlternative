@@ -3,332 +3,151 @@
 
 @layout EditorLayout
 
-
 <style>
-    .sheme {
-    }
-
-    .level {
+    .relations-state{
         display: flex;
-        align-items: center;
-        border: 1px solid gainsboro;
+    }
+    .sheme-nav{
+        flex: 3;
+        padding: 5px;
+        border-right: 1px solid gainsboro;
+    }
+    .sheme-info{
+        flex: 7;
+        padding: 5px 10px;
+    }
+    .sheme-info-total {
+
+    }
+    .sheme-info-fill{
+
+    }
+    .sheme-info-cons{
+
     }
 
-    .level-name {
-        width: 20%;
-        text-align: center;
+    .info-details{
+        margin: 0 1em;
     }
 
-    .level-index {
-        font-size: 0.9em;
-        color: gray;
+    .sheme-info ul{
+        list-style-type: circle;
     }
-
-    .level-text {
-        font-size: 1.2em;
-    }
-
-    .level-elements {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .node-element {
-        padding: 10px;
-        margin: 10px;
-        border: 1px solid gray;
-        text-align: center;
-        border-radius: 4px;
-        padding: 0;
+    .sheme-info a{
         text-decoration: none;
+        color: royalblue;
+    }
+    .sheme-info a:hover{
+        color: blue;
     }
 
-        .node-element a {
-            text-decoration: none;
-        }
-
-    .node-element-name {
-        font-size: 0.9em;
+    .errors, .warnings, .no-errors{
+        font-size: 1.15em;
     }
-
-    .filters {
-        list-style: none;
-        display: flex;
+    .no-errors{
+        color: green;
     }
-
-        .filters li {
-            padding: 5px 15px;
-            border-bottom: 1px solid gainsboro;
-        }
-
-            .filters li:hover {
-                background-color: gainsboro;
-                cursor: pointer;
-            }
-
-        .filters .selected {
-            background-color: gainsboro;
-        }
-
-
-
-    .good {
-        background-color: #dfffdf;
-    }
-
-    .bad {
-        background-color: #ffdee3;
-    }
-
-    .warn {
-        background-color: antiquewhite;
-    }
-
-    .best {
-        background-color: #dfffdf;
-    }
-
-
-
-    .actions-section {
-        padding: 2px 5px;
-        justify-content: center;
-        align-items: center;
-        height: 3em;
-        display: none;
-    }
-
-    .action {
-        display: flex;
-        padding: 3px 5px;
-        border: 1px solid gray;
-        border-radius: 2px;
-        font-size: 0.7em;
-        margin: 5px 1px;
-        align-items: center;
-        cursor: pointer;
-    }
-
-    .action-header {
-        padding: 10px 0;
-        border-bottom: 1px solid gainsboro;
-    }
-
-    .node-element:hover .actions-section {
-        display: flex;
-    }
-
-    .action-values-section {
-        padding: 2px 5px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 3em;
-    }
-
-    .node-element:hover .action-values-section {
-        display: none;
-    }
-
-    .action-icon {
-        height: 16px;
-        margin: auto;
-        opacity: 50%;
-    }
-
-    .action:hover {
-        color: black;
-    }
-
-        .action:hover .action-icon {
-            opacity: 100%;
-        }
-
-    .action-name {
-        width: 80%;
-        color: black;
-    }
-
-    .edit-criteria:hover {
-    }
-
-    .edit-relations:hover {
-    }
-
-    .clear-relations:hover {
-        border: 1px solid red;
-    }
-
-    .clear-relations a:hover {
+    .errors{
         color: red;
     }
-
-    .property {
-        font-size: 0.9em;
-        margin: 0 6px;
-    }
-
-    .property-name {
-        color: gray;
-    }
-
-    .property-value {
-        color: black;
-    }
-
-    .filters-section {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .warnings{
+        color: darkgoldenrod;
     }
 </style>
 
-<section class="sheme">
-    <h2 class="content-header-h">Схема задачи выбора</h2>
-    <div>
-        @if (!RelationState.AreConsistenct)
-        {
-            <Warning Header="Несогласованность" Message="Некоторые отношения являются несогласованными!"></Warning>
-        }
-        @if (!RelationState.AreKnown)
-        {
-            <Warning Header="Незаполненность!" Message="Некоторые отношения не заполнены"></Warning>
-        }
-    </div>
-    <div class="filters-section">
-        <ul class="filters">
-            @foreach (var filter in Filters)
-            {
-                <li class="@(filter == Filter ? "selected" : "") " @onclick="@(() => SelectFilter(filter))">
-                    @filter
-                </li>
-            }
-        </ul>
-        <div class="size-edit">
-            <span>Размер элементов %: </span>
-            <input type="number" @bind-value="@NodeSize" />
-        </div>
-    </div>
-
-    @foreach (var levelGroup in Problem.GroupedByLevel)
-    {
-        <div class="level">
-            <div class="level-name">
-                <span class="level-index">Уровень @levelGroup.Key</span>
-                <br>
-                <span class="level-text">@levelGroup.First().LevelName</span>
-            </div>
-            <div class="level-elements">
-                @foreach (var node in levelGroup)
-                {
-                    <details open class="node-element" style="@($"width:{NodeSize}%")">
-                        <summary class="action-header @(GetClass(node))">
-                            <span class="node-element-name">@node.Name</span>
-                        </summary>
-                        <div class="actions-section">
-                            <a class="action edit-criteria" title="Редактировать критерий" href="@NodeLink" @onclick="() => Project.SetNow(node)">
-                                <span class="action-name"></span>
-                                <img class="action-icon" src="Images/pencil.png" />
-                            </a>
-                            @if (Problem.NodesWithRels.Contains(node))
-                            {
-
-                                <a class="action edit-relations" title="Переход к отношениям по критерию" href="@RelationsLink" @onclick="() => Project.SetNow(Project.GetRelFromNode(node))">
-                                    <span class="action-name"></span>
-                                    <img class="action-icon" src="Images/play.png" />
-                                </a>
-                                <a class="action clear-relations" title="Сбросить все отношения критерия" href="@ViewLink" @onclick="@(() => Problem.ClearRelations(node))">
-                                    <span class="action-name">X</span>
-                                    <img class="action-icon" src="Images/tech.png" />
-                                </a>
-                            }
-                        </div>
-                        <div class="action-values-section">
-                            <div class="property">
-                                <span class="property-name">Cr:</span><br />
-                                <span class="property-value">@ProcessDouble(Problem.GetMtxRelations(node).Consistency.Cr)</span>
-                            </div>
-                            <div class="property">
-                                <span class="property-name">Рейт:</span><br />
-                                <span class="property-value">@ProcessDouble(node.Coefficient)</span>
-                            </div>
-                        </div>
-                    </details>
-                }
-            </div>
-        </div>
-    }
-</section>
-
 <section>
+    <div class="relations-state">
+        <section class="sheme-nav">
+            <h3>Схема иерархии</h3>
+            <HierShemeBig LinkType="@RelationsLink" ViewSelection="HierShemeBig.ViewSelections.Relations"></HierShemeBig>
+        </section>
+        <div class="sheme-info">
+            <section class="sheme-info-total">
+                <h3>В общем</h3>
+                <NavLink href="legacy/view">
+                    Старый обзор
+                </NavLink>
+                <div class="info-details">
+                    @if (RelationState.AreCorrect)
+                    {
+                        <p class="no-errors">
+                            ✓ Отлично, все отношения заполнены и согласованы
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="warnings">
+                            ! Для анализа результатов выбора необходимо исправить указанные недочеты
+                        </p>
+                    }
+                </div>
+            </section>
 
-    @if (Filter == Constistency)
-    {
-        <DSSAlternative.Pages.Дополнительно.Фильтры.ViewConsistency />
-    }
-    else if (Filter == FilterRating)
-    {
-        <DSSAlternative.Pages.Дополнительно.Фильтры.ViewRating />
-    }
+            <section class="sheme-info-fill">
+                <h4>Заполнение</h4>
+                <div class="info-details">
+                    @if (RelationState.AreKnown)
+                    {
+                        <p class="no-errors">
+                            ✓ Проблем нет
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="warnings">
+                            ! Следующие отношения неизвестны:
+                        </p>
+                        <ul>
+                            @foreach (var rel in Problem.RelationsRequired.Where(r => r.Unknown))
+                            {
+                                <li>
+                                    <a href="@RelationsLink" @onclick="() => SetNow(rel)">
+                                        @rel.From.Name --> @rel.To.Name | @rel.Main.Name
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                        <p>
+                            Необходимо установить связи между элементами.
+                        </p>
+                    }
+                </div>
+            </section>
+
+            <section class="sheme-info-cons">
+                <h4>Согласованность</h4>
+                <div class="info-details">
+                    @if (RelationState.AreConsistenct)
+                    {
+                        <p class="no-errors">
+                            ✓ Проблем нет
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="errors">
+                            X Отношения по данным критериям рассогласованы:
+                        </p>
+                        <ul>
+                            @foreach (var node in Problem.NodesWithRels.Where(n => !RelationState.IsNodeConsistenct(n)))
+                            {
+                                <li>
+                                    <a href="@RelationsLink" @onclick="() => SetNow(Problem.FirstRequiredRelation(node))">
+                                        @node | Cr = @Problem.GetMtxRelations(node).Consistency.Cr.ToString("0.00")
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                        <p>
+                            Для устранения рассогласованности надо задать более логичные оценки элементов.
+                        </p>
+                    }
+                </div>
+            </section>
+        </div>
+    </div>
 </section>
-
-
 
 @code {
-    private int NodeSize { get; set; } = 20;
 
-    private string ProcessDouble(double num)
-    {
-        if (double.IsNaN(num))
-            return "~";
-        if (double.IsInfinity(num))
-            return "∞";
-        return Math.Round(num, 2).ToString();
-    }
-
-
-    //Фильтры
-    const string FilterRating = "По рейтингу критериев";
-    const string Constistency = "По отношениям";
-
-    public string[] Filters { get; set; } = new string[]
-    {
-            FilterRating,
-            Constistency,
-    };
-    private string Filter => Project.ViewFilter;
-
-    private void SelectFilter(string text)
-    {
-        Project.ViewFilter = text;
-    }
-
-
-
-    private string GetClass(INode node)
-    {
-        string tag = "usual";
-        switch (Filter)
-        {
-            case FilterRating:
-                if (Problem.Best(node.Level).Contains(node))
-                    return "best";
-                return "usual";
-
-            case Constistency:
-                double res = Problem.GetMtxRelations(node).Consistency.Cr;
-                if (RelationState.IsNodeUnknown(node))
-                    return "warn";
-                if (!RelationState.IsNodeConsistenct(node))
-                    return "bad";
-                return "good";
-
-            default:
-                return tag;
-        }
-    }
 }

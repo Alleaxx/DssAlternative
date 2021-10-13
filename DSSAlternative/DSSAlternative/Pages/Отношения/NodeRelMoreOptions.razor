@@ -108,8 +108,6 @@
         }
 
         .errors-list {
-            display: flex;
-            justify-content: center;
             margin: 10px 0;
         }
 
@@ -140,31 +138,36 @@
         }
     </style>
 
+
+    <section>
+        <h4>Настройки</h4>
+        <div>
+            <label for="amount">Количество градаций оценок:</label><br />
+            <input id="amount" type="number" @bind-value="@DSSApp.RatingSystem.Amount" min="1" max="9" />
+        </div>
+        <div>
+            <label for="border-cons">Граница согласованности</label><br />
+            <input id="border-cons" type="number" @bind-value="@MatrixConsistenct.BorderConsistenct" />
+        </div>
+    </section>
+
     <section class="more-options">
         <h4 class="more-options-header">
-            Дополнительно
+            Состояние
         </h4>
-        <span class="more-options-add">Состояние</span><br />
         <div class="errors-list">
             @foreach (var error in RelationState.Errors(Relation.Main))
             {
-                <div class="hier-fail @(error.CssClass())" title="@error.Message">X @error.Name</div>
+                <Warning Header="Внимание" Message="@error.Message">
+
+                </Warning>
             }
-            @if (RelationState.Errors(Relation.Main).Count() == 0)
+            @if (!RelationState.Errors(Relation.Main).Any())
             {
-                <span>Матрица согласована и заполнена, всё отлично</span>
+                <p>
+                    Матрица согласована и заполнена, всё отлично
+                </p>
             }
-        </div>
-        <span class="more-options-add">Действия</span><br />
-        <div class="actions-section">
-            <a class="action edit-criteria" href="@NodeLink" @onclick="() => Project.SetNow(Relation.Main)">
-                <span class="action-name">Редактировать критерий и матрицу сравнения</span>
-                <img class="action-icon" src="Images/pencil.png" />
-            </a>
-            <a class="action clear-relations" @onclick="@(() => Problem.ClearRelations(Relation.Main))">
-                <span class="action-name">Сброс всех отношений по данному критерию</span>
-                <img class="action-icon" src="Images/tech.png" />
-            </a>
         </div>
     </section>
     @code {
