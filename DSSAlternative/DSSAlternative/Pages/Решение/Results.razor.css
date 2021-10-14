@@ -1,0 +1,55 @@
+﻿.level-header {
+}
+
+.node-name {
+    flex: 22;
+}
+
+.node-rating {
+    flex: 8;
+}
+
+.level-best-nodes {
+}
+
+.node-best {
+    font-weight: 600;
+}
+
+.node-progress {
+    flex: 70;
+    height: 6px;
+    position: relative;
+    background-color: rgb(230,230,230);
+}
+
+.progress-filler {
+    height: 100%;
+    position: absolute;
+    background-color: rgb(6,176,37);
+}
+
+.res {
+    font-size: 0.9em;
+}
+
+.results {
+    list-style: none;
+    flex-flow: row;
+}
+
+    .results li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+        .results li:before {
+            content: "—";
+            position: relative;
+            left: -5px;
+        }
+
+    .results span {
+        margin-bottom: 5px;
+    }

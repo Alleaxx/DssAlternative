@@ -1,218 +1,159 @@
 ﻿@inherits DSSProject
 
 <style>
-    .navside ul {
-        list-style: none;
-        padding: 0;
-        margin-top: 0;
-        margin-right: 1em;
-    }
-
-        .navside ul a {
-            padding: 4px;
-            text-decoration: none;
-            border-right: 5px solid gainsboro;
-        }
-
-            .navside ul a.active {
-                background-color: white;
-                border-right: 5px solid orange;
-                color: black;
-                font-weight: 600;
-            }
-
-            .navside ul a:hover {
-                color: black;
-            }
-
-    .navside a {
+    .navside ul a {
+        padding: 4px;
+        text-decoration: none;
+        border-right: 5px solid gainsboro;
         cursor: pointer;
     }
-</style>
-<style>
-    .stage-menu a {
-        border-top: 1px solid gainsboro;
-        border-bottom: 1px solid lightgreen;
-        border-left: 2px solid lightgreen;
-    }
 
-        .stage-menu a.warning {
-            border-bottom-color: #cccc10;
-            border-left-color: #cccc10;
+        .navside ul a.active {
+            background-color: white;
+            border-right: 5px solid orange;
+            color: black;
+            font-weight: 600;
         }
 
-        .stage-menu a.error {
-            border-bottom-color: red;
-            border-left-color: red;
+        .navside ul a:hover {
+            color: black;
         }
 
-        .stage-menu a.none {
-            display: none;
-        }
+.stage-menu a {
+    border-top: 1px solid gainsboro;
+    border-bottom: 1px solid lightgreen;
+    border-left: 2px solid lightgreen;
+}
 
-    .stage-menu-header {
-        text-align: center;
-        font-size: 1.15em;
+    .stage-menu a.warning {
+        border-bottom-color: #cccc10;
+        border-left-color: #cccc10;
     }
 
-    .stage-menu-element {
-        display: flex;
-        align-items: center;
+    .stage-menu a.error {
+        border-bottom-color: red;
+        border-left-color: red;
     }
 
-    .stage-element-image {
-        width: 10%;
-        flex-basis: 10%;
-        margin: 0 10px;
-        opacity: 50%;
-    }
-
-    .active .stage-element-image {
-        opacity: 100%;
-    }
-
-    .stage-element-name {
-        flex-basis: 90%;
-        font-family: "Calibri Light";
-        font-size: 1.4em;
-    }
-
-    ul.relations {
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
-        padding: 5px 20px;
-    }
-
-        ul.relations a {
-            display: block;
-            font-size: 0.8em;
-            border-top-right-radius: 3px;
-            border-bottom-right-radius: 3px;
-            border-right: 5px solid gainsboro;
-            padding: 5px 10px;
-            margin: 0 3px;
-        }
-</style>
-
-<style>
-    .task-menu {
-    }
-
-    .task-menu-header {
-        text-align: center;
-        font-size: 1.15em;
-    }
-
-    .task-menu-element {
-        display: flex;
-        align-items: center;
-        opacity: 75%;
-    }
-
-        .task-menu-element.active {
-            opacity: 100%;
-        }
-
-
-    .task-element-sheme {
-        flex-basis: 15%;
+    .stage-menu a.none {
+        display: none;
     }
 
 
-    .task-element-header {
-        flex-basis: 85%;
-    }
+.stage-menu-element {
+    display: flex;
+    align-items: center;
+}
 
-    .task-element-name {
-        font-size: 0.9em;
-        margin: 0;
-        font-weight: 500;
-    }
+.stage-element-image {
+    flex: 1;
+    margin: 0 10px;
+    opacity: 50%;
+    width: 25px;
+}
 
-    .task-element-descr {
-        color: gray;
-        font-size: 0.8em;
-        margin: 3px 0;
-    }
+.active .stage-element-image {
+    opacity: 100%;
+}
 
-    a.active .task-element-descr {
-        font-weight: normal;
-    }
+.stage-element-name {
+    flex: 9;
+    font-family: "Calibri Light";
+    font-size: 1.4em;
+}
 
-    .task-menu li {
-        border-bottom: 1px solid gainsboro;
-    }
+.navside ul.inner-list {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    padding: 5px 20px;
+}
 
-    .navside ul a.options-link{
+    .navside ul.inner-list a {
         display: block;
-        border: 1px solid gainsboro;
+        font-size: 0.8em;
+        border-top-right-radius: 3px;
+        border-bottom-right-radius: 3px;
+        padding: 5px 10px;
     }
-
 </style>
 
 <nav class="navside">
-    <section class="stage-menu">
-        <h2 class="stage-menu-header">Этапы решения задачи:</h2>
-        <ul>
-            <li>
-                <NavLink class="@($"stage-menu-element {Hier.CssClass()}")" href="@HierLink">
-                    <img class="stage-element-image" src="Images/Иерархия.png" />
-                    <span class="stage-element-name">I ИЕРАРХИЯ</span>
-                </NavLink>
-            </li>
-            <li>
-                <ul class="relations">
-                    <li>
-                        <NavLink style="@($"margin-left:1em")" class="@($"{Hier.CssClass()}")" href="@NodeLink">
-                            I - Редактирование
-                        </NavLink>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <NavLink class="@($"stage-menu-element {View.CssClass()}")" href="@ViewLink">
-                    <img class="stage-element-image" src="Images/Отношения.png" />
-                    <span class="stage-element-name">II ОТНОШЕНИЯ</span>
-                </NavLink>
-            </li>
-            <li>
-                <ul class="relations">
-                    @foreach (var criteria in Problem.NodesWithRels)
-                    {
+    <div>
+        <section class="stage-menu">
+            <h2 class="stage-menu-header">Этапы решения задачи:</h2>
+            <ul>
+                <li>
+                    <NavLink class="@HierClass" href="@HierLink">
+                        <img class="stage-element-image" src="Images/Иерархия.png" />
+                        <span class="stage-element-name">I ИЕРАРХИЯ</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <ul class="inner-list">
                         <li>
-                            <a style="@($"margin-left:{criteria.Level * 2}em")" class="@($"{Project.GetStageFromNode(criteria).CssClass()}")" @onclick="() => SetNow(Problem.FirstRequiredRelation(criteria))" href="@RelationsLink">
-                                II - @Problem.NodesWithRels.ToList().IndexOf(criteria): @criteria.Name
-                            </a>
+                            <NavLink style="margin-left: 1em" class="@HierClass" href="@NodeLink">
+                                I - Редактирование
+                            </NavLink>
                         </li>
-                    }
-                </ul>
-            </li>
-            <li>
-                <NavLink class="@($"stage-menu-element {Res.CssClass()}")" href="@ResultsLink">
-                    <img class="stage-element-image" src="Images/Результаты.png" />
-                    <span class="stage-element-name">III РЕЗУЛЬТАТЫ</span>
-                </NavLink>
-            </li>
-        </ul>
-        <h2 class="stage-menu-header">Настройки решения:</h2>
-        <ul>
-            <li>
-                <NavLink class="options-link" href="@OptionsLink">
-                    @*<img class="stage-element-image" src="Images/Иерархия.png" />*@
-                    <span>Общие</span>
-                </NavLink>
-            </li>
-        </ul>
-    </section>
+                    </ul>
+                </li>
+                <li>
+                    <NavLink class="@ViewClass" href="@ViewLink">
+                        <img class="stage-element-image" src="Images/Отношения.png" />
+                        <span class="stage-element-name">II ОТНОШЕНИЯ</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <ul class="inner-list">
+                        @foreach (var criteria in NavNodes)
+                        {
+                            <li>
+                                <a href="@RelationsLink" style="@LeftMarginNode(criteria)" class="@NodeClass(criteria)" @onclick="() => SetRelFromNode(criteria)" >
+                                    II - @NodeIndex(criteria): @criteria.Name
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </li>
+                <li>
+                    <NavLink class="@ResultsClass" href="@ResultsLink">
+                        <img class="stage-element-image" src="Images/Результаты.png" />
+                        <span class="stage-element-name">III РЕЗУЛЬТАТЫ</span>
+                    </NavLink>
+                </li>
+            </ul>
+        </section>
+    </div>
 </nav>
 
-@code{      
-    //protected override void OnInitialized()
-    //    {
-    //        base.OnInitialized();
-    //    Project.OnRelationChanged += () => StateHasChanged();
-    //    }
+@code{
+    private IEnumerable<INode> NavNodes => Problem.NodesWithRels;
+
+    private string HierClass => $"stage-menu-element {Hier.CssClass()}";
+    private string ViewClass => $"stage-menu-element {View.CssClass()}";
+    private string ResultsClass => $"stage-menu-element {Res.CssClass()}";
+
+    private string NodeClass(INode node)
+    {
+        return Project.GetStageFromNode(node).CssClass();
+    }
+
+    private int NodeIndex(INode node)
+    {
+        return NavNodes.ToList().IndexOf(node);
+    }
+
+    private void SetRelFromNode(INode node)
+    {
+        SetNow(Problem.FirstRequiredRelation(node));
+    }
+
+    private string LeftMarginNode(INode node)
+    {
+        return $"margin-left:{node.Level * 2}em";
+    }
+
 }
 
 

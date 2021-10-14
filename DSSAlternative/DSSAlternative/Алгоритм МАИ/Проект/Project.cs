@@ -12,7 +12,7 @@ namespace DSSAlternative.AHP
 
         string ViewFilter { get; set; }
         bool UnsavedChanged { get; }
-
+        bool CanTranferEditing { get; }
 
         ITemplate TemplateEditing { get; }
         IHierarchy ProblemEditing { get; }
@@ -58,6 +58,8 @@ namespace DSSAlternative.AHP
 
 
         public bool UnsavedChanged => !HierarchySheme.CompareEqual(ProblemActive, ProblemEditing);
+        public bool CanTranferEditing => UnsavedChanged && ProblemEditing.Correctness.IsCorrect;
+
         public string Status
         {
             get
@@ -97,9 +99,9 @@ namespace DSSAlternative.AHP
         }
         private void SetActiveProblem(ITemplate template)
         {
-            TemplateEditing = template;
+            TemplateEditing = template.CloneThis();
             IProblem old = ProblemActive;
-            ProblemActive = new Problem(TemplateEditing);
+            ProblemActive = new Problem(template);
             CreateStages();
             SetNow(ProblemActive.MainGoal);
 

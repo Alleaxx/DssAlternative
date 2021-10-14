@@ -1,0 +1,11 @@
+﻿
+.stage-menu-header {
+    text-align: center;
+    font-size: 1.15em;
+}
+.navside ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 0;
+    margin-right: 1em;
+}

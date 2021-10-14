@@ -1,0 +1,171 @@
+﻿@inherits DSSComponentParamNode
+@layout EditorLayout
+
+
+<div>
+    @if (IsEmpty())
+    {
+        <div>
+            <div class="mtx">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="cell-header" colspan="@(1 + NodesCount())">
+                                <div class="@(IsCorrectMtx() ? "good-mtx" : "bad-mtx")">
+                                    <h4>
+                                        <b>@Node.Name</b>  @(IsCorrectMtx() ? "✓" : "X")
+                                    </h4>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="cell-node">
+                                &nbsp;
+                            </td>
+                            @foreach (var node in Node.LowerNodesControlled)
+                            {
+                                <td class="cell-node">
+                                    <a href="@NodeLink" @onclick="() => SetNow(node)">
+                                        @node.Name
+                                    </a>
+                                </td>
+                            }
+                        </tr>
+                        @foreach (var node in Problem.RelationsGroupedMain(Node))
+                        {
+                            <tr>
+                                <td class="cell-node">
+                                    <a href="@NodeLink" @onclick="() => SetNow(node.Key)">
+                                        @node.Key.Name
+                                    </a>
+                                </td>
+                                @foreach (var relation in node)
+                                {
+                                    <td class="@RelationClass(relation)">
+                                        <input disabled="@Disabled(relation)" type="text" @bind-value="@relation.Value" @onfocus="@(() => RelationSelected = relation)" />
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+
+
+            @if (RelationSelected != null)
+            {
+                @*<div class="relation-sel">
+                        <NodeQuestion RelationUpdated="@(() => StateHasChanged())" Relation="@RelationSelected" />
+                    </div>*@
+            }
+
+            <div class="counts" hidden>
+                <details>
+                    <summary>
+                        <span>Подробные расчеты</span>
+                    </summary>
+                    <dl>
+                        <dt>nmax</dt>
+                        <dd>@Mtx.Consistency.Nmax</dd>
+                        <dt>CI</dt>
+                        <dd>@Mtx.Consistency.CI</dd>
+                        <dt>RI</dt>
+                        <dd>@Mtx.Consistency.RI</dd>
+                        <dt>CR </dt>
+                        <dd>@Mtx.Consistency.Cr</dd>
+
+                        <dt>Локальные коэффициенты</dt>
+                        <dd>
+                            <details>
+                                <ul>
+                                    @foreach (var coeff in Mtx.Coeffiients)
+                                    {
+                                        <li>@coeff</li>
+                                    }
+                                </ul>
+                            </details>
+                        </dd>
+
+
+                        <dt>Вектор произведения матрицы отношений и локальных коэффициентов</dt>
+                        <dd>
+                            <details>
+                                <ul>
+                                    @foreach (var coeff in Mtx.Consistency.MultiMatrixLocalCoeffs)
+                                    {
+                                        <li>@coeff</li>
+                                    }
+                                </ul>
+                            </details>
+                        </dd>
+
+                    </dl>
+                </details>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>Матрица для данного критерия пуста</p>
+    }
+
+</div>
+
+@code {
+    [Parameter]
+    public IEnumerable<INodeRelation> AllowedRelations { get; set; }
+
+
+    private bool IsCorrectMtx()
+    {
+        return Mtx.Consistency.IsCorrect();
+    }
+    private int NodesCount()
+    {
+        return Node.LowerNodesControlled.Length;
+    }
+
+    private INodeRelation RelationSelected { get; set; }
+
+    private bool Disabled(INodeRelation relation)
+    {
+        if (AllowedRelations != null && !AllowedRelations.Contains(relation))
+        {
+            return true;
+        }
+        if (relation.Self)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private bool IsEmpty()
+    {
+        return Node.LowerNodesControlled.Length > 0;
+    }
+
+    private string RelationClass(INodeRelation rel)
+    {
+        List<string> classes = new List<string>() { "cell-value" };
+        if(rel == RelationSelected)
+        {
+            classes.Add("cell-selected");
+        }
+        if(RelationSelected != null && rel == RelationSelected.Mirrored)
+        {
+            classes.Add("cell-mirrored");
+        }
+        if(rel.Value == 0)
+        {
+            classes.Add("unknown");
+        }
+        if (!Mtx.Consistency.IsCorrect())
+        {
+            classes.Add("incorrect");
+        }
+
+        return string.Join(" ", classes);
+    }
+}

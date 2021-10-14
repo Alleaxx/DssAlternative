@@ -1,0 +1,80 @@
+﻿@page "/results"
+@inherits DSSProject
+@layout EditorLayout
+
+
+<section class="res">
+    <h2 class="content-header-h">
+        Анализ результатов
+    </h2>
+    <div>
+        @if (RelationState.AreCorrect)
+        {
+            @foreach (var levelGroup in GroupedResults())
+            {
+                <section>
+                    <h4 class="level-header">
+                        @HeaderText(levelGroup)
+                    </h4>
+                    <div>
+                        <ul class="results">
+                            @foreach (var node in levelGroup.OrderByDescending(n => n.Coefficient))
+                            {
+                                <li>
+                                    <span class="node-name">
+                                        @node.Name
+                                    </span>
+                                    <span class="node-rating">
+                                        @((node.Coefficient * 100).ToString("0.00"))
+                                    </span>
+                                    <div class="node-progress">
+                                        <div class="progress-filler" style="width:@ReturnPrs(node)%" />
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                        <p class="level-best-nodes">
+                            ЛУЧШИЙ ВЫБОР –
+                            @foreach (var bestNode in Problem.Best(levelGroup.Key))
+                            {
+                                <span class="node-best">@bestNode.Name </span>
+                            }
+                        </p>
+
+                    </div>
+                </section>
+            }
+            <HierShemeBig ProjectSheme="Project" ViewSelection="HierShemeBig.ViewSelections.Best"></HierShemeBig>
+        }
+        else
+        {
+            @if (!RelationState.AreConsistenct)
+            {
+                <Warning Header="Несогласованность" Message="Некоторые отношения являются несогласованными!"></Warning>
+            }
+            @if (!RelationState.AreKnown)
+            {
+                <Warning Header="Незаполненность!" Message="Некоторые отношения не заполнены"></Warning>
+            }
+        }
+    </div>
+</section>
+
+@code{
+    private string ReturnPrs(INode node)
+    {
+        return (node.Coefficient * 100).ToString("0");
+    }
+
+    private IEnumerable<IGrouping<int, INode>> GroupedResults()
+    {
+        return Problem.GroupedByLevel.Where(g => g.Key != 0);
+    }
+
+    private string HeaderText(IGrouping<int, INode> group)
+    {
+        string name = group.First().LevelName;
+        return $"{name} ур. {group.Key}";
+    }
+
+}

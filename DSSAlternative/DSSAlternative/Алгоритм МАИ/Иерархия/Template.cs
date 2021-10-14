@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP
 {
-    public interface ITemplate
+    public interface ITemplate : ICloneable
     {
         string Name { get; }
         string Description { get; }
@@ -15,6 +15,8 @@ namespace DSSAlternative.AHP
         List<Node> Nodes { get; }
         IEnumerable<INodeGroup> Groups { get; }
         TemplateRelation[] Relations { get; }
+
+        ITemplate CloneThis();
     }
 
     public class Template : ITemplate
@@ -65,6 +67,16 @@ namespace DSSAlternative.AHP
         public Template(IProject project) : this(project.ProblemActive.Hierarchy.OfType<Node>(), project.ProblemActive.RelationsRequired)
         {
 
+        }
+
+        public object Clone()
+        {
+            return CloneThis();
+        }
+        public ITemplate CloneThis()
+        {
+            IEnumerable<Node> copiedNodes = Nodes.Select(n => new Node(n.Level, n.Name, n.Group, n.GroupIndex));
+            return new Template(copiedNodes.ToArray());
         }
     }
 

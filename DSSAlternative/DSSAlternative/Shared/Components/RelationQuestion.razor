@@ -1,0 +1,135 @@
+﻿@inherits DSSComponentParamRelation
+@layout EditorLayout
+
+<section>
+    <CascadingValue Value="this">
+        <table class="matrix" @onclick="@RelationUpdated">
+            <colgroup>
+                <col style="width:40%" />
+                <col style="width:20%" />
+                <col style="width:40%" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th class="main-node united" colspan="3">
+                        <a href="@NodeLink" @onclick="() => SetNow(Relation.Main)">
+                            <h3>
+                                @Relation.Main.Name
+                            </h3>
+                        </a>
+                    </th>
+                </tr>
+                <tr>
+                    <th class="side-node from">
+                        <a href="@NodeLink" @onclick="() => SetNow(Relation.From)">
+                            @Relation.From.Name
+                        </a>
+                    </th>
+                    <RelationRating Node="Relation.From" Rating="RatingNone" ColSpan="1" Relation="Relation">
+
+                    </RelationRating>
+                    <th class="side-node to">
+                        <a href="@NodeLink" @onclick="() => SetNow(Relation.To)">
+                            @Relation.To.Name
+                        </a>
+                    </th>
+                </tr>
+
+
+                <tr>
+                    <RelationRating Node="Relation.From" Rating="RatingEqual" ColSpan="3" Relation="Relation">
+
+                    </RelationRating>
+                </tr>
+
+                @foreach (var group in Ratings)
+                {
+                    @if (group.forRating.Value != 1)
+                    {
+                        <tr>
+                            <RelationRating Node="Relation.From" Rating="group.forRating" ColSpan="1" Relation="Relation">
+
+                            </RelationRating>
+                            <td class="between">
+                                &nbsp;
+                            </td>
+                            <RelationRating Node="Relation.To" Rating="group.toRating" ColSpan="1" Relation="Relation">
+
+                            </RelationRating>
+                        </tr>
+                    }
+                }
+
+                <tr>
+                    <td colspan="3" class="results-message">
+                        '@Relation.From.Name' @Relation.GetTextRelation() '@Relation.To.Name'
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </CascadingValue>
+    <div style="display:flex; justify-content: center">
+        <ColoredDefinition Message="Согласованность" Color="#efffef"></ColoredDefinition>
+        <ColoredDefinition Message="Рассогласованность" Color="#fff7f8"></ColoredDefinition>
+        <ColoredDefinition Message="Неизвестно" Color="white"></ColoredDefinition>
+    </div>
+</section>
+
+
+@code {
+    [Parameter]
+    public EventCallback RelationUpdated { get; set; }
+    [Parameter]
+    public bool UseSafeWarnings { get; set; } = true;
+
+
+    private IRating RatingNone { get; set; }
+    private IRating RatingEqual { get; set; }
+    private IEnumerable<(IRating forRating, IRating toRating)> Ratings { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        CreateRatings();
+        if (UseSafeWarnings && !Problem.GetMtxRelations(Relation.Main).WithZeros())
+        {
+            CreateMatrixes();
+        }
+    }
+    private void CreateRatings()
+    {
+        RatingNone = new Rating(0);
+        RatingEqual = new Rating(1);
+        Ratings = RatingSystem.RatingsFor(Relation);
+    }
+    private void CreateMatrixes()
+    {
+        RatingMatrix.Add(RatingNone, GetMatrixForRating(0));
+        RatingMatrix.Add(RatingEqual, GetMatrixForRating(1));
+        foreach (var rating in Ratings)
+        {
+            double value = rating.forRating.Value;
+
+            RatingMatrix.Add(rating.forRating, GetMatrixForRating(value));
+            RatingMatrix.Add(rating.toRating, GetMatrixForRating(1 / value));
+        }
+
+        IMatrix GetMatrixForRating(double value)
+        {
+            IMatrixRelations source = Problem.GetMtxRelations(Relation.Main);
+            source.Change(Relation.From, Relation.To, value);
+            return source;
+        }
+    }
+
+    private Dictionary<IRating, IMatrix> RatingMatrix { get; set; } = new Dictionary<IRating, IMatrix>();
+    public string ClassSafeOrDangerous(IRating rating)
+    {
+        if (UseSafeWarnings && RatingMatrix.ContainsKey(rating))
+        {
+            return RatingMatrix[rating].Consistency.IsCorrect() ? "safe " : "dangerous ";
+        }
+        return "usual ";
+    }
+}

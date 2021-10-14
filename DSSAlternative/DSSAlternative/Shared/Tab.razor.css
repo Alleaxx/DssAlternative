@@ -1,0 +1,15 @@
+﻿.tabset {
+}
+
+.tab-items {
+    list-style: none;
+    display: flex;
+    align-items: flex-end;
+    margin: 0;
+}
+
+.tab-content {
+    border: 1px solid whitesmoke;
+    border-radius: 1px;
+    padding: 0.25em;
+}

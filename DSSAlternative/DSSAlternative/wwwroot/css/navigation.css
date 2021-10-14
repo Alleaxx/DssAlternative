@@ -1,15 +1,15 @@
-﻿a:visited{
-    color: blue;
-}
-
-.content-header-h {
+﻿h2 {
     margin-top: 15px;
     margin-bottom: 10px;
-    text-align: left;
+}
+
+.tab-header {
+    margin: 5px 0;
+    font-weight: 500;
 }
 
 
-.navigation-link {
+/*.navigation-link {
     text-decoration: none;
     font-family: "Calibri Light";
     margin: 3px 12px;
@@ -24,7 +24,7 @@
     .navigation-link:hover {
         font-weight: 600;
         color: black;
-    }
+    }*/
 
 .warning {
     color: #986b00;

@@ -1,0 +1,15 @@
+﻿
+.rating-system {
+}
+
+    .rating-system th {
+        font-size: 0.95em;
+        font-weight: 500;
+        padding: 5px 0;
+        border-bottom: 1px solid gainsboro;
+    }
+
+    .rating-system input {
+        width: 90%;
+        border: 0;
+    }

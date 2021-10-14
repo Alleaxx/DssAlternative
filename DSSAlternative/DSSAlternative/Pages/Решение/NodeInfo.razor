@@ -1,0 +1,131 @@
+﻿@page "/node"
+@inherits DSSProject
+@layout EditorLayout
+
+<div>
+    @*<section class="problem-info">
+        <h2>Структура иерархии</h2>
+        <details>
+            <summary>
+                <span>JSON-схема</span>
+            </summary>
+            <textarea id="jsonsheme" rows="15" cols="50">
+                @JsonSheme()
+            </textarea>
+        </details>
+    </section>*@
+
+    <section class="row">
+        <section class="navigation">
+            <h3>Схема иерархии</h3>
+            <div>
+                <HierShemeBig ProjectSheme="Project" LinkType="@NodeLink"></HierShemeBig>
+            </div>
+        </section>
+        <section class="edit">
+            <h3>Редактирование '@Node.Name'</h3>
+            @Node.LevelName
+            <dl>
+                <dt>
+                    <label for="nodename">
+                        Название:
+                    </label>
+                </dt>
+                <dd>
+                    <input id="nodename" type="text" @bind-value="@Node.Name" />
+                </dd>
+                <dt>
+                    <label for="nodedescr">
+                        Краткое описание:
+                    </label>
+                </dt>
+                <dd>
+                    <input id="nodedescr" type="text" @bind-value="@Node.Description" />
+                </dd>
+                <dt>Итоговый коэффициент:</dt>
+                <dd>
+                    <span>
+                        @FormatNumber(Node.Coefficient)
+                    </span>
+                </dd>
+                <dt>Согласованность (Cr):</dt>
+                <dd>
+                    <span>
+                        @FormatNumber(Cr)
+                    </span>
+                </dd>
+                <dt>Отношения:</dt>
+                <dd>
+                    <div>
+                        @if (HasRelations())
+                        {
+                            <NodeRelations Node="Node" Context="rel">
+                                <RelationView>
+                                    <span>@rel.From.Name - @rel.To.Name</span>
+                                </RelationView>
+                            </NodeRelations>
+                            <div class="actions-section">
+                                <button class="action clear-relations" href="@NodeLink" @onclick="ClearRelations">
+                                    <span class="action-name">Сбросить все связи</span>
+                                    <img class="action-icon" src="Images/tech.png" />
+                                </button>
+                            </div>
+                        }
+                    </div>
+
+                </dd>
+                <dt>Матрица отношений:</dt>
+                <dd>
+                    <NodeMatrix Node="@Node" />
+                </dd>
+            </dl>
+        </section>
+    </section>
+</div>
+
+
+@code {
+    public INode Node => Project.NodeSelected;
+    public double Cr => Problem.GetMtxRelations(Node).Consistency.Cr;
+
+    private IEnumerable<INodeRelation> RelationsOwned()
+    {
+        return Project.ProblemActive.RelationsAll.Where(r => r.Main == Node && !r.Self);
+    }
+    private bool HasRelations()
+    {
+        return RelationsOwned().Any();
+    }
+
+    private string JsonSheme()
+    {
+        var template = new Template(Project);
+        return JsonSerializer.Serialize(template, DSSApp.JsonOptions);
+    }
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Project.OnNodeChanged += () => StateHasChanged();
+    }
+
+
+    private string GetEmPadding(KeyValuePair<int, INode[]> group)
+    {
+        int level = group.Key;
+        return ((double)level / 2).ToString().Replace(',', '.');
+    }
+    private string Name(KeyValuePair<int, INode[]> group)
+    {
+        int level = group.Key;
+        string firstNode = group.Value.First().GetLevelName(Problem.Hierarchy);
+        return $"{firstNode} ({level})";
+    }
+
+    private void ClearRelations()
+    {
+        Problem.ClearRelations(Node);
+    }
+
+}

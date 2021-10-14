@@ -1,0 +1,60 @@
+﻿
+.prev-next-stages {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    margin: 12px 0;
+}
+
+    .prev-next-stages a {
+        text-decoration: none;
+        cursor: pointer;
+        display: block;
+        color: royalblue;
+    }
+
+        .prev-next-stages a:hover {
+            color: blue;
+        }
+
+.prev, .next {
+    flex: 2;
+}
+
+.res {
+    flex: 1;
+}
+
+
+
+.relations-grid {
+    display: grid;
+    grid-template-columns: 7fr 3fr;
+    grid-template-areas: "relation menu";
+}
+
+.relation-area {
+    grid-area: relation;
+    padding: 10px;
+}
+
+.relation-current-header {
+    text-align: center;
+    font-size: 1.15em;
+    margin-bottom: 0;
+}
+
+
+.menu-area {
+    grid-area: menu;
+    padding: 10px;
+}
+
+.rel-menu-header {
+    font-size: 1.2em;
+}
+
+.relation-area h4 {
+    margin: 3px 0;
+    font-weight: 500;
+}

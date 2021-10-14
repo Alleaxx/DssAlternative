@@ -20,7 +20,7 @@ namespace DSSAlternative.AHP
                 AddClass("warning");
             }
 
-            bool isCorrectHierarchy = Project.ProblemEditing.Correctness.Result;
+            bool isCorrectHierarchy = Project.ProblemEditing.Correctness.IsCorrect;
             if (!isCorrectHierarchy)
             {
                 AddClass("error");

@@ -1,0 +1,16 @@
+﻿
+.warning-body {
+    padding: 7px;
+    margin: 6px;
+    border: 1px solid yellow;
+    border-radius: 2px;
+    background-color: rgb(250,250,250);
+}
+
+.warning-header {
+    margin: 3px 0;
+}
+
+.warning-text {
+    margin: 3px 0;
+}

@@ -27,6 +27,7 @@ namespace DSSAlternative.AHP
         protected IRelationsCorrectness RelationState => Project.ProblemActive.CorrectnessRels;
 
 
+        public INodeRelation RelationActive => Project.RelationSelected;
         protected void SetNow(INodeRelation rel)
         {
             Project.SetNow(rel);
@@ -40,25 +41,11 @@ namespace DSSAlternative.AHP
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            DSSApp.OnProjectSelected += DSS_ProjectChanged;
+            DSSApp.OnProjectSelectChange += DSS_ProjectChanged;
         }
         private void DSS_ProjectChanged(IProject obj)
         {
             StateHasChanged();
-        }
-
-
-        protected string FormatNumber(double num)
-        {
-            if (double.IsNaN(num))
-            {
-                return "~";
-            }
-            if (double.IsInfinity(num))
-            {
-                return "∞";
-            }
-            return num.ToString("0.00");
         }
     }
 }

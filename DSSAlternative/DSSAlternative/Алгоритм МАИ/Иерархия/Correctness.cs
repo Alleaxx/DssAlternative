@@ -7,7 +7,7 @@ namespace DSSAlternative.AHP
 {
     public interface ICorrectness
     {
-        bool Result { get; }
+        bool IsCorrect { get; }
         List<ICheck> Checks { get; }
     }
 
@@ -68,7 +68,7 @@ namespace DSSAlternative.AHP
         }
 
 
-        public bool Result => Checks.TrueForAll(c => c.Passed);
+        public bool IsCorrect => Checks.TrueForAll(c => c.Passed);
         public List<ICheck> Checks { get; private set; } = new List<ICheck>();
     }
 }

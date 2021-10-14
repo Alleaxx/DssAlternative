@@ -1,0 +1,272 @@
+﻿@page "/hierarchy"
+@inherits DSSProject
+@layout EditorLayout
+
+<section>
+    <h2 class="content-header-h">Редактирование иерархии задачи выбора</h2>
+
+    <div class="sheme basic-border">
+        <div class="confirm">
+            <div>
+                @if (Project.CanTranferEditing)
+                {
+                    <span class="not-saved">Есть несохраненные изменения</span>
+                    <input class="add" type="button" value="Подтвердить текущую иерархию" @onclick="UpdateHierarchy" />
+
+                }
+                else if (Project.CanTranferEditing)
+                {
+                    <span class="warning">В структуре иерархии обнаружены ошибки:</span>
+                }
+                else
+                {
+                    <span class="all-saved">Все изменения сохранены</span>
+                }
+            </div>
+            <div class="hier-fails">
+                @foreach (var check in HierEditState.Checks)
+                {
+                    <div class="@check.CssClass()" title="@check.Message">
+                        @check.Name
+                    </div>
+                }
+            </div>
+        </div>
+
+
+
+
+        <div class="information">
+            <div>
+                <span class="property-name">Уровней: </span>
+                <span class="property-value">@ProblemEditing.LevelsCount</span>
+            </div>
+            <div>
+                <span class="property-name">Узлов: </span>
+                <span class="property-value">@ProblemEditing.NodesCount</span>
+            </div>
+            <div>
+                <span class="property-name">Отношений: </span>
+                <span class="property-value">@ProblemEditing.RelationsCount</span>
+            </div>
+            <div>
+                <span class="property-name">~ Времени на решение: </span>
+                <span class="property-value">@ProblemEditing.EstTime.Minutes мин. @ProblemEditing.EstTime.Seconds сек.</span>
+            </div>
+        </div>
+        
+        <Tab>
+            <TabItem>
+                <Title>
+                    <h4 class="tab-header">Иерархия</h4>
+                </Title>
+                <ChildContent>
+                    <div>
+                        @foreach (var levelGroup in ProblemEditing.GroupedByLevel)
+                        {
+                            <section class="level @(levelGroup.Key == 0 ? "main-goal-level" : "")">
+                                <div class="level-name">
+                                    <span class="level-index">Уровень @levelGroup.Key</span>
+                                    <br>
+                                    <span>@levelGroup.ElementAt(0).LevelName</span>
+                                    <br />
+
+                                </div>
+                                <div class="level-elements">
+                                    @foreach (var node in levelGroup)
+                                    {
+                                        <div class="@HierClass(node) node-element" @onclick="@(() => NodeHovered = node)">
+                                            <input class="input-text" type="text" @bind-value="@node.Name" />
+                                            <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="level-add">
+                                    <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
+                                </div>
+
+                            </section>
+                        }
+                        <section class="level new-level">
+                            <div class="level-name">
+                                <span>Уровень @ProblemEditing.LevelsCount</span>
+                            </div>
+                            <input class="add " type="button" value="++" @onclick="@(() => AddNode(ProblemEditing.LevelsCount))" />
+                            <input class="add" type="button" value="+" style="visibility:hidden" />
+                        </section>
+                        <section style="display:flex">
+                            <ColoredDefinition ColorBorder="orange" Color="White" Message="Контролирующие узлы"></ColoredDefinition>
+                            <ColoredDefinition ColorBorder="red" Color="White" Message="Зависимые узлы"></ColoredDefinition>
+                        </section>
+                    </div>
+                </ChildContent>
+            </TabItem>
+            <TabItem>
+                <Title>
+                    <h4 class="tab-header">Подробная структура</h4>
+                </Title>
+                <ChildContent>
+                    <section style="padding: 1em 0.5em">
+                        <table class="structure">
+                            <tr>
+                                <th>№</th>
+                                <th>Критерии</th>
+                                <th>Зависимые</th>
+                            </tr>
+                            @foreach (var group in Template.Groups)
+                            {
+                                <tr>
+                                    <td>
+                                        <b>Группа @group.Index</b>:
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            @foreach (var node in group.Group)
+                                            {
+                                                <li>@node.Name</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            @foreach (var node in Template.Nodes.Where(n => n.GroupIndex == group.Index))
+                                            {
+                                                <li>@node.Name</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+
+                        <table class="node-table-edit">
+                            <colgroup>
+                                <col style="width:20%"/>
+                                <col style="width:38%"/>
+                                <col style="width:14%"/>
+                                <col style="width:14%"/>
+                                <col style="width:14%" />
+                            </colgroup>
+                            <tr class="node-table-edit-header">
+                                <th>Тип</th>
+                                <th>Имя</th>
+                                <th class="num">Уровень</th>
+                                <th class="num">Группа</th>
+                                <th class="num">Подчинена</th>
+                            </tr>
+                            @foreach (var node in Problem.Hierarchy.OrderBy(n => n.Level))
+                            {
+                                <tr class="node-table-edit-node">
+                                    <td class="edit-text">
+                                        <span class="node-text">@node.LevelName</span>
+                                    </td>
+                                    <td class="edit-cell">
+                                        <input type="text" @bind-value="@node.Name" />
+                                    </td>
+                                    <td class="edit-cell">
+                                        <input type="number" @bind-value="@node.Level" />
+                                    </td>
+                                    <td class="edit-cell">
+                                        <input type="number" @bind-value="@node.Group" />
+                                    </td>
+                                    <td class="edit-cell">
+                                        <input type="number" @bind-value="@node.GroupIndex" />
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </section>
+                </ChildContent>
+            </TabItem>
+            <TabItem>
+                <Title>
+                    <h4 class="tab-header">JSON</h4>
+                </Title>
+                <ChildContent>
+                    <textarea rows="20" cols="100">
+                     @JsonCurrent
+                </textarea>
+                </ChildContent>
+            </TabItem>
+        </Tab>
+    </div>
+</section>
+
+
+@code {
+    private Template TemplateCurrent => new Template(NodesEditing.OfType<Node>().ToArray())
+    {
+        Name = ProblemEditing.MainGoal.Name,
+        Img = "Images/tech.png",
+        Description = "Сохраненная задача выбора"
+    };
+    private string JsonCurrent => JsonSerializer.Serialize<Template>(TemplateCurrent, DSSApp.JsonOptions);
+
+    private INode NodeHovered { get; set; }
+
+
+    private IHierarchy ProblemEditing => Project.ProblemEditing;
+    private ITemplate Template => Project.TemplateEditing;
+    private List<Node> NodesEditing => Template.Nodes;
+
+
+    //Подтверждение иерархии
+    private void UpdateHierarchy() => Project.UpdateProblemFromEditing();
+
+
+    //Редактирование иерархии
+    private void AddNode(int level = -1)
+    {
+        level = level == -1 ? ProblemEditing.LevelsCount - 1 : level;
+        INode newNode = new Node(level, "Узел", level, level - 1);
+        NodesEditing.Add(newNode as Node);
+    }
+    private void RemoveNode(INode e)
+    {
+        if (e != ProblemEditing.MainGoal)
+            NodesEditing.Remove(e as Node);
+    }
+    private string HierClass(INode node)
+    {
+        if(NodeHovered != null)
+        {
+            if(NodeHovered == node)
+            {
+                return "node-own";
+            }
+            if (NodeHovered.Criterias.Group.Contains(node))
+            {
+                return "node-main-element";
+            }
+            var lower = NodeHovered.LowerNodesControlled;
+            if (lower != null && lower.Contains(node))
+            {
+                return "node-controlled-element";
+            }
+        }
+        return "";
+    }
+
+    private void ShowStructure()
+    {
+        Console.WriteLine("Новая структура");
+        foreach (var node in Problem.Hierarchy)
+        {
+            Console.WriteLine($"{node.Level} - {node.Name}:");
+            Console.Write("Расчет: ");
+            foreach (var countNode in node.Criterias.Group)
+            {
+                Console.Write($"{countNode.Name}, ");
+            }
+            Console.WriteLine(new MtxRelations(Problem, node).GetText());
+            Console.WriteLine("Матрица локальных");
+            Console.WriteLine(new MtxLocalCoeffs(Problem, node).GetText());
+            Console.WriteLine("Матрица глобальных");
+            Console.WriteLine(new MtxGlobalCoeffs(node).GetText());
+            Console.WriteLine("Матрица коэфф.");
+            Console.WriteLine(new MtxCoeffs(Problem, node).GetText());
+            Console.WriteLine();
+        }
+    }
+}

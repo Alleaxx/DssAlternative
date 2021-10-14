@@ -1,6 +1,6 @@
 ﻿@implements ITabItem
 
-<li class="@(Owner.ActiveTab == this ? "selected" : "") tab-item" @onclick="() => Owner.SetTab(this)">
+<li class="tab-item @IsSelected()" @onclick="SetTab">
     @Title
 </li>
 
@@ -12,6 +12,20 @@
     public RenderFragment Title { get; set; }
     [Parameter]
     public RenderFragment ChildContent { get; set; }
+
+    private string IsSelected()
+    {
+        if(Owner.ActiveTab == this)
+        {
+            return "selected";
+        }
+        return "";
+    }
+
+    private void SetTab()
+    {
+        Owner.SetTab(this);
+    }
 
     protected override void OnInitialized()
     {

@@ -1,0 +1,30 @@
+﻿
+
+main {
+    max-width: 50em;
+}
+main p{
+    line-height: 140%;
+}
+
+    main img {
+        padding: 8px;
+        max-width: 90%;
+    }
+
+img.right {
+    float: right;
+    width: 45%;
+}
+
+.filled, .constistent {
+    padding-left: 5px;
+}
+
+.filled {
+    border-left: 8px solid #b3c108;
+}
+
+.constistent {
+    border-left: 8px solid red;
+}

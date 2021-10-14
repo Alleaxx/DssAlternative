@@ -1,177 +1,11 @@
 ﻿@page "/start"
 @inherits DSSComponent
 
-@inject HttpClient Http
-
-<style>
-    .load-task-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: auto 1fr;
-        grid-template-areas:
-            "header header header"
-            "own preset loaded";
-    }
-
-        .load-task-grid h3 {
-            font-size: 1em;
-        }
-
-
-    .load-header {
-        grid-area: header;
-        text-align: center;
-        border-bottom: 1px solid gainsboro;
-    }
-
-    .load-sample {
-        grid-area: sample;
-        padding: 10px;
-        min-height: 30em;
-    }
-
-    .load-own {
-        grid-area: own;
-        padding: 10px;
-    }
-
-        .load-own input[type="button"], .load-sample input[type="button"] {
-            width: 90%;
-            margin: 5px;
-            cursor: pointer;
-            background-color: transparent;
-            border: 1px solid gray;
-            padding: 8px;
-        }
-
-            .load-own input[type="button"]:hover, .load-sample input[type="button"]:hover {
-                background-color: lightgreen;
-            }
-
-
-    .load-preset {
-        grid-area: preset;
-        border-right: 1px solid gainsboro;
-        border-left: 1px solid gainsboro;
-        cursor: initial;
-        padding: 10px;
-    }
-
-    .presets, .problems {
-        list-style: none;
-        padding: 0;
-    }
-
-        .presets a, .problems a {
-            text-decoration: none;
-            color: black;
-        }
-
-            .problems a:hover {
-                background-color: gainsboro;
-            }
-
-    .preset {
-        display: grid;
-        grid-template-columns: auto 8fr 1fr;
-        grid-template-rows: auto auto;
-        padding: 5px 0;
-        border-top: 1px solid gainsboro;
-        border-bottom: 1px solid gainsboro;
-        grid-template-areas:
-            "img name load"
-            "img descr load";
-    }
-
-    .preset-img{
-        grid-area: img;
-        height: 30px;
-        margin: 5px;
-    }
-
-    .preset-name {
-        grid-area: name;
-        font-size: 0.8em;
-        margin: 0;
-    }
-
-    .problem-name {
-        grid-area: name;
-        font-size: 0.8em;
-        margin: 0;
-    }
-
-    .preset-descr {
-        grid-area: descr;
-        font-size: 0.8em;
-        margin: 4px 0;
-        color: gray;
-    }
-
-    .problem-status {
-        grid-area: status;
-        font-size: 0.8em;
-        margin: 4px 0;
-        color: gray;
-    }
-
-
-    .preset-load {
-        grid-area: load;
-        height: 24px;
-        margin-left: 1em;
-        border: 1px solid gray;
-        background-color: transparent;
-    }
-
-        .preset-load:hover {
-            background-color: lightgreen;
-            cursor: pointer;
-        }
-
-    .problem-img {
-        grid-area: img;
-        margin-right: 1em;
-        vertical-align: middle;
-    }
-
-    .loaded {
-        grid-area: loaded;
-        padding: 10px;
-    }
-
-    .problems {
-        list-style: none;
-        padding: 0;
-    }
-
-    .problem {
-        display: grid;
-        grid-template-rows: auto auto;
-        grid-template-columns: 2fr 8fr;
-        padding: 5px 0;
-        border-top: 1px solid gainsboro;
-        border-bottom: 1px solid gainsboro;
-        grid-template-areas:
-            "img name"
-            "img status";
-    }
-
-
-    .load-note {
-        color: gray;
-        font-size: 0.9em;
-    }
-
-    .load-json{
-        width: 90%;
-    }
-</style>
-
 <div class="load-task-grid">
     <header class="load-header">
         <h2>Формирование задачи выбора</h2>
     </header>
+
     <section class="load-own">
         <section>
             <h3>Создание с нуля</h3>
@@ -186,12 +20,13 @@
             <p class="load-note">
                 Образцовая задача показывает возможности системы на примере уже решенной проблемы.
             </p>
-            <input type="button" @onclick="@(() => DSSApp.AddProject(DSSExample.CreateSampleProblem()))" value="Загрузить" />
+            <input type="button" @onclick="LoadExample" value="Загрузить" />
             <br />
-            <input type="button" @onclick="@(() => DSSApp.AddProject(DSSExample.CreateSampleTreeProblem()))" value="Образец задачи с подкритериями" />
+            <input type="button" @onclick="LoadEx1" value="Образец задачи с подкритериями" />
             <br />
-            <input type="button" @onclick="@(() => DSSApp.AddProject(DSSExample.CreateSampleTree2Problem()))" value="Образец задачи с подкритериям II" />
+            <input type="button" @onclick="LoadEx2" value="Образец задачи с подкритериям II" />
         </section>
+
         <section>
             <h3>Загрузка сохраненной задачи</h3>
             <p class="load-note">
@@ -200,42 +35,35 @@
             <textarea class="load-json" rows="5" @onchange="LoadJSON"></textarea>
         </section>
     </section>
+
     <section class="load-preset">
         <h3>Модификация шаблона</h3>
         <p class="load-note">
             Позволяет задать типовую задачу, которую можно изменить под свои условия.
         </p>
         <ul class="presets">
-            @foreach (var template in DSSApp.Templates)
-            {
-                <li>
-                    <section class="preset">
-                        <img class="preset-img" title="@template.Name" src="@template.Img" />
-                        <h4 class="preset-name">@template.Name</h4>
-                        <p class="preset-descr">@template.Description</p>
-                        <input class="preset-load" type="button" value="→" @onclick="@(() => LoadTemplate(template))" />
-                    </section>
-                </li>
-            }
+            <CascadingValue Value="this">
+                @foreach (var template in Templates)
+                {
+                    <li>
+                        <HierTemplate Template="template"></HierTemplate>
+                    </li>
+                }
+            </CascadingValue>
         </ul>
     </section>
+
     <section class="loaded">
         <h3>Открытые задачи</h3>
         <p class="load-note">
             Список уже загруженных задач выбора.
         </p>
         <ul class="problems">
-            @foreach (var project in DSSApp.Projects)
+            @foreach (IProject project in Projects)
             {
-                <li>
-                    <NavLink @onclick="@(() => DSSApp.SelectProject(project))" class="problem" href="hierarchy">
-                        <div class="problem-img">
-                            <HierSheme Project="@project" />
-                        </div>
-                        <h4 class="problem-name">@project.ProblemActive.MainGoal.Name</h4>
-                        <p class="problem-status">@project.Status</p>
-                    </NavLink>
-                </li>
+                <ProjectTask Project="project" Removed="() => StateHasChanged()">
+                    
+                </ProjectTask>
             }
         </ul>
     </section>
@@ -248,11 +76,27 @@
     {
         DSSApp.AddProject(DSSExample.CreateNewProblem());
     }
-    private void LoadTemplate(ITemplate template) => DSSApp.AddProject(new Project(template));
+    public void LoadTemplate(ITemplate template)
+    {
+        DSSApp.AddProject(new Project(template));
+        StateHasChanged();
+    }
+
+    private void LoadExample()
+    {
+        DSSApp.AddProject(DSSExample.CreateSampleProblem());
+    }
+    private void LoadEx1()
+    {
+        DSSApp.AddProject(DSSExample.CreateSampleTreeProblem());
+    }
+    private void LoadEx2()
+    {
+        DSSApp.AddProject(DSSExample.CreateSampleTree2Problem());
+    }
 
 
-    //Загрузка JSON
-    private string JSONLoadResult = "Вставка JSON-текста";
+    private string JSONLoadResult { get; set; } = "Вставка JSON-текста";
     private void LoadJSON(ChangeEventArgs e)
     {
         string json = e.Value.ToString();
@@ -262,7 +106,7 @@
             DSSApp.AddProject(new Project(obj));
             JSONLoadResult = "Проблема успешно загружена";
         }
-        catch (Exception ex)
+        catch (JsonException ex)
         {
             JSONLoadResult = "Неверный формат данных, попробуйте ещё раз";
             Console.WriteLine(ex.Message);

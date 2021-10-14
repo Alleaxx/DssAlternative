@@ -1,0 +1,20 @@
+﻿
+.hier-sheme-mini {
+    margin: 4px;
+    width: 50px;
+}
+
+.hier-sheme-level {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.hier-sheme-element {
+    width: 4px;
+    height: 4px;
+    margin: 2px 1px;
+    border: 1px solid black;
+    border-radius: 1px;
+}

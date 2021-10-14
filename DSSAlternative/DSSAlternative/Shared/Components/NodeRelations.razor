@@ -1,0 +1,63 @@
+﻿@inherits DSSComponentParamNode
+
+<section class="criteria-relations">
+    <h3 class="rel-menu-list-header @StageClass()">
+        @Node.Name
+    </h3>
+    <ul class="rel-menu-list">
+        @foreach (var relation in ShowedRelations())
+        {
+            <li class="rel-menu-element @StageClass(relation)" @onclick="() => SetNow(relation)">
+                <a href="@RelationsLink">
+                    @RelationView.Invoke(relation)
+                </a>
+            </li>
+        }
+    </ul>
+    <p class="criteria-state">
+        @if (ShowState)
+        {
+            @if (IsNotConsistenct)
+            {
+                <span><b>↑</b> Нужна корректировка согласованности</span>
+            }
+            else if (IsUnknown)
+            {
+                <span><b>↑</b> Нужно заполнение</span>
+            }
+            else
+            {
+                <span><b>✓</b> Всё в порядке</span>
+            }
+        }
+    </p>
+</section>
+
+@code {
+    [Parameter]
+    public Predicate<INodeRelation> RelationFilter { get; set; } = rel => true;
+
+    [Parameter]
+    public bool ShowState { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment<INodeRelation> RelationView { get; set; }
+
+
+    private bool IsNotConsistenct => !RelationState.IsNodeConsistenct(Node);
+    private bool IsUnknown => RelationState.IsNodeUnknown(Node);
+
+
+    private string StageClass()
+    {
+        return Project.GetStageFromNode(Node).CssClass();
+    }
+    private string StageClass(INodeRelation rel)
+    {
+        return Project.GetStageFromRel(rel).CssClass();
+    }
+    private IEnumerable<INodeRelation> ShowedRelations()
+    {
+        return Problem.RelationsRequired.Where(r => r.Main == Node && RelationFilter.Invoke(r));
+    }
+}

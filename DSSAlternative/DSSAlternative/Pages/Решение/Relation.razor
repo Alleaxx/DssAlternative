@@ -1,0 +1,95 @@
+﻿@page "/relation-edit"
+@inherits DSSProject
+@layout EditorLayout
+
+
+<div class="relations-grid">
+    <nav class="menu-area">
+        <h2 class="rel-menu-header">Список отношений</h2>
+        @foreach (var node in Problem.NodesWithRels)
+        {
+            <NodeRelations Node="node" Context="rel">
+                <RelationView>
+                    <span>@rel.From.Name - @rel.To.Name</span>
+                </RelationView>
+            </NodeRelations>
+        }
+    </nav>
+
+    <section class="relation-area">
+        <h2>Отношение</h2>
+        <Tab>
+            <TabItem>
+                <Title>
+                    <h4>Сравнение</h4>
+                </Title>
+                <ChildContent>
+                    <RelationQuestion Relation="@RelationActive" />
+                </ChildContent>
+            </TabItem>
+            <TabItem>
+                <Title>
+                    <h4>Матрица</h4>
+                </Title>
+                <ChildContent>
+                    <NodeMatrix Node="@RelationActive.Main" />
+                </ChildContent>
+            </TabItem>
+            <TabItem>
+                <Title>
+                    <h4>Настройки</h4>
+                </Title>
+                <ChildContent>
+                    <section>
+                        <h5>Настройки</h5>
+                        <div>
+                            <label for="amount">Количество градаций оценок:</label><br />
+                            <input id="amount" type="number" @bind-value="@DSSApp.RatingSystem.Amount" min="1" max="12" />
+                        </div>
+                        <div>
+                            <label for="border-cons">Граница согласованности</label><br />
+                            <input id="border-cons" type="number" @bind-value="@MatrixConsistenct.BorderConsistenct" />
+                        </div>
+                        <p>
+                            <a class="options-link" href="@OptionsLink">
+                                <span>Все настройки</span>
+                            </a>
+                        </p>
+                    </section>
+                </ChildContent>
+            </TabItem>
+        </Tab>
+        <div class="prev-next-stages">
+            <div>
+                <a class="prev" @onclick="() => Project.SetNow(Prev)">
+                    ← предыдущее
+                </a>
+            </div>
+            @if (RelationState.AreCorrect)
+            {
+                <a class="res" href="@ResultsLink">
+                    ДОСТУПЕН РЕЗУЛЬТАТ!
+                </a>
+            }
+            <div>
+                <a class="next" @onclick="() => Project.SetNow(Next)">
+                    следующее →
+                </a>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+@code {
+
+    protected INodeRelation Prev => Problem.PrevRequiredRel(RelationActive);
+    protected INodeRelation Next => Problem.NextRequiredRel(RelationActive);
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Project.OnRelationChanged += () => StateHasChanged();
+    }
+}

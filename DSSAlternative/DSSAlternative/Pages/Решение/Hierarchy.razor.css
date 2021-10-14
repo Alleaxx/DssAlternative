@@ -1,0 +1,269 @@
+﻿.basic-border {
+    border: 1px solid gainsboro;
+    border-radius: 3px;
+    margin: 3px;
+    padding: 5px;
+}
+
+.sheme {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+
+.col-own {
+    display: flex;
+    flex-direction: column;
+}
+
+.level {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid gainsboro;
+}
+
+
+.level-name {
+    text-align: center;
+    width: 150px;
+}
+
+.level-index {
+    color: gray;
+    font-size: 0.9em;
+}
+
+.level-elements {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    margin: 5px 0;
+}
+
+.level-add {
+}
+
+.node-element {
+    display: flex;
+    padding: 2px 5px;
+    padding-right: 0;
+    margin: 8px;
+    border: 2px solid silver;
+    min-width: 15%;
+    border-radius: 2px;
+}
+
+
+.node-main-element {
+    border: 2px solid orange;
+}
+
+.node-controlled-element {
+    border: 2px solid red;
+}
+
+.node-own {
+    border: 2px solid gray;
+}
+
+.add {
+    color: green;
+    border: 2px solid lightgreen;
+    background: transparent;
+    padding: 5px 30px;
+    font-size: 1em;
+}
+
+    .add:hover {
+        background-color: lightgreen;
+        cursor: pointer;
+    }
+
+.remove {
+    color: red;
+    font-size: 1em;
+    margin: 0;
+    padding: 5px 8px;
+    background-color: transparent;
+    border: 0;
+    border-left: 1px solid gainsboro;
+}
+
+    .remove:hover {
+        background-color: lightpink;
+        cursor: pointer;
+    }
+
+
+.input-text {
+    width: 100%;
+    font-size: 0.85em;
+    border: 0;
+    padding: 10px 0;
+    text-align: center;
+    outline-color: transparent;
+}
+
+.confirm {
+    margin: 10px;
+    display: flex;
+    align-items: center;
+}
+
+    .confirm .add {
+        margin: 0 2em;
+    }
+
+.hier-fails {
+    display: flex;
+    margin: 0 10px;
+}
+
+.hier-fail {
+    border: 2px solid red;
+    border-radius: 3px;
+    font-size: 0.8em;
+    width: 2em;
+    cursor: pointer;
+    text-align: center;
+    padding: 1px 4px;
+    margin: 0 4px;
+}
+
+    .hier-fail:hover {
+        background-color: lightpink;
+    }
+
+.main-goal-level {
+}
+
+    .main-goal-level .level-index {
+        display: none;
+    }
+
+    .main-goal-level .level-name {
+        font-size: 1.4em;
+    }
+
+    .main-goal-level br {
+        display: none;
+    }
+
+    .main-goal-level .level-add {
+        visibility: hidden;
+    }
+
+    .main-goal-level .node-element {
+        min-width: 14em;
+        font-size: 1.25em;
+    }
+
+    .main-goal-level .remove {
+        display: none;
+    }
+
+
+
+
+.new-level {
+    padding: 10px 0;
+}
+
+    .new-level .level-name {
+        color: gray;
+    }
+
+.information {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    border-top: 1px solid whitesmoke;
+    border-bottom: 1px solid whitesmoke;
+    padding: 14px 0;
+    margin: 5px 10px;
+    font-size: 0.9em;
+}
+
+.property-name {
+    color: gray;
+}
+
+.property-value {
+    margin-right: 2em;
+    margin-left: 4px;
+}
+
+.not-saved, .all-saved, .warning {
+}
+
+.not-saved {
+    color: darkgoldenrod;
+}
+
+.warning {
+    color: darkred;
+}
+
+.all-saved {
+    color: green;
+}
+
+.json-sheme {
+    margin: 20px 0;
+}
+
+
+
+
+.structure td, .structure th {
+    text-align: left;
+}
+
+.node-table-edit {
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+    .node-table-edit td, .node-table-edit th {
+        padding: 2px 5px;
+    }
+
+.node-table-edit-header {
+}
+
+    .node-table-edit-header th {
+        border-bottom: 1px solid gainsboro;
+    }
+
+.node-table-edit-node {
+}
+
+    .node-table-edit-node .edit-text {
+        text-align: left;
+        font-style: italic;
+    }
+
+.edit-cell input {
+    width: 85%;
+}
+
+    .edit-cell input[type="number"] {
+        text-align: right;
+        padding: 5px 10px;
+        border: 0;
+        border-bottom: 0px solid gainsboro;
+    }
+
+.num {
+    text-align: right;
+}
+
+.edit-cell input[type="text"] {
+    text-align: left;
+    padding: 5px 10px;
+    border: 0;
+    border-bottom: 0px solid gainsboro;
+}

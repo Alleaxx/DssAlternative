@@ -1,0 +1,58 @@
+﻿
+.preset {
+    display: grid;
+    grid-template-columns: auto 8fr 1fr;
+    grid-template-rows: auto auto;
+    padding: 5px 0;
+    border-top: 1px solid gainsboro;
+    border-bottom: 1px solid gainsboro;
+    grid-template-areas:
+        "img name load"
+        "img descr load";
+}
+
+.preset-img {
+    grid-area: img;
+    height: 30px;
+    margin: 5px;
+}
+
+.preset-name {
+    grid-area: name;
+    font-size: 0.8em;
+    margin: 0;
+}
+
+.problem-name {
+    grid-area: name;
+    font-size: 0.8em;
+    margin: 0;
+}
+
+.preset-descr {
+    grid-area: descr;
+    font-size: 0.8em;
+    margin: 4px 0;
+    color: gray;
+}
+
+.problem-status {
+    grid-area: status;
+    font-size: 0.8em;
+    margin: 4px 0;
+    color: gray;
+}
+
+
+.preset-load {
+    grid-area: load;
+    height: 24px;
+    margin-left: 1em;
+    border: 1px solid gray;
+    background-color: transparent;
+}
+
+    .preset-load:hover {
+        background-color: lightgreen;
+        cursor: pointer;
+    }

@@ -1,36 +1,23 @@
 ﻿<style>
-    .main-header ul {
-        list-style: none;
-    }
-
-    .main-header li {
-        margin: 5px 20px;
-    }
-
     .main-header a {
         text-decoration: none;
-    }
-
-        .main-header a:hover {
-            color: black;
-        }
-
-
-    .main-header a{
         text-transform: uppercase;
         font-family: "Calibri Light";
         font-size: 1.35em;
         text-align: center;
     }
 
+        .main-header a:hover {
+            color: black;
+        }
+
     .main-header a.active{
         color: black;
         font-weight: 600;
     }
-
 </style>
 <div class="main-header">
-    <ul class="row">
+    <ul>
         <li>
             <NavLink href="info">
                 О системе
@@ -48,7 +35,3 @@
         </li>
     </ul>
 </div>
-
-@code{
-
-}

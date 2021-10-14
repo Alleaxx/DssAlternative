@@ -45,7 +45,7 @@ namespace DSSAlternative.AHP
         private double End { get; set; }
 
 
-        public RatingDefaultSystem(double start = 3, double turn = 2, double end = 9)
+        public RatingDefaultSystem(double start = 1, double turn = 2, double end = 9)
         {
             Name = "Стандартная система рейтинга";
             Start = start;
@@ -57,7 +57,7 @@ namespace DSSAlternative.AHP
         protected virtual void CreateRules()
         {
             DefaultRule = new RatingRule(double.NegativeInfinity, double.PositiveInfinity, "?? отношение ??", "color: black");
-            Add(new RatingRule(0, 1, "Неизвестное отношение","color:black"));
+            Add(new RatingRule(0, 1, "????","color:black"));
             Add(new RatingRule(1, 2, "Одинаковы по значимости", "color:black"));
             Add(new RatingRule(2, 3, "Слегка приоритетнее", "color:green;font-size:0.9em;"));
             Add(new RatingRule(3, 4, "Немного приоритетнее", "color:green"));

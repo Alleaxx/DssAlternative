@@ -56,7 +56,7 @@ namespace DSSAlternative.AHP
 
 
 
-        public event Action<IProject> OnProjectSelected;
+        public event Action<IProject> OnProjectSelectChange;
 
         public IRatingSystem RatingSystem { get; private set; } = new RatingDefaultSystem();
         public List<ITemplate> Templates { get; set; }
@@ -79,14 +79,13 @@ namespace DSSAlternative.AHP
 
             void Update()
             {
-                OnProjectSelected?.Invoke(project);
+                OnProjectSelectChange?.Invoke(project);
             }
         }
 
         public void AddProject(IProject project)
         {
             Projects.Add(project);
-            SelectProject(project);
         }
 
         public void RemoveProject(IProject project)

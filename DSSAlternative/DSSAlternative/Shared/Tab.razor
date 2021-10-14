@@ -1,37 +1,4 @@
-﻿<style>
-
-    .tabset{
-
-    }
-    .tab-items {
-        list-style: none;
-        display: flex;
-        align-items: flex-end;
-        margin: 0;
-    }
-    .tab-content {
-        border: 1px solid whitesmoke;
-        border-radius: 1px;
-        padding: 0.25em;
-    }
-
-    .tab-item {
-        padding: 5px 10px;
-        border-bottom: 1px solid gainsboro;
-    }
-
-        .tab-item:hover {
-            background-color: gainsboro;
-            cursor: pointer;
-        }
-
-    .tab-item.selected {
-        background-color: silver;
-    }
-
-</style>
-
-<section class="tabset">
+﻿<div class="tabset">
     <CascadingValue Value="this">
         <ul class="tab-items">
             @ChildContent
@@ -40,7 +7,7 @@
             @ActiveTab?.ChildContent
         </div>
     </CascadingValue>
-</section>
+</div>
 
 @code {
     public IEnumerable<ITabItem> TabItems { get; private set; }

@@ -1,0 +1,36 @@
+﻿@inherits LayoutComponentBase
+
+@inject NavigationManager NavigationManager
+@inject DSS DssApp
+
+<link rel="stylesheet" href="css/app.css" />
+
+<section class="grid">
+    <Logo />
+
+    <MainHeader />
+
+    <MenuProjects />
+
+    <Menu />
+
+    <main>
+        @Body
+    </main>
+
+    <nav class="lower-menu"></nav>
+
+    <Footer />
+</section>
+
+@code{
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (DssApp.Project == null)
+        {
+            NavigationManager.NavigateTo("start");
+        }
+    }
+}
+

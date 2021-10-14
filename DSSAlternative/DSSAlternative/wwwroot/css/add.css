@@ -2,36 +2,37 @@
 th {
     text-align: left;
 }
-
 .row {
     display: flex;
 }
-
 .center {
     align-items: center;
 }
 
-.tab-header{
-    margin: 4px 0;
-    font-weight: 500;
-}
 
-.hier-sheme-mini {
-    margin: 4px;
-    width: 50px;
-}
 
-.hier-sheme-level {
+
+
+
+/*.stage-area {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
 }
 
-.hier-sheme-element {
-    width: 4px;
-    height: 4px;
-    margin: 2px 1px;
-    border: 1px solid black;
-    border-radius: 1px;
-}
+    .stage-area a {
+        flex-basis: 50%;
+        text-align: center;
+        color: black;
+        padding: 8px 0;
+        border: 1px solid lightgreen;
+    }
+
+        .stage-area a:hover {
+            background-color: lightgreen;
+        }
+
+.node-edit {
+    font-size: 0.9em;
+}*/
+
+
+

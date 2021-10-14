@@ -1,0 +1,24 @@
+﻿.task-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    border-bottom: 1px solid gainsboro;
+}
+
+.add-task {
+    font-size: 0.9em;
+    border: 1px solid lightgreen;
+    color: green;
+    padding: 4px 1em;
+    height: 100%;
+    background-color: transparent;
+    cursor: pointer;
+    border-radius: 0;
+}
+
+    .add-task:hover {
+        background-color: lightgreen;
+    }

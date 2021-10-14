@@ -1,0 +1,43 @@
+﻿@inherits DSSComponentParamRelation
+
+<td colspan="@ColSpan" title="@Rating.Value" style="@StyleSel()" class="@(ClassSel())" @onclick="Set">
+    @Rating.Name
+</td>
+
+@code {
+    [CascadingParameter]
+    public RelationQuestion RelationQuest { get; set; }
+
+    [Parameter]
+    public INode Node { get; set; }
+    [Parameter]
+    public int ColSpan { get; set; }
+    [Parameter]
+    public IRating Rating { get; set; }
+
+    private bool IsSelected => Rating.CheckEqual(Relation.Rating);
+
+    private void Set()
+    {
+        Relation.SetRating(Rating);
+    }
+
+    private string StyleSel()
+    {
+        return IsSelected ? Rating.CssStyle() : "";
+    }
+    private string ClassSel()
+    {
+        string selState = "selectable";
+        if (IsSelected)
+        {
+            selState = "selected";
+        }
+        if((Relation.Value == 1 || Relation.Value == 0) && Relation.Value == Rating.Value)
+        {
+            selState = "selected";
+        }
+        return $"{selState} {RelationQuest.ClassSafeOrDangerous(Rating)}";
+    }
+
+}

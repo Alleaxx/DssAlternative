@@ -1,0 +1,16 @@
+﻿<section class="preset">
+    <img class="preset-img" title="@Template.Name" src="@Template.Img" />
+    <h4 class="preset-name">@Template.Name</h4>
+    <p class="preset-descr">@Template.Description</p>
+    <button class="preset-load" type="button" @onclick="@(() => StartComponent.LoadTemplate(Template))">
+        <span>→</span>
+    </button>
+</section>
+
+@code {
+    [Parameter]
+    public ITemplate Template { get; set; }
+
+    [CascadingParameter]
+    public Start StartComponent { get; set; }
+}

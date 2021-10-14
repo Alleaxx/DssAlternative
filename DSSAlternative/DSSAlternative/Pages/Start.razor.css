@@ -1,0 +1,103 @@
+﻿
+.load-task-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+        "header header header"
+        "own preset loaded";
+}
+
+    .load-task-grid h3 {
+        font-size: 1em;
+    }
+
+
+.load-header {
+    grid-area: header;
+    text-align: center;
+    border-bottom: 1px solid gainsboro;
+}
+
+.load-sample {
+    grid-area: sample;
+    padding: 10px;
+    min-height: 30em;
+}
+
+.load-own {
+    grid-area: own;
+    padding: 10px;
+}
+
+    .load-own input[type="button"], .load-sample input[type="button"] {
+        width: 90%;
+        margin: 5px;
+        cursor: pointer;
+        background-color: transparent;
+        border: 1px solid gray;
+        padding: 8px;
+    }
+
+        .load-own input[type="button"]:hover,
+        .load-sample input[type="button"]:hover {
+            background-color: lightgreen;
+        }
+
+
+.load-preset {
+    grid-area: preset;
+    border-right: 1px solid gainsboro;
+    border-left: 1px solid gainsboro;
+    cursor: initial;
+    padding: 10px;
+}
+
+.presets, .problems {
+    list-style: none;
+    padding: 0;
+}
+
+    .presets a, .problems a {
+        text-decoration: none;
+        color: black;
+    }
+
+
+.problem-img {
+    grid-area: img;
+    margin-right: 1em;
+    vertical-align: middle;
+}
+
+.loaded {
+    grid-area: loaded;
+    padding: 10px;
+}
+
+.problems {
+    list-style: none;
+    padding: 0;
+}
+
+.problem {
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-template-columns: 2fr 8fr;
+    padding: 5px 0;
+    border-top: 1px solid gainsboro;
+    border-bottom: 1px solid gainsboro;
+    grid-template-areas:
+        "img name"
+        "img status";
+}
+
+
+.load-note {
+    color: gray;
+    font-size: 0.9em;
+}
+
+.load-json {
+    width: 90%;
+}

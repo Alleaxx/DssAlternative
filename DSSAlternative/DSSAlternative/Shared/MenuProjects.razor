@@ -1,0 +1,26 @@
+﻿@inherits DSSProject
+<nav>
+    <ul class="task-menu">
+        <CascadingValue Value="this">
+            @foreach (var project in DSSApp.Projects)
+            {
+                <li>
+                    <ProjectTask Project="project"></ProjectTask>
+                </li>
+            }
+        </CascadingValue>
+        <li>
+            <button class="add-task" @onclick="CreateProblem">
+                <span>Создать</span>
+            </button>
+        </li>
+    </ul>
+</nav>
+
+@code{
+
+    private void CreateProblem()
+    {
+        DSSApp.AddProject(DSSExample.CreateNewProblem());
+    }
+}

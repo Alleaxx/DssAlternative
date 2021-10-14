@@ -37,7 +37,10 @@ namespace DSSAlternative.AHP
         }
 
 
-        public bool CheckEqual(IRating rating) => rating.Node == Node && rating.Value == Value;
+        public bool CheckEqual(IRating rating)
+        {
+            return rating.Node == Node && rating.Value == Value;
+        }
 
         public string CssClass() => "";
         public string CssStyle() => Rule.Style;

@@ -1,0 +1,61 @@
+﻿.matrix {
+    margin: 5px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .matrix th, .matrix td {
+        padding: 8px 24px;
+        text-align: center;
+        border: 5px solid transparent;
+        border-top: 0;
+        border-bottom: 0;
+    }
+
+
+td.from {
+}
+
+td.to {
+}
+
+td.united {
+}
+
+td.between {
+    border: 0;
+}
+
+.matrix .main-node {
+    border: 0;
+}
+
+.matrix .side-node {
+    border: 0;
+}
+
+.main-node h3 {
+    margin: 5px 0;
+}
+
+.side-node {
+    font-size: 1.1em;
+}
+
+.matrix a {
+    text-decoration: none;
+    color: royalblue;
+}
+
+    .matrix a:hover {
+        color: blue;
+    }
+
+
+
+.matrix .results-message {
+    padding: 20px 0;
+    border-bottom: 1px solid gray;
+    border-top: 1px solid gray;
+    text-align: center;
+}

@@ -132,8 +132,19 @@ namespace DSSAlternative.AHP
         }
         public void SetRating(IRating rating)
         {
-            INodeRelation relation = rating.Node.Equals(From) ? this : Mirrored;
-            relation.Value = rating.Value;
+            if(rating.Value == 0)
+            {
+                SetUnknown();
+            }
+            else if(rating.Value == 1)
+            {
+                Value = 1;
+            }
+            else
+            {
+                INodeRelation relation = rating.Node.Equals(From) ? this : Mirrored;
+                relation.Value = rating.Value;
+            }
         }
         public void SetUnknown()
         {

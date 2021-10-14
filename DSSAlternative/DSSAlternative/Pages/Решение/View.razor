@@ -1,0 +1,80 @@
+﻿@page "/view"
+@inherits DSSProject
+@layout EditorLayout
+
+<div class="relations-state">
+    <section class="sheme-nav">
+        <h3>Схема иерархии</h3>
+        <HierShemeBig ProjectSheme="Project" LinkType="@RelationsLink" ViewSelection="HierShemeBig.ViewSelections.Relations">
+
+        </HierShemeBig>
+
+        @*<ColoredDefinition Color="#dfffdf" Message="известно и согласовано"></ColoredDefinition>
+            <ColoredDefinition Color="lightyellow" Message="неизвестность"></ColoredDefinition>
+            <ColoredDefinition Color="#ffdee3" Message="рассогласованность"></ColoredDefinition>*@
+    </section>
+
+    <div class="sheme-info">
+        <section class="sheme-info-total">
+            <h3>Отношения</h3>
+            <p>
+                <a href="legacy/view">
+                    Старый обзор
+                </a>
+            </p>
+            <div class="info-details">
+                @if (RelationState.AreCorrect)
+                {
+                    <p class="no-errors">
+                        ✓ Отлично, все отношения заполнены и согласованы
+                    </p>
+                    <p>
+                        <a href="@ResultsLink">Посмотреть результат</a>
+                    </p>
+                }
+                else
+                {
+                    if (!RelationState.AreConsistenct)
+                    {
+                        @foreach (var node in UnconsistenctNodes())
+                        {
+                            <NodeRelations Node="node" Context="rel">
+                                <RelationView>
+                                    <span>@rel.From.Name - @rel.To.Name, Cr = @GetCrNode(node).ToString("0.00")</span>
+                                </RelationView>
+                            </NodeRelations>
+                        }
+                    }
+                    if (!RelationState.AreKnown)
+                    {
+                        @foreach (var node in UnknownNodes())
+                        {
+                            <NodeRelations Node="node" Context="rel" RelationFilter="rel => rel.Unknown">
+                                <RelationView>
+                                    <span>@rel.From.Name ??? @rel.To.Name</span>
+                                </RelationView>
+                            </NodeRelations>
+                        }
+                    }
+                }
+            </div>
+        </section>
+    </div>
+</div>
+
+@code {
+
+    public IEnumerable<INode> UnknownNodes()
+    {
+        return Problem.Hierarchy.Where(n => RelationState.IsNodeUnknown(n));
+    }
+    public IEnumerable<INode> UnconsistenctNodes()
+    {
+        return Problem.NodesWithRels.Where(n => !RelationState.IsNodeConsistenct(n));
+    }
+    public double GetCrNode(INode node)
+    {
+        return Problem.GetMtxRelations(node).Consistency.Cr;
+    }
+
+}
