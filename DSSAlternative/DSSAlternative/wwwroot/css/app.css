@@ -48,7 +48,7 @@
 
 main {
     grid-area: content;
-    padding: 0px 10px;
+    padding: 0px 5px;
     margin: 0;
     max-width: 1300px;
     min-height: 60vh;
@@ -67,4 +67,19 @@ main {
     padding: 5px 20px;
 }
 
+
+.loading{
+    background-color: whitesmoke;
+}
+.loading p{
+    margin: auto;
+    padding: 30px 20px;
+    background-color: white;
+    border: 1px solid gainsboro;
+    border-radius: 2px;
+    font-size: 1.5em;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-top: 3em;
+}
 

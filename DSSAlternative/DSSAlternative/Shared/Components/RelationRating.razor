@@ -1,7 +1,7 @@
 ﻿@inherits DSSComponentParamRelation
 
 <td colspan="@ColSpan" title="@Rating.Value" style="@StyleSel()" class="@(ClassSel())" @onclick="Set">
-    @Rating.Name
+    @CssRating.Rules.GetRuleForRating(Rating).Name
 </td>
 
 @code {
@@ -24,7 +24,7 @@
 
     private string StyleSel()
     {
-        return IsSelected ? Rating.CssStyle() : "";
+        return IsSelected ? new CssRating(Relation, Rating).CssStyle() : "";
     }
     private string ClassSel()
     {

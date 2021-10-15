@@ -37,6 +37,11 @@
     list-style: none;
     flex-flow: row;
 }
+.results-list{
+    padding-bottom: 5px;
+    border-bottom: 1px solid gainsboro;
+    margin-bottom: 5px;
+}
 
     .results li {
         display: flex;

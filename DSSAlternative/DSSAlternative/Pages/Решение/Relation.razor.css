@@ -24,6 +24,10 @@
 .res {
     flex: 1;
 }
+.prev, .next, .res{
+    margin-top: 10px;
+    padding: 10px 5px;
+}
 
 
 
@@ -48,6 +52,7 @@
 .menu-area {
     grid-area: menu;
     padding: 10px;
+    border-left: 1px solid gainsboro;
 }
 
 .rel-menu-header {

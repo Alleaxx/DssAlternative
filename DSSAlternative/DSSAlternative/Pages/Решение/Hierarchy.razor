@@ -1,9 +1,12 @@
 ﻿@page "/hierarchy"
 @inherits DSSProject
 @layout EditorLayout
+@inject Clipboard Clipboard
 
 <section>
-    <h2 class="content-header-h">Редактирование иерархии задачи выбора</h2>
+    <h2>
+        Иерархия задачи выбора
+    </h2>
 
     <div class="sheme basic-border">
         <div class="confirm">
@@ -24,9 +27,9 @@
                 }
             </div>
             <div class="hier-fails">
-                @foreach (var check in HierEditState.Checks)
+                @foreach (var check in HierEditState.ErrorsList)
                 {
-                    <div class="@check.CssClass()" title="@check.Message">
+                    <div class="@(new CssCorrectCheck(check).CssClass())" title="@check.Message">
                         @check.Name
                     </div>
                 }
@@ -108,44 +111,13 @@
                 </Title>
                 <ChildContent>
                     <section style="padding: 1em 0.5em">
-                        <table class="structure">
-                            <tr>
-                                <th>№</th>
-                                <th>Критерии</th>
-                                <th>Зависимые</th>
-                            </tr>
-                            @foreach (var group in Template.Groups)
-                            {
-                                <tr>
-                                    <td>
-                                        <b>Группа @group.Index</b>:
-                                    </td>
-                                    <td>
-                                        <ul>
-                                            @foreach (var node in group.Group)
-                                            {
-                                                <li>@node.Name</li>
-                                            }
-                                        </ul>
-                                    </td>
-                                    <td>
-                                        <ul>
-                                            @foreach (var node in Template.Nodes.Where(n => n.GroupIndex == group.Index))
-                                            {
-                                                <li>@node.Name</li>
-                                            }
-                                        </ul>
-                                    </td>
-                                </tr>
-                            }
-                        </table>
 
                         <table class="node-table-edit">
                             <colgroup>
-                                <col style="width:20%"/>
-                                <col style="width:38%"/>
-                                <col style="width:14%"/>
-                                <col style="width:14%"/>
+                                <col style="width:20%" />
+                                <col style="width:38%" />
+                                <col style="width:14%" />
+                                <col style="width:14%" />
                                 <col style="width:14%" />
                             </colgroup>
                             <tr class="node-table-edit-header">
@@ -176,6 +148,38 @@
                                 </tr>
                             }
                         </table>
+
+                        <table class="structure">
+                            <tr>
+                                <th>Группа №</th>
+                                <th>Критерии</th>
+                                <th>Зависимые</th>
+                            </tr>
+                            @foreach (var group in Template.Groups)
+                            {
+                                <tr>
+                                    <td>
+                                        @group.Index
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            @foreach (var node in group.Group)
+                                            {
+                                                <li>@node.Name</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            @foreach (var node in Template.Nodes.Where(n => n.GroupIndex == group.Index))
+                                            {
+                                                <li>@node.Name</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
                     </section>
                 </ChildContent>
             </TabItem>
@@ -184,7 +188,12 @@
                     <h4 class="tab-header">JSON</h4>
                 </Title>
                 <ChildContent>
-                    <textarea rows="20" cols="100">
+                    <p>
+                        <button @onclick="() => Clipboard.WriteTextAsync(JsonCurrent)">
+                            Скопировать в буфер обмена
+                        </button>
+                    </p>
+                    <textarea rows="20" cols="75">
                      @JsonCurrent
                 </textarea>
                 </ChildContent>

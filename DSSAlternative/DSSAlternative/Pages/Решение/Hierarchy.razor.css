@@ -122,7 +122,7 @@
     margin: 0 10px;
 }
 
-.hier-fail {
+.errored {
     border: 2px solid red;
     border-radius: 3px;
     font-size: 0.8em;
@@ -133,7 +133,7 @@
     margin: 0 4px;
 }
 
-    .hier-fail:hover {
+    .errored:hover {
         background-color: lightpink;
     }
 
@@ -215,13 +215,6 @@
     margin: 20px 0;
 }
 
-
-
-
-.structure td, .structure th {
-    text-align: left;
-}
-
 .node-table-edit {
     border-collapse: collapse;
     font-size: 0.9em;
@@ -266,4 +259,20 @@
     padding: 5px 10px;
     border: 0;
     border-bottom: 0px solid gainsboro;
+}
+
+.structure{
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+    .structure td,
+    .structure th {
+        font-size: 0.9em;
+        border-bottom: 1px solid gainsboro;
+    }
+
+.structure th {
+    padding: 4px 6px;
+}
+.structure td{
 }

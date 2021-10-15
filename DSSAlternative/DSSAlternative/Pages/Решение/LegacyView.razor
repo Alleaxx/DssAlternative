@@ -285,11 +285,11 @@
             FilterRating,
             Constistency,
         };
-    private string Filter => Project.ViewFilter;
+    private string Filter { get; set; }
 
     private void SelectFilter(string text)
     {
-        Project.ViewFilter = text;
+        Filter = text;
     }
 
 

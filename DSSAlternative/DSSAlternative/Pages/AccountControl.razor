@@ -1,0 +1,54 @@
+﻿@inherits DSSComponent
+
+@page "/account"
+<h2>AccountControl</h2>
+<div>
+    <h3>Настройки аккаунта</h3>
+    <p>
+        @User.Name, авторизован: @User.Loginned
+    </p>
+</div>
+<div>
+    <div>
+        <h3>Состояние</h3>
+        @if (DssState != null)
+        {
+            @Account.CurrentUser.State
+        }
+        else
+        {
+            <p>
+                Сохраненного состояния нет
+            </p>
+        }
+    </div>
+    <div>
+        <h3>Свои шаблоны</h3>
+        @foreach (var template in OwnTemplates)
+        {
+            <p>
+                @template.Name<br />
+                @template.Description
+                <button @onclick="() => Account.LoadTemplate(template)">
+                    Загрузить шаблон
+                </button>
+                <button @onclick="() => Account.RemoveTemplate(template)">
+                    Удалить
+                </button>
+            </p>
+            <hr />
+        }
+    </div>
+</div>
+
+@code {
+    public User User => Account.CurrentUser;
+    public DssState DssState => User.State;
+    public IEnumerable<ITemplate> OwnTemplates => User.Templates;
+
+
+    private void AddTemplate(ITemplate template)
+    {
+
+    }
+}

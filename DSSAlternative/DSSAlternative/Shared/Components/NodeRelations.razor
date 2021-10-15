@@ -1,14 +1,14 @@
 ﻿@inherits DSSComponentParamNode
 
 <section class="criteria-relations">
-    <h3 class="rel-menu-list-header @StageClass()">
-        @Node.Name
+    <h3 class="rel-menu-list-header @NodeRelClass()">
+        @Node.Name  [@FormatNumber(Cr)]
     </h3>
     <ul class="rel-menu-list">
         @foreach (var relation in ShowedRelations())
         {
-            <li class="rel-menu-element @StageClass(relation)" @onclick="() => SetNow(relation)">
-                <a href="@RelationsLink">
+            <li>
+                <a class="rel-menu-element @RelationClass(relation)" @onclick="() => SetNow(relation)" href="@RelationsLink">
                     @RelationView.Invoke(relation)
                 </a>
             </li>
@@ -46,16 +46,19 @@
 
     private bool IsNotConsistenct => !RelationState.IsNodeConsistenct(Node);
     private bool IsUnknown => RelationState.IsNodeUnknown(Node);
+    public double Cr => Problem.GetMtxRelations(Node).Consistency.Cr;
 
 
-    private string StageClass()
+    private string NodeRelClass()
     {
-        return Project.GetStageFromNode(Node).CssClass();
+        var rel = Problem.FirstRequiredRelation(Node);
+        return RelationClass(rel);
     }
-    private string StageClass(INodeRelation rel)
+    private string RelationClass(INodeRelation rel)
     {
-        return Project.GetStageFromRel(rel).CssClass();
+        return new CssRelation(Project, rel).CssClass();
     }
+
     private IEnumerable<INodeRelation> ShowedRelations()
     {
         return Problem.RelationsRequired.Where(r => r.Main == Node && RelationFilter.Invoke(r));

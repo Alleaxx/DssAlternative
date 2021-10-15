@@ -14,7 +14,7 @@
     <section>
         <h4>Система опроса</h4>
         <p>
-            Текущая система: @RatingSystem.Name
+            Текущая система: @RatingSystem
         </p>
         <div>
             <label for="amount">Количество градаций оценок:</label>
@@ -35,7 +35,7 @@
                     <th>Имя</th>
                     <th>Стиль</th>
                 </tr>
-                @foreach (var rule in RatingSystem.Rules)
+                @foreach (var rule in RatingRules.Rules)
                 {
                     <tr>
                         <td>

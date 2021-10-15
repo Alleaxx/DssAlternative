@@ -55,7 +55,7 @@ td.between {
 
 .matrix .results-message {
     padding: 20px 0;
-    border-bottom: 1px solid gray;
-    border-top: 1px solid gray;
+    border-bottom: 1px solid whitesmoke;
+    border-top: 1px solid whitesmoke;
     text-align: center;
 }

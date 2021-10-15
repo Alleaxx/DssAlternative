@@ -4,15 +4,15 @@
 
 
 <section class="res">
-    <h2 class="content-header-h">
+    <h2>
         Анализ результатов
     </h2>
     <div>
-        @if (RelationState.AreCorrect)
+        @if (RelationState.IsCorrect)
         {
             @foreach (var levelGroup in GroupedResults())
             {
-                <section>
+                <section class="results-list">
                     <h4 class="level-header">
                         @HeaderText(levelGroup)
                     </h4>
@@ -37,7 +37,7 @@
                             ЛУЧШИЙ ВЫБОР –
                             @foreach (var bestNode in Problem.Best(levelGroup.Key))
                             {
-                                <span class="node-best">@bestNode.Name </span>
+                                <span class="node-best">@bestNode.Name,</span>
                             }
                         </p>
 
@@ -50,11 +50,17 @@
         {
             @if (!RelationState.AreConsistenct)
             {
-                <Warning Header="Несогласованность" Message="Некоторые отношения являются несогласованными!"></Warning>
+                <div>
+                    <Warning Header="Несогласованность" Message="Некоторые отношения являются несогласованными!"></Warning>
+
+                </div>
             }
             @if (!RelationState.AreKnown)
             {
-                <Warning Header="Незаполненность!" Message="Некоторые отношения не заполнены"></Warning>
+                <div>
+                    <Warning Header="Незаполненность!" Message="Некоторые отношения не заполнены"></Warning>
+
+                </div>
             }
         }
     </div>

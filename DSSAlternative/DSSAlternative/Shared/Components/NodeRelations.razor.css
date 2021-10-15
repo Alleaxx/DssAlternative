@@ -47,8 +47,6 @@
     }
     .rel-menu-element:hover {
         background-color: whitesmoke;
-    }
-    .rel-menu-element a:hover {
         color: blue;
     }
 

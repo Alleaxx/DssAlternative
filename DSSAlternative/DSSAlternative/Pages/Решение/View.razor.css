@@ -6,12 +6,12 @@
 .sheme-nav {
     flex: 3;
     padding: 5px;
-    border-right: 1px solid gainsboro;
 }
 
 .sheme-info {
     flex: 7;
     padding: 5px 10px;
+    border-left: 1px solid gainsboro;
 }
 
 .sheme-info-total {

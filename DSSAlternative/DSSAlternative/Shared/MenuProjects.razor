@@ -1,20 +1,31 @@
 ﻿@inherits DSSProject
 <nav>
-    <ul class="task-menu">
-        <CascadingValue Value="this">
-            @foreach (var project in DSSApp.Projects)
-            {
-                <li>
-                    <ProjectTask Project="project"></ProjectTask>
-                </li>
-            }
-        </CascadingValue>
-        <li>
-            <button class="add-task" @onclick="CreateProblem">
-                <span>Создать</span>
+    <div class="task-row">
+        <ul class="task-menu">
+            <CascadingValue Value="this">
+                @foreach (var project in DSSApp.Projects)
+                {
+                    <li>
+                        <ProjectTask Project="project"></ProjectTask>
+                    </li>
+                }
+            </CascadingValue>
+            <li>
+                <button class="add-task" @onclick="CreateProblem">
+                    <span>Создать</span>
+                </button>
+            </li>
+        </ul>
+        <div>
+            <button @onclick="SaveProgress">
+                <span>Сохранить прогресс</span>
             </button>
-        </li>
-    </ul>
+            <br />
+            <button @onclick="LoadProgress">
+                <span>Восстановить состояние</span>
+            </button>
+        </div>
+    </div>
 </nav>
 
 @code{
@@ -22,5 +33,14 @@
     private void CreateProblem()
     {
         DSSApp.AddProject(DSSExample.CreateNewProblem());
+    }
+
+    private void SaveProgress()
+    {
+        Account.SaveState();
+    }
+    private void LoadProgress()
+    {
+        Account.LoadState();
     }
 }

@@ -130,13 +130,14 @@
 @code{
     private IEnumerable<INode> NavNodes => Problem.NodesWithRels;
 
-    private string HierClass => $"stage-menu-element {Hier.CssClass()}";
-    private string ViewClass => $"stage-menu-element {View.CssClass()}";
-    private string ResultsClass => $"stage-menu-element {Res.CssClass()}";
+    private string HierClass => $"stage-menu-element {HierCss.CssClass()}";
+    private string ViewClass => $"stage-menu-element {ViewCss.CssClass()}";
+    private string ResultsClass => $"stage-menu-element {ResultsCss.CssClass()}";
 
     private string NodeClass(INode node)
     {
-        return Project.GetStageFromNode(node).CssClass();
+        var rel = Problem.FirstRequiredRelation(node);
+        return new CssRelation(Project, rel).CssClass();
     }
 
     private int NodeIndex(INode node)
@@ -153,7 +154,6 @@
     {
         return $"margin-left:{node.Level * 2}em";
     }
-
 }
 
 

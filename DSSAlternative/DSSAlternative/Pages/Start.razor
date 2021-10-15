@@ -1,5 +1,6 @@
 ﻿@page "/start"
 @inherits DSSComponent
+@inject Clipboard Clipboard
 
 <div class="load-task-grid">
     <header class="load-header">
@@ -30,6 +31,10 @@
         <section>
             <h3>Загрузка сохраненной задачи</h3>
             <p class="load-note">
+                <button @onclick="async () => LoadJSON(new ChangeEventArgs() { Value = await Clipboard.ReadTextAsync() })">
+                    Вставить из буфера обмена
+                </button>
+                <br />
                 <span>@JSONLoadResult</span>
             </p>
             <textarea class="load-json" rows="5" @onchange="LoadJSON"></textarea>

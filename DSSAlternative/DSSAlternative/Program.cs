@@ -21,6 +21,8 @@ namespace DSSAlternative
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddScoped<AHP.DSS>();
+            builder.Services.AddScoped<AHP.Clipboard>();
+            builder.Services.AddScoped<AHP.Account>();
 
             await builder.Build().RunAsync();
         }

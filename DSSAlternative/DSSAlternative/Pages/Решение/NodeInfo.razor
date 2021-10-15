@@ -21,6 +21,11 @@
             <div>
                 <HierShemeBig ProjectSheme="Project" LinkType="@NodeLink"></HierShemeBig>
             </div>
+            <div>
+                <button @onclick="() => Account.AddTemplate(Project)">
+                    Сохранить как шаблон
+                </button>
+            </div>
         </section>
         <section class="edit">
             <h3>Редактирование '@Node.Name'</h3>

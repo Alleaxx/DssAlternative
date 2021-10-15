@@ -1,11 +1,16 @@
-﻿.task-menu {
+﻿.task-row {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid gainsboro;
+}
+.task-menu {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
+    flex: 1;
     flex-wrap: wrap;
     align-items: stretch;
-    border-bottom: 1px solid gainsboro;
 }
 
 .add-task {
