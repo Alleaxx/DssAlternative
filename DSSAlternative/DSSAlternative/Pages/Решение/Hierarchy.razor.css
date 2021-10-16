@@ -111,15 +111,17 @@
     margin: 10px;
     display: flex;
     align-items: center;
+    min-height: 2em;
 }
 
     .confirm .add {
-        margin: 0 2em;
+        margin: 0 1em;
     }
 
-.hier-fails {
-    display: flex;
-    margin: 0 10px;
+.fails {
+    list-style-type: square;
+    margin: 0 4px;
+    font-size: 0.9em;
 }
 
 .errored {

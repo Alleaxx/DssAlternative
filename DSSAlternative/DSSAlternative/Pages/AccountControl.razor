@@ -26,17 +26,14 @@
         <h3>Свои шаблоны</h3>
         @foreach (var template in OwnTemplates)
         {
-            <p>
-                @template.Name<br />
-                @template.Description
-                <button @onclick="() => Account.LoadTemplate(template)">
-                    Загрузить шаблон
-                </button>
-                <button @onclick="() => Account.RemoveTemplate(template)">
+            <HierTemplate Template="template">
+
+            </HierTemplate>
+            <div style="border-bottom: 1px solid gainsboro">
+                <button class="action-button" @onclick="() => Account.RemoveTemplate(template)">
                     Удалить
                 </button>
-            </p>
-            <hr />
+            </div>
         }
     </div>
 </div>

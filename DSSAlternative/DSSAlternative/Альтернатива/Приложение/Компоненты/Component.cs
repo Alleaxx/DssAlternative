@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using DSSAlternative.AHP;
 using Microsoft.AspNetCore.Components;
 
-namespace DSSAlternative.AHP
+namespace DSSAlternative.AppComponents
 {
     public class DSSComponent : ComponentBase
     {
@@ -17,7 +18,7 @@ namespace DSSAlternative.AHP
         public IEnumerable<IProject> Projects => DSSApp.Projects;
         public IEnumerable<ITemplate> Templates => DSSApp.Templates;
         public IRatingSystem RatingSystem => DSSApp.RatingSystem;
-        public IRatingRules RatingRules { get; set; } = new RatingCssSystem();
+        public IRatingRules RatingRules { get; set; } = RatingCssSystem.DefaultSystem;
 
         protected const string OptionsLink = "Options";
         protected static string FormatNumber(double num)

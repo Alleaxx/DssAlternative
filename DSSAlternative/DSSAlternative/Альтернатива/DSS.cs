@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Components;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using System.Net.Http;
+using DSSAlternative.AHP;
 
-namespace DSSAlternative.AHP
+namespace DSSAlternative.AppComponents
 {
     public class DSS
     {

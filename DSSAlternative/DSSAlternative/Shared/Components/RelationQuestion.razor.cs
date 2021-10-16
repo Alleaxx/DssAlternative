@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using DSSAlternative.AHP;
+using DSSAlternative.AppComponents;
+
 using Microsoft.AspNetCore.Components;
 
 namespace DSSAlternative.Shared.Components
@@ -20,6 +22,7 @@ namespace DSSAlternative.Shared.Components
         private IRating RatingEqual { get; set; }
         private IEnumerable<(IRating forRating, IRating toRating)> Ratings { get; set; }
 
+        private Dictionary<IRating, IMatrix> RatingMatrix { get; set; } = new Dictionary<IRating, IMatrix>();
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -29,10 +32,7 @@ namespace DSSAlternative.Shared.Components
             }
 
             CreateRatings();
-            if (UseSafeWarnings && !Problem.GetMtxRelations(Relation.Main).WithZeros())
-            {
-                CreateMatrixes();
-            }
+            CreateMatrixes();
         }
         private void CreateRatings()
         {
@@ -42,32 +42,26 @@ namespace DSSAlternative.Shared.Components
         }
         private void CreateMatrixes()
         {
-            RatingMatrix.Add(RatingNone, GetMatrixForRating(0));
-            RatingMatrix.Add(RatingEqual, GetMatrixForRating(1));
-            foreach (var rating in Ratings)
+            if(UseSafeWarnings && !Problem.GetMtxRelations(Relation.Main).WithZeros())
             {
-                double value = rating.forRating.Value;
+                RatingMatrix.Add(RatingNone, GetMatrixForRating(0));
+                RatingMatrix.Add(RatingEqual, GetMatrixForRating(1));
+                foreach (var rating in Ratings)
+                {
+                    double value = rating.forRating.Value;
 
-                RatingMatrix.Add(rating.forRating, GetMatrixForRating(value));
-                RatingMatrix.Add(rating.toRating, GetMatrixForRating(1 / value));
-            }
+                    RatingMatrix.Add(rating.forRating, GetMatrixForRating(value));
+                    RatingMatrix.Add(rating.toRating, GetMatrixForRating(1 / value));
+                }
 
-            IMatrix GetMatrixForRating(double value)
-            {
-                IMatrixRelations source = Problem.GetMtxRelations(Relation.Main);
-                source.Change(Relation.From, Relation.To, value);
-                return source;
+                IMatrix GetMatrixForRating(double value)
+                {
+                    IMatrixRelations source = Problem.GetMtxRelations(Relation.Main);
+                    source.Change(Relation.From, Relation.To, value);
+                    return source;
+                }
             }
         }
 
-        private Dictionary<IRating, IMatrix> RatingMatrix { get; set; } = new Dictionary<IRating, IMatrix>();
-        public string ClassSafeOrDangerous(IRating rating)
-        {
-            if (UseSafeWarnings && RatingMatrix.ContainsKey(rating))
-            {
-                return RatingMatrix[rating].Consistency.IsCorrect() ? "safe " : "dangerous ";
-            }
-            return "usual ";
-        }
     }
 }

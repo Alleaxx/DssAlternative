@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DSSAlternative.AHP
+using DSSAlternative.AHP;
+
+namespace DSSAlternative.AppComponents
 {
     public interface ICss
     {
@@ -20,6 +22,11 @@ namespace DSSAlternative.AHP
         public void AddRuleClass(string clas)
         {
             CssRule rule = new CssRule().SetClass(clas, "");
+            Rules.Add(rule);
+        }
+        public void AddRuleClass(bool check, string classTrue, string classFalse = "")
+        {
+            CssRule rule = new CssRule(() => check).SetClass(classTrue, classFalse);
             Rules.Add(rule);
         }
         public void AddRuleClass(Func<bool> check, string classTrue, string classFalse = "")

@@ -1,10 +1,21 @@
 ﻿.rel-menu-list-header {
-    font-size: 1em;
-    font-weight: 400;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
     margin: 4px 0;
     padding-bottom: 3px;
     margin-bottom: 0;
 }
+
+    .rel-menu-list-header h3 {
+        font-size: 1em;
+        font-weight: 400;
+        margin: 0;
+    }
+    .rel-menu-list-header .cr{
+        font-size: 0.9em;
+    }
 
     .rel-menu-list-header.safe {
         border-bottom: 1px solid gainsboro;

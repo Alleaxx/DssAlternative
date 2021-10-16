@@ -8,10 +8,11 @@
         <HierShemeBig ProjectSheme="Project" LinkType="@RelationsLink" ViewSelection="HierShemeBig.ViewSelections.Relations">
 
         </HierShemeBig>
-
-        @*<ColoredDefinition Color="#dfffdf" Message="известно и согласовано"></ColoredDefinition>
+        <div hidden>
+            <ColoredDefinition Color="#dfffdf" Message="известно и согласовано"></ColoredDefinition>
             <ColoredDefinition Color="lightyellow" Message="неизвестность"></ColoredDefinition>
-            <ColoredDefinition Color="#ffdee3" Message="рассогласованность"></ColoredDefinition>*@
+            <ColoredDefinition Color="#ffdee3" Message="рассогласованность"></ColoredDefinition>
+        </div>
     </section>
 
     <div class="sheme-info">
@@ -36,18 +37,18 @@
                 {
                     if (!RelationState.AreConsistenct)
                     {
-                        @foreach (var node in UnconsistenctNodes())
+                        @foreach (var node in Project.UnconsistenctNodes())
                         {
                             <NodeRelations Node="node" Context="rel">
                                 <RelationView>
-                                    <span>@rel.From.Name - @rel.To.Name, Cr = @GetCrNode(node).ToString("0.00")</span>
+                                    <span>@rel.From.Name - @rel.To.Name</span>
                                 </RelationView>
                             </NodeRelations>
                         }
                     }
                     if (!RelationState.AreKnown)
                     {
-                        @foreach (var node in UnknownNodes())
+                        @foreach (var node in Project.UnknownNodes())
                         {
                             <NodeRelations Node="node" Context="rel" RelationFilter="rel => rel.Unknown">
                                 <RelationView>
@@ -64,17 +65,5 @@
 
 @code {
 
-    public IEnumerable<INode> UnknownNodes()
-    {
-        return Problem.Hierarchy.Where(n => RelationState.IsNodeUnknown(n));
-    }
-    public IEnumerable<INode> UnconsistenctNodes()
-    {
-        return Problem.NodesWithRels.Where(n => !RelationState.IsNodeConsistenct(n));
-    }
-    public double GetCrNode(INode node)
-    {
-        return Problem.GetMtxRelations(node).Consistency.Cr;
-    }
 
 }

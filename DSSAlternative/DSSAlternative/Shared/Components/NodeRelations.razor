@@ -1,9 +1,14 @@
 ﻿@inherits DSSComponentParamNode
 
 <section class="criteria-relations">
-    <h3 class="rel-menu-list-header @NodeRelClass()">
-        @Node.Name  [@FormatNumber(Cr)]
-    </h3>
+    <div class="rel-menu-list-header @NodeRelClass()">
+        <h3>
+            @Node.Name
+        </h3>
+        <span class="cr">
+            [@FormatNumber(Cr)]
+        </span>
+    </div>
     <ul class="rel-menu-list">
         @foreach (var relation in ShowedRelations())
         {

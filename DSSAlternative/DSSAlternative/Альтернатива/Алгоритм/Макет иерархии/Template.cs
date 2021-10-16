@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
+using DSSAlternative.AppComponents;
+
 namespace DSSAlternative.AHP
 {
     public interface ITemplate : ICloneable

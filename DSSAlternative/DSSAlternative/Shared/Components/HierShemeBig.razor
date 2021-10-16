@@ -1,7 +1,7 @@
 ﻿@inherits DSSComponent
 
 <section class="sheme">
-    @foreach (var levelGroup in ProjectSheme.ProblemActive.GroupedByLevel)
+    @foreach (var levelGroup in ProjectSheme.Grouped())
     {
         <div class="level">
             @if (ShowHeaders)
@@ -50,6 +50,7 @@
     [Parameter]
     public string LinkType { get; set; } = "relation-edit";
 
+
     private void SetNowMatched(INode node)
     {
         if(ViewSelection == ViewSelections.Selection)
@@ -64,27 +65,7 @@
 
     private string GetClass(INode node)
     {
-        string tag = "usual";
-
-        switch (ViewSelection)
-        {
-            case ViewSelections.Best:
-                if (ProjectSheme.ProblemActive.Best(node.Level).Contains(node))
-                    return "best";
-                break;
-            case ViewSelections.Relations:
-                double res = ProjectSheme.ProblemActive.GetMtxRelations(node).Consistency.Cr;
-                if (ProjectSheme.ProblemActive.CorrectnessRels.IsNodeUnknown(node))
-                    return "warn";
-                if (!ProjectSheme.ProblemActive.CorrectnessRels.IsNodeConsistenct(node))
-                    return "bad";
-                return "good";
-            case ViewSelections.Selection:
-                if (node == ProjectSheme.NodeSelected)
-                    return "good";
-                break;
-        }
-        return tag;
+        return new CssNode(ProjectSheme, node, ViewSelection).CssClass();
     }
 }
 

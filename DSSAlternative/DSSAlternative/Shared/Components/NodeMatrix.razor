@@ -51,15 +51,6 @@
                 </table>
             </div>
 
-
-
-            @if (RelationSelected != null)
-            {
-                @*<div class="relation-sel">
-                        <NodeQuestion RelationUpdated="@(() => StateHasChanged())" Relation="@RelationSelected" />
-                    </div>*@
-            }
-
             <div class="counts" hidden>
                 <details>
                     <summary>
@@ -148,24 +139,6 @@
 
     private string RelationClass(INodeRelation rel)
     {
-        List<string> classes = new List<string>() { "cell-value" };
-        if(rel == RelationSelected)
-        {
-            classes.Add("cell-selected");
-        }
-        if(RelationSelected != null && rel == RelationSelected.Mirrored)
-        {
-            classes.Add("cell-mirrored");
-        }
-        if(rel.Value == 0)
-        {
-            classes.Add("unknown");
-        }
-        if (!Mtx.Consistency.IsCorrect())
-        {
-            classes.Add("incorrect");
-        }
-
-        return string.Join(" ", classes);
+        return new CssRelation(Mtx, RelationSelected, rel).CssClass();
     }
 }

@@ -3,25 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DSSAlternative.AHP
+using DSSAlternative.AHP;
+
+namespace DSSAlternative.AppComponents
 {
     public class Account
     {
-        public DSS App { get; set; }
+        private readonly DSS App;
+        private readonly LocalStorage Storage;
         public User CurrentUser { get; set; }
-        public Account(DSS app)
+        public Account(DSS app, LocalStorage storage)
         {
             App = app;
             CurrentUser = new User();
+            Storage = storage;
         }
 
         public void LoadState()
         {
             App.LoadState(CurrentUser.State);
         }
-        public void SaveState()
+        public async void SaveState()
         {
             CurrentUser.State = new DssState(App);
+            await Storage.SetPropAsync("testKeyDate", DateTime.Now);
+            Console.WriteLine("Что записали:");
+            string test = await Storage.GetValueAsync("testKeyDate");
+            Console.WriteLine(test);
+            await Storage.ClearAll();
+            Console.WriteLine("Очистили хранилище:");
         }
 
 

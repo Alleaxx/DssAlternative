@@ -6,7 +6,7 @@
 
 @code {
     [CascadingParameter]
-    public Tab Owner { get; set; }
+    public Tab OwnerTabSet { get; set; }
 
     [Parameter]
     public RenderFragment Title { get; set; }
@@ -15,7 +15,7 @@
 
     private string IsSelected()
     {
-        if(Owner.ActiveTab == this)
+        if(OwnerTabSet.ActiveTab == this)
         {
             return "selected";
         }
@@ -24,11 +24,11 @@
 
     private void SetTab()
     {
-        Owner.SetTab(this);
+        OwnerTabSet.SetTab(this);
     }
 
     protected override void OnInitialized()
     {
-        Owner.AddTab(this);
+        OwnerTabSet.AddTab(this);
     }
 }

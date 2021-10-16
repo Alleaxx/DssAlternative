@@ -18,13 +18,13 @@
     <section class="row">
         <section class="navigation">
             <h3>Схема иерархии</h3>
-            <div>
-                <HierShemeBig ProjectSheme="Project" LinkType="@NodeLink"></HierShemeBig>
-            </div>
-            <div>
-                <button @onclick="() => Account.AddTemplate(Project)">
+            <div style="margin:5px 10px">
+                <button class="action-button" @onclick="() => Account.AddTemplate(Project)">
                     Сохранить как шаблон
                 </button>
+            </div>
+            <div>
+                <HierShemeBig ProjectSheme="Project" LinkType="@NodeLink"></HierShemeBig>
             </div>
         </section>
         <section class="edit">
@@ -71,7 +71,7 @@
                             </NodeRelations>
                             <div class="actions-section">
                                 <button class="action clear-relations" href="@NodeLink" @onclick="ClearRelations">
-                                    <span class="action-name">Сбросить все связи</span>
+                                    <span class="action-name">Сбросить все отношения</span>
                                     <img class="action-icon" src="Images/tech.png" />
                                 </button>
                             </div>
@@ -91,11 +91,11 @@
 
 @code {
     public INode Node => Project.NodeSelected;
-    public double Cr => Problem.GetMtxRelations(Node).Consistency.Cr;
+    public double Cr => Node.Cr(Project);
 
     private IEnumerable<INodeRelation> RelationsOwned()
     {
-        return Project.ProblemActive.RelationsAll.Where(r => r.Main == Node && !r.Self);
+        return Node.OwnedRelations(Project);
     }
     private bool HasRelations()
     {

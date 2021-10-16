@@ -32,6 +32,10 @@ namespace DSSAlternative.AHP
 
         public Problem(ITemplate template) : base(template)
         {
+            foreach (var item in Hierarchy)
+            {
+                item.Owner = this;
+            }
             CreateRelations();
             FillRelations(template);
             RecountCoeffs();

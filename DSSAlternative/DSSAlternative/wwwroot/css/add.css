@@ -9,30 +9,54 @@ th {
     align-items: center;
 }
 
-
-
-
-
-
-/*.stage-area {
-    display: flex;
+.action-button{
+    background-color: white;
+    border: 1px solid silver;
+    border-radius: 2px;
+    padding: 4px 8px;
+    outline-color: gray;
+    cursor: pointer;
+}
+.action-button:hover{
+    background-color: whitesmoke;
+}
+.action-button:active{
+    background-color: gainsboro;
 }
 
-    .stage-area a {
-        flex-basis: 50%;
-        text-align: center;
-        color: black;
-        padding: 8px 0;
-        border: 1px solid lightgreen;
+
+.add-button{
+    cursor: pointer;
+    background-color: transparent;
+    border: 1px solid gray;
+    padding: 8px;
+}
+.add-button:hover{
+    background-color: lightgreen;
+}
+    .add-button:active {
+        background-color: #83ec83;
     }
 
-        .stage-area a:hover {
-            background-color: lightgreen;
-        }
 
-.node-edit {
-    font-size: 0.9em;
-}*/
+    .delete-button{
+        color: darkred;
+    }
+    .delete-button:hover{
 
+    }
+    .delete-button:active{
+
+    }
+
+    .special-button{
+        opacity: 50%;
+    }
+    .special-button:hover{
+        opacity: 75%;
+    }
+    .special-button:active{
+        opacity: 100%;
+    }
 
 

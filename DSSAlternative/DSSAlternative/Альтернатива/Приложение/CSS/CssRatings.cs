@@ -3,19 +3,41 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DSSAlternative.AHP
+using DSSAlternative.AHP;
+
+namespace DSSAlternative.AppComponents
 {
     public class CssRating : CssCheck
     {
-        public static IRatingRules Rules { get; set; } = new RatingCssSystem();
-        public CssRating(INodeRelation relation, IRating ratingFor)
+        public CssRating(Dictionary<IRating, IMatrix> RatingMatrix, INodeRelation relation, IRating ratingFor, IRatingRules rules = null)
         {
-            var rule = Rules.GetRuleForRating(ratingFor);
-            AddRuleStyle(rule.Style);
+            if(rules == null)
+            {
+                rules = RatingCssSystem.DefaultSystem;
+            }
+            var rule = rules.GetRuleForRating(ratingFor);
             bool isSelected = relation.Rating.CheckEqual(ratingFor)
-                || ( (relation.Value == 1 || relation.Value == 0) && relation.Value == ratingFor.Value);
+                || ((relation.Value == 1 || relation.Value == 0) && relation.Value == ratingFor.Value);
 
-            AddRuleClass(() => isSelected, "selected", "selectable");
+            SetSelected();
+            SetSafe();
+
+            void SetSelected()
+            {
+                AddRuleStyle(() => isSelected, rule.Style, "");
+                AddRuleClass(() => isSelected, "selected", "selectable");
+            }
+            void SetSafe()
+            {
+                if (RatingMatrix.ContainsKey(ratingFor))
+                {
+                    AddRuleClass(() => RatingMatrix[ratingFor].Consistency.IsCorrect(), "safe", "dangerous");
+                }
+                else
+                {
+                    AddRuleClass("usual");
+                }
+            }
         }
     }
 
@@ -65,6 +87,8 @@ namespace DSSAlternative.AHP
             var rule = Rules.Find(rule => relation.Value >= rule.FromVal && relation.Value < rule.ToVal);
             return rule ?? DefaultRule;
         }
+
+        public static readonly IRatingRules DefaultSystem = new RatingCssSystem();
     }
     public class RatingCssSystemV2 : RatingCssSystem
     {

@@ -23,6 +23,10 @@ namespace DSSAlternative.AHP
         private void CheckElementsExisting()
         {
             string name = "Наличие";
+            if (Hierarchy.Hierarchy.Count() < 2)
+            {
+                AddFail(name, "Отстутствует иерархия");
+            }
             if (Hierarchy.MainGoal == null)
             {
                 AddFail(name, "Отсутствует главная цель проблемы");
@@ -57,7 +61,7 @@ namespace DSSAlternative.AHP
 
                 if (level == 0 && levelAmount != 1)
                 {
-                    AddFail(name, "На главном уровне иерархии не 1 элемент");
+                    AddFail(name, "На главном уровне иерархии больше одной цели");
                 }
                 else if (level > 0 && levelAmount < 2)
                 {

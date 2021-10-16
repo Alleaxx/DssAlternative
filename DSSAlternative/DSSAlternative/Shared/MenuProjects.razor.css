@@ -27,3 +27,12 @@
     .add-task:hover {
         background-color: lightgreen;
     }
+
+
+    .state-control{
+        margin: 4px 0;
+    }
+    .state-control button{
+        margin-top: 3px;
+        margin-bottom: 3px;
+    }

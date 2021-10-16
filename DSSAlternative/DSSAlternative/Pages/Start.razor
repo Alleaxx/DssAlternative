@@ -28,16 +28,35 @@
             <input type="button" @onclick="LoadEx2" value="Образец задачи с подкритериям II" />
         </section>
 
-        <section>
+        <section hidden>
             <h3>Загрузка сохраненной задачи</h3>
             <p class="load-note">
-                <button @onclick="async () => LoadJSON(new ChangeEventArgs() { Value = await Clipboard.ReadTextAsync() })">
+                <button class="action-button" @onclick="async () => LoadJSON(new ChangeEventArgs() { Value = await Clipboard.ReadTextAsync() })">
                     Вставить из буфера обмена
                 </button>
                 <br />
                 <span>@JSONLoadResult</span>
             </p>
             <textarea class="load-json" rows="5" @onchange="LoadJSON"></textarea>
+        </section>
+        <section>
+            <h3>Прежде закрытые задачи</h3>
+            @if (Account.CurrentUser.State != null)
+            {
+                <button class="action-button">
+                    Восстановить все
+                </button>
+                <ul class="presets">
+                    <CascadingValue Value="this">
+                        @foreach (var template in Account.CurrentUser.State.OpenedTemplates)
+                        {
+                            <li>
+                                <HierTemplate Template="template"></HierTemplate>
+                            </li>
+                        }
+                    </CascadingValue>
+                </ul>
+            }
         </section>
     </section>
 
@@ -56,6 +75,19 @@
                 }
             </CascadingValue>
         </ul>
+        <section>
+            <h4>Пользовательские пресеты</h4>
+            <ul class="presets">
+                <CascadingValue Value="this">
+                    @foreach (var template in Account.CurrentUser.Templates)
+                    {
+                        <li>
+                            <HierTemplate Template="template"></HierTemplate>
+                        </li>
+                    }
+                </CascadingValue>
+            </ul>
+        </section>
     </section>
 
     <section class="loaded">

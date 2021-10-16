@@ -14,10 +14,9 @@
                 @if (Project.CanTranferEditing)
                 {
                     <span class="not-saved">Есть несохраненные изменения</span>
-                    <input class="add" type="button" value="Подтвердить текущую иерархию" @onclick="UpdateHierarchy" />
-
+                    <input class="add" type="button" value="Обновить иерархию" @onclick="UpdateHierarchy" />
                 }
-                else if (Project.CanTranferEditing)
+                else if (Project.UnsavedChanged && !Project.CanTranferEditing)
                 {
                     <span class="warning">В структуре иерархии обнаружены ошибки:</span>
                 }
@@ -26,18 +25,17 @@
                     <span class="all-saved">Все изменения сохранены</span>
                 }
             </div>
-            <div class="hier-fails">
-                @foreach (var check in HierEditState.ErrorsList)
-                {
-                    <div class="@(new CssCorrectCheck(check).CssClass())" title="@check.Message">
-                        @check.Name
-                    </div>
-                }
-            </div>
         </div>
-
-
-
+        <ul class="fails">
+            @foreach (var check in HierEditState.ErrorsList)
+            {
+                <li>
+                    <span>
+                        @check.Message
+                    </span>
+                </li>
+            }
+        </ul>
 
         <div class="information">
             <div>
@@ -52,12 +50,12 @@
                 <span class="property-name">Отношений: </span>
                 <span class="property-value">@ProblemEditing.RelationsCount</span>
             </div>
-            <div>
+            <div hidden>
                 <span class="property-name">~ Времени на решение: </span>
                 <span class="property-value">@ProblemEditing.EstTime.Minutes мин. @ProblemEditing.EstTime.Seconds сек.</span>
             </div>
         </div>
-        
+
         <Tab>
             <TabItem>
                 <Title>
@@ -189,7 +187,7 @@
                 </Title>
                 <ChildContent>
                     <p>
-                        <button @onclick="() => Clipboard.WriteTextAsync(JsonCurrent)">
+                        <button class="action-button" @onclick="() => Clipboard.WriteTextAsync(JsonCurrent)">
                             Скопировать в буфер обмена
                         </button>
                     </p>
@@ -234,27 +232,13 @@
     private void RemoveNode(INode e)
     {
         if (e != ProblemEditing.MainGoal)
+        {
             NodesEditing.Remove(e as Node);
+        }
     }
     private string HierClass(INode node)
     {
-        if(NodeHovered != null)
-        {
-            if(NodeHovered == node)
-            {
-                return "node-own";
-            }
-            if (NodeHovered.Criterias.Group.Contains(node))
-            {
-                return "node-main-element";
-            }
-            var lower = NodeHovered.LowerNodesControlled;
-            if (lower != null && lower.Contains(node))
-            {
-                return "node-controlled-element";
-            }
-        }
-        return "";
+        return new CssNode(node, NodeHovered).CssClass();
     }
 
     private void ShowStructure()

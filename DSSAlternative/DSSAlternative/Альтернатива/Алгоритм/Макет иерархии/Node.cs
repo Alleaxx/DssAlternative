@@ -39,6 +39,8 @@ namespace DSSAlternative.AHP
         INode[] LowerNodesControlled { get; }
 
         void UpdateStructure(IEnumerable<INode> allNodes, IEnumerable<INodeGroup> groups);
+
+        IProblem Owner { get; set; }
     }
     public class Node : INode, ICloneable
     {
@@ -72,8 +74,8 @@ namespace DSSAlternative.AHP
             else
                 return "Подкритерии";
         }
-
-
+        [JsonIgnore]
+        public IProblem Owner { get; set; }
         public Node() { }
         public Node(int level, string name, int group, int groupIndex)
         {

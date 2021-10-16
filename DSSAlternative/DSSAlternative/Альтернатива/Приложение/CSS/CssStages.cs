@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DSSAlternative.AHP
+using DSSAlternative.AHP;
+
+namespace DSSAlternative.AppComponents
 {
 
     public class CssHierarchy : CssCheck
@@ -50,6 +52,16 @@ namespace DSSAlternative.AHP
             AddRuleClass(() => relationsUnknown, "warning");
             AddRuleClass(() => !relationConsistent, "error");
             AddRuleClass(() => project.RelationSelected == relation, "active");
+            AddRuleStyle($"margin-left:{relation.Main.Level * 2}em");
+        }
+        public CssRelation(IMatrix mtx, INodeRelation selected,INodeRelation relation)
+        {
+            bool mirrored = selected != null && relation == selected.Mirrored;
+            AddRuleClass("cell-value");
+            AddRuleClass(() => relation == selected, "cell-selected");
+            AddRuleClass(() => mirrored, "cell-mirrored");
+            AddRuleClass(() => relation.Value == 0, "unknown");
+            AddRuleClass(() => !mtx.Consistency.IsCorrect(), "incorrect");
         }
     }
 }
