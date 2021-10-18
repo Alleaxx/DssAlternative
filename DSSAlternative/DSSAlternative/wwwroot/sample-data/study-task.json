@@ -5,43 +5,49 @@
 
   "Nodes": [
     {
-      "Name": "Место учебы",
+      "Name": "Выбор места учебы",
       "Level": 0,
       "Group": 0,
       "GroupIndex": -1
     },
     {
-      "Name": "Расположение",
+      "Name": "Репутация",
       "Level": 1,
       "Group": 1,
       "GroupIndex": 0
     },
     {
-      "Name": "Репутация",
+      "Name": "Местоположение",
       "Level": 1,
-      "Group": 2,
+      "Group": 1,
       "GroupIndex": 0
     },
     {
-      "Name": "Маршрут",
+      "Name": "Вариант А",
       "Level": 2,
       "Group": 2,
       "GroupIndex": 1
     },
     {
-      "Name": "Расстояние",
+      "Name": "Вариант B",
       "Level": 2,
       "Group": 2,
       "GroupIndex": 1
     },
     {
-      "Name": "Место 1",
+      "Name": "Вариант C",
+      "Level": 2,
+      "Group": 2,
+      "GroupIndex": 1
+    },
+    {
+      "Name": "Факультет А",
       "Level": 3,
       "Group": 3,
       "GroupIndex": 2
     },
     {
-      "Name": "Место 2",
+      "Name": "Факультет Б",
       "Level": 3,
       "Group": 3,
       "GroupIndex": 2

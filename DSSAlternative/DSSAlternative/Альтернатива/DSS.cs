@@ -108,13 +108,19 @@ namespace DSSAlternative.AppComponents
         public void LoadState(DssState state)
         {
             Projects.Clear();
-            var projects = state.OpenedTemplates.Select(t => new Project(t));
-            foreach (var project in projects)
+            if(state.OpenedTemplates != null)
             {
-                AddProject(project);
+                var projects = state.OpenedTemplates.Select(t => new Project(t));
+                foreach (var project in projects)
+                {
+                    AddProject(project);
+                }
+                if (projects.Any())
+                {
+                    var selected = Project = Projects[state.SelectedTemplateIndex];
+                    SelectProject(selected);
+                }
             }
-            var selected = Project = Projects[state.SelectedTemplateIndex];
-            SelectProject(selected);
         }
     }
 }

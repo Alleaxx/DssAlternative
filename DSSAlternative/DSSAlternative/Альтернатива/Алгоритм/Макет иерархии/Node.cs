@@ -47,6 +47,7 @@ namespace DSSAlternative.AHP
         public override string ToString() => $"{Name} [{Level}]";
 
         public string Name { get; set; }
+        [JsonIgnore]
         public string LevelName { get; protected set; }
         public string Description { get; set; }
 

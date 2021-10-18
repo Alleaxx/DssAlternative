@@ -12,12 +12,16 @@ namespace DSSAlternative.AppComponents
     {
         public override string ToString()
         {
-            return $"DSS-Состояние на {Saved:dd.MM.yyyy HH:mm}, {OpenedTemplates.Count()} задач ({SelectedTemplateIndex})";
+            return $"Сохраненный прогресс на {Saved:dd.MM.yyyy HH:mm}, {OpenedTemplates?.Length} задач ({SelectedTemplateIndex})";
         }
         public DateTime Saved { get; set; }
         public int SelectedTemplateIndex { get; set; }
-        public IEnumerable<ITemplate> OpenedTemplates { get; set; }
+        public Template[] OpenedTemplates { get; set; } = Array.Empty<Template>();
 
+        public DssState()
+        {
+
+        }
         public DssState(DSS dss)
         {
             Saved = DateTime.Now;

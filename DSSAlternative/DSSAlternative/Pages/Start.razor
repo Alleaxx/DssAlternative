@@ -7,88 +7,119 @@
         <h2>Формирование задачи выбора</h2>
     </header>
 
-    <section class="load-own">
-        <section>
-            <h3>Создание с нуля</h3>
-            <p class="load-note">
-                Формирование иерархии проблемы с нуля. Подходит для нетипичных задач.
-            </p>
-            <input type="button" @onclick="LoadOwn" value="Создать" />
-        </section>
+    <div class="tab-presets">
+        <Tab>
+            <TabItem>
+                <Title><h3 class="tab-header">Загрузка</h3></Title>
+                <ChildContent>
+                    <div class="tab-section">
+                        <section class="load-own">
+                            <h4>Создание с нуля</h4>
+                            <p class="load-note">
+                                Формирование иерархии проблемы с нуля. Подходит для нетипичных задач.
+                            </p>
+                            <input type="button" @onclick="LoadOwn" value="Создать" />
+                            <p class="load-note">
+                                Образцовая задача показывает возможности системы на примере уже решенной проблемы.
+                            </p>
+                            <input type="button" @onclick="LoadExample" value="Загрузить" />
+                            <br />
+                            <input type="button" @onclick="LoadEx1" value="Образец задачи с подкритериями" />
+                            <br />
+                            <input type="button" @onclick="LoadEx2" value="Образец задачи с подкритериям II" />
+                        </section>
+                        <section class="saved-session">
+                            <h4>Сохраненная сессия</h4>
+                            <p class="load-note">
+                                Загрузить сохраненный прогресс решения задач 
+                            </p>
+                            <button class="action-button" @onclick="() => { Account.LoadState(); StateHasChanged(); }">
+                                Восстановить все
+                            </button>
+                            
+                            @if (Account.CurrentUser.State != null)
+                            {
+                                <ul class="presets">
+                                    <CascadingValue Value="this">
+                                        @foreach (var template in Account.CurrentUser.State.OpenedTemplates)
+                                        {
+                                            <li>
+                                                <HierTemplate Template="template"></HierTemplate>
+                                            </li>
+                                        }
+                                    </CascadingValue>
+                                </ul>
+                            }
+                        </section>
+                    </div>
+                </ChildContent>
+            </TabItem>
+            <TabItem>
+                <Title><h3 class="tab-header">Шаблоны и пресеты</h3></Title>
+                <ChildContent>
+                    <div class="tab-section">
 
-        <section>
-            <h3>Загрузка образца</h3>
-            <p class="load-note">
-                Образцовая задача показывает возможности системы на примере уже решенной проблемы.
-            </p>
-            <input type="button" @onclick="LoadExample" value="Загрузить" />
-            <br />
-            <input type="button" @onclick="LoadEx1" value="Образец задачи с подкритериями" />
-            <br />
-            <input type="button" @onclick="LoadEx2" value="Образец задачи с подкритериям II" />
-        </section>
+                        <div class="load-own">
+                            <section>
+                                <h4>Пользовательские пресеты</h4>
+                                <p class="load-note">
+                                    Создать задачу по пользовательскому шаблону
+                                </p>
+                                <ul class="presets">
+                                    <CascadingValue Value="this">
+                                        @foreach (var template in Account.CurrentUser.Templates)
+                                        {
+                                            <li>
+                                                <HierTemplate Template="template"></HierTemplate>
+                                            </li>
+                                        }
+                                    </CascadingValue>
+                                </ul>
+                                <div>
+                                    @if (!Account.CurrentUser.Templates.Any())
+                                    {
+                                        <p class="load-note">
+                                            Правда, сохраненных шаблонов нет. Тогда можно воспользоваться иным методом:
+                                        </p>
+                                        <section>
+                                            <h3>Загрузка задачи из JSON</h3>
+                                            <p class="load-note">
+                                                <button class="action-button" @onclick="async () => LoadJSON(new ChangeEventArgs() { Value = await Clipboard.ReadTextAsync() })">
+                                                    Вставить из буфера обмена
+                                                </button>
+                                                <br />
+                                                <span>@JSONLoadResult</span>
+                                            </p>
+                                            <textarea class="load-json" rows="5" @onchange="LoadJSON"></textarea>
+                                        </section>
+                                    }
+                                </div>
+                            </section>
 
-        <section hidden>
-            <h3>Загрузка сохраненной задачи</h3>
-            <p class="load-note">
-                <button class="action-button" @onclick="async () => LoadJSON(new ChangeEventArgs() { Value = await Clipboard.ReadTextAsync() })">
-                    Вставить из буфера обмена
-                </button>
-                <br />
-                <span>@JSONLoadResult</span>
-            </p>
-            <textarea class="load-json" rows="5" @onchange="LoadJSON"></textarea>
-        </section>
-        <section>
-            <h3>Прежде закрытые задачи</h3>
-            @if (Account.CurrentUser.State != null)
-            {
-                <button class="action-button">
-                    Восстановить все
-                </button>
-                <ul class="presets">
-                    <CascadingValue Value="this">
-                        @foreach (var template in Account.CurrentUser.State.OpenedTemplates)
-                        {
-                            <li>
-                                <HierTemplate Template="template"></HierTemplate>
-                            </li>
-                        }
-                    </CascadingValue>
-                </ul>
-            }
-        </section>
-    </section>
+                        </div>
 
-    <section class="load-preset">
-        <h3>Модификация шаблона</h3>
-        <p class="load-note">
-            Позволяет задать типовую задачу, которую можно изменить под свои условия.
-        </p>
-        <ul class="presets">
-            <CascadingValue Value="this">
-                @foreach (var template in Templates)
-                {
-                    <li>
-                        <HierTemplate Template="template"></HierTemplate>
-                    </li>
-                }
-            </CascadingValue>
-        </ul>
-        <section>
-            <h4>Пользовательские пресеты</h4>
-            <ul class="presets">
-                <CascadingValue Value="this">
-                    @foreach (var template in Account.CurrentUser.Templates)
-                    {
-                        <li>
-                            <HierTemplate Template="template"></HierTemplate>
-                        </li>
-                    }
-                </CascadingValue>
-            </ul>
-        </section>
-    </section>
+                        <section class="load-preset saved-session">
+                            <h3>Модификация шаблона</h3>
+                            <p class="load-note">
+                                Позволяет задать типовую задачу, которую можно изменить под свои условия.
+                            </p>
+                            <ul class="presets">
+                                <CascadingValue Value="this">
+                                    @foreach (var template in Templates)
+                                    {
+                                        <li>
+                                            <HierTemplate Template="template"></HierTemplate>
+                                        </li>
+                                    }
+                                </CascadingValue>
+                            </ul>
+                        </section>
+                    </div>
+                </ChildContent>
+            </TabItem>
+        </Tab>
+
+    </div>
 
     <section class="loaded">
         <h3>Открытые задачи</h3>

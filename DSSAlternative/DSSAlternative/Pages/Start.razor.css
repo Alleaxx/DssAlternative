@@ -5,13 +5,15 @@
     grid-template-rows: auto 1fr;
     grid-template-areas:
         "header header header"
-        "own preset loaded";
+        "presets presets loaded";
 }
 
     .load-task-grid h3 {
         font-size: 1em;
     }
-
+    .presets-section{
+        grid-area: presets;
+    }
 
 .load-header {
     grid-area: header;
@@ -19,16 +21,24 @@
     border-bottom: 1px solid gainsboro;
 }
 
-.load-sample {
-    grid-area: sample;
-    padding: 10px;
-    min-height: 30em;
+
+.tab-presets {
+    grid-area: presets;
+}
+.tab-section{
+    display: flex;
+}
+.load-own {
+    flex: 1;
+    padding: 0 5px;
+}
+.saved-session {
+    flex: 1;
+    padding: 0 5px;
 }
 
-.load-own {
-    grid-area: own;
-    padding: 10px;
-}
+
+
 
     .load-own input[type="button"], .load-sample input[type="button"] {
         width: 90%;
@@ -44,14 +54,6 @@
             background-color: lightgreen;
         }
 
-
-.load-preset {
-    grid-area: preset;
-    border-right: 1px solid gainsboro;
-    border-left: 1px solid gainsboro;
-    cursor: initial;
-    padding: 10px;
-}
 
 .presets, .problems {
     list-style: none;
@@ -73,6 +75,7 @@
 .loaded {
     grid-area: loaded;
     padding: 10px;
+    border-left: 1px solid gainsboro;
 }
 
 .problems {
