@@ -12,7 +12,10 @@ namespace DSSAlternative.AppComponents
     {
         public override string ToString()
         {
-            return $"Сохраненный прогресс на {Saved:dd.MM.yyyy HH:mm}, {OpenedTemplates?.Length} задач ({SelectedTemplateIndex})";
+            if (Saved == new DateTime())
+                return "Сохраненного состояния нет";
+            else
+                return $"Сохранено {Saved:dd MMM yyyy HH:mm}, задач: {OpenedTemplates?.Length}";
         }
         public DateTime Saved { get; set; }
         public int SelectedTemplateIndex { get; set; }
@@ -28,18 +31,5 @@ namespace DSSAlternative.AppComponents
             OpenedTemplates = dss.Projects.Select(pr => new Template(pr)).ToArray();
             SelectedTemplateIndex = dss.Projects.IndexOf(dss.Project);
         }
-
-        //Состояние открытых проектов
-        //Указатель на выбранный проект
-        //Список проектов
-        //Редактируемая иерархия проекта
-        //Активная проблема проекта
-        //Текущие матрицы связей
-
-        //Шаблоны проектов
-        //Юзер
-        //Шаблоны проектов
-        //Состояние открытых проектов
-        //Шаблоны открытых проектов
     }
 }

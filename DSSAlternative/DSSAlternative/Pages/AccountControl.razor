@@ -41,11 +41,11 @@
             <HierTemplate Template="template">
 
             </HierTemplate>
-            <div style="border-bottom: 1px solid gainsboro">
+            <p style="border-bottom: 1px solid gainsboro; margin: 0; padding: 5px 0;">
                 <button class="action-button" @onclick="() => Account.RemoveTemplate(template)">
                     Удалить
                 </button>
-            </div>
+            </p>
         }
         @if (!OwnTemplates.Any())
         {

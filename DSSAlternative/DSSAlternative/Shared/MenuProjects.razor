@@ -16,15 +16,15 @@
                 </button>
             </li>
         </ul>
-        <div class="state-control">
-            <button class="action-button" @onclick="SaveProgress">
-                <span>Сохранить</span>
-            </button>
-            <br />
-            <button class="action-button" @onclick="LoadProgress">
-                <span>Загрузить</span>
-            </button>
-        </div>
+    </div>
+    <div class="state-control">
+        <button class="action-button save" @onclick="SaveProgress">
+            <span>Сохранить прогресс</span>
+        </button>
+        <br />
+        <button class="action-button load" @onclick="LoadProgress">
+            <span>Загрузить</span>
+        </button>
     </div>
 </nav>
 

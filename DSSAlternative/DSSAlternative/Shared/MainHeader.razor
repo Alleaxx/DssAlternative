@@ -1,10 +1,13 @@
 ﻿<style>
     .main-header a {
         text-decoration: none;
-        text-transform: uppercase;
         font-family: "Calibri Light";
         font-size: 1.35em;
         text-align: center;
+    }
+
+    .main-header .links {
+        text-transform: uppercase;
     }
 
         .main-header a:hover {
@@ -17,7 +20,7 @@
     }
 </style>
 <div class="main-header">
-    <ul>
+    <ul class="links">
         <li>
             <NavLink href="info">
                 О системе
@@ -31,11 +34,6 @@
         <li>
             <NavLink href="info">
                 Пример задачи
-            </NavLink>
-        </li>
-        <li>
-            <NavLink href="updates">
-                Обновления
             </NavLink>
         </li>
     </ul>

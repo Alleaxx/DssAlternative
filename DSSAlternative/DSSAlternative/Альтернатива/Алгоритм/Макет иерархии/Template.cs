@@ -52,9 +52,9 @@ namespace DSSAlternative.AHP
 
         public Template()
         {
-
+            Creation = DateTime.Now;
         }
-        public Template(Node[] nodes)
+        public Template(Node[] nodes) : this()
         {
             Nodes = new List<Node>(nodes);
         }

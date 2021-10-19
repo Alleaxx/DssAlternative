@@ -45,7 +45,12 @@ namespace DSSAlternative.AppComponents
         }
         private async Task<IEnumerable<Template>> GetTemplates()
         {
-            return await ReadFromJson<List<Template>>(Templates);
+            var list = await ReadFromJson<List<Template>>(Templates);
+            if(list == null)
+            {
+                list = new List<Template>();
+            }
+            return list;
         }
 
 

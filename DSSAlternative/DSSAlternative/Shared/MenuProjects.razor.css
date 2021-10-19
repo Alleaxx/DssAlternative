@@ -17,7 +17,7 @@
     font-size: 0.9em;
     border: 1px solid lightgreen;
     color: green;
-    padding: 4px 1em;
+    padding: 3px;
     height: 100%;
     background-color: transparent;
     cursor: pointer;
@@ -30,9 +30,19 @@
 
 
     .state-control{
-        margin: 4px 0;
+        display : flex;
+        padding: 4px 0;
+        border-bottom: 1px solid gainsboro;
     }
     .state-control button{
+        margin: 1px 5px;
         margin-top: 1px;
         margin-bottom: 1px;
+    }
+
+    .state-control .save:hover{
+        color: green;
+    }
+    .state-control .load:hover{
+        color: darkred;
     }
