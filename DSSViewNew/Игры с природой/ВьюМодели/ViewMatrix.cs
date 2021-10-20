@@ -10,31 +10,19 @@ using DSSLib;
 
 namespace DSSView
 {
-        //Представление приложения
-        //- Коллекция статистических игр
-
-    //Статистическая игра
-        //- Матрица
-            //- Действия
-            //- Случаи
-        //- Итоги по критериям (использует матрицу)
-            //- Вальд
-            //- Гурвиц...
-        //- Текстовый отчет (использует итоги и матрицу)
-
     public class ViewMatrix : NotifyObj
     {
         public ObservableCollection<StatGameView> Games { get; private set; }
-        public StatGameView SelectedNew
+        public StatGameView Selected
         {
-            get => selectedNew;
+            get => selected;
             set
             {
-                selectedNew = value;
+                selected = value;
                 OnPropertyChanged();
             }
         }
-        private StatGameView selectedNew;
+        private StatGameView selected;
 
         private readonly ISaver<StatGame> Saver;
 
@@ -65,49 +53,46 @@ namespace DSSView
             {
                 StatGame newGame = new StatGame(info.Name, MtxStat.CreateFromSize(info.Rows, info.Cols));
                 Games.Add(new StatGameView(newGame));
-                SelectedNew = Games.Last();
+                Selected = Games.Last();
             }
         }
         private void CloseMatrix(object obj)
         {
-            StatGameView oldSelected = SelectedNew;
+            StatGameView oldSelected = Selected;
             int index = Games.IndexOf(oldSelected);
             if (index > 0)
             {
-                SelectedNew = Games[index - 1];
+                Selected = Games[index - 1];
             }
             else
             {
-                SelectedNew = null;
+                Selected = null;
             }
             Games.Remove(oldSelected);
         }
 
-        private bool IsSavingAvailable(object obj) => false; //SelectedNew != null && SelectedNew.File != null && Selected.File.Exists;
+        private bool IsSavingAvailable(object obj) => Selected != null;
         private void SaveMatrix(object obj)
         {
 
         }
         private void SaveAsMatrix(object obj)
         {
-            Saver.Save(SelectedNew.Source);
+            Saver.Save(Selected.Source);
         }
         private void OpenMatrix(object obj)
         {
-            var newMatrix = Saver.Open();
+            StatGame newMatrix = Saver.Open();
             if (newMatrix != null)
             {
                 Games.Add(new StatGameView(newMatrix));
-                SelectedNew = Games.Last();
+                Selected = Games.Last();
             }
         }
 
         private void CreateReport(object obj)
         {
-            //IReport report = Report.GetReport(Selected.Matrix, (Report.ReportType)obj);
 
-            //report.Create();
-            //report.Open();
         }
 
 
@@ -115,17 +100,18 @@ namespace DSSView
         {
             Saver = XmlProvider.Get<StatGame>();
 
+            Games = new ObservableCollection<StatGameView>();
+            AddMatrix(new NewGameInfo(3,3, "Стартовая матрица"));
+        }
+        protected override void InitCommands()
+        {
             ShowAddMatrixWindowCommand = new RelayCommand(ShowAddMatrixWindow, obj => true);
             AddMatrixCommand = new RelayCommand(AddMatrix, obj => true);
-            CloseMatrixCommand = new RelayCommand(CloseMatrix, obj => SelectedNew != null);
+            CloseMatrixCommand = new RelayCommand(CloseMatrix, obj => Selected != null);
             OpenMatrixCommand = new RelayCommand(OpenMatrix, obj => true);
             SaveMatrixCommand = new RelayCommand(SaveMatrix, IsSavingAvailable);
-            SaveAsMatrixCommand = new RelayCommand(SaveAsMatrix, obj => SelectedNew != null);
-            CreateReportCommand = new RelayCommand(CreateReport, obj => SelectedNew != null);
-
-
-            Games = new ObservableCollection<StatGameView>();
-            AddMatrix(new NewGameInfo() { Name = "Стартовая", Rows = 3, Cols = 3 });
+            SaveAsMatrixCommand = new RelayCommand(SaveAsMatrix, obj => Selected != null);
+            CreateReportCommand = new RelayCommand(CreateReport, obj => Selected != null);
         }
     }
 }

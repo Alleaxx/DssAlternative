@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 using DSSView.Extensions;
-namespace DSSView
+namespace DSSView.Criterias
 {
     public class CriteriaLeman : Criteria
     {
-        public IOption LemanCoeff { get; set; } = new Option("Коэффициент доверия к информации", 0.6, 0, 1);
+        public IOption LemanCoeff { get; set; } = new Option("Доверие к информации", 0.6, 0, 1);
         public CriteriaLeman(IStatGame game) : base(game)
         {
             Name = "Критерий Ходжа-Лемана";

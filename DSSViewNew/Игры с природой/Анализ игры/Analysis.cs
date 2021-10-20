@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using DSSLib;
+using DSSView.Criterias;
 
 namespace DSSView
 {
@@ -15,19 +16,30 @@ namespace DSSView
             return $"Анализ статистической игры: ({string.Join(";", BestAlternatives)})";
         }
 
+        public bool IgnoreUsage
+        {
+            get => ignoreUsage;
+            set
+            {
+                ignoreUsage = value;
+                OnPropertyChanged();
+                UpdateSummary();
+            }
+        }
+        private bool ignoreUsage = false;
         //Критерии для анализа
         private IEnumerable<ICriteria> Criterias { get; set; }
         public IEnumerable<ICriteria> CriteriasConsider
         {
             get
             {
-                if (true)
+                if (!IgnoreUsage)
                 {
-                    return Criterias.Where(c => c.Rank.Rating > 0);
+                    return Criterias.Where(c => c.Rank.Rating > 0).OrderByDescending(c => c.Rank.Rating);
                 }
                 else
                 {
-                    return default;
+                    return Criterias;
                 }
             }
         }
@@ -59,6 +71,15 @@ namespace DSSView
                 new CriteriaGerr(game),
             };
             Options = Criterias.SelectMany(c => c.Options);
+            foreach (var option in Options)
+            {
+                option.OnValueChanged += Option_OnValueChanged;
+            }
+            UpdateSummary();
+        }
+
+        private void Option_OnValueChanged(double arg1, double arg2)
+        {
             UpdateSummary();
         }
 
@@ -72,7 +93,6 @@ namespace DSSView
 
             AlternativeRanks = GetAltRanks();
             BestAlternatives = AlternativeRanks.Where(c => c.Rating == MaxRank).Select(f => f.Alternative);
-            
             UpdateProperties();
         }
         private void UpdateProperties()
@@ -88,7 +108,7 @@ namespace DSSView
             var bestAlts = CriteriasConsider.SelectMany(c => c.BestAlternatives).Distinct();
             var ranks = new List<RankAlternative>(bestAlts.Count());
             CreateRanks();
-            SetRanksRating();
+            SetRanksTotalRating();
             return ranks.OrderByDescending(r => r.Rating);
 
             void CreateRanks()
@@ -96,11 +116,11 @@ namespace DSSView
                 foreach (Alternative alt in bestAlts)
                 {
                     var critsWhoChosedAlt = CriteriasConsider.Where(c => c.BestAlternatives.Contains(alt));
-                    RankAlternative rank = new RankAlternative(alt, critsWhoChosedAlt);
+                    RankAlternative rank = new RankAlternative(alt, critsWhoChosedAlt, IgnoreUsage);
                     ranks.Add(rank);
                 }
             }
-            void SetRanksRating()
+            void SetRanksTotalRating()
             {
                 double rankRating = ranks.Sum(r => r.Rating);
                 foreach (var rank in ranks)

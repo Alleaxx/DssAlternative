@@ -31,9 +31,5 @@ namespace DSSView
             Source = source;
             InitCommands();
         }
-        protected virtual void InitCommands()
-        {
-
-        }
     }
 }

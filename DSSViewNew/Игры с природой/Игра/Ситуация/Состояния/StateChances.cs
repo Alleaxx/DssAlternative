@@ -71,7 +71,7 @@ namespace DSSView
             public ChancesRiscs() : base(Chances.Riscs)
             {
                 Name = "Риски";
-                AddCompare(Chances.Riscs, 1, "Предназначен для условий риска");
+                AddCompare(Chances.Riscs, 3, "Предназначен для условий риска");
                 AddCompare(Chances.Unknown, -10, "Не применяется в условиях неопределенности");
             }
 
@@ -93,7 +93,7 @@ namespace DSSView
             public ChancesUnknown() : base(Chances.Unknown)
             {
                 Name = "Неопределенность";
-                AddCompare(Chances.Unknown, 1, "Предназначен для условий неопределенности");
+                AddCompare(Chances.Unknown, 3, "Предназначен для условий неопределенности");
                 AddCompare(Chances.Riscs, -10, "Не применяется в условиях риска");
             }
         }

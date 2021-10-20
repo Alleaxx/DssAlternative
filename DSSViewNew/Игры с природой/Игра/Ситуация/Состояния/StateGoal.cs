@@ -39,6 +39,9 @@ namespace DSSView
             public GoalMinRisc() : base(Goals.MinRisc)
             {
                 Name = "Минимальный риск";
+                AddCompare(Goals.MinRisc, 2, "Идеален для минимального риска");
+                AddCompare(Goals.MaxProfit, -1, "Не слишком подходит для максимального выигрыша");
+                AddCompare(Goals.RiscAllowed, 1, "Частично подходит для некоторого риска");
             }
         }
         public class GoalMaxProfit : StateGoal
@@ -46,6 +49,9 @@ namespace DSSView
             public GoalMaxProfit() : base(Goals.MaxProfit)
             {
                 Name = "Максимальный выигрыш";
+                AddCompare(Goals.MaxProfit, 2, "Идеален для максимального выигрыша");
+                AddCompare(Goals.MinRisc, -1, "Не слишком подходит для минимального риска");
+                AddCompare(Goals.RiscAllowed, 1, "Частично подходит для некоторого риска");
             }
         }
         public class GoalAny : StateGoal
@@ -53,6 +59,9 @@ namespace DSSView
             public GoalAny() : base(Goals.RiscAllowed)
             {
                 Name = "Некоторый риск";
+                AddCompare(Goals.RiscAllowed, 2, "Идеален для некоторого риска");
+                AddCompare(Goals.MaxProfit, 1, "Частично подходит для максимального выигрыша");
+                AddCompare(Goals.MinRisc, 0, "Не совсем подходит для минимального риска");
             }
         }
     }

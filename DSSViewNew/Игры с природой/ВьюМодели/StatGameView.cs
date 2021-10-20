@@ -47,6 +47,10 @@ namespace DSSView
             {
                 Mtx.OnRowAdded += Stat_RowChanged;
                 Mtx.OnColAdded += Stat_ColChanged;
+
+                Mtx.OnColRemoved += Stat_ColChanged;
+                Mtx.OnRowRemoved += Stat_RowChanged;
+
                 Mtx.OnValuesChanged += Stat_ValuesChanged;
                 Source.Situation.OnChanged += () => Stat_ValuesChanged(default);
             }
@@ -110,13 +114,17 @@ namespace DSSView
         }
         private void Remove(object obj)
         {
-            if (obj is Alternative alt)
+            if (obj is Alternative alt && Alternatives.Count() > 1)
             {
                 Mtx.RemoveRow(alt);
             }
-            else if (obj is Case cas)
+            else if (obj is Case cas && Cases.Count() > 1)
             {
                 Mtx.RemoveCol(cas);
+            }
+            else if(obj is IEnumerable<MtxCell<Alternative, Case, double>> en)
+            {
+                Mtx.RemoveRow(en.First().From);
             }
         }
 

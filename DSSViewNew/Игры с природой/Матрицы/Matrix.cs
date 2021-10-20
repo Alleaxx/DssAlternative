@@ -214,16 +214,16 @@ namespace DSSView
         //Удаление
         public void RemoveCol(C col)
         {
-            Source.RemoveAll(c => c.To.Equals(col));
             int index = IndexOf(col);
             OffsetCols(index + 1, -1);
+            Source.RemoveAll(c => c.To.Equals(col));
             OnColRemoved?.Invoke(col);
         }
         public void RemoveRow(R row)
         {
-            Source.RemoveAll(c => c.From.Equals(row));
             int index = IndexOf(row);
             OffsetRows(index + 1, -1);
+            Source.RemoveAll(c => c.From.Equals(row));
             OnRowRemoved?.Invoke(row);
         }
 

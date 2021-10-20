@@ -47,11 +47,6 @@ namespace DSSView
         protected void AddOption(IOption option)
         {
             Options.Add(option);
-            option.OnValueChanged += Option_Changed;
-        }
-        private void Option_Changed(double arg1, double arg2)
-        {
-            Update();
         }
 
 

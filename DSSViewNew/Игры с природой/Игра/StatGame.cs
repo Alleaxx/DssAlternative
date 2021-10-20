@@ -11,6 +11,7 @@ namespace DSSView
     public interface IStatGame
     {
         event Action OnInfoUpdated;
+        event Action OnStructureChanged;
         double[,] Arr { get; }
         Situation Situation { get; }
         double GetChance(int col);
@@ -25,6 +26,7 @@ namespace DSSView
         }
 
         public event Action OnInfoUpdated;
+        public event Action OnStructureChanged;
 
         public string Name { get; set; }
 

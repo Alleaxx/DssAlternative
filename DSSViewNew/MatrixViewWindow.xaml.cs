@@ -14,21 +14,19 @@ using System.Windows.Shapes;
 
 namespace DSSView
 {
-    /// <summary>
-    /// Логика взаимодействия для MatrixViewWindow.xaml
-    /// </summary>
     public partial class MatrixViewWindow : Window
     {
+        public ViewMatrix ViewMatrix { get; set; }
         public MatrixViewWindow()
         {
             InitializeComponent();
-            View.Matrix = DataContext as ViewMatrix;
+            ViewMatrix = DataContext as ViewMatrix;
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void about_Click(object sender, RoutedEventArgs e)
         {
-            MtxAlphaWindow w = new MtxAlphaWindow();
-            w.ShowDialog();
+            AboutWindow window = new AboutWindow();
+            window.ShowDialog();
         }
     }
 }

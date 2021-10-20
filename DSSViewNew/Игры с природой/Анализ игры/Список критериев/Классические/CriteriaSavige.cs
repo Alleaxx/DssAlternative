@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using DSSView.Extensions;
-namespace DSSView
+namespace DSSView.Criterias
 {
     public class CriteriaSavige : Criteria
     {

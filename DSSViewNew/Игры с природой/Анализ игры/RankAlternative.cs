@@ -16,13 +16,15 @@ namespace DSSView
         public Alternative Alternative { get; private set; }
         public IEnumerable<ICriteria> Criterias { get; private set; }
 
-        public double Rating => Criterias.Sum(c => c.Rank.Rating);
+        private readonly bool IgnoreRating;
+        public double Rating => IgnoreRating ? Criterias.Count() : Criterias.Sum(c => c.Rank.Rating);
         public double RatingTotal { get; set; }
 
-        public RankAlternative(Alternative alternative, IEnumerable<ICriteria> criterias)
+        public RankAlternative(Alternative alternative, IEnumerable<ICriteria> criterias, bool ignoreRating)
         {
             Alternative = alternative;
             Criterias = criterias.ToArray();
+            IgnoreRating = ignoreRating;
         }
     }
 }

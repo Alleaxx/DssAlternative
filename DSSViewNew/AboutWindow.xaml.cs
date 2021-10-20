@@ -15,15 +15,18 @@ using System.Windows.Shapes;
 namespace DSSView
 {
     /// <summary>
-    /// Логика взаимодействия для MtxAlphaWindow.xaml
+    /// Логика взаимодействия для AboutWindow.xaml
     /// </summary>
-    public partial class MtxAlphaWindow : Window
+    public partial class AboutWindow : Window
     {
-        public StatGameView Mtx { get; set; }
-        public MtxAlphaWindow()
+        public AboutWindow()
         {
             InitializeComponent();
-            Mtx = DataContext as StatGameView;
+        }
+
+        private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/Alleaxx/DSS/tree/master/DSSViewNew");
         }
     }
 }

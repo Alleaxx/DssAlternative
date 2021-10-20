@@ -34,6 +34,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -56,34 +60,34 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MatrixViewWindow.xaml.cs">
       <DependentUpon>MatrixViewWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MtxAlphaWindow.xaml.cs">
-      <DependentUpon>MtxAlphaWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="NewMatrixWindow.xaml.cs">
       <DependentUpon>NewMatrixWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Игры с природой\NewGameInfo.cs" />
     <Compile Include="Игры с природой\Игра\Ситуация\Situation.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Criteria.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Note.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерий\Criteria.cs" />
+    <Compile Include="Игры с природой\Note.cs" />
     <Compile Include="Игры с природой\Анализ игры\RankAlternative.cs" />
     <Compile Include="Игры с природой\Анализ игры\RankCriteria.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Option.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Step.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaBaiesLaplas.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерии\Производные\CriteriaGerr.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерии\Производные\CriteriaGurvits.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерии\Производные\CriteriaLeman.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaMaxMax.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaMinMax.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерии\Производные\CriteriaMulti.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaSavige.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерии\Классические\CriteriaWald.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерий\Option.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Критерий\Step.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Список критериев\Классические\CriteriaBaiesLaplas.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Список критериев\Производные\CriteriaGerr.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Список критериев\Производные\CriteriaGurvits.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Список критериев\Производные\CriteriaLeman.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Список критериев\Классические\CriteriaMaxMax.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Список критериев\Классические\CriteriaMinMax.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Список критериев\Производные\CriteriaMulti.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Список критериев\Классические\CriteriaSavige.cs" />
+    <Compile Include="Игры с природой\Анализ игры\Список критериев\Классические\CriteriaWald.cs" />
     <Compile Include="Игры с природой\Игра\Ситуация\State.cs" />
-    <Compile Include="Игры с природой\Игра\View.cs" />
+    <Compile Include="Игры с природой\ВьюМодели\View.cs" />
     <Compile Include="Игры с природой\Игра\Матрица игры\AltCase.cs" />
     <Compile Include="Игры с природой\Игра\Матрица игры\StatCellFactory.cs" />
     <Compile Include="Игры с природой\Игра\Ситуация\Состояния\StateChances.cs" />
@@ -102,20 +106,19 @@
     <Compile Include="Игры с природой\Отчеты\ReportXAML.cs" />
     <Compile Include="Конвертеры\RoundNumbers.cs" />
     <Compile Include="Конвертеры\ObjectVisibility.cs" />
-    <Compile Include="Игры с природой\ViewMatrix.cs" />
+    <Compile Include="Игры с природой\ВьюМодели\ViewMatrix.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Игры с природой\ViewApp.cs" />
     <Compile Include="Игры с природой\Игра\StatGame.cs" />
-    <Compile Include="Игры с природой\Игра\StatGameView.cs" />
+    <Compile Include="Игры с природой\ВьюМодели\StatGameView.cs" />
     <Compile Include="Игры с природой\Игра\Матрица игры\StatMatrix.cs" />
-    <Page Include="MatrixViewWindow.xaml">
+    <Page Include="AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MtxAlphaWindow.xaml">
+    <Page Include="MatrixViewWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -159,6 +162,45 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Ресурсы\Matrix.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Иконки\grid.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Иконки\info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Иконки\plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Иконки\plus-square.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Иконки\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Иконки\sliders.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Иконки\x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Иконки\x-square.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="list.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="favicon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="fav.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="favicon2.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="favicon3.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

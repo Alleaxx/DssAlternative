@@ -10,7 +10,7 @@ namespace DSSView
     {
         public override string ToString()
         {
-            return $"Текущее состояние: {chances} | {goal} | {usage}";
+            return $"Cостояние: {chances} | {goal} | {usage}";
         }
 
         public event Action OnChanged;
