@@ -7,6 +7,20 @@ using System.Threading.Tasks;
 
 namespace DSSView
 {
+    public class MatrixException : Exception
+    {
+        public MatrixException(string msg) : base(msg)
+        {
+
+        }
+    }
+    public class MatrixGetValueException : MatrixException
+    {
+        public MatrixGetValueException(int row, int col) : base($"Указанной ячейки [{row},{col}] не существует")
+        {
+
+        }
+    }
     public class Matrix<R, C, V>
     {
         public override string ToString()
@@ -84,7 +98,7 @@ namespace DSSView
         {
             AddCol(ColsCount);
         }
-        public void AddColAfter(C col)
+        public void AddColBefore(C col)
         {
             AddCol(IndexOf(col));
         }
@@ -115,7 +129,7 @@ namespace DSSView
         {
             AddRow(RowsCount);
         }
-        public void AddRowAfter(R row)
+        public void AddRowBefore(R row)
         {
             AddRow(IndexOf(row));
         }
@@ -212,12 +226,20 @@ namespace DSSView
         }
 
         //Удаление
+        public void RemoveCol(int col)
+        {
+            RemoveCol(Cols[col]);
+        }
         public void RemoveCol(C col)
         {
             int index = IndexOf(col);
             OffsetCols(index + 1, -1);
             Source.RemoveAll(c => c.To.Equals(col));
             OnColRemoved?.Invoke(col);
+        }
+        public void RemoveRow(int row)
+        {
+            RemoveRow(Rows[row]);
         }
         public void RemoveRow(R row)
         {
@@ -246,7 +268,7 @@ namespace DSSView
             }
             else
             {
-                throw new Exception("Нельзя установить значение в пустую ячейку");
+                throw new MatrixGetValueException(0, 0);
             }
         }
 

@@ -102,8 +102,8 @@
         </Grid.ColumnDefinitions>
         <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" FontSize="16" Padding="0,5">
             <MenuItem Header="Открыть" Command="{Binding OpenMatrixCommand}"/>
-            <MenuItem Header="Сохранить" Command="{Binding SaveMatrixCommand}"/>
-            <MenuItem Header="Сохранить как" Command="{Binding SaveAsMatrixCommand}"/>
+            <MenuItem Header="Сохранить" Command="{Binding SaveMatrixCommand}" Visibility="Collapsed"/>
+            <MenuItem Header="Сохранить" Command="{Binding SaveAsMatrixCommand}"/>
             <MenuItem Header="Сформировать отчет" Visibility="Collapsed">
                 <MenuItem Header="Excel" Command="{Binding CreateReportCommand}" CommandParameter="Excel"/>
                 <MenuItem Header="Word" Command="{Binding CreateReportCommand}" CommandParameter="Word"/>
@@ -438,7 +438,7 @@
                                                                         </Grid.ColumnDefinitions>
                                                                         <TextBlock Grid.Column="0" Text="{Binding Name,StringFormat=- \{0\} . . .}" FontSize="12" />
                                                                         <TextBox Grid.Column="1" Text="{Binding ElementName=slider, Path=Value}" Padding="5,0" Margin="5,0" BorderThickness="0,0,0,1" BorderBrush="Orange" FontSize="12" HorizontalAlignment="Right" MinWidth="30"/>
-                                                                        <Slider Grid.Column="2" x:Name="slider" Minimum="{Binding Min}" Maximum="{Binding Max}" Value="{Binding Value}" IsSelectionRangeEnabled="True" TickFrequency="0.1" IsSnapToTickEnabled="True" Foreground="LightGreen" Background="WhiteSmoke" Margin="5,0"/>
+                                                                        <Slider Grid.Column="2" x:Name="slider" Minimum="{Binding Min}" Maximum="{Binding Max}" Value="{Binding Value}" IsSelectionRangeEnabled="True" TickFrequency="0.1" IsSnapToTickEnabled="True" Margin="5,0"/>
                                                                     </Grid>
                                                                 </DataTemplate>
                                                             </ItemsControl.ItemTemplate>
@@ -465,7 +465,7 @@
                                                                     </Grid.ColumnDefinitions>
                                                                     <TextBlock Text="{Binding Alternative.Name}" Grid.Column="0"/>
                                                                     <TextBlock Text="{Binding Rating}" Grid.Column="1"/>
-                                                                    <ProgressBar Minimum="0" Value="{Binding Rating,Mode=OneWay}" Maximum="{Binding RatingTotal,Mode=OneWay}" Grid.Column="2" Height="4"/>
+                                                                    <ProgressBar Minimum="0" Value="{Binding Rating,Mode=OneWay}" Maximum="{Binding RatingTotal,Mode=OneWay}" Grid.Column="2" Foreground="#77dd77" Background="WhiteSmoke" BorderBrush="Gainsboro"  Height="4"/>
                                                                 </Grid>
                                                             </DataTemplate>
                                                         </ItemsControl.ItemTemplate>

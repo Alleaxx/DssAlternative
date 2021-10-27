@@ -12,6 +12,7 @@ namespace DSSView
     {
         event Action<double, IEnumerable<Alternative>> OnResultChanged;
 
+        string Name { get; }
         RankCriteria Rank { get; }
         double Result { get; }
         IEnumerable<Alternative> BestAlternatives { get; }

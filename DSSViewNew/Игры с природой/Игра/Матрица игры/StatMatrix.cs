@@ -20,6 +20,12 @@ namespace DSSView
 
         }
 
+        public static MtxStat CreateEmpty()
+        {
+            MtxStat newMtx = new MtxStat();
+            newMtx.SetEmpty();
+            return newMtx;
+        }
         public static MtxStat CreateFromSize(int rows, int cols)
         {
             MtxStat newMtx = new MtxStat();
@@ -32,6 +38,18 @@ namespace DSSView
                 newMtx.AddColEnd();
             }
             return newMtx;
+        }
+        public static MtxStat CreateFromArray(double[,] array)
+        {
+            var mtx = CreateFromSize((int)array.Rows(), (int)array.Cols());
+            for (int r = 0; r < array.Rows(); r++)
+            {
+                for (int c = 0; c < array.Cols(); c++)
+                {
+                    mtx.Set(r, c, array[r, c]);
+                }
+            }
+            return mtx;
         }
         public static MtxStat CreateFromXml(StatGameXml xml)
         {

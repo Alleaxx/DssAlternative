@@ -74,8 +74,11 @@ namespace DSSView
             void AddListeners()
             {
                 Situation.OnChanged += MtxUpdated;
+                Mtx.OnRowRemoved += r => MtxUpdated();
                 Mtx.OnRowAdded += r => MtxUpdated();
+
                 Mtx.OnColAdded += c => MtxUpdated();
+                Mtx.OnColRemoved += c => MtxUpdated();
                 Mtx.OnValuesChanged += c => MtxUpdated();
 
                 Mtx.OnColAdded += CaseValueAddListener;

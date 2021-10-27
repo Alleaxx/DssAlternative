@@ -31,7 +31,7 @@ namespace DSSView
         public GameAnalysis Report => Source.Report;
         public IEnumerable<ICriteria> Criterias => Report.CriteriasConsider;
         public IEnumerable<Alternative> BestAlts => Report.BestAlternatives;
-
+        public string FilePath { get; set; }
 
 
         public StatGameView() : this(new StatGame())
@@ -61,7 +61,10 @@ namespace DSSView
                 Usages = Enum.GetValues(typeof(Usages)).OfType<Usages>().Select(en => StateUsage.Get(en)).ToArray();
             }
         }
-
+        public StatGameView(string path, StatGame stat) : this(stat)
+        {
+            FilePath = path;
+        }
 
         protected override void InitCommands()
         {
@@ -98,7 +101,7 @@ namespace DSSView
             }
             else if (obj is Alternative alt)
             {
-                Mtx.AddRowAfter(alt);
+                Mtx.AddRowBefore(alt);
             }
         }
         private void AddCol(object obj)
@@ -109,7 +112,7 @@ namespace DSSView
             }
             else if (obj is Case cas)
             {
-                Mtx.AddColAfter(cas);
+                Mtx.AddColBefore(cas);
             }
         }
         private void Remove(object obj)
