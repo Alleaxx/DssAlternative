@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:dsslib="clr-namespace:DSSLib;assembly=DSSLib"
         xmlns:local="clr-namespace:DSSView"
+        xmlns:Lib="clr-namespace:DSSCriterias.Logic;assembly=DSSCriterias.Logic"
         mc:Ignorable="d"
         Title="Статистические игры" Height="680" Width="1200">
 
@@ -425,7 +426,7 @@
                                                         <TextBlock Text="Коэффициенты" FontSize="14" Foreground="Gray"/>
                                                         <ItemsControl ItemsSource="{Binding Report.Options}">
                                                             <ItemsControl.ItemTemplate>
-                                                                <DataTemplate DataType="{x:Type local:Option}">
+                                                                <DataTemplate DataType="{x:Type Lib:Option}">
                                                                     <Grid>
                                                                         <Grid.RowDefinitions>
                                                                             <RowDefinition />
@@ -594,7 +595,7 @@
                                             <TextBlock Text="{Binding ElementName=criterias,Path=SelectedItem.Name}"  FontSize="18"/>
                                         </GroupBox.Header>
                                         <GroupBox.ContentTemplate>
-                                            <DataTemplate DataType="{x:Type local:Criteria}">
+                                            <DataTemplate DataType="{x:Type Lib:Criteria}">
                                                 <ScrollViewer>
                                                     <StackPanel>
                                                         <Border Margin="0,3" Padding="0,3" BorderThickness="0,0,0,0" BorderBrush="Gainsboro">
@@ -629,7 +630,7 @@
                                                                 <TextBlock Text="Условия" FontSize="14" FontWeight="Medium" Margin="0,4" />
                                                                 <ItemsControl ItemsSource="{Binding Rank.Notes}">
                                                                     <ItemsControl.ItemTemplate>
-                                                                        <DataTemplate DataType="{x:Type local:Note}">
+                                                                        <DataTemplate DataType="{x:Type Lib:Note}">
                                                                             <DockPanel>
                                                                                 <TextBlock x:Name="title" Text="{Binding Name,StringFormat=-{0}}" Foreground="Gray" FontSize="14"/>
                                                                                 <TextBlock Text=":" Margin="5,0" FontSize="14"/>
@@ -659,7 +660,7 @@
                                                                     <TextBlock Text="Расчеты" FontSize="14" FontWeight="Medium" Margin="0,4"/>
                                                                     <ItemsControl ItemsSource="{Binding StepsAlgorythm}">
                                                                         <ItemsControl.Resources>
-                                                                            <DataTemplate DataType="{x:Type local:Step}">
+                                                                            <DataTemplate DataType="{x:Type Lib:Step}">
                                                                                 <DockPanel>
                                                                                     <TextBlock Text="{Binding Order}" FontSize="14"/>
                                                                                     <TextBlock Text=")" FontSize="14"/>
@@ -668,7 +669,7 @@
                                                                                     <TextBlock Text="{Binding Result}" Margin="5,0" FontSize="14"/>
                                                                                 </DockPanel>
                                                                             </DataTemplate>
-                                                                            <DataTemplate DataType="{x:Type local:StepArr}">
+                                                                            <DataTemplate DataType="{x:Type Lib:StepArr}">
                                                                                 <DockPanel>
                                                                                     <TextBlock Text="{Binding Order}" FontSize="14"/>
                                                                                     <TextBlock Text=")" FontSize="14"/>

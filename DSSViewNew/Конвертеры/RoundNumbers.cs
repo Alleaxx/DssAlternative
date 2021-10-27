@@ -16,7 +16,9 @@ namespace DSSView
         {
             int digits = 4;
             if (parameter is string s && int.TryParse(s, out int num))
+            {
                 digits = num;
+            }
 
             return Math.Round((double)value, digits);
         }

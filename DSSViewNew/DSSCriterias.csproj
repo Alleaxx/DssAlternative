@@ -69,51 +69,16 @@
     <Compile Include="NewMatrixWindow.xaml.cs">
       <DependentUpon>NewMatrixWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Игры с природой\NewGameInfo.cs" />
-    <Compile Include="Игры с природой\Игра\Ситуация\Situation.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерий\Criteria.cs" />
-    <Compile Include="Игры с природой\Note.cs" />
-    <Compile Include="Игры с природой\Анализ игры\RankAlternative.cs" />
-    <Compile Include="Игры с природой\Анализ игры\RankCriteria.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерий\Option.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Критерий\Step.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Список критериев\Классические\CriteriaBaiesLaplas.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Список критериев\Производные\CriteriaGerr.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Список критериев\Производные\CriteriaGurvits.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Список критериев\Производные\CriteriaLeman.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Список критериев\Классические\CriteriaMaxMax.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Список критериев\Классические\CriteriaMinMax.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Список критериев\Производные\CriteriaMulti.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Список критериев\Классические\CriteriaSavige.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Список критериев\Классические\CriteriaWald.cs" />
-    <Compile Include="Игры с природой\Игра\Ситуация\State.cs" />
-    <Compile Include="Игры с природой\ВьюМодели\View.cs" />
-    <Compile Include="Игры с природой\Игра\Матрица игры\AltCase.cs" />
-    <Compile Include="Игры с природой\Игра\Матрица игры\StatCellFactory.cs" />
-    <Compile Include="Игры с природой\Игра\Ситуация\Состояния\StateChances.cs" />
-    <Compile Include="Игры с природой\Игра\Ситуация\Состояния\StateGoal.cs" />
-    <Compile Include="Игры с природой\Игра\Ситуация\Состояния\StateUsage.cs" />
-    <Compile Include="Игры с природой\Матрицы\Cell.cs" />
-    <Compile Include="Игры с природой\Матрицы\CellFactory.cs" />
-    <Compile Include="Игры с природой\Матрицы\Coords.cs" />
-    <Compile Include="Игры с природой\Матрицы\Matrix.cs" />
-    <Compile Include="Игры с природой\Анализ игры\Analysis.cs" />
-    <Compile Include="Игры с природой\Матрицы\MtxExtensions.cs" />
-    <Compile Include="Игры с природой\Отчеты\ReportExcel.cs" />
-    <Compile Include="Игры с природой\Отчеты\ReportHTML.cs" />
-    <Compile Include="Игры с природой\Отчеты\Report.cs" />
-    <Compile Include="Игры с природой\XmlMatrixProvider.cs" />
-    <Compile Include="Игры с природой\Отчеты\ReportXAML.cs" />
+    <Compile Include="ВьюМодели\NewGameInfo.cs" />
+    <Compile Include="ВьюМодели\View.cs" />
     <Compile Include="Конвертеры\RoundNumbers.cs" />
     <Compile Include="Конвертеры\ObjectVisibility.cs" />
-    <Compile Include="Игры с природой\ВьюМодели\ViewMatrix.cs" />
+    <Compile Include="ВьюМодели\ViewMatrix.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Игры с природой\Игра\StatGame.cs" />
-    <Compile Include="Игры с природой\ВьюМодели\StatGameView.cs" />
-    <Compile Include="Игры с природой\Игра\Матрица игры\StatMatrix.cs" />
+    <Compile Include="ВьюМодели\StatGameView.cs" />
     <Page Include="AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -155,6 +120,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DSSCriterias.Logic\DSSCriterias.Logic.csproj">
+      <Project>{610213c3-4f1d-4b0a-bdcc-c475a2cc8e91}</Project>
+      <Name>DSSCriterias.Logic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DSSLib\DSSLib.csproj">
       <Project>{649b425f-c47b-455e-88c6-270931c4d7b0}</Project>
       <Name>DSSLib</Name>
@@ -186,21 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Иконки\x-square.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="list.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="favicon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="fav.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="favicon2.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="favicon3.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

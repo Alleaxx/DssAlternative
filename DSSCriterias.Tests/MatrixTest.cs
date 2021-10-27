@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using DSSView;
+using DSSCriterias.Logic;
 namespace DSSCriterias.Tests
 {
     [TestClass]

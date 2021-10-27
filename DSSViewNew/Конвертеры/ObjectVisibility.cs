@@ -15,13 +15,21 @@ namespace DSSView
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
+            {
                 return Visibility.Collapsed;
+            }
             if (value is int number && number == 0)
+            {
                 return Visibility.Collapsed;
+            }
             if (value is string str && string.IsNullOrEmpty(str))
+            {
                 return Visibility.Collapsed;
+            }
             if (value is bool YesOrNo && !YesOrNo)
+            {
                 return Visibility.Collapsed;
+            }
 
             return Visibility.Visible;
         }

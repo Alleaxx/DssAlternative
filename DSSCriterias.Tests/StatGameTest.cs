@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using DSSView;
+using DSSCriterias.Logic;
 namespace DSSCriterias.Tests
 {
     [TestClass]
@@ -22,7 +22,7 @@ namespace DSSCriterias.Tests
                 { 0, 0, 0 }
             };
             StatGame game = new StatGame("", MtxStat.CreateFromArray(gameMtx));
-            ICriteria criteria = game.Report.CriteriasConsider.First(c => c is DSSView.Criterias.CriteriaMaxMax);
+            ICriteria criteria = game.Report.CriteriasConsider.First(c => c is Logic.Criterias.CriteriaMaxMax);
             double firstResult = criteria.Result;
 
             for (int i = 0; i < 3; i++)
@@ -45,7 +45,7 @@ namespace DSSCriterias.Tests
             };
             StatGame game = new StatGame("", MtxStat.CreateFromArray(gameMtx));
             game.Situation.Chances = StateChances.Riscs();
-            ICriteria criteria = game.Report.CriteriasConsider.First(c => c is DSSView.Criterias.CriteriaGerr);
+            ICriteria criteria = game.Report.CriteriasConsider.First(c => c is Logic.Criterias.CriteriaGerr);
             double firstResult = criteria.Result;
 
             game.Mtx.Cols[0].Chance = 0.5;
@@ -64,7 +64,7 @@ namespace DSSCriterias.Tests
                 { 0, 0, 0 }
             };
             StatGame game = new StatGame("", MtxStat.CreateFromArray(gameMtx));
-            var criteria = game.Report.CriteriasConsider.First(c => c is DSSView.Criterias.CriteriaMaxMax);
+            var criteria = game.Report.CriteriasConsider.First(c => c is Logic.Criterias.CriteriaMaxMax);
             double firstResult = criteria.Result;
 
             game.Mtx.RemoveRow(game.Mtx.Rows.First());
@@ -85,7 +85,7 @@ namespace DSSCriterias.Tests
             StatGame game = new StatGame("", MtxStat.CreateFromArray(gameMtx));
             game.Report.IgnoreUsage = true;
 
-            var criteria = game.Report.CriteriasConsider.First(c => c is DSSView.Criterias.CriteriaGerr);
+            var criteria = game.Report.CriteriasConsider.First(c => c is Logic.Criterias.CriteriaGerr);
             game.Mtx.Cols[0].Chance = 0.5;
             game.Mtx.Cols[1].Chance = 0.4;
             game.Mtx.Cols[2].Chance = 0.1;

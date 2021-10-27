@@ -1,7 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using DSSView;
-using DSSView.Criterias;
+using DSSCriterias.Logic;
+using DSSCriterias.Logic.Criterias;
 using System;
 using DSSLib;
 using System.Collections.Generic;
