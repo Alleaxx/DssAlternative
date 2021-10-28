@@ -204,7 +204,7 @@ namespace DSSAlternative.AHP
         }
         public INodeRelation NextRequiredRel(INodeRelation from)
         {
-            var isMtxOK = GetMtxRelations(from.Main).Consistency.IsCorrect();
+            var isMtxOK = GetMtxRelations(from.Main).IsCorrect;
             var firstRelation = RelationsRequired.ToList().Find(r => r.Main == from.Main);
             var lastRelation = RelationsRequired.ToList().FindLast(r => r.Main == from.Main);
 

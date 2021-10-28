@@ -31,7 +31,7 @@ namespace DSSAlternative.AHP
         }
         public static double Cr(this INode node, IProject project)
         {
-            return project.ProblemActive.GetMtxRelations(node).Consistency.Cr;
+            return project.ProblemActive.GetMtxRelations(node).Cr;
         }
         public static IEnumerable<INodeRelation> OwnedRelations(this INode node, IProject project)
         {
@@ -62,7 +62,7 @@ namespace DSSAlternative.AHP
         }
         public static double Cr(this INodeRelation rel, IProject project)
         {
-            return project.ProblemActive.GetMtxRelations(rel.Main).Consistency.Cr;
+            return project.ProblemActive.GetMtxRelations(rel.Main).Cr;
         }
 
 

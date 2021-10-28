@@ -305,7 +305,7 @@
                 return "usual";
 
             case Constistency:
-                double res = Problem.GetMtxRelations(node).Consistency.Cr;
+                double res = Problem.GetMtxRelations(node).Cr;
                 if (RelationState.IsNodeUnknown(node))
                     return "warn";
                 if (!RelationState.IsNodeConsistenct(node))

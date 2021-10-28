@@ -38,7 +38,7 @@ namespace DSSAlternative.AHP
 
         private IEnumerable<INode> NodesNotConsistent()
         {
-            return Problem.NodesWithRels.Where(node => !Problem.GetMtxRelations(node).Consistency.IsCorrect());
+            return Problem.NodesWithRels.Where(node => !Problem.GetMtxRelations(node).IsCorrect);
         }
         private IEnumerable<INodeRelation> RelationsUnknown()
         {
@@ -51,7 +51,7 @@ namespace DSSAlternative.AHP
         }
         public bool IsNodeConsistenct(INode node)
         {
-            return Problem.GetMtxRelations(node).Consistency.IsCorrect();
+            return Problem.GetMtxRelations(node).IsCorrect;
         }
     }
 }

@@ -51,7 +51,7 @@
 
     private bool IsNotConsistenct => !RelationState.IsNodeConsistenct(Node);
     private bool IsUnknown => RelationState.IsNodeUnknown(Node);
-    public double Cr => Problem.GetMtxRelations(Node).Consistency.Cr;
+    public double Cr => Problem.GetMtxRelations(Node).Cr;
 
 
     private string NodeRelClass()

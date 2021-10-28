@@ -58,13 +58,13 @@
                     </summary>
                     <dl>
                         <dt>nmax</dt>
-                        <dd>@Mtx.Consistency.Nmax</dd>
+                        <dd>@Mtx.Array.Nmax()</dd>
                         <dt>CI</dt>
-                        <dd>@Mtx.Consistency.CI</dd>
+                        <dd>@Mtx.Array.CI()</dd>
                         <dt>RI</dt>
-                        <dd>@Mtx.Consistency.RI</dd>
+                        <dd>@Mtx.Array.RI()</dd>
                         <dt>CR </dt>
-                        <dd>@Mtx.Consistency.Cr</dd>
+                        <dd>@Mtx.Array.Cr()</dd>
 
                         <dt>Локальные коэффициенты</dt>
                         <dd>
@@ -83,7 +83,7 @@
                         <dd>
                             <details>
                                 <ul>
-                                    @foreach (var coeff in Mtx.Consistency.MultiMatrixLocalCoeffs)
+                                    @foreach (var coeff in Mtx.Array.MultiMatrixLocalCoeffs())
                                     {
                                         <li>@coeff</li>
                                     }
@@ -110,7 +110,7 @@
 
     private bool IsCorrectMtx()
     {
-        return Mtx.Consistency.IsCorrect();
+        return Mtx.IsCorrect;
     }
     private int NodesCount()
     {

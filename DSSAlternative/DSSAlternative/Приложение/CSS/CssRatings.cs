@@ -31,7 +31,7 @@ namespace DSSAlternative.AppComponents
             {
                 if (RatingMatrix.ContainsKey(ratingFor))
                 {
-                    AddRuleClass(() => RatingMatrix[ratingFor].Consistency.IsCorrect(), "safe", "dangerous");
+                    AddRuleClass(() => RatingMatrix[ratingFor].IsCorrect, "safe", "dangerous");
                 }
                 else
                 {

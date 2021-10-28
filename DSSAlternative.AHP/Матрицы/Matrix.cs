@@ -8,45 +8,38 @@ namespace DSSAlternative.AHP
 {
     public interface IMatrix
     {
-        int RSize { get; }
-        int CSize { get; }
+        int Rows { get; }
+        int Cols { get; }
 
         double[,] Array { get; }
         double[] Coeffiients { get; }
-        IConsistency Consistency { get; }
         bool WithZeros();
+
+
+        double Cr { get; }
+        bool IsCorrect { get; }
 
         string GetText();
     }
     public class Matrix : IMatrix 
     {
-        public override string ToString() => $"Матрица ({RSize}x{CSize})";
+        public override string ToString() => $"Матрица ({Rows}x{Cols})";
         
         public double[,] Array { get; set; }
-        public int RSize => Array.GetLength(0);
-        public int CSize => Array.GetLength(1);
+        public int Rows => Array.Rows();
+        public int Cols => Array.Cols();
 
-        public IConsistency Consistency { get; protected set; }
 
-        public double[] Coeffiients => MtxActions.LocalCoefficients(Array);
+        public double Cr => Array.Cr();
+        public bool IsCorrect => Array.IsCorrect();
 
-        public bool WithZeros()
-        {
-            for (int x = 0; x < RSize; x++)
-            {
-                for (int y = 0; y < CSize; y++)
-                {
-                    if (Array[x, y] == 0)
-                        return true;
-                }
-            }
-            return false;
-        }
-
+        public double[] Coeffiients => Array.LocalCoeffs();
+        public bool WithZeros() => Array.WithZeros();
+        public string GetText() => Array.Text();
 
         protected Matrix()
         {
-            Consistency = new MatrixConsistenct(this);
+
         }
         public Matrix(double[,] arr)
         {
@@ -61,22 +54,6 @@ namespace DSSAlternative.AHP
                     Array[i, a] = arr[i,a];
                 }
             }
-            Consistency = new MatrixConsistenct(this);
-        }
-
-
-        public string GetText()
-        {
-            string text = "";
-            for (int x = 0; x < RSize; x++)
-            {
-                text += "\n";
-                for (int y = 0; y < CSize; y++)
-                {
-                    text += $"{Math.Round(Array[x, y], 3),-7}";
-                }
-            }
-            return text;
         }
     }
 }

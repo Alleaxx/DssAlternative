@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP
 {
-    static class MtxActions
+    public static class MtxActions
     {
-        public static double[] GeometricMultiVector(double[,] mtx)
+        //Действия с матрицами
+        public static double[] GeometricMultiVector(this double[,] mtx)
         {
             int size = mtx.GetLength(0);
 
@@ -24,8 +25,7 @@ namespace DSSAlternative.AHP
             }
             return vector;
         }
-
-        public static double[] MatrixMultiplication(double[,] mtx, double[] vector)
+        public static double[] Multiply(this double[,] mtx, double[] vector)
         {
             int rsize = mtx.GetLength(0);
             int vsize = vector.Length;
@@ -41,7 +41,30 @@ namespace DSSAlternative.AHP
             }
             return results;
         }
+        public static double[] LocalCoeffs(this double[,] mtx)
+        {
+            int size = mtx.GetLength(0);
+            var geometricMulti = mtx.GeometricMultiVector();
 
+            var multiPowed = new double[size];
+            for (int i = 0; i < size; i++)
+            {
+                multiPowed[i] = Math.Pow(geometricMulti[i], 1 / (double)size);
+            }
+            var coeffs = Normalise(multiPowed, multiPowed.Sum());
+
+            return coeffs;
+        }
+        public static double[] MultiMatrixLocalCoeffs(this double[,] mtx)
+        {
+            var local = mtx.LocalCoeffs();
+            return mtx.Multiply(local);
+        }
+
+        private static double[] Normalise2(this double[] mtx, double? max = null)
+        {
+            return Normalise(mtx, max);
+        }
         public static double[] Normalise(double[] vector, double? max = null)
         {
             int size = vector.Length;
@@ -56,20 +79,5 @@ namespace DSSAlternative.AHP
             return results;
         }
 
-        public static double[] LocalCoefficients(double[,] mtx)
-        {
-            int size = mtx.GetLength(0);
-            var geometricMulti = GeometricMultiVector(mtx);
-
-            var multiPowed = new double[size];
-            for (int i = 0; i < size; i++)
-            {
-                multiPowed[i] = Math.Pow(geometricMulti[i], 1 / (double)size);
-            }
-            var coeffs = Normalise(multiPowed, multiPowed.Sum());
-
-            return coeffs;
-        }
-    }
-
+    } 
 }

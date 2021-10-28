@@ -46,7 +46,7 @@ namespace DSSAlternative.AppComponents
         public CssRelation(IProject project, INodeRelation relation)
         {
             bool relationsUnknown = relation.Unknown;
-            bool relationConsistent = project.ProblemActive.GetMtxRelations(relation.Main).Consistency.IsCorrect();
+            bool relationConsistent = project.ProblemActive.GetMtxRelations(relation.Main).IsCorrect;
 
             AddRuleClass("safe");
             AddRuleClass(() => relationsUnknown, "warning");
@@ -61,7 +61,7 @@ namespace DSSAlternative.AppComponents
             AddRuleClass(() => relation == selected, "cell-selected");
             AddRuleClass(() => mirrored, "cell-mirrored");
             AddRuleClass(() => relation.Value == 0, "unknown");
-            AddRuleClass(() => !mtx.Consistency.IsCorrect(), "incorrect");
+            AddRuleClass(() => !mtx.IsCorrect, "incorrect");
         }
     }
 }
