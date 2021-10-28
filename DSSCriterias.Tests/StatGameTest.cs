@@ -6,96 +6,102 @@ using System.Text;
 using System.Threading.Tasks;
 
 using DSSCriterias.Logic;
+using DSSCriterias.Logic.Criterias;
 namespace DSSCriterias.Tests
 {
     [TestClass]
     public class StatGameTest
     {
-        //Проверить обновление результата критериев при обновлении значения матрицы
-        [TestMethod]
-        public void UpdateValue()
+        private readonly double[,] MatrixExample;
+        public StatGameTest()
         {
-            double[,] gameMtx = new double[,]
+            MatrixExample = new double[,]
             {
                 { 9, 9, 9 },
                 { 0, 0, 0 },
                 { 0, 0, 0 }
             };
-            StatGame game = new StatGame("", MtxStat.CreateFromArray(gameMtx));
-            ICriteria criteria = game.Report.CriteriasConsider.First(c => c is Logic.Criterias.CriteriaMaxMax);
-            double firstResult = criteria.Result;
+        }
 
+
+        //Проверка на обновление результатов критериев и выбранных альтернатив
+        [TestMethod]
+        //При изменении значения
+        public void UpdateValue()
+        {
+            //assign
+            StatGame game = new StatGame("", MtxStat.CreateFromArray(MatrixExample));
+            ICriteria criteria = game.Report.GetCriteria<CriteriaMaxMax>();
+            double firstResult = criteria.Result;
+            var firstRank = game.Report.AlternativeRanks;
+
+            //act
             for (int i = 0; i < 3; i++)
             {
                 game.Mtx.Set(2, i, 15);
             }
 
+            //assert
             Assert.IsTrue(criteria.Result != firstResult, "Критерий не обновлен после изменения значения матрицы");
+            Assert.IsTrue(game.Report.AlternativeRanks != firstRank, "Отчет по критериям не обновлен после изменения значения матрицы");
         }
 
         [TestMethod]
-        //Проверить обновление результата критериев при обновлении шанса у матрицы
+        //При изменении вероятности исхода
         public void UpdateChance()
         {
-            double[,] gameMtx = new double[,]
-            {
-                { 9, 9, 9 },
-                { 0, 0, 0 },
-                { 0, 0, 0 }
-            };
-            StatGame game = new StatGame("", MtxStat.CreateFromArray(gameMtx));
-            game.Situation.Chances = StateChances.Riscs();
-            ICriteria criteria = game.Report.CriteriasConsider.First(c => c is Logic.Criterias.CriteriaGerr);
+            //assign
+            StatGame game = new StatGame("", MtxStat.CreateFromArray(MatrixExample), new Situation() { Chances = StateChances.Riscs() });
+            ICriteria criteria = game.Report.GetCriteria<CriteriaGerr>();
             double firstResult = criteria.Result;
+            var firstRank = game.Report.AlternativeRanks;
 
-            game.Mtx.Cols[0].Chance = 0.5;
+            //act
+            game.SetChance(0, 0.5);
 
+            //assert
             Assert.IsTrue(criteria.Result != firstResult, "Критерий не обновлен после изменения вероятности исхода");
+            Assert.IsTrue(game.Report.AlternativeRanks != firstRank, "Отчет по критериям не обновлен после изменения вероятности исхода");
         }
 
         [TestMethod]
-        //Проверить обновление результата критериев при изменении структуры матрицы
+        //При изменении структуры матрицы
         public void UpdateStructure()
         {
-            double[,] gameMtx = new double[,]
-            {
-                { 9, 9, 9 },
-                { 0, 0, 0 },
-                { 0, 0, 0 }
-            };
-            StatGame game = new StatGame("", MtxStat.CreateFromArray(gameMtx));
-            var criteria = game.Report.CriteriasConsider.First(c => c is Logic.Criterias.CriteriaMaxMax);
+            //assign
+            StatGame game = new StatGame("", MtxStat.CreateFromArray(MatrixExample));
+            var criteria = game.Report.GetCriteria<CriteriaMaxMax>();
             double firstResult = criteria.Result;
+            var firstRank = game.Report.AlternativeRanks;
 
+            //act
             game.Mtx.RemoveRow(game.Mtx.Rows.First());
 
+            //assert
             Assert.IsTrue(firstResult != criteria.Result, "Критерий не обновлен изменения структуры матрицы");
+            Assert.IsTrue(game.Report.AlternativeRanks != firstRank, "Отчет по критериям не обновлен после изменения структуры матрицы");
         }
 
         [TestMethod]
-        //Проверить обновление результата критериев при изменении ситуации матрицы
+        //При обновлении ситуации
         public void UpdateSituation()
         {
-            double[,] gameMtx = new double[,]
-            {
-                { 9, 9, 9 },
-                { 0, 0, 0 },
-                { 0, 0, 0 }
-            };
-            StatGame game = new StatGame("", MtxStat.CreateFromArray(gameMtx));
+            //assign
+            StatGame game = new StatGame("", MtxStat.CreateFromArray(MatrixExample));
             game.Report.IgnoreUsage = true;
-
-            var criteria = game.Report.CriteriasConsider.First(c => c is Logic.Criterias.CriteriaGerr);
-            game.Mtx.Cols[0].Chance = 0.5;
-            game.Mtx.Cols[1].Chance = 0.4;
-            game.Mtx.Cols[2].Chance = 0.1;
+            game.SetChance(0, 0.5);
+            game.SetChance(1, 0.4);
+            game.SetChance(2, 0.1);
+            var criteria = game.Report.GetCriteria<CriteriaGerr>();
             double firstResult = criteria.Result;
+            var firstRank = game.Report.AlternativeRanks;
 
+            //act
             game.Situation.Chances = StateChances.Riscs();
+
+            //assert
             Assert.IsTrue(firstResult != criteria.Result, "Критерий не обновлен после шанса у исхода");
+            Assert.IsTrue(game.Report.AlternativeRanks != firstRank, "Отчет по критериям не обновлен после изменения ситуации матрицы");
         }
-
-
-        //Проверить, что нулевые вероятности при рисках равны 1 / n
     }
 }

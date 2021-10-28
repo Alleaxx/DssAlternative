@@ -64,38 +64,39 @@ namespace DSSCriterias.Logic
         }
     }
 
-    namespace States
-    {
-        public class ChancesRiscs : StateChances
-        {
-            public ChancesRiscs() : base(Chances.Riscs)
-            {
-                Name = "Риски";
-                AddCompare(Chances.Riscs, 3, "Предназначен для условий риска");
-                AddCompare(Chances.Unknown, -10, "Не применяется в условиях неопределенности");
-            }
+}
 
-            public override double GetChance(IEnumerable<Case> cases, Case c)
+namespace DSSCriterias.Logic.States
+{
+    public class ChancesRiscs : StateChances
+    {
+        public ChancesRiscs() : base(Chances.Riscs)
+        {
+            Name = "Риски";
+            AddCompare(Chances.Riscs, 3, "Предназначен для условий риска");
+            AddCompare(Chances.Unknown, -10, "Не применяется в условиях неопределенности");
+        }
+
+        public override double GetChance(IEnumerable<Case> cases, Case c)
+        {
+            double sum = cases.Sum(cas => cas.Chance);
+            if (sum == 0)
             {
-                double sum = cases.Sum(cas => cas.Chance);
-                if (sum == 0)
-                {
-                    return DefaultMod(cases);
-                }
-                else
-                {
-                    return c.Chance / sum;
-                }
+                return DefaultMod(cases);
+            }
+            else
+            {
+                return c.Chance / sum;
             }
         }
-        public class ChancesUnknown : StateChances
+    }
+    public class ChancesUnknown : StateChances
+    {
+        public ChancesUnknown() : base(Chances.Unknown)
         {
-            public ChancesUnknown() : base(Chances.Unknown)
-            {
-                Name = "Неопределенность";
-                AddCompare(Chances.Unknown, 3, "Предназначен для условий неопределенности");
-                AddCompare(Chances.Riscs, -10, "Не применяется в условиях риска");
-            }
+            Name = "Неопределенность";
+            AddCompare(Chances.Unknown, 3, "Предназначен для условий неопределенности");
+            AddCompare(Chances.Riscs, -10, "Не применяется в условиях риска");
         }
     }
 }

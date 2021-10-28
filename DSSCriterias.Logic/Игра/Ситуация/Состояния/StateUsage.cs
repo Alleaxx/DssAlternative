@@ -32,37 +32,38 @@ namespace DSSCriterias.Logic
         }
     }
 
-    namespace States
+}
+
+namespace DSSCriterias.Logic.States
+{
+    public class UsageOneTime : StateUsage
     {
-        public class UsageOneTime : StateUsage
+        public UsageOneTime() : base(Usages.OneTime)
         {
-            public UsageOneTime() : base(Usages.OneTime)
-            {
-                Name = "Однократно";
-                AddCompare(Usages.OneTime, 2, "Идеален для однократного применения");
-                AddCompare(Usages.Couple, 0, "Не слишком подходит для нескольких применений");
-                AddCompare(Usages.Any, -2, "Не подходит для многократного применения");
-            }
+            Name = "Однократно";
+            AddCompare(Usages.OneTime, 2, "Идеален для однократного применения");
+            AddCompare(Usages.Couple, 0, "Не слишком подходит для нескольких применений");
+            AddCompare(Usages.Any, -2, "Не подходит для многократного применения");
         }
-        public class UsageAnyTimes : StateUsage
+    }
+    public class UsageAnyTimes : StateUsage
+    {
+        public UsageAnyTimes() : base(Usages.Any)
         {
-            public UsageAnyTimes() : base(Usages.Any)
-            {
-                Name = "Многократно";
-                AddCompare(Usages.Any, 2, "Идеален для многократного применения");
-                AddCompare(Usages.OneTime, 0, "Не слишком подходит для однократного применения");
-                AddCompare(Usages.Couple, 1, "Можно использовать и для нескольких применений");
-            }
+            Name = "Многократно";
+            AddCompare(Usages.Any, 2, "Идеален для многократного применения");
+            AddCompare(Usages.OneTime, 0, "Не слишком подходит для однократного применения");
+            AddCompare(Usages.Couple, 1, "Можно использовать и для нескольких применений");
         }
-        public class UsageCouple : StateUsage
+    }
+    public class UsageCouple : StateUsage
+    {
+        public UsageCouple() : base(Usages.Couple)
         {
-            public UsageCouple() : base(Usages.Couple)
-            {
-                Name = "Немного";
-                AddCompare(Usages.Couple, 2, "Идеален для нескольких применений");
-                AddCompare(Usages.OneTime, 0, "Не совсем подходит для единственного применения");
-                AddCompare(Usages.Any, 1, "Вполне можно использовать для многократного применения");
-            }
+            Name = "Немного";
+            AddCompare(Usages.Couple, 2, "Идеален для нескольких применений");
+            AddCompare(Usages.OneTime, 0, "Не совсем подходит для единственного применения");
+            AddCompare(Usages.Any, 1, "Вполне можно использовать для многократного применения");
         }
     }
 }

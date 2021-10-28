@@ -15,6 +15,7 @@ namespace DSSCriterias.Logic
         double[,] Arr { get; }
         Situation Situation { get; }
         double GetChance(int col);
+        void SetChance(int col, double value);
         Alternative GetRow(int r);
     }
 
@@ -44,21 +45,32 @@ namespace DSSCriterias.Logic
         {
             return Situation.Chances.GetChance(Mtx.Cols, pos);
         }
+        public void SetChance(int col, double value)
+        {
+            Mtx.Cols[col].Chance = value;
+        }
 
-
+        //Стандартная игра
         public StatGame() : this("Природа", new MtxStat())
         {
 
         }
+        //Из файла
         public StatGame(StatGameXml xml) : this(xml.Name, MtxStat.CreateFromXml(xml))
         {
 
         }
-        public StatGame(string name, MtxStat mtx)
+        //Настраиваемая игра
+        public StatGame(string name, MtxStat mtx) : this(name, mtx, new Situation())
+        {
+
+        }
+        //Настраиваемая игра
+        public StatGame(string name, MtxStat mtx, Situation situation)
         {
             Name = name;
             Mtx = mtx;
-            Situation = new Situation();
+            Situation = situation;
             Report = new GameAnalysis(this);
 
             AddListeners();
@@ -103,5 +115,6 @@ namespace DSSCriterias.Logic
         {
             c.OnChanceChanged -= CaseChanceChanged;
         }
+
     }
 }

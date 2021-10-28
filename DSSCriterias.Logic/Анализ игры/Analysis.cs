@@ -43,6 +43,10 @@ namespace DSSCriterias.Logic
                 }
             }
         }
+        public ICriteria GetCriteria<T>() where T:ICriteria
+        {
+            return CriteriasConsider.First(c => c is T);
+        }
         public IEnumerable<IOption> Options { get; private set; }
 
         //Результаты анализа

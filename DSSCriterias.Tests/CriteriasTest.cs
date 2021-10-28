@@ -27,7 +27,10 @@ namespace DSSCriterias.Tests
         {
             return Chances[col];
         }
-
+        public void SetChance(int col, double value)
+        {
+            Chances[col] = value;
+        }
         public Alternative[] Alternatives { get; set; }
         public Alternative GetRow(int r)
         {
