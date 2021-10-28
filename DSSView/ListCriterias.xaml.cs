@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DSSView
+namespace DSSAHP
 {
     /// <summary>
     /// Логика взаимодействия для ListCriterias.xaml

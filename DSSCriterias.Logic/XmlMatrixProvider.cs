@@ -51,31 +51,49 @@ namespace DSSCriterias.Logic
         }
     }
 
-    public static class XmlProvider
+    public static class SaverProvider
     {
-        public static ISaver<T> Get<T>()
+        public static ISaver<T> Get<T>(SaveFormat format = SaveFormat.XML)
         {
             Type type = typeof(T);
             if (type == typeof(StatGame))
             {
-                return new SaverLogged<StatGame>(new Saver<StatGame>(new StatGameProvider())) as ISaver<T>;
+                return new SaverLogged<StatGame>(new Saver<StatGame>(new StatGameProvider(format))) as ISaver<T>;
             }
             return null;
         }
     }
+
+    public enum SaveFormat
+    {
+        JSON, XML
+    }
     public class StatGameProvider : ITextProvider<StatGame>
     {
-        private XmlProvider<StatGameXml> Provider { get; set; } = new XmlProvider<StatGameXml>();
+        private readonly ITextProvider<StatGameXml> DefaultProvider;
+
+        public StatGameProvider(SaveFormat format)
+        {
+            switch (format)
+            {
+                case SaveFormat.JSON:
+                    DefaultProvider = new JsonDefaultProvider<StatGameXml>();
+                    break;
+                case SaveFormat.XML:
+                    DefaultProvider = new XmlDefaultProvider<StatGameXml>();
+                    break;
+            }
+        }
 
         public StatGame FromTextString(string xml)
         {
-            StatGameXml gameXml = Provider.FromTextString(xml);
+            StatGameXml gameXml = DefaultProvider.FromTextString(xml);
             return new StatGame(gameXml);
         }
         public string ToTextString(StatGame game)
         {
             StatGameXml gameXml = new StatGameXml(game);
-            return Provider.ToTextString(gameXml);
+            return DefaultProvider.ToTextString(gameXml);
         }
     }
 }

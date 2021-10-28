@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 using DSSLib;
 
-namespace DSSView
+namespace DSSAHP
 {
     //Экземпляр приложения
     public class View : DSSLib.NotifyObj

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DSSView
+namespace DSSAHP
 {
     public class SingleChoiceSystemRelations : DSSLib.NotifyObj, IAdviceSystem
     {

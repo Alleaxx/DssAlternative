@@ -18,7 +18,7 @@ namespace DSSLib
         protected IFileSelector FileDialog { get; set; }
         protected ITextProvider<T> Provider { get; set; }
 
-        public Saver() : this(new DialogFileSelector(), new XmlProvider<T>())
+        public Saver() : this(new DialogFileSelector(), new XmlDefaultProvider<T>())
         {
 
         }
@@ -30,6 +30,16 @@ namespace DSSLib
         {
             FileDialog = selector;
             Provider = provider;
+        }
+
+
+        public static Saver<T> CreateJsonSaver()
+        {
+            return new Saver<T>(new DialogFileSelector(".json"), new JsonDefaultProvider<T>());
+        }
+        public static Saver<T> CreateXmlSaver()
+        {
+            return new Saver<T>(new DialogFileSelector(".json"), new JsonDefaultProvider<T>());
         }
 
 
@@ -62,28 +72,4 @@ namespace DSSLib
             File.WriteAllText(path, xml, Encoding.Default);
         }
     }
-
-    //Декоратор с логами
-    public class SaverLogged<T> : Saver<T>
-    {
-        private ISaver<T> Saver { get; set; }
-        public SaverLogged(ISaver<T> saver)
-        {
-            Saver = saver;
-        }
-        public override T Open(string path)
-        {
-            DateTime now = DateTime.Now;
-            var res = Saver.Open(path);
-            Console.WriteLine($"По пути {path} был открыт объект {res} за {(DateTime.Now - now).TotalMilliseconds} мс");
-            return res;
-        }
-        public override void Save(string path, T obj)
-        {
-            DateTime now = DateTime.Now;
-            Console.WriteLine($"По пути {path} был сохранен объект {obj} за {(DateTime.Now - now).TotalMilliseconds} мс");
-            Saver.Save(path, obj);
-        }
-    }
-
 }

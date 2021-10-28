@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace DSSView
+namespace DSSAHP
 {
 
     public class AdviceSystemRelationsMatrix : DSSLib.NotifyObj, IAdviceSystem

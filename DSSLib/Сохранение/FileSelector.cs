@@ -22,7 +22,7 @@ namespace DSSLib
         {
 
         }
-        public DialogFileSelector(string defaultExt = ".xml", string defaultFolder = @"C:\Users\Alleaxx\Documents\Программы", string filter = "XML-файлы (*.xml) |*.xml| TXT-файлы (*.txt*)|*.txt")
+        public DialogFileSelector(string defaultExt = ".xml", string defaultFolder = null, string filter = "XML-файлы (*.xml) |*.xml|JSON-файлы (*.json) |*.json| TXT-файлы (*.txt*)|*.txt")
         {
             DefaultExt = defaultExt;
             DefaultDirectory = defaultFolder;

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DSSView.Properties {
+namespace DSSAHP.Properties {
     using System;
     
     

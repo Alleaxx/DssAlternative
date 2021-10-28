@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DSSCriterias.Logic\DSSCriterias.Logic.csproj" />
     <ProjectReference Include="..\DSSLib\DSSLib.csproj" />
-    <ProjectReference Include="..\DSSViewNew\DSSCriterias.csproj" />
   </ItemGroup>
 
 </Project>

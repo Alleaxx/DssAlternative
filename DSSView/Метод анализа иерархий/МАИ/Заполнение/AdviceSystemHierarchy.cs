@@ -8,7 +8,7 @@ using System.Windows.Data;
 
 using DSSLib;
 
-namespace DSSView
+namespace DSSAHP
 {
     public class AdviceSystemHierarchy : DSSLib.NotifyObj, IHierarchyAdviceSystem
     {

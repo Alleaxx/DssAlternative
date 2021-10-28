@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace DSSView
+namespace DSSAHP
 {
     public partial class TreeViewWindow : Window
     {

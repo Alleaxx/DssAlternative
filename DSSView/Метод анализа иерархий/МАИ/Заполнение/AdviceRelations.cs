@@ -7,7 +7,7 @@ using System.Windows.Data;
 
 using DSSLib;
 
-namespace DSSView
+namespace DSSAHP
 {
     public abstract class AdviceSystemRelations<T> : DSSLib.NotifyObj, IAdviceSystem
     {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using DSSLib;
 
-namespace DSSView
+namespace DSSAHP
 {
     public interface IViewProblem
     {

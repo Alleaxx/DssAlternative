@@ -8,23 +8,6 @@ using System.Windows.Input;
 namespace DSSLib
 {
 
-    public class NotifyObj : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        public NotifyObj()
-        {
-            InitCommands();
-        }
-        protected virtual void InitCommands()
-        {
-
-        }
-    }
 
 
 
@@ -45,11 +28,11 @@ namespace DSSLib
         }
         public bool CanExecute(object parameter)
         {
-            return this.canExecute == null || this.canExecute(parameter);
+            return canExecute == null || canExecute(parameter);
         }
         public void Execute(object parameter)
         {
-            this.execute(parameter);
+            execute(parameter);
         }
 
         public static bool IsTrue(object obj) => true;
