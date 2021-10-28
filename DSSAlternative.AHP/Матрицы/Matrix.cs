@@ -20,6 +20,9 @@ namespace DSSAlternative.AHP
         bool IsCorrect { get; }
 
         string GetText();
+
+        void Change(INode a, INode b, double value);
+        void Change(int x, int y, double value);
     }
     public class Matrix : IMatrix 
     {
@@ -54,6 +57,71 @@ namespace DSSAlternative.AHP
                     Array[i, a] = arr[i,a];
                 }
             }
+        }
+
+
+
+        //Матрица отношений (которая редактируется в интерфейсе)
+        public static IMatrix CreateRelations(IRelationsGrouped problem, INode node)
+        {
+            var rels = problem.RelationsGroupedMain(node);
+            int length = rels.Count();
+
+            var array = new double[length, length];
+            for (int r = 0; r < length; r++)
+            {
+                var row = rels.ElementAt(r);
+                for (int c = 0; c < length; c++)
+                {
+                    array[r, c] = row.ElementAt(c).Value;
+                }
+            }
+            return new Matrix(array);
+        }
+
+        //Матрица -1 локальных коэффициентов для узла
+        public static IMatrix CreateLocalCoeffs(IRelationsGrouped problem, INode node)
+        {
+            var nodes = node.Criterias2();
+            double[,] array = null;
+            if (nodes.Any())
+            {
+                var coeffs = nodes.Select(n => CreateRelations(problem, n).Coeffiients).ToArray();
+                int rows = coeffs.First().Length;
+                int cols = coeffs.Length;
+
+                array = new double[rows, cols];
+                for (int c = 0; c < cols; c++)
+                {
+                    var coeffsNow = coeffs[c];
+                    for (int r = 0; r < rows; r++)
+                    {
+                        array[r, c] = coeffsNow[r];
+                    }
+                }
+            }
+            else
+            {
+                array = new double[1, 1];
+                array[0, 0] = 1;
+            }
+
+
+            return new Matrix(array);
+        }
+
+
+
+        public void Change(INode a, INode b, double value)
+        {
+            int x = a.OrderIndexGroup();
+            int y = b.OrderIndexGroup();
+            Change(x, y, value);
+        }
+        public void Change(int x, int y, double value)
+        {
+            Array[x, y] = value;
+            Array[y, x] = 1 / value;
         }
     }
 }

@@ -56,7 +56,7 @@ namespace DSSAlternative.Shared.Components
 
                 IMatrix GetMatrixForRating(double value)
                 {
-                    IMatrixRelations source = Problem.GetMtxRelations(Relation.Main);
+                    IMatrix source = Problem.GetMtxRelations(Relation.Main);
                     source.Change(Relation.From, Relation.To, value);
                     return source;
                 }

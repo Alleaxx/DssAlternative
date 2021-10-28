@@ -3,7 +3,7 @@
 
 
 <div>
-    @if (IsEmpty())
+    @if (NotEmpty())
     {
         <div>
             <div class="mtx">
@@ -22,7 +22,7 @@
                             <td class="cell-node">
                                 &nbsp;
                             </td>
-                            @foreach (var node in Node.LowerNodesControlled)
+                            @foreach (var node in Node.LowerNodesControlled())
                             {
                                 <td class="cell-node">
                                     <a href="@NodeLink" @onclick="() => SetNow(node)">
@@ -114,7 +114,7 @@
     }
     private int NodesCount()
     {
-        return Node.LowerNodesControlled.Length;
+        return Node.LowerNodesControlled().Count();
     }
 
     private INodeRelation RelationSelected { get; set; }
@@ -132,9 +132,9 @@
         return false;
     }
 
-    private bool IsEmpty()
+    private bool NotEmpty()
     {
-        return Node.LowerNodesControlled.Length > 0;
+        return Node.LowerNodesControlled().Any();
     }
 
     private string RelationClass(INodeRelation rel)

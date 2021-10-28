@@ -30,8 +30,8 @@ namespace DSSAlternative.AppComponents
             if (hovered != null)
             {
                 AddRuleClass(hovered == node, "node-own");
-                AddRuleClass(hovered.Criterias.Group.Contains(node), "node-main-element");
-                var lower = hovered.LowerNodesControlled;
+                AddRuleClass(hovered.Criterias2().Contains(node), "node-main-element");
+                var lower = hovered.LowerNodesControlled();
                 AddRuleClass(lower != null && lower.Contains(node), "node-controlled-element");
             }
         }

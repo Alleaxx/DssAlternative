@@ -16,15 +16,17 @@ namespace DSSAlternative.AHP
         public event Action OnStructureUpdated;
         public event Action OnRelationsUpdated;
 
+
+
         //Редактируемое состояние
         public ITemplate TemplateEditing { get; private set; }
-        public IHierarchy ProblemEditing => new HierarchySheme(TemplateEditing);
+        public IHierarchy ProblemEditing => new HierarchyNodes(TemplateEditing);
 
         //Текущая проблема
         public IProblem ProblemActive { get; private set; }
+        public IRelations Relations { get; private set; }
 
-
-        public bool UnsavedChanged => !HierarchySheme.CompareEqual(ProblemActive, ProblemEditing);
+        public bool UnsavedChanged => !HierarchyNodes.CompareEqual(ProblemActive, ProblemEditing);
         public bool CanTranferEditing => UnsavedChanged && ProblemEditing.Correctness.IsCorrect;
 
         public string Status

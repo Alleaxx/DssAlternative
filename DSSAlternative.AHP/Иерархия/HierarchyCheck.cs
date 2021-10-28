@@ -23,7 +23,7 @@ namespace DSSAlternative.AHP
         private void CheckElementsExisting()
         {
             string name = "Наличие";
-            if (Hierarchy.Hierarchy.Count() < 2)
+            if (Hierarchy.Count() < 2)
             {
                 AddFail(name, "Отстутствует иерархия");
             }

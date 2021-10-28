@@ -14,7 +14,6 @@ namespace DSSAlternative.AHP
         string Img { get; }
 
         List<Node> Nodes { get; }
-        IEnumerable<INodeGroup> Groups { get; }
         TemplateRelation[] Relations { get; }
 
         ITemplate CloneThis();
@@ -29,25 +28,6 @@ namespace DSSAlternative.AHP
         public DateTime Creation { get; set; }
         public List<Node> Nodes { get; set; }
         public TemplateRelation[] Relations { get; set; } = Array.Empty<TemplateRelation>();
-
-
-        [JsonIgnore]
-        public IEnumerable<INodeGroup> Groups
-        {
-            get
-            {
-                var groupedNodes = Nodes.GroupBy(n => n.Group).OrderBy(g => g.Key);
-                var groupIndexes = groupedNodes.Select(g => g.Key);
-
-                List<NodeGroup> groups = new List<NodeGroup>();
-                foreach (var index in groupIndexes)
-                {
-                    groups.Add(new NodeGroup(index, Nodes.Where(n => n.Group == index).ToArray()));
-                }
-                return groups;
-            }
-        }
-
 
         public Template()
         {
@@ -75,7 +55,7 @@ namespace DSSAlternative.AHP
             Creation = DateTime.Now;
         }
         public Template(IProject project)
-            : this(project.ProblemActive.Hierarchy.OfType<Node>(), project.ProblemActive.RelationsRequired) { }
+            : this(project.ProblemActive.OfType<Node>(), project.ProblemActive.RelationsRequired) { }
 
         public object Clone()
         {

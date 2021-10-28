@@ -39,7 +39,7 @@ namespace DSSAlternative.AHP
         }
         public static bool HasOwnRelations(this INode node)
         {
-            return node.LowerNodes.Any() || node.LowerNodesControlled.Any();
+            return node.LowerNodes().Any() || node.LowerNodesControlled().Any();
         }
 
 
@@ -74,7 +74,7 @@ namespace DSSAlternative.AHP
         public static IEnumerable<INode> UnknownNodes(this IProject project)
         {
             var relationsCheck = project.ProblemActive.CorrectnessRels;
-            return project.ProblemActive.Hierarchy.Where(n => relationsCheck.IsNodeUnknown(n));
+            return project.ProblemActive.Where(n => relationsCheck.IsNodeUnknown(n));
         }
         public static IEnumerable<INode> UnconsistenctNodes(this IProject project)
         {

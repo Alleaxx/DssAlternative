@@ -29,7 +29,7 @@
         </section>
         <section class="edit">
             <h3>Редактирование '@Node.Name'</h3>
-            @Node.LevelName
+            @Node.LevelName()
             <dl>
                 <dt>
                     <label for="nodename">
@@ -124,7 +124,7 @@
     private string Name(KeyValuePair<int, INode[]> group)
     {
         int level = group.Key;
-        string firstNode = group.Value.First().GetLevelName(Problem.Hierarchy);
+        string firstNode = group.Value.First().LevelName();
         return $"{firstNode} ({level})";
     }
 

@@ -5,11 +5,14 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP
 {
-    public interface IProblem : IHierarchy
+    public interface IRelationsGrouped
+    {
+        IEnumerable<IGrouping<INode, INodeRelation>> RelationsGroupedMain(INode node);
+    }
+    public interface IProblem : IHierarchy, IRelationsGrouped
     {
         INodeRelation[] RelationsAll { get; }
         INodeRelation[] RelationsRequired { get; }
-        IEnumerable<IGrouping<INode, INodeRelation>> RelationsGroupedMain(INode node);
 
 
         event Action RelationValueChanged;
@@ -24,18 +27,14 @@ namespace DSSAlternative.AHP
         void ClearRelations();
         void ClearRelations(INode node);
 
-        IMatrixRelations GetMtxRelations(INode node);
+        IMatrix GetMtxRelations(INode node);
     }
-    public class Problem : HierarchySheme, IProblem
+    public class Problem : HierarchyNodes, IProblem
     {
         public event Action RelationValueChanged;
 
         public Problem(ITemplate template) : base(template)
         {
-            foreach (var item in Hierarchy)
-            {
-                item.Owner = this;
-            }
             CreateRelations();
             FillRelations(template);
             RecountCoeffs();
@@ -59,10 +58,10 @@ namespace DSSAlternative.AHP
             List<INodeRelation> GetRelations()
             {
                 List<INodeRelation> relations = new List<INodeRelation>();
-                foreach (var node in Hierarchy)
+                foreach (var node in this)
                 {
-                    var neigbors = Hierarchy.Where(n => Enumerable.SequenceEqual(n.Criterias.Group, node.Criterias.Group));
-                    foreach (var criteria in node.Criterias.GroupHier)
+                    var neigbors = this.Where(n => Enumerable.SequenceEqual(n.Criterias2(), node.Criterias2()));
+                    foreach (var criteria in node.Criterias2())
                     {
                         foreach (var nodeNeighbor in neigbors)
                         {
@@ -104,10 +103,10 @@ namespace DSSAlternative.AHP
         {
             foreach (var rel in template.Relations)
             {
-                INode main = Hierarchy.FirstOrDefault(n => n.Name == rel.Main);
-                INode from = Hierarchy.FirstOrDefault(n => n.Name == rel.From);
-                INode to = Hierarchy.FirstOrDefault(n => n.Name == rel.To);
-                if(main != null && from != null && to != null)
+                INode main = this.FirstOrDefault(n => n.Name == rel.Main);
+                INode from = this.FirstOrDefault(n => n.Name == rel.From);
+                INode to = this.FirstOrDefault(n => n.Name == rel.To);
+                if (main != null && from != null && to != null)
                 {
                     SetRelationBetween(main, from, to, rel.Value);
                 }
@@ -121,10 +120,10 @@ namespace DSSAlternative.AHP
         {
             return RelationsAll.Where(g => g.Main == node).GroupBy(r => r.From);
         }
-        
-        public IMatrixRelations GetMtxRelations(INode node)
+
+        public IMatrix GetMtxRelations(INode node)
         {
-            return new MtxRelations(this, node);
+            return Matrix.CreateRelations(this, node);
         }
 
 
@@ -138,8 +137,8 @@ namespace DSSAlternative.AHP
                 {
                     foreach (var node in levelNodes)
                     {
-                        var coefficients = new MtxCoeffs(this, node);
-                        double coeff = coefficients.Get(node);
+                        var coefficients = VectorMtx.CreateCoeffs(this, node);
+                        double coeff = coefficients[node];
 
                         node.Coefficient = coeff;
                     }
@@ -217,5 +216,26 @@ namespace DSSAlternative.AHP
                 return nextRelation;
         }
         public INodeRelation PrevRequiredRel(INodeRelation from) => GetRequiredRel(from, -1);
+    }
+
+
+    //Отдельный элемент, воплощающий отношения для списка узлов
+    //Пересоздается при изменении текущей коллекции в проекте
+    public interface IRelations : IEnumerable<INodeRelation>, IRelationsGrouped
+    {
+
+    }
+    public class Relations : List<INodeRelation>, IRelations
+    {
+        public readonly IHierarchy Hierarchy;
+        public Relations(IHierarchy hierarchy)
+        {
+            Hierarchy = hierarchy;
+        }
+
+        public IEnumerable<IGrouping<INode, INodeRelation>> RelationsGroupedMain(INode node)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -45,7 +45,7 @@
             </div>
             <div>
                 <span class="property-name">Узлов: </span>
-                <span class="property-value">@ProblemEditing.NodesCount</span>
+                <span class="property-value">@ProblemEditing.Count()</span>
             </div>
             <div>
                 <span class="property-name">Отношений: </span>
@@ -70,7 +70,7 @@
                                 <div class="level-name">
                                     <span class="level-index">Уровень @levelGroup.Key</span>
                                     <br>
-                                    <span>@levelGroup.ElementAt(0).LevelName</span>
+                                    <span>@levelGroup.ElementAt(0).LevelName()</span>
                                     <br />
 
                                 </div>
@@ -126,11 +126,11 @@
                                 <th class="num">Группа</th>
                                 <th class="num">Подчинена</th>
                             </tr>
-                            @foreach (var node in Problem.Hierarchy.OrderBy(n => n.Level))
+                            @foreach (var node in Problem.OrderBy(n => n.Level))
                             {
                                 <tr class="node-table-edit-node">
                                     <td class="edit-text">
-                                        <span class="node-text">@node.LevelName</span>
+                                        <span class="node-text">@node.LevelName()</span>
                                     </td>
                                     <td class="edit-cell">
                                         <input type="text" @bind-value="@node.Name" />
@@ -154,15 +154,15 @@
                                 <th>Критерии</th>
                                 <th>Зависимые</th>
                             </tr>
-                            @foreach (var group in Template.Groups)
+                            @foreach (var group in Template.Nodes.GroupBy(n => n.Group))
                             {
                                 <tr>
                                     <td>
-                                        @group.Index
+                                        @group.Key
                                     </td>
                                     <td>
                                         <ul>
-                                            @foreach (var node in group.Group)
+                                            @foreach (var node in group)
                                             {
                                                 <li>@node.Name</li>
                                             }
@@ -170,7 +170,7 @@
                                     </td>
                                     <td>
                                         <ul>
-                                            @foreach (var node in Template.Nodes.Where(n => n.GroupIndex == group.Index))
+                                            @foreach (var node in Template.Nodes.Where(n => n.GroupIndex == group.Key))
                                             {
                                                 <li>@node.Name</li>
                                             }
@@ -245,21 +245,21 @@
     private void ShowStructure()
     {
         Console.WriteLine("Новая структура");
-        foreach (var node in Problem.Hierarchy)
+        foreach (var node in Problem)
         {
             Console.WriteLine($"{node.Level} - {node.Name}:");
             Console.Write("Расчет: ");
-            foreach (var countNode in node.Criterias.Group)
+            foreach (var countNode in node.Criterias2())
             {
                 Console.Write($"{countNode.Name}, ");
             }
-            Console.WriteLine(new MtxRelations(Problem, node).GetText());
+            Console.WriteLine(Matrix.CreateRelations(Problem, node).GetText());
             Console.WriteLine("Матрица локальных");
-            Console.WriteLine(new MtxLocalCoeffs(Problem, node).GetText());
+            Console.WriteLine(Matrix.CreateLocalCoeffs(Problem, node).GetText());
             Console.WriteLine("Матрица глобальных");
-            Console.WriteLine(new MtxGlobalCoeffs(node).GetText());
+            Console.WriteLine(VectorMtx.CreateGlobalCoeffs(node).ToString());
             Console.WriteLine("Матрица коэфф.");
-            Console.WriteLine(new MtxCoeffs(Problem, node).GetText());
+            Console.WriteLine(VectorMtx.CreateCoeffs(Problem, node).ToString());
             Console.WriteLine();
         }
     }

@@ -79,7 +79,7 @@
 
     private string HeaderText(IGrouping<int, INode> group)
     {
-        string name = group.First().LevelName;
+        string name = group.First().LevelName();
         return $"{name} ур. {group.Key}";
     }
 
