@@ -73,7 +73,7 @@ namespace DSSAlternative.AHP
             Node[] nodes = new Node[] { main, k1, k2, a1, a2 };
 
             ITemplate template = new Template(nodes);
-            IProject project = new Project(template, true);
+            IProject project = new Project(template);
             return project;
         }
         public static IProject CreateSampleTree2Problem()

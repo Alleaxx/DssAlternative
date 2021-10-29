@@ -27,12 +27,13 @@ namespace DSSAlternative.AppComponents
         }
         public CssNode(INode node, INode hovered)
         {
-            if (hovered != null)
+            if (hovered != null && node != null)
             {
                 AddRuleClass(hovered == node, "node-own");
-                AddRuleClass(hovered.Criterias2().Contains(node), "node-main-element");
-                var lower = hovered.LowerNodesControlled();
-                AddRuleClass(lower != null && lower.Contains(node), "node-controlled-element");
+                var criterias = hovered.Criterias();
+                AddRuleClass(criterias.Any() && hovered.Criterias().Contains(node), "node-main-element");
+                var lower = hovered.Controlled();
+                AddRuleClass(lower.Any() && lower.Contains(node), "node-controlled-element");
             }
         }
     }

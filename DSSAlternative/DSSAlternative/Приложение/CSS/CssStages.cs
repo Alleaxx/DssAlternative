@@ -12,7 +12,7 @@ namespace DSSAlternative.AppComponents
     {
         public CssHierarchy(IProject project)
         {
-            bool isEditHierCorrect = project.ProblemEditing.Correctness.IsCorrect;
+            bool isEditHierCorrect = project.HierarchyEditing.Correctness.IsCorrect;
 
             AddRuleClass("stage-menu-element");
             AddRuleClass(() => project.UnsavedChanged, "warning");

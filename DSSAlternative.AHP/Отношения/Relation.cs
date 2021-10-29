@@ -8,6 +8,8 @@ namespace DSSAlternative.AHP
 {
     public interface INodeRelation
     {
+        event Action<INodeRelation> OnChanged;
+
         INode Main { get; }
         INode From { get; }
         INode To { get; }
@@ -44,17 +46,18 @@ namespace DSSAlternative.AHP
                 return $"'{From}' хуже '{To}' в {1 / Value} раз по {Main}";
             }
         }
+        
+        
         public event Action<INodeRelation> OnChanged;
 
-        public INode Main { get; private set; }
 
-        public INode From { get; private set; }
-        public INode To { get; private set; }
+        public INode Main { get; init; }
+        public INode From { get; init; }
+        public INode To { get; init; }
 
 
         //Свойства
-        private bool Inited => From != null && To != null;
-        public bool Self => Inited && From == To;
+        public bool Self => From == To;
         public INodeRelation Mirrored { get; set; }
 
 
@@ -99,17 +102,29 @@ namespace DSSAlternative.AHP
             }
         }
         protected double value;
-        public bool Unknown => value == 0;
+        public bool Unknown => Value == 0;
 
 
 
-
+        public NodeRelation(INode criteria, INode from)
+        {
+            Main = criteria;
+            From = from;
+            To = from;
+            Value = 1;
+        }
         public NodeRelation(INode criteria, INode from, INode to, double val)
         {
             Main = criteria;
             From = from;
             To = to;
             Value = val;
+        }
+
+
+        public static INodeRelation CreateRelation(INode criteria, INode from, INode to, double val)
+        {
+            return default;
         }
 
 
@@ -150,6 +165,9 @@ namespace DSSAlternative.AHP
         {
             Value = 0;
         }
+
+
+
 
 
         public string GetTextRelation()
@@ -206,33 +224,6 @@ namespace DSSAlternative.AHP
                 else
                     return "СЛЕГКА ПРОИГРЫВАЕТ";
             }
-        }
-    }
-
-    public class RelationPair
-    {
-        public readonly NodeRelation FromRelation;
-        public readonly NodeRelation ToRelation;
-
-        public INode MainNode => FromRelation.Main;
-        public INode FromNode => FromRelation.From;
-        public INode ToNode => FromRelation.To;
-
-        public IRating Rating { get; set; }
-        public void SetRating(IRating rating)
-        {
-
-        }
-
-        public RelationPair(NodeRelation from, NodeRelation to)
-        {
-            FromRelation = from;
-            ToRelation = to;
-        }
-        public RelationPair(NodeRelation main)
-        {
-            FromRelation = main;
-            ToRelation = main.Mirrored as NodeRelation;
         }
     }
 }

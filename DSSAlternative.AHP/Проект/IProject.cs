@@ -14,10 +14,9 @@ namespace DSSAlternative.AHP
         bool CanTranferEditing { get; }
 
 
-        ITemplate TemplateEditing { get; }
-        IHierarchy ProblemEditing { get; }
+        IHierarchy HierarchyEditing { get; }
         IProblem ProblemActive { get; }
-
+        IRelations Relations { get; set; }
 
         INode NodeSelected { get; }
         INodeRelation RelationSelected { get; }

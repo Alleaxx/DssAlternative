@@ -36,7 +36,7 @@ namespace DSSAlternative.AHP
         //Вектор -1 глобальных коэффициентов для узла
         public static VectorMtx CreateGlobalCoeffs(INode node)
         {
-            INode[] nodes = node.Criterias2().ToArray();
+            INode[] nodes = node.Criterias().ToArray();
             double[] vector = new double[] { 1 };
             if (nodes.Length > 0)
             {
@@ -49,7 +49,7 @@ namespace DSSAlternative.AHP
         //Вектор коэффициентов для узла (на одном уровне)
         public static VectorMtx CreateCoeffs(IRelationsGrouped problem, INode node)
         {
-            var nodes = node.NeighborsGroup().ToArray();
+            var nodes = node.NeighborsGroupIndex().ToArray();
 
             var local = Matrix.CreateLocalCoeffs(problem, node);
             var global = CreateGlobalCoeffs(node);

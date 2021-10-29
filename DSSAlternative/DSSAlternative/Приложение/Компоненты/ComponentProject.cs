@@ -25,7 +25,7 @@ namespace DSSAlternative.AppComponents
         protected ICss ResultsCss => new CssResults(Project);
 
 
-        protected ICorrectness HierEditState => Project.ProblemEditing.Correctness;
+        protected ICorrectness HierEditState => Project.HierarchyEditing.Correctness;
         protected IRelationsCorrectness RelationState => Project.ProblemActive.CorrectnessRels;
 
 

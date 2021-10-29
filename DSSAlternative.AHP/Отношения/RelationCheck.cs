@@ -38,7 +38,7 @@ namespace DSSAlternative.AHP
 
         private IEnumerable<INode> NodesNotConsistent()
         {
-            return Problem.NodesWithRels.Where(node => !Problem.GetMtxRelations(node).IsCorrect);
+            return Problem.RelationNodes.Where(node => !Problem.GetMtxRelations(node).IsCorrect);
         }
         private IEnumerable<INodeRelation> RelationsUnknown()
         {

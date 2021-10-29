@@ -39,6 +39,22 @@ namespace DSSAlternative.AHP
             {
                 AddFail(name, "Отсутствуют альтернативы");
             }
+            if (Hierarchy.MainGoal != null && !Hierarchy.Any(n => n.GroupIndex == Hierarchy.MainGoal.Group))
+            {
+                AddFail(name, "Отсутствуют элементы, подчиненные главной цели");
+            }
+            if (Hierarchy.Any(n => n.Group == n.GroupIndex))
+            {
+                AddFail(name, "Есть элементы, зависимые от самих себя");
+            }
+            if (Hierarchy.Any(n => !Hierarchy.ExistingGroups.Contains(n.Group)))
+            {
+                AddFail(name, "Есть элементы, зависимые от несуществующих групп");
+            }
+            //if (!Hierarchy.Any(n => Hierarchy.Any(n2 => n2.GroupIndex == n.Group)))
+            //{
+            //    AddFail(name, "Нет конечных альтернатив");
+            //}
         }
         private void CheckElementsPlacement()
         {
@@ -69,5 +85,9 @@ namespace DSSAlternative.AHP
                 }
             }
         }
+
+        //Должны быть узлы, которые не являются ни для кого критериями
+
+        //Проверка на группировку...
     }
 }

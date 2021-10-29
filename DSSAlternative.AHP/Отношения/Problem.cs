@@ -28,6 +28,7 @@ namespace DSSAlternative.AHP
         void ClearRelations(INode node);
 
         IMatrix GetMtxRelations(INode node);
+        void FillRelations(ITemplate template);
     }
     public class Problem : HierarchyNodes, IProblem
     {
@@ -43,25 +44,25 @@ namespace DSSAlternative.AHP
         //Конструирование задачи и отношений
         private void CreateRelations()
         {
-            var relations = GetRelations();
+            var relations = CreateRelationsList();
             RelationsAll = relations.ToArray();
 
             foreach (var rel in relations)
             {
                 rel.Mirrored = relations.Find(mirr => mirr.Main == rel.Main && mirr.To == rel.From && mirr.From == rel.To);
             }
-            RelationsRequired = GetRequiredRelations().ToArray();
+            RelationsRequired = FigureOutRequiredRelations().ToArray();
 
             CorrectnessRels = new RelationsCheck(this);
 
 
-            List<INodeRelation> GetRelations()
+            List<INodeRelation> CreateRelationsList()
             {
                 List<INodeRelation> relations = new List<INodeRelation>();
                 foreach (var node in this)
                 {
-                    var neigbors = this.Where(n => Enumerable.SequenceEqual(n.Criterias2(), node.Criterias2()));
-                    foreach (var criteria in node.Criterias2())
+                    var neigbors = this.Where(n => Enumerable.SequenceEqual(n.Criterias(), node.Criterias()));
+                    foreach (var criteria in node.Criterias())
                     {
                         foreach (var nodeNeighbor in neigbors)
                         {
@@ -78,7 +79,7 @@ namespace DSSAlternative.AHP
                 return relations;
             }
 
-            List<INodeRelation> GetRequiredRelations()
+            List<INodeRelation> FigureOutRequiredRelations()
             {
                 List<INodeRelation> onlyRequired = RelationsAll.Where(r => r.From != r.To).ToList();
                 for (int i = 0; i < onlyRequired.Count; i++)
@@ -99,7 +100,7 @@ namespace DSSAlternative.AHP
         }
 
 
-        private void FillRelations(ITemplate template)
+        public void FillRelations(ITemplate template)
         {
             foreach (var rel in template.Relations)
             {
@@ -127,6 +128,7 @@ namespace DSSAlternative.AHP
         }
 
 
+
         private void RecountCoeffs()
         {
             MainGoal.Coefficient = 1;
@@ -140,12 +142,11 @@ namespace DSSAlternative.AHP
                         var coefficients = VectorMtx.CreateCoeffs(this, node);
                         double coeff = coefficients[node];
 
-                        node.Coefficient = coeff;
+                        //node.Coefficient = coeff;
                     }
                 }
             }
         }
-
         public void ClearRelations(INode node)
         {
             foreach (var relation in RelationsRequired.Where(r => r.Main == node))
@@ -156,7 +157,7 @@ namespace DSSAlternative.AHP
         }
         public void ClearRelations()
         {
-            foreach (var node in NodesWithRels)
+            foreach (var node in RelationNodes)
             {
                 ClearRelations(node);
             }
@@ -216,26 +217,5 @@ namespace DSSAlternative.AHP
                 return nextRelation;
         }
         public INodeRelation PrevRequiredRel(INodeRelation from) => GetRequiredRel(from, -1);
-    }
-
-
-    //Отдельный элемент, воплощающий отношения для списка узлов
-    //Пересоздается при изменении текущей коллекции в проекте
-    public interface IRelations : IEnumerable<INodeRelation>, IRelationsGrouped
-    {
-
-    }
-    public class Relations : List<INodeRelation>, IRelations
-    {
-        public readonly IHierarchy Hierarchy;
-        public Relations(IHierarchy hierarchy)
-        {
-            Hierarchy = hierarchy;
-        }
-
-        public IEnumerable<IGrouping<INode, INodeRelation>> RelationsGroupedMain(INode node)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

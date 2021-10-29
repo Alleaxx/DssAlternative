@@ -22,7 +22,7 @@
                             <td class="cell-node">
                                 &nbsp;
                             </td>
-                            @foreach (var node in Node.LowerNodesControlled())
+                            @foreach (var node in Node.Controlled())
                             {
                                 <td class="cell-node">
                                     <a href="@NodeLink" @onclick="() => SetNow(node)">
@@ -114,7 +114,7 @@
     }
     private int NodesCount()
     {
-        return Node.LowerNodesControlled().Count();
+        return Node.Controlled().Count();
     }
 
     private INodeRelation RelationSelected { get; set; }
@@ -134,7 +134,7 @@
 
     private bool NotEmpty()
     {
-        return Node.LowerNodesControlled().Any();
+        return Node.Controlled().Any();
     }
 
     private string RelationClass(INodeRelation rel)

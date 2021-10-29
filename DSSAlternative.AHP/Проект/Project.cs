@@ -19,15 +19,14 @@ namespace DSSAlternative.AHP
 
 
         //Редактируемое состояние
-        public ITemplate TemplateEditing { get; private set; }
-        public IHierarchy ProblemEditing => new HierarchyNodes(TemplateEditing);
+        public IHierarchy HierarchyEditing { get; init; }
 
         //Текущая проблема
         public IProblem ProblemActive { get; private set; }
         public IRelations Relations { get; private set; }
 
-        public bool UnsavedChanged => !HierarchyNodes.CompareEqual(ProblemActive, ProblemEditing);
-        public bool CanTranferEditing => UnsavedChanged && ProblemEditing.Correctness.IsCorrect;
+        public bool UnsavedChanged => !HierarchyNodes.CompareEqual(ProblemActive, HierarchyEditing);
+        public bool CanTranferEditing => UnsavedChanged && HierarchyEditing.Correctness.IsCorrect;
 
         public string Status
         {
@@ -47,49 +46,66 @@ namespace DSSAlternative.AHP
         }
 
 
-        public Project(ITemplate template, bool activeInit = true)
+        public Project(ITemplate template)
         {
             Console.WriteLine("Создание проекта и обновление иерархии");
-
-            if (activeInit)
-            {
-                SetActiveProblem(template);
-            }
-            else
-            {
-                TemplateEditing = template;
-            }
+            HierarchyEditing = new HierarchyNodes(template);
+            UpdateProblemFromEditing();
+            ProblemActive.FillRelations(template);
+        }
+        public Project(IEnumerable<INode> nodes)
+        {
+            Console.WriteLine("Создание проекта и обновление иерархии");
+            HierarchyEditing = new HierarchyNodes(nodes);
+            UpdateProblemFromEditing();
         }
         public void UpdateProblemFromEditing()
         {
             if (CanTranferEditing)
             {
-                SetActiveProblem(TemplateEditing);
+                ReplaceCurrentProblem(HierarchyEditing);
             }
             else
             {
                 Console.WriteLine("Обновление иерархии недоступно");
             }
         }
-        private void SetActiveProblem(ITemplate template)
+        private void ReplaceCurrentProblem(IHierarchy hierarchy)
         {
-            TemplateEditing = template.CloneThis();
+            ITemplate copy = new Template(hierarchy).CloneThis();
             IProblem old = ProblemActive;
-            ProblemActive = new Problem(template);
-            SetNow(ProblemActive.MainGoal);
 
+            RegisterProblem(new Problem(copy));
             if (old != null)
             {
-                old.RelationValueChanged -= Update;
-            }
-            ProblemActive.RelationValueChanged += Update;
-            Update();
-
-            void Update()
-            {
-                UpdatedHierOrRelationChanged?.Invoke();
+                old.RelationValueChanged -= RelationsUpdated;
             }
         }
+        private void RegisterProblem(IProblem problem)
+        {
+            ProblemActive = problem;
+            SetNow(ProblemActive.MainGoal);
+
+            ProblemActive.RelationValueChanged += RelationsUpdated;
+            RelationsUpdated();
+
+            Relations = new Relations(ProblemActive);
+            Relations.SetFromTemplate(new Template(ProblemActive.OfType<Node>(), ProblemActive.RelationsRequired));
+        }
+        private void RelationsUpdated()
+        {
+            UpdatedHierOrRelationChanged?.Invoke();
+            if(Relations != null)
+            {
+                Relations.SetFromTemplate(new Template(ProblemActive.OfType<Node>(), ProblemActive.RelationsRequired));
+
+                Console.WriteLine("ИЗМЕНЕНИЕ ОТНОШЕНИЙ");
+                Console.WriteLine(Relations);
+                Console.WriteLine();
+            }
+        }
+
+
 
 
 

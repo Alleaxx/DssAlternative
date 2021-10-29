@@ -9,27 +9,25 @@ namespace DSSAlternative.AHP
     {
         IEnumerable<IGrouping<int, INode>> GroupedByLevel { get; }
         IEnumerable<IGrouping<int, INode>> GroupedByGroup { get; }
-        ILookup<int, INode> Dictionary { get; }
         IEnumerable<INode> Best(int level);
 
 
         public INode MainGoal { get; }
         public IEnumerable<INode> Criterias { get; }
         public IEnumerable<INode> Alternatives { get; }
-        public IEnumerable<INode> NodesWithRels { get; }
+        public IEnumerable<INode> RelationNodes { get; }
 
         public ICorrectness Correctness { get; }
 
-
         public int LevelsCount { get; }
         public int RelationsCount { get; }
-        TimeSpan EstTime { get; }
+        TimeSpan CountEstTime();
         public int MaxLevel { get; }
+        IEnumerable<int> ExistingGroups { get; }
 
 
         event Action OnChanged;
         void AddNode(INode node);
-        void RemoveNode(INode node);
     }
 
     public class HierarchyNodes : List<INode>, IHierarchy
@@ -38,37 +36,67 @@ namespace DSSAlternative.AHP
         {
             return $"{MainGoal.Name} [{GroupedByLevel.Count()}] ({Count})";
         }
-        public HierarchyNodes(ITemplate template) : base(template.Nodes.OfType<INode>().ToArray())
+        
+        public ICorrectness Correctness { get; init; }
+        public HierarchyNodes(ITemplate template) : this(template.Nodes.OfType<INode>().ToArray())
         {
+
+        }
+        public HierarchyNodes(params INode[] nodes) : this(nodes.AsEnumerable())
+        {
+
+        }
+        public HierarchyNodes(IEnumerable<INode> nodes) : base(nodes)
+        {
+            Correctness = new HierarchyCheck(this);
             foreach (var node in this)
             {
                 node.SetHierarchy(this);
+                node.OnChanged += NodeUpdated;
+                node.OnMoved += NodeMoved;
             }
         }
+
+
+        //Изменение коллекции
         public event Action OnChanged;
         public void AddNode(INode node)
         {
             if (!Contains(node))
             {
                 Add(node);
+                if(node.Hierarchy != this)
+                {
+                    node.SetHierarchy(this);
+                }
+                node.OnChanged += NodeUpdated;
+                node.OnMoved += NodeMoved;
                 OnChanged?.Invoke();
             }
         }
-        public void RemoveNode(INode node)
+        private void RemoveNode(INode node)
         {
             bool isRemoved = Remove(node);
             if (isRemoved)
             {
+                node.OnChanged -= NodeUpdated;
+                node.OnMoved -= NodeMoved;
                 OnChanged?.Invoke();
             }
         }
-
+        private void NodeUpdated(INode node)
+        {
+            OnChanged?.Invoke();
+        }
+        private void NodeMoved(INode node, IHierarchy newHier)
+        {
+            RemoveNode(node);
+        }
 
 
         //Структура
         public IEnumerable<IGrouping<int, INode>> GroupedByLevel => this.OrderBy(n => n.Level).GroupBy(h => h.Level);
         public IEnumerable<IGrouping<int, INode>> GroupedByGroup => this.OrderBy(n => n.Group).GroupBy(h => h.Group);
-        public ICorrectness Correctness => new HierarchyCheck(this);
 
         public ILookup<int, INode> Dictionary => this.ToLookup(n => n.Level);
         public IEnumerable<INode> Best(int level)
@@ -77,8 +105,8 @@ namespace DSSAlternative.AHP
             return Dictionary[level].Where(n => n.Coefficient == maxCoefficient);
         }
 
-        //Всего узлов
-        public int LevelsCount => Dictionary.Count;
+        //Общая информация об иерархии
+        public int LevelsCount => this.Select(n => n.Level).Distinct().Count();
         public int RelationsCount
         {
             get
@@ -95,16 +123,20 @@ namespace DSSAlternative.AHP
                 return relsAmount;
             }
         }
-        public TimeSpan EstTime => new TimeSpan(0, 0, RelationsCount * 8);
+        public TimeSpan CountEstTime()
+        {
+            return new TimeSpan(0, 0, RelationsCount * 8);
+        }
         public int MaxLevel => this.Max(s => s.Level);
-
+        public IEnumerable<int> ExistingGroups => this.Select(n => n.Group).Distinct();
 
         //Узлы
-        public INode MainGoal => this.FirstOrDefault(h => h.Level == 0);
-        public IEnumerable<INode> Criterias => this.Where(h => h.Level > 0 && h.Level < LevelsCount - 1);
-        public IEnumerable<INode> Alternatives => this.Where(h => h.Level == LevelsCount - 1);
-        public IEnumerable<INode> NodesWithRels => Criterias.Prepend(MainGoal);
-        
+        public INode MainGoal => this.FirstOrDefault(h => h.Level == 0 && h.GroupIndex == -1);
+        public IEnumerable<INode> Criterias => this.Where(h => h.Level > 0 && h.Level < MaxLevel);
+        public IEnumerable<INode> Alternatives => this.Where(h => h.Level == MaxLevel);
+
+        //Все кроме последнего уровня
+        public IEnumerable<INode> RelationNodes => this.Where(n => n.Level != MaxLevel);
 
         public static bool CompareEqual(IHierarchy a, IHierarchy b)
         {
@@ -112,23 +144,18 @@ namespace DSSAlternative.AHP
             {
                 return false;
             }
-
-            var aNodes = a.ToList();
-            var bNodes = b.ToList();
-
-            int aCount = aNodes.Count;
-            int bCount = bNodes.Count;
-
-            if (aCount != bCount)
+            if (a.Count() != b.Count())
             {
                 return false;
             }
-
-            string aString = string.Join(';', aNodes);
-            string bString = string.Join(';', bNodes);
-            if (!aString.Equals(bString))
+            var dictionary = a.ToDictionary(n => n.CreateNodeId());
+            foreach (var node in b)
             {
-                return false;
+                string id = node.CreateNodeId();
+                if (!dictionary.ContainsKey(id))
+                {
+                    return false;
+                }
             }
 
             return true;

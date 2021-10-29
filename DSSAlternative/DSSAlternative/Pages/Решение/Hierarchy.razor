@@ -41,19 +41,19 @@
         <div class="information">
             <div>
                 <span class="property-name">Уровней: </span>
-                <span class="property-value">@ProblemEditing.LevelsCount</span>
+                <span class="property-value">@HierarchyEdit.LevelsCount</span>
             </div>
             <div>
                 <span class="property-name">Узлов: </span>
-                <span class="property-value">@ProblemEditing.Count()</span>
+                <span class="property-value">@HierarchyEdit.Count()</span>
             </div>
             <div>
                 <span class="property-name">Отношений: </span>
-                <span class="property-value">@ProblemEditing.RelationsCount</span>
+                <span class="property-value">@HierarchyEdit.RelationsCount</span>
             </div>
             <div hidden>
                 <span class="property-name">~ Времени на решение: </span>
-                <span class="property-value">@ProblemEditing.EstTime.Minutes мин. @ProblemEditing.EstTime.Seconds сек.</span>
+                <span class="property-value">@HierarchyEdit.CountEstTime().Minutes мин. @HierarchyEdit.CountEstTime().Seconds сек.</span>
             </div>
         </div>
 
@@ -64,7 +64,7 @@
                 </Title>
                 <ChildContent>
                     <div>
-                        @foreach (var levelGroup in ProblemEditing.GroupedByLevel)
+                        @foreach (var levelGroup in HierarchyEdit.GroupedByLevel)
                         {
                             <section class="level @(levelGroup.Key == 0 ? "main-goal-level" : "")">
                                 <div class="level-name">
@@ -92,9 +92,9 @@
                         }
                         <section class="level new-level">
                             <div class="level-name">
-                                <span>Уровень @ProblemEditing.LevelsCount</span>
+                                <span>Уровень @HierarchyEdit.LevelsCount</span>
                             </div>
-                            <input class="add " type="button" value="++" @onclick="@(() => AddNode(ProblemEditing.LevelsCount))" />
+                            <input class="add " type="button" value="++" @onclick="@(() => AddNode(HierarchyEdit.LevelsCount))" />
                             <input class="add" type="button" value="+" style="visibility:hidden" />
                         </section>
                         <section style="display:flex">
@@ -126,7 +126,7 @@
                                 <th class="num">Группа</th>
                                 <th class="num">Подчинена</th>
                             </tr>
-                            @foreach (var node in Problem.OrderBy(n => n.Level))
+                            @foreach (var node in HierarchyEdit.OrderBy(n => n.Level))
                             {
                                 <tr class="node-table-edit-node">
                                     <td class="edit-text">
@@ -154,7 +154,7 @@
                                 <th>Критерии</th>
                                 <th>Зависимые</th>
                             </tr>
-                            @foreach (var group in Template.Nodes.GroupBy(n => n.Group))
+                            @foreach (var group in HierarchyEdit.GroupBy(n => n.Group))
                             {
                                 <tr>
                                     <td>
@@ -170,7 +170,7 @@
                                     </td>
                                     <td>
                                         <ul>
-                                            @foreach (var node in Template.Nodes.Where(n => n.GroupIndex == group.Key))
+                                            @foreach (var node in HierarchyEdit.Where(n => n.GroupIndex == group.Key))
                                             {
                                                 <li>@node.Name</li>
                                             }
@@ -203,9 +203,9 @@
 
 
 @code {
-    private Template TemplateCurrent => new Template(NodesEditing.OfType<Node>().ToArray())
+    private Template TemplateCurrent => new Template(HierarchyEdit.OfType<Node>().ToArray())
     {
-        Name = ProblemEditing.MainGoal.Name,
+        Name = HierarchyEdit.MainGoal.Name,
         Img = "Images/tech.png",
         Description = "Сохраненная задача выбора"
     };
@@ -214,9 +214,7 @@
     private INode NodeHovered { get; set; }
 
 
-    private IHierarchy ProblemEditing => Project.ProblemEditing;
-    private ITemplate Template => Project.TemplateEditing;
-    private List<Node> NodesEditing => Template.Nodes;
+    private IHierarchy HierarchyEdit => Project.HierarchyEditing;
 
 
     //Подтверждение иерархии
@@ -226,15 +224,22 @@
     //Редактирование иерархии
     private void AddNode(int level = -1)
     {
-        level = level == -1 ? ProblemEditing.LevelsCount - 1 : level;
-        INode newNode = new Node(level, "Узел", level, level - 1);
-        NodesEditing.Add(newNode as Node);
+        level = level == -1 ? HierarchyEdit.LevelsCount - 1 : level;
+        bool isAlternative = level == HierarchyEdit.MaxLevel || level == HierarchyEdit.MaxLevel + 1;
+
+        string name = isAlternative ? $"А{HierarchyEdit.Alternatives.Count() + 1}" : $"К{HierarchyEdit.Criterias.Count() + 1}";
+        INode newNode = new Node(level, name, level, level - 1);
+        newNode.SetHierarchy(HierarchyEdit);
     }
     private void RemoveNode(INode e)
     {
-        if (e != ProblemEditing.MainGoal)
+        if (e != HierarchyEdit.MainGoal)
         {
-            NodesEditing.Remove(e as Node);
+            if(NodeHovered == e)
+            {
+                NodeHovered = null;
+            }
+            e.RemoveFromHierarchy();
         }
     }
     private string HierClass(INode node)
@@ -249,7 +254,7 @@
         {
             Console.WriteLine($"{node.Level} - {node.Name}:");
             Console.Write("Расчет: ");
-            foreach (var countNode in node.Criterias2())
+            foreach (var countNode in node.Criterias())
             {
                 Console.Write($"{countNode.Name}, ");
             }

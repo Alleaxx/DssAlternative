@@ -33,9 +33,13 @@ namespace DSSAlternative.AHP
         {
             Creation = DateTime.Now;
         }
-        public Template(Node[] nodes) : this()
+        public Template(IEnumerable<Node> nodes) : this()
         {
             Nodes = new List<Node>(nodes);
+        }
+        public Template(IHierarchy hier)
+        {
+            Nodes = new List<Node>(hier.OfType<Node>());
         }
         public Template(IEnumerable<Node> nodes, IEnumerable<INodeRelation> relations)
         {

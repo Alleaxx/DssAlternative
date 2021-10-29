@@ -6,7 +6,7 @@
 <div class="relations-grid">
     <nav class="menu-area">
         <h2 class="rel-menu-header">Список отношений</h2>
-        @foreach (var node in Problem.NodesWithRels)
+        @foreach (var node in Problem.RelationNodes)
         {
             <NodeRelations Node="node" Context="rel">
                 <RelationView>

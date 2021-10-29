@@ -18,6 +18,7 @@ namespace DSSAlternative.AHP
 
         double Cr { get; }
         bool IsCorrect { get; }
+        bool Consistent { get; }
 
         string GetText();
 
@@ -35,6 +36,7 @@ namespace DSSAlternative.AHP
 
         public double Cr => Array.Cr();
         public bool IsCorrect => Array.IsCorrect();
+        public bool Consistent => Array.IsCorrect();
 
         public double[] Coeffiients => Array.LocalCoeffs();
         public bool WithZeros() => Array.WithZeros();
@@ -82,7 +84,7 @@ namespace DSSAlternative.AHP
         //Матрица -1 локальных коэффициентов для узла
         public static IMatrix CreateLocalCoeffs(IRelationsGrouped problem, INode node)
         {
-            var nodes = node.Criterias2();
+            var nodes = node.Criterias();
             double[,] array = null;
             if (nodes.Any())
             {
