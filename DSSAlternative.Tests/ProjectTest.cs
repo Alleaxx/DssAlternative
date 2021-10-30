@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using DSSAlternative.AHP;
 namespace DSSAlternative.Tests
 {
+    [TestClass]
     class ProjectTest
     {
 
@@ -16,7 +19,10 @@ namespace DSSAlternative.Tests
         //Проект сохраняется в шаблон и восстанавливается в фактически равном состоянии
         
 
+        public void TemplateSave()
+        {
 
+        }
         //Шаблон сохраняется в JSON и восстанавливается эквивалентно
     }
 }

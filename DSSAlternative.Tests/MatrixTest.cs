@@ -234,7 +234,7 @@ namespace DSSAlternative.Tests
 
 
 
-        private void CheckEqualArrays(double[] expected, double[] received, double delta, string message)
+        public static void CheckEqualArrays(double[] expected, double[] received, double delta, string message)
         {
             if(expected.Length != received.Length)
             {
@@ -245,6 +245,23 @@ namespace DSSAlternative.Tests
                 Assert.AreEqual(expected[i], received[i], delta, $"{message}: Массивы не равны");
             }
         }
+        public static void CheckEqualArrays(double[,] expected, double[,] received, double delta, string message)
+        {
+            if (expected.GetLength(0) != received.GetLength(0) || expected.GetLength(1) != received.GetLength(1))
+            {
+                Assert.Fail($"{message}: Массивы не равны");
+            }
+            for (int r = 0; r < expected.GetLength(0); r++)
+            {
+                for (int c = 0; c < expected.GetLength(1); c++)
+                {
+                    Assert.AreEqual(expected[r,c], received[r,c], delta, $"{message}: Массивы не равны");
+                }
+            }
+        }
+
+
+
         //Изменение значений матрицы невозможно
         //Изменение значений матрицы возвращает другую матрицу
         //...

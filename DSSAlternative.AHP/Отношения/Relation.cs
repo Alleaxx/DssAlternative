@@ -19,6 +19,7 @@ namespace DSSAlternative.AHP
         bool Unknown { get;  }
         double Value { get; set; }
 
+        void Reflect();
         void SetUnknown();
 
         IRating Rating { get; }
@@ -103,15 +104,15 @@ namespace DSSAlternative.AHP
         }
         protected double value;
         public bool Unknown => Value == 0;
-
-
-
-        public NodeRelation(INode criteria, INode from)
+        public void Reflect()
         {
-            Main = criteria;
-            From = from;
-            To = from;
-            Value = 1;
+            Value = 1 / Value;
+        }
+
+
+        public NodeRelation(INode criteria, INode from) : this(criteria, from, from, 1)
+        {
+            Mirrored = this;
         }
         public NodeRelation(INode criteria, INode from, INode to, double val)
         {
@@ -172,54 +173,55 @@ namespace DSSAlternative.AHP
 
         public string GetTextRelation()
         {
+            double val = Value;
             if (Unknown)
             {
                 return "??????";
             }
 
-            if (Value == 1)
+            if (val == 1)
             {
                 return $"РАВНОЗНАЧЕН";
             }
-            else if(Value > 1)
+            else if(val > 1)
             {
-                if (Value >= 9)
+                if (val >= 9)
                     return "АБСОЛЮТНО ПРЕВОСХОДИТ";
-                else if (Value >= 8)
+                else if (val >= 8)
                     return "СИЛЬНО ПРЕОБЛАДАЕТ над";
-                else if (Value >= 7)
+                else if (val >= 7)
                     return "СИЛЬНО ПРЕОБЛАДАЕТ над";
-                else if (Value >= 6)
+                else if (val >= 6)
                     return "ПРЕОБЛАДАЕТ над";
-                else if (Value >= 5)
+                else if (val >= 5)
                     return "ПРЕОБЛАДАЕТ над";
-                else if (Value >= 4)
+                else if (val >= 4)
                     return "НЕМНОГО ПРЕОБЛАДАЕТ над";
-                else if (Value >= 3)
+                else if (val >= 3)
                     return "НЕМНОГО ПРЕОБЛАДАЕТ над";
-                else if (Value >= 2)
+                else if (val >= 2)
                     return "СЛЕГКА ПРЕОБЛАДАЕТ над";
                 else
                     return "СЛЕГКА ПРЕОБЛАДАЕТ над";
             }
             else
             {
-                double testValue = 1 / Value;
-                if (testValue >= 9)
+                double reflectVal = 1 / val;
+                if (reflectVal >= 9)
                     return "АБСОЛЮТНО ПРОИГРЫВАЕТ";
-                else if (testValue >= 8)
+                else if (reflectVal >= 8)
                     return "СИЛЬНО ПРОИГРЫВАЕТ";
-                else if (testValue >= 7)
+                else if (reflectVal >= 7)
                     return "СИЛЬНО ПРОИГРЫВАЕТ";
-                else if (testValue >= 6)
+                else if (reflectVal >= 6)
                     return "ПРОИГРЫВАЕТ";
-                else if (testValue >= 5)
+                else if (reflectVal >= 5)
                     return "ПРОИГРЫВАЕТ";
-                else if (testValue >= 4)
+                else if (reflectVal >= 4)
                     return "НЕМНОГО ПРОИГРЫВАЕТ";
-                else if (testValue >= 3)
+                else if (reflectVal >= 3)
                     return "НЕМНОГО ПРОИГРЫВАЕТ";
-                else if (testValue >= 2)
+                else if (reflectVal >= 2)
                     return "СЛЕГКА ПРОИГРЫВАЕТ";
                 else
                     return "СЛЕГКА ПРОИГРЫВАЕТ";

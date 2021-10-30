@@ -231,10 +231,71 @@ namespace DSSAlternative.Tests
         }
 
 
+
         //Иерархии равны, если они фактически равны
         //Иерархии не равны, если различаются именем
         //Иерархии не равны, если различаются уровнем
         //Иерархии не равны, если различаются группами
         //Иерархии не равны, если различаются принадлежностями
+        [TestMethod]
+        public void HierEqual_IsTrue()
+        {
+            INode a1 = new Node(), a2 = new Node(1, "Цель", 0, 5);
+            INode b1 = new Node(), b2 = new Node(1, "Цель", 0, 5);
+            IHierarchy A = new HierarchyNodes(a1, a2);
+            IHierarchy B = new HierarchyNodes(b1, b2);
+
+            bool equal = HierarchyNodes.CompareEqual(A, B);
+
+            Assert.IsTrue(equal, "Фактически равные коллекции считаются неравными");
+        }
+        [TestMethod]
+        public void HierLevelEqual_IsFalse()
+        {
+            INode a1 = new Node(), a2 = new Node(1, "Цель", 0, 5);
+            INode b1 = new Node(), b2 = new Node(2, "Цель", 0, 5);
+            IHierarchy A = new HierarchyNodes(a1, a2);
+            IHierarchy B = new HierarchyNodes(b1, b2);
+
+            bool equal = HierarchyNodes.CompareEqual(A, B);
+
+            Assert.IsTrue(!equal, "Коллекции с различием в имени считаются эквивалентными");
+        }
+        [TestMethod]
+        public void HierNameEqual_IsFalse()
+        {
+            INode a1 = new Node(), a2 = new Node(1, "Цель", 0, 5);
+            INode b1 = new Node(), b2 = new Node(1, "Цель2", 0, 5);
+            IHierarchy A = new HierarchyNodes(a1, a2);
+            IHierarchy B = new HierarchyNodes(b1, b2);
+
+            bool equal = HierarchyNodes.CompareEqual(A, B);
+
+            Assert.IsTrue(!equal, "Коллекции с различием в имени считаются эквивалентными");
+        }
+        [TestMethod]
+        public void HierGroupEqual_IsFalse()
+        {
+            INode a1 = new Node(), a2 = new Node(1, "Цель", 0, 5);
+            INode b1 = new Node(), b2 = new Node(1, "Цель", 1, 5);
+            IHierarchy A = new HierarchyNodes(a1, a2);
+            IHierarchy B = new HierarchyNodes(b1, b2);
+
+            bool equal = HierarchyNodes.CompareEqual(A, B);
+
+            Assert.IsTrue(!equal, "Коллекции с различием в имени считаются эквивалентными");
+        }
+        [TestMethod]
+        public void HierIndexEqual_IsFalse()
+        {
+            INode a1 = new Node(), a2 = new Node(1, "Цель", 0, 5);
+            INode b1 = new Node(), b2 = new Node(1, "Цель", 0, 10);
+            IHierarchy A = new HierarchyNodes(a1, a2);
+            IHierarchy B = new HierarchyNodes(b1, b2);
+
+            bool equal = HierarchyNodes.CompareEqual(A, B);
+
+            Assert.IsTrue(!equal, "Коллекции с различием в имени считаются эквивалентными");
+        }
     }
 }

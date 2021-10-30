@@ -105,7 +105,6 @@ namespace DSSAlternative.AHP
         {
             RelationSelected = rel;
             OnRelationChanged?.Invoke();
-            Console.WriteLine("Отношение было выбрано");
         }
     }
 

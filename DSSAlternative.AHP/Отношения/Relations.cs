@@ -86,13 +86,13 @@ namespace DSSAlternative.AHP
         {
             var allRelations = AllRelations.ToList();
             int index = allRelations.IndexOf(from);
-            return index <= allRelations.Count - 1 ? allRelations[index + 1] : allRelations[0];
+            return index < allRelations.Count - 1 ? allRelations[index + 1] : allRelations[0];
         }
         public INodeRelation PrevRequiredRel(INodeRelation from)
         {
             var allRelations = AllRelations.ToList();
             int index = allRelations.IndexOf(from);
-            return index >= 0 ? allRelations[index - 1] : allRelations[allRelations.Count - 1];
+            return index > 0 ? allRelations[index - 1] : allRelations[allRelations.Count - 1];
         }
 
 

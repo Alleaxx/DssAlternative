@@ -82,6 +82,10 @@ namespace DSSAlternative.AHP
         {
 
         }
+        public Node(string name) : this(0, name, 0, -1)
+        {
+
+        }
         public Node(int level, string name, int group, int groupIndex)
         {
             Name = name;
