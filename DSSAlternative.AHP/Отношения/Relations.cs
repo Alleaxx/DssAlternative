@@ -6,32 +6,7 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP
 {
-    public interface IUsable
-    {
-        bool Correct { get; }
-        bool Consistent { get; }
-        bool Known { get; }
-    }
-    //Отдельный элемент, воплощающий отношения для списка узлов
-    //Пересоздается при изменении текущей коллекции в проекте
-    public interface IRelations : IEnumerable<ICriteriaRelation>, IRelationsGrouped, IUsable
-    {
-        ICriteriaRelation this[INode main] { get; }
 
-        event Action<IRelations> OnChanged;
-        void Set(INode main, INode from, INode to, double value);
-        IRelationsCorrectness CorrectnessRels { get; }
-
-
-        INodeRelation NextRequiredRel(INodeRelation from);
-        INodeRelation PrevRequiredRel(INodeRelation from);
-
-        void SetUnknown();
-
-        void SetFromTemplate(ITemplate template);
-    }
-
-    //Список критериев по иерархии
     public class Relations : List<ICriteriaRelation>, IRelations
     {
         public override string ToString()
@@ -61,7 +36,7 @@ namespace DSSAlternative.AHP
         //Создание критериев и отношений
         private void CreateCriterias()
         {
-            foreach (var node in Hierarchy.RelationNodes)
+            foreach (var node in Hierarchy)
             {
                 var criteria = new CriteriaRelation(this, node);
                 Add(criteria);
@@ -102,36 +77,22 @@ namespace DSSAlternative.AHP
         {
             get => Criterias[main];
         }
-        private IEnumerable<INodeRelation> AllRelations => this.SelectMany(criteria => criteria);
+        private IEnumerable<INodeRelation> AllRelations => this.SelectMany(criteria => criteria.Required);
         public IEnumerable<IGrouping<INode, INodeRelation>> RelationsGroupedMain(INode node)
         {
             return Criterias[node].MtxView;
         }
         public INodeRelation NextRequiredRel(INodeRelation from)
         {
-            var criteria = this[from.Main];
-            if (criteria.Correct)
-            {
-
-            }
-            else
-            {
-                
-            }
-            throw new NotImplementedException();
+            var allRelations = AllRelations.ToList();
+            int index = allRelations.IndexOf(from);
+            return index <= allRelations.Count - 1 ? allRelations[index + 1] : allRelations[0];
         }
         public INodeRelation PrevRequiredRel(INodeRelation from)
         {
-            var criteria = this[from.Main];
-            if (criteria.Correct)
-            {
-
-            }
-            else
-            {
-
-            }
-            throw new NotImplementedException();
+            var allRelations = AllRelations.ToList();
+            int index = allRelations.IndexOf(from);
+            return index >= 0 ? allRelations[index - 1] : allRelations[allRelations.Count - 1];
         }
 
 
@@ -139,8 +100,6 @@ namespace DSSAlternative.AHP
         public bool Correct => this.All(c => c.Correct);
         public bool Consistent => this.All(c => c.Consistent);
         public bool Known => this.All(c => c.Known);
-
-        public IRelationsCorrectness CorrectnessRels => throw new NotImplementedException();
 
 
         //Установка значений

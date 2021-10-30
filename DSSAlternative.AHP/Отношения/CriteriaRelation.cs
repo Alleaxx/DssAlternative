@@ -6,22 +6,6 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP
 {
-    public interface ICriteriaRelation : IGrouping<INode, INodeRelation>, IUsable
-    {
-        event Action<ICriteriaRelation> OnChanged;
-
-        IEnumerable<INode> Nodes { get; }
-        IEnumerable<INodeRelation> Required { get; }
-        INodeRelation this[INode from, INode to] { get; }
-        INodeRelation FirstRequired { get; }
-        (bool correct, INodeRelation next) NextRequired(); 
-
-        void Set(INode from, INode to, double value);
-        void SetUnknown();
-
-        IEnumerable<IGrouping<INode, INodeRelation>> MtxView { get; }
-        IMatrix Mtx { get; }
-    }
     
     //Список отношений по узлу
     public class CriteriaRelation : List<INodeRelation>, ICriteriaRelation
@@ -31,7 +15,7 @@ namespace DSSAlternative.AHP
             StringBuilder sb = new StringBuilder();
             sb.Append($"- Критерий {Node}: {Node.Coefficient}");
             sb.Append($"{Mtx.GetText()}");
-            sb.Append($"--- Корректность: {Correct}, согласованность {Consistent}, известность {Known}");
+            sb.Append($"\n--- Корректность: {Correct}, согласованность {Consistent}, известность {Known}");
             return sb.ToString();
         }
 
@@ -47,27 +31,23 @@ namespace DSSAlternative.AHP
 
 
         //Требуемые отношения
-        public bool ReqLeft { get; set; } = true;
-        public IEnumerable<INodeRelation> Required => ReqLeft ? LeftRelations : RightRelations;
+        public bool PreferTop { get; set; } = true;
+        public IEnumerable<INodeRelation> Required => PreferTop ? TopRelations : BottomRelations;
         public INodeRelation FirstRequired => Required.FirstOrDefault();
 
 
         //Доступ к отдельным отношения
-        private IEnumerable<INodeRelation> LeftRelations { get; set; }
-        private IEnumerable<INodeRelation> RightRelations { get; set; }
+        private IEnumerable<INodeRelation> TopRelations { get; set; }
+        private IEnumerable<INodeRelation> BottomRelations { get; set; }
         private IEnumerable<INodeRelation> DiagRelations { get; set; }
         public INodeRelation this[INode from, INode to]
         {
             get => this.FirstOrDefault(r => r.From == from && r.To == to);
         }
-        public (bool correct, INodeRelation next) NextRequired()
-        {
-            return default;
-        }
 
 
         //Характеристика критерия
-        public bool Correct => Mtx.IsCorrect;
+        public bool Correct => Known && Consistent;
         public bool Known => !Mtx.WithZeros();
         public bool Consistent => Mtx.IsCorrect;
 
@@ -102,9 +82,29 @@ namespace DSSAlternative.AHP
             {
                 relation.Mirrored = this[relation.To, relation.From];
             }
-            
-            LeftRelations = Nodes.SelectMany(n => this.Where(r => r.From == n && !r.Self)).ToArray();
-            RightRelations = Nodes.SelectMany(n => this.Where(r => r.To == n && !r.Self)).ToArray();
+
+            List<INodeRelation> top = new List<INodeRelation>();
+            List<INodeRelation> bottom = new List<INodeRelation>();
+
+            int count = Nodes.Count();
+            for (int i = 0; i < count; i++)
+            {
+                for (int a = i + 1; a < count; a++)
+                {
+                    top.Add(this[i * count + a]);
+                }
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                for (int a = i - 1; a >= count; a--)
+                {
+                    top.Add(this[i * count - a]);
+                }
+            }
+
+            TopRelations = top;
+            BottomRelations = bottom;
             DiagRelations = this.Where(r => r.Self).ToArray();
 
             MtxView = this.GroupBy(r => r.From);
@@ -122,7 +122,7 @@ namespace DSSAlternative.AHP
         }
         public void SetUnknown()
         {
-            foreach (var relation in LeftRelations)
+            foreach (var relation in TopRelations)
             {
                 relation.SetUnknown();
             }

@@ -13,6 +13,6 @@ namespace DSSAlternative.AppComponents
         [Parameter]
         public INode Node { get; set; }
 
-        protected IMatrix Mtx => Problem.GetMtxRelations(Node);
+        protected IMatrix Mtx => Relations[Node].Mtx;
     }
 }

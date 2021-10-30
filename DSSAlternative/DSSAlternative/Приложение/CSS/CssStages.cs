@@ -23,8 +23,8 @@ namespace DSSAlternative.AppComponents
     {
         public CssView(IProject project)
         {
-            bool areRelationsKnown = project.ProblemActive.CorrectnessRels.AreKnown;
-            bool areRelationsConsistent = project.ProblemActive.CorrectnessRels.AreConsistenct;
+            bool areRelationsKnown = project.Relations.Known;
+            bool areRelationsConsistent = project.Relations.Consistent;
 
             AddRuleClass("stage-menu-element");
             AddRuleClass(() => !areRelationsKnown, "warning");
@@ -35,7 +35,7 @@ namespace DSSAlternative.AppComponents
     {
         public CssResults(IProject project)
         {
-            bool areRelationsCorrect = project.ProblemActive.CorrectnessRels.IsCorrect;
+            bool areRelationsCorrect = project.Relations.Correct;
 
             AddRuleClass("stage-menu-element");
             AddRuleClass(() => !areRelationsCorrect, "none");
@@ -46,7 +46,7 @@ namespace DSSAlternative.AppComponents
         public CssRelation(IProject project, INodeRelation relation)
         {
             bool relationsUnknown = relation.Unknown;
-            bool relationConsistent = project.ProblemActive.GetMtxRelations(relation.Main).IsCorrect;
+            bool relationConsistent = project.Relations[relation.Main].Consistent;
 
             AddRuleClass("safe");
             AddRuleClass(() => relationsUnknown, "warning");

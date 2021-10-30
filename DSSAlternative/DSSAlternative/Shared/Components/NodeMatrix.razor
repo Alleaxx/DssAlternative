@@ -31,7 +31,7 @@
                                 </td>
                             }
                         </tr>
-                        @foreach (var node in Problem.RelationsGroupedMain(Node))
+                        @foreach (var node in Relations[Node].MtxView)
                         {
                             <tr>
                                 <td class="cell-node">

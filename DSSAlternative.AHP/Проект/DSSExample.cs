@@ -25,20 +25,19 @@ namespace DSSAlternative.AHP
 
             INode[] nodes = new INode[] { main, Reputation, Place, A, B, C, F1, F2 };
 
-            ITemplate template = new Template(nodes.OfType<Node>().ToArray());
-            IProject project = new Project(template);
-            IProblem problem = project.ProblemActive;
+            IProject project = new Project(nodes);
+            IRelations relations = project.Relations;
 
-            problem.SetRelationBetween(main, Reputation, Place, 5);
-            problem.SetRelationBetween(Reputation, A, B, 2);
-            problem.SetRelationBetween(Reputation, A, C, 3);
-            problem.SetRelationBetween(Reputation, B, C, 1.5);
-            problem.SetRelationBetween(Place, B, A, 2);
-            problem.SetRelationBetween(Place, C, A, 5);
-            problem.SetRelationBetween(Place, C, B, 2);
-            problem.SetRelationBetween(A, F1, F2, 2);
-            problem.SetRelationBetween(B, F1, F2, 4);
-            problem.SetRelationBetween(C, F1, F2, 6);
+            //relations.Set(main, Reputation, Place, 5);
+            //relations.Set(Reputation, A, B, 2);
+            //relations.Set(Reputation, A, C, 3);
+            //relations.Set(Reputation, B, C, 1.5);
+            //relations.Set(Place, B, A, 2);
+            //relations.Set(Place, C, A, 5);
+            //relations.Set(Place, C, B, 2);
+            //relations.Set(A, F1, F2, 2);
+            //relations.Set(B, F1, F2, 4);
+            //relations.Set(C, F1, F2, 6);
 
             return project;
         }
@@ -72,8 +71,7 @@ namespace DSSAlternative.AHP
 
             Node[] nodes = new Node[] { main, k1, k2, a1, a2 };
 
-            ITemplate template = new Template(nodes);
-            IProject project = new Project(template);
+            IProject project = new Project(nodes);
             return project;
         }
         public static IProject CreateSampleTree2Problem()
@@ -98,25 +96,24 @@ namespace DSSAlternative.AHP
 
             INode[] nodes = new INode[] { main, F, M, O, F1, F2, F3, M1, M2, M3, O1, O2, O3 };
 
-            ITemplate template = new Template(nodes.OfType<Node>().ToArray());
-            IProject project = new Project(template);
-            IProblem problem = project.ProblemActive;
+            IProject project = new Project(nodes);
+            IRelations relations = project.Relations;
 
-            problem.SetRelationBetween(main, F, M, 2);
-            problem.SetRelationBetween(main, F, O, 2);
-            problem.SetRelationBetween(main, M, O, 2);
+            //relations.Set(main, F, M, 2);
+            //relations.Set(main, F, O, 2);
+            //relations.Set(main, M, O, 2);
 
-            problem.SetRelationBetween(F, F1, F2, 2);
-            problem.SetRelationBetween(F, F1, F3, 4);
-            problem.SetRelationBetween(F, F2, F3, 2);
+            //relations.Set(F, F1, F2, 2);
+            //relations.Set(F, F1, F3, 4);
+            //relations.Set(F, F2, F3, 2);
 
-            problem.SetRelationBetween(M, M1, M2, 5);
-            problem.SetRelationBetween(M, M1, M3, 9);
-            problem.SetRelationBetween(M, M2, M3, 2);
+            //relations.Set(M, M1, M2, 5);
+            //relations.Set(M, M1, M3, 9);
+            //relations.Set(M, M2, M3, 2);
 
-            problem.SetRelationBetween(O, O1, O2, 4);
-            problem.SetRelationBetween(O, O1, O3, 8);
-            problem.SetRelationBetween(O, O2, O3, 2);
+            //relations.Set(O, O1, O2, 4);
+            //relations.Set(O, O1, O3, 8);
+            //relations.Set(O, O2, O3, 2);
 
             return project;
         }

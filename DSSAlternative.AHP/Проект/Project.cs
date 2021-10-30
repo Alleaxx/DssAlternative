@@ -9,7 +9,7 @@ namespace DSSAlternative.AHP
     {
         public override string ToString()
         {
-            return ProblemActive.ToString();
+            return HierarchyActive.ToString();
         }
         public event Action UpdatedHierOrRelationChanged;
 
@@ -20,111 +20,93 @@ namespace DSSAlternative.AHP
 
         //Редактируемое состояние
         public IHierarchy HierarchyEditing { get; init; }
-
-        //Текущая проблема
-        public IProblem ProblemActive { get; private set; }
+        public IHierarchy HierarchyActive { get; private set; }
         public IRelations Relations { get; private set; }
 
-        public bool UnsavedChanged => !HierarchyNodes.CompareEqual(ProblemActive, HierarchyEditing);
-        public bool CanTranferEditing => UnsavedChanged && HierarchyEditing.Correctness.IsCorrect;
 
+        //Текущий статус проекта
         public string Status
         {
             get
             {
                 string status = "Готова";
-                if (!ProblemActive.CorrectnessRels.AreKnown)
+                if (!Relations.Known)
                 {
                     return "Нужна информация";
                 }
-                if (!ProblemActive.CorrectnessRels.AreConsistenct)
+                if (!Relations.Consistent)
                 {
                     return "Нужна корректировка";
                 }
                 return status;
             }
         }
+        public bool UnsavedChanged => !HierarchyNodes.CompareEqual(HierarchyActive, HierarchyEditing);
+        public bool IsUpdateAvailable => UnsavedChanged && HierarchyEditing.Correctness.IsCorrect;
 
 
+        //Создание проекта
         public Project(ITemplate template)
         {
-            Console.WriteLine("Создание проекта и обновление иерархии");
             HierarchyEditing = new HierarchyNodes(template);
-            UpdateProblemFromEditing();
-            ProblemActive.FillRelations(template);
+            UpdateHierarchy();
+            Relations.SetFromTemplate(template);
         }
         public Project(IEnumerable<INode> nodes)
         {
-            Console.WriteLine("Создание проекта и обновление иерархии");
             HierarchyEditing = new HierarchyNodes(nodes);
-            UpdateProblemFromEditing();
+            UpdateHierarchy();
         }
-        public void UpdateProblemFromEditing()
+        public void UpdateHierarchy()
         {
-            if (CanTranferEditing)
+            if (IsUpdateAvailable)
             {
-                ReplaceCurrentProblem(HierarchyEditing);
-            }
-            else
-            {
-                Console.WriteLine("Обновление иерархии недоступно");
+                ITemplate copy = new Template(HierarchyEditing).CloneThis();
+                UpdateHierarchy(new HierarchyNodes(copy));
             }
         }
-        private void ReplaceCurrentProblem(IHierarchy hierarchy)
+        private void UpdateHierarchy(IHierarchy problem)
         {
-            ITemplate copy = new Template(hierarchy).CloneThis();
-            IProblem old = ProblemActive;
+            HierarchyActive = problem;
+            SetNow(HierarchyActive.MainGoal);
+            CreateSetNewRelations();
+            Relations_OnChanged(Relations);
 
-            RegisterProblem(new Problem(copy));
-            if (old != null)
+            void CreateSetNewRelations()
             {
-                old.RelationValueChanged -= RelationsUpdated;
+                if (Relations != null)
+                {
+                    Relations.OnChanged -= Relations_OnChanged;
+                }
+                Relations = new Relations(HierarchyActive);
+                Relations.OnChanged += Relations_OnChanged;
             }
-        }
-        private void RegisterProblem(IProblem problem)
-        {
-            ProblemActive = problem;
-            SetNow(ProblemActive.MainGoal);
-
-            ProblemActive.RelationValueChanged += RelationsUpdated;
-            RelationsUpdated();
-
-            Relations = new Relations(ProblemActive);
-            Relations.SetFromTemplate(new Template(ProblemActive.OfType<Node>(), ProblemActive.RelationsRequired));
-        }
-        private void RelationsUpdated()
-        {
-            UpdatedHierOrRelationChanged?.Invoke();
-            if(Relations != null)
+            void Relations_OnChanged(IRelations obj)
             {
-                Relations.SetFromTemplate(new Template(ProblemActive.OfType<Node>(), ProblemActive.RelationsRequired));
-
-                Console.WriteLine("ИЗМЕНЕНИЕ ОТНОШЕНИЙ");
-                Console.WriteLine(Relations);
-                Console.WriteLine();
+                UpdatedHierOrRelationChanged?.Invoke();
             }
         }
 
 
 
 
+        public event Action OnRelationChanged;
+        public event Action OnNodeChanged;
 
-        public INodeRelation RelationSelected { get; set; }
-        public void SetNow(INodeRelation rel)
-        {
-            RelationSelected = rel;
-            OnRelationChanged?.Invoke();
-        }
-
-        public INode NodeSelected { get; set; }
+        public INodeRelation RelationSelected { get; private set; }
+        public INode NodeSelected { get; private set; }
+        
         public void SetNow(INode node)
         {
             NodeSelected = node;
             OnNodeChanged?.Invoke();
         }
-
-        public event Action OnRelationChanged;
-        public event Action OnNodeChanged;
+        public void SetNow(INodeRelation rel)
+        {
+            RelationSelected = rel;
+            OnRelationChanged?.Invoke();
+            Console.WriteLine("Отношение было выбрано");
+        }
     }
 
 }

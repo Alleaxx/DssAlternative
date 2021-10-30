@@ -49,14 +49,20 @@
     public RenderFragment<INodeRelation> RelationView { get; set; }
 
 
-    private bool IsNotConsistenct => !RelationState.IsNodeConsistenct(Node);
-    private bool IsUnknown => RelationState.IsNodeUnknown(Node);
-    public double Cr => Problem.GetMtxRelations(Node).Cr;
+    private bool IsNotConsistenct => !Relations[Node].Consistent;
+    private bool IsUnknown => !Relations[Node].Known;
+    public double Cr => Relations[Node].Mtx.Cr;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Project.OnRelationChanged += () => StateHasChanged();
+    }
 
 
     private string NodeRelClass()
     {
-        var rel = Problem.FirstRequiredRelation(Node);
+        var rel = Relations[Node].FirstRequired;
         return RelationClass(rel);
     }
     private string RelationClass(INodeRelation rel)
@@ -66,6 +72,6 @@
 
     private IEnumerable<INodeRelation> ShowedRelations()
     {
-        return Problem.RelationsRequired.Where(r => r.Main == Node && RelationFilter.Invoke(r));
+        return Relations[Node].Required.Where(r => RelationFilter.Invoke(r));
     }
 }

@@ -6,7 +6,7 @@
 <div class="relations-grid">
     <nav class="menu-area">
         <h2 class="rel-menu-header">Список отношений</h2>
-        @foreach (var node in Problem.RelationNodes)
+        @foreach (var node in Hierarchy.RelationNodes)
         {
             <NodeRelations Node="node" Context="rel">
                 <RelationView>
@@ -61,18 +61,18 @@
         </Tab>
         <div class="prev-next-stages">
             <div>
-                <a class="prev" @onclick="() => Project.SetNow(Prev)">
+                <a class="prev" @onclick="SetPrev">
                     ← предыдущее
                 </a>
             </div>
-            @if (RelationState.IsCorrect)
+            @if (Relations.Correct)
             {
                 <a class="res" href="@ResultsLink">
                     ДОСТУПЕН РЕЗУЛЬТАТ!
                 </a>
             }
             <div>
-                <a class="next" @onclick="() => Project.SetNow(Next)">
+                <a class="next" @onclick="SetNext">
                     следующее →
                 </a>
             </div>
@@ -83,13 +83,22 @@
 
 @code {
 
-    protected INodeRelation Prev => Problem.PrevRequiredRel(RelationActive);
-    protected INodeRelation Next => Problem.NextRequiredRel(RelationActive);
-
+    protected INodeRelation Prev => Relations.PrevRequiredRel(RelationActive);
+    protected INodeRelation Next => Relations.NextRequiredRel(RelationActive);
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         Project.OnRelationChanged += () => StateHasChanged();
+    }
+
+    private void SetNext()
+    {
+        SetNow(Next);
+    }
+    private void SetPrev()
+    {
+        SetNow(Prev);
+        StateHasChanged();
     }
 }

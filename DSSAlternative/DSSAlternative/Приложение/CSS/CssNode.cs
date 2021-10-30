@@ -12,9 +12,9 @@ namespace DSSAlternative.AppComponents
     {
         public CssNode(IProject project, INode node, HierShemeBig.ViewSelections viewSelection)
         {
-            bool isBest = project.ProblemActive.Best(node.Level).Contains(node);
-            bool isUnknown = project.ProblemActive.CorrectnessRels.IsNodeUnknown(node);
-            bool isConsistenct = project.ProblemActive.CorrectnessRels.IsNodeConsistenct(node);
+            bool isBest = project.HierarchyActive.Best(node.Level).Contains(node);
+            bool isUnknown = !project.Relations[node].Known;
+            bool isConsistenct = project.Relations[node].Consistent;
             bool isSelected = node == project.NodeSelected;
             bool filled = !isUnknown && isConsistenct;
 

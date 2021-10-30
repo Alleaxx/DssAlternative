@@ -11,12 +11,12 @@ namespace DSSAlternative.AHP
         event Action UpdatedHierOrRelationChanged;
 
         bool UnsavedChanged { get; }
-        bool CanTranferEditing { get; }
+        bool IsUpdateAvailable { get; }
 
 
         IHierarchy HierarchyEditing { get; }
-        IProblem ProblemActive { get; }
-        IRelations Relations { get; set; }
+        IHierarchy HierarchyActive { get; }
+        IRelations Relations { get; }
 
         INode NodeSelected { get; }
         INodeRelation RelationSelected { get; }
@@ -26,7 +26,7 @@ namespace DSSAlternative.AHP
         event Action OnRelationChanged;
         event Action OnNodeChanged;
 
-        void UpdateProblemFromEditing();
+        void UpdateHierarchy();
         string Status { get; }
     }
 }

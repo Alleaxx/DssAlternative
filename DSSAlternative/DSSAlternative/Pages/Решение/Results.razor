@@ -8,7 +8,7 @@
         Анализ результатов
     </h2>
     <div>
-        @if (RelationState.IsCorrect)
+        @if (Relations.Correct)
         {
             @foreach (var levelGroup in GroupedResults())
             {
@@ -35,7 +35,7 @@
                         </ul>
                         <p class="level-best-nodes">
                             ЛУЧШИЙ ВЫБОР –
-                            @foreach (var bestNode in Problem.Best(levelGroup.Key))
+                            @foreach (var bestNode in Hierarchy.Best(levelGroup.Key))
                             {
                                 <span class="node-best">@bestNode.Name,</span>
                             }
@@ -48,14 +48,14 @@
         }
         else
         {
-            @if (!RelationState.AreConsistenct)
+            @if (!Relations.Consistent)
             {
                 <div>
                     <Warning Header="Несогласованность" Message="Некоторые отношения являются несогласованными!"></Warning>
 
                 </div>
             }
-            @if (!RelationState.AreKnown)
+            @if (!Relations.Known)
             {
                 <div>
                     <Warning Header="Незаполненность!" Message="Некоторые отношения не заполнены"></Warning>
@@ -74,7 +74,7 @@
 
     private IEnumerable<IGrouping<int, INode>> GroupedResults()
     {
-        return Problem.GroupedByLevel.Where(g => g.Key != 0);
+        return Hierarchy.GroupedByLevel.Where(g => g.Key != 0);
     }
 
     private string HeaderText(IGrouping<int, INode> group)

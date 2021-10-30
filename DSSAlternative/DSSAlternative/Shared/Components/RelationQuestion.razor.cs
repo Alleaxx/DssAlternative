@@ -28,7 +28,7 @@ namespace DSSAlternative.Shared.Components
             base.OnParametersSet();
             if (Relation == null)
             {
-                Relation = Problem.RelationsRequired.First();
+                Relation = Relations.First().First(); // Problem.RelationsRequired.First();
             }
 
             CreateRatings();
@@ -42,7 +42,7 @@ namespace DSSAlternative.Shared.Components
         }
         private void CreateMatrixes()
         {
-            if(UseSafeWarnings && !Problem.GetMtxRelations(Relation.Main).WithZeros())
+            if(UseSafeWarnings && Relations[Relation.Main].Known)
             {
                 RatingMatrix.Add(RatingNone, GetMatrixForRating(0));
                 RatingMatrix.Add(RatingEqual, GetMatrixForRating(1));
@@ -56,7 +56,7 @@ namespace DSSAlternative.Shared.Components
 
                 IMatrix GetMatrixForRating(double value)
                 {
-                    IMatrix source = Problem.GetMtxRelations(Relation.Main);
+                    IMatrix source = Relations[Relation.Main].Mtx;
                     source.Change(Relation.From, Relation.To, value);
                     return source;
                 }

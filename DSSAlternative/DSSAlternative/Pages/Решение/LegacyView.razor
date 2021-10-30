@@ -190,11 +190,11 @@
 <section class="sheme">
     <h2 class="content-header-h">Схема задачи выбора</h2>
     <div>
-        @if (!RelationState.AreConsistenct)
+        @if (!Relations.Consistent)
         {
             <Warning Header="Несогласованность" Message="Некоторые отношения являются несогласованными!"></Warning>
         }
-        @if (!RelationState.AreKnown)
+        @if (!Relations.Known)
         {
             <Warning Header="Незаполненность!" Message="Некоторые отношения не заполнены"></Warning>
         }
@@ -214,7 +214,7 @@
         </div>
     </div>
 
-    @foreach (var levelGroup in Problem.GroupedByLevel)
+    @foreach (var levelGroup in Hierarchy.GroupedByLevel)
     {
         <div class="level">
             <div class="level-name">
@@ -225,7 +225,7 @@
             <div class="level-elements">
                 @foreach (var node in levelGroup)
                 {
-                    <a class="node-element" href="@RelationsLink" @onclick="() => SetNow(Problem.FirstRequiredRelation(node))" style="@($"width:{NodeSize}%")">
+                    <a class="node-element" href="@RelationsLink" @onclick="() => SetNow(Relations[node].FirstRequired)" style="@($"width:{NodeSize}%")">
                         <div class="action-header @(GetClass(node))">
                             <span class="node-element-name">@ProcessDouble(node.Coefficient) - @node.Name</span>
                         </div>
@@ -300,15 +300,15 @@
         switch (Filter)
         {
             case FilterRating:
-                if (Problem.Best(node.Level).Contains(node))
+                if (Hierarchy.Best(node.Level).Contains(node))
                     return "best";
                 return "usual";
 
             case Constistency:
-                double res = Problem.GetMtxRelations(node).Cr;
-                if (RelationState.IsNodeUnknown(node))
+                double res = Relations[node].Mtx.Cr;
+                if (!Relations[node].Known)
                     return "warn";
-                if (!RelationState.IsNodeConsistenct(node))
+                if (!Relations[node].Consistent)
                     return "bad";
                 return "good";
 

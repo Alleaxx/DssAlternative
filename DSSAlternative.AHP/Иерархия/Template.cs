@@ -59,7 +59,7 @@ namespace DSSAlternative.AHP
             Creation = DateTime.Now;
         }
         public Template(IProject project)
-            : this(project.ProblemActive.OfType<Node>(), project.ProblemActive.RelationsRequired) { }
+            : this(project.HierarchyActive.OfType<Node>(), project.Relations.SelectMany(c => c.Required)) { }
 
         public object Clone()
         {

@@ -18,15 +18,9 @@ namespace DSSAlternative.AppComponents
 
 
         protected IProject Project => DSSApp.Project;
-        protected IProblem Problem => Project.ProblemActive;
+        protected IHierarchy Hierarchy => Project.HierarchyActive;
+        protected IRelations Relations => Project.Relations;
 
-        protected ICss HierCss => new CssHierarchy(Project);
-        protected ICss ViewCss => new CssView(Project);
-        protected ICss ResultsCss => new CssResults(Project);
-
-
-        protected ICorrectness HierEditState => Project.HierarchyEditing.Correctness;
-        protected IRelationsCorrectness RelationState => Project.ProblemActive.CorrectnessRels;
 
 
         public INodeRelation RelationActive => Project.RelationSelected;

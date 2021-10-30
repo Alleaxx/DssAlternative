@@ -12,12 +12,12 @@
     <div class="sheme basic-border">
         <div class="confirm">
             <div>
-                @if (Project.CanTranferEditing)
+                @if (Project.IsUpdateAvailable)
                 {
                     <span class="not-saved">Есть несохраненные изменения</span>
                     <input class="add" type="button" value="Обновить иерархию" @onclick="UpdateHierarchy" />
                 }
-                else if (Project.UnsavedChanged && !Project.CanTranferEditing)
+                else if (Project.UnsavedChanged && !Project.IsUpdateAvailable)
                 {
                     <span class="warning">В структуре иерархии обнаружены ошибки:</span>
                 }
@@ -28,7 +28,7 @@
             </div>
         </div>
         <ul class="fails">
-            @foreach (var check in HierEditState.ErrorsList)
+            @foreach (var check in HierarchyEdit.Correctness.ErrorsList)
             {
                 <li>
                     <span>
@@ -218,7 +218,7 @@
 
 
     //Подтверждение иерархии
-    private void UpdateHierarchy() => Project.UpdateProblemFromEditing();
+    private void UpdateHierarchy() => Project.UpdateHierarchy();
 
 
     //Редактирование иерархии
@@ -250,7 +250,7 @@
     private void ShowStructure()
     {
         Console.WriteLine("Новая структура");
-        foreach (var node in Problem)
+        foreach (var node in Hierarchy)
         {
             Console.WriteLine($"{node.Level} - {node.Name}:");
             Console.Write("Расчет: ");
@@ -258,13 +258,13 @@
             {
                 Console.Write($"{countNode.Name}, ");
             }
-            Console.WriteLine(Matrix.CreateRelations(Problem, node).GetText());
+            Console.WriteLine(Matrix.CreateRelations(Relations, node).GetText());
             Console.WriteLine("Матрица локальных");
-            Console.WriteLine(Matrix.CreateLocalCoeffs(Problem, node).GetText());
+            Console.WriteLine(Matrix.CreateLocalCoeffs(Relations, node).GetText());
             Console.WriteLine("Матрица глобальных");
             Console.WriteLine(VectorMtx.CreateGlobalCoeffs(node).ToString());
             Console.WriteLine("Матрица коэфф.");
-            Console.WriteLine(VectorMtx.CreateCoeffs(Problem, node).ToString());
+            Console.WriteLine(VectorMtx.CreateCoeffs(Relations, node).ToString());
             Console.WriteLine();
         }
     }

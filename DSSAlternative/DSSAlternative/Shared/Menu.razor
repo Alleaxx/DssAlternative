@@ -128,7 +128,11 @@
 </nav>
 
 @code{
-    private IEnumerable<INode> NavNodes => Problem.RelationNodes;
+    private IEnumerable<INode> NavNodes => Hierarchy.RelationNodes;
+
+    protected ICss HierCss => new CssHierarchy(Project);
+    protected ICss ViewCss => new CssView(Project);
+    protected ICss ResultsCss => new CssResults(Project);
 
     private string HierClass => HierCss.CssClass();
     private string ViewClass => ViewCss.CssClass();
@@ -136,7 +140,7 @@
 
     private string NodeClass(INode node)
     {
-        var rel = Problem.FirstRequiredRelation(node);
+        var rel = Relations[node].FirstRequired; //Problem.FirstRequiredRelation(node);
         return new CssRelation(Project, rel).CssClass();
     }
 
@@ -147,12 +151,18 @@
 
     private void SetRelFromNode(INode node)
     {
-        SetNow(Problem.FirstRequiredRelation(node));
+        SetNow(Relations[node].FirstRequired);
     }
 
     private string LeftMarginNode(INode node)
     {
         return $"margin-left:{node.Level * 2}em";
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Project.OnRelationChanged += () => StateHasChanged();
     }
 }
 

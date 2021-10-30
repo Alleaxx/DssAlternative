@@ -1,12 +1,12 @@
 ﻿@inherits DSSComponent
 
-<div class="task-menu-element @IsSelected" @onclick="@SelectProblem" href="hierarchy">
-    <a class="task-link" href="hierarchy">
+<div class="task-menu-element @IsSelected" href="hierarchy">
+    <a class="task-link" href="hierarchy" @onclick="@SelectProblem">
         <div class="task-element-sheme">
             <HierSheme Project="@Project" />
         </div>
         <header class="task-element-header">
-            <h4 class="task-element-name">@Project.ProblemActive.MainGoal.Name</h4>
+            <h4 class="task-element-name">@Project.HierarchyActive.MainGoal.Name</h4>
             <p class="task-element-descr">@Project.Status</p>
         </header>
     </a>

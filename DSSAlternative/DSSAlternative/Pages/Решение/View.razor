@@ -24,7 +24,7 @@
                 </a>
             </p>
             <div class="info-details">
-                @if (RelationState.IsCorrect)
+                @if (Relations.Correct)
                 {
                     <p class="no-errors">
                         ✓ Отлично, все отношения заполнены и согласованы
@@ -35,7 +35,7 @@
                 }
                 else
                 {
-                    if (!RelationState.AreConsistenct)
+                    if (!Relations.Consistent)
                     {
                         @foreach (var node in Project.UnconsistenctNodes())
                         {
@@ -46,7 +46,7 @@
                             </NodeRelations>
                         }
                     }
-                    if (!RelationState.AreKnown)
+                    if (!Relations.Known)
                     {
                         @foreach (var node in Project.UnknownNodes())
                         {
