@@ -11,18 +11,28 @@
         cursor: pointer;
         display: block;
         color: royalblue;
+        font-size: 1.4em;
+        border-radius: 5px;
     }
 
         .prev-next-stages a:hover {
             color: blue;
+            background-color: rgb(250,250,250);
         }
-
+.res {
+    text-decoration: none;
+    cursor: pointer;
+    display: block;
+    color: royalblue;
+    font-size: 1.15em;
+    border-radius: 5px;
+}
+    .res:hover {
+        color: blue;
+        background-color: rgb(250,250,250);
+    }
 .prev, .next {
     flex: 2;
-}
-
-.res {
-    flex: 1;
 }
 .prev, .next, .res{
     margin-top: 10px;
@@ -33,19 +43,26 @@
 
 .relations-grid {
     display: grid;
-    grid-template-columns: 7fr 3fr;
-    grid-template-areas: "relation menu";
+    grid-template-columns: 4fr 11fr 5fr;
+    grid-template-areas: "criterias relation menu";
+    min-height: 75vh;
 }
 
 .relation-area {
     grid-area: relation;
     padding: 10px;
+    border-left: 1px solid gainsboro;
 }
 
 .relation-current-header {
     text-align: center;
     font-size: 1.15em;
     margin-bottom: 0;
+}
+
+.criterias{
+    grid-area: criterias;
+    padding: 10px;
 }
 
 

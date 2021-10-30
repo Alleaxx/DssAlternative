@@ -5,12 +5,12 @@
 
 .grid {
     display: grid;
-    grid-template-columns: 25fr 75fr;
+    grid-template-columns: 20fr 80fr;
     grid-template-rows: auto auto 1fr auto;
     grid-template-areas:
         "logo header"
-        "navside menu"
-        "navside content"
+        "menu navside"
+        "menu content"
         "footer footer";
 }
 
@@ -41,10 +41,12 @@
 
 .navside {
     grid-area: navside;
-    background-color: rgb(250, 250, 250);
+    border-bottom: 2px solid gainsboro;
+}
+.menu-projects {
+    grid-area: menu;
     border-right: 1px solid gainsboro;
 }
-
 
 main {
     grid-area: content;

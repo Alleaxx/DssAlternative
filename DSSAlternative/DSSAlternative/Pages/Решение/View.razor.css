@@ -5,13 +5,16 @@
 
 .sheme-nav {
     flex: 3;
-    padding: 5px;
 }
 
 .sheme-info {
     flex: 7;
-    padding: 5px 10px;
+/*    padding: 5px 10px;*/
+    min-height: 75vh;
+
+    padding-right: 20px;
     border-left: 1px solid gainsboro;
+    padding-left: 15px;
 }
 
 .sheme-info-total {

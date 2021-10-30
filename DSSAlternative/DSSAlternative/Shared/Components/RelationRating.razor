@@ -1,7 +1,14 @@
 ﻿@inherits DSSComponentParamRelation
 
-<td colspan="@ColSpan" title="@Rating.Value" style="@CssStyle" class="@CssClass" @onclick="Set">
-    @Name()
+<td colspan="@ColSpan" title="@Rating.Value"  class="@CssClass" @onclick="Set">
+    <div class="rating">
+        <span style="@CssStyle">
+            @Name()
+        </span>
+        <span>
+            @CrDelta()
+        </span>
+    </div> 
 </td>
 
 @code {
@@ -22,6 +29,7 @@
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
+
         Css = new CssRating(RatingMatrix, Relation, Rating);
     }
 
@@ -32,5 +40,14 @@
     private void Set()
     {
         Relation.SetRating(Rating);
+    }
+
+    public string CrDelta()
+    {
+        if (RatingMatrix.ContainsKey(Rating))
+        {
+            return double.IsInfinity(RatingMatrix[Rating].Cr) ? "~" : double.IsNaN(RatingMatrix[Rating].Cr) ? "~" : Math.Abs(RatingMatrix[Rating].Cr).ToString("0.00");
+        }
+        return "-";
     }
 }

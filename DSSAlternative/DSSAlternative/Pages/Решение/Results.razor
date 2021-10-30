@@ -4,12 +4,14 @@
 
 
 <section class="res">
-    <h2>
-        Анализ результатов
-    </h2>
-    <div>
-        @if (Relations.Correct)
-        {
+    @if (Relations.Correct)
+    {
+        <div class="sheme">
+            <h3>Иерерхия</h3>
+            <HierShemeBig ProjectSheme="Project" ViewSelection="HierShemeBig.ViewSelections.Best"></HierShemeBig>
+        </div>
+        <div class="res-info">
+            <h3>Результаты</h3>
             @foreach (var levelGroup in GroupedResults())
             {
                 <section class="results-list">
@@ -44,26 +46,26 @@
                     </div>
                 </section>
             }
-            <HierShemeBig ProjectSheme="Project" ViewSelection="HierShemeBig.ViewSelections.Best"></HierShemeBig>
-        }
-        else
+
+        </div>
+    }
+    else
+    {
+        @if (!Relations.Consistent)
         {
-            @if (!Relations.Consistent)
-            {
-                <div>
-                    <Warning Header="Несогласованность" Message="Некоторые отношения являются несогласованными!"></Warning>
+            <div>
+                <Warning Header="Несогласованность" Message="Некоторые отношения являются несогласованными!"></Warning>
 
-                </div>
-            }
-            @if (!Relations.Known)
-            {
-                <div>
-                    <Warning Header="Незаполненность!" Message="Некоторые отношения не заполнены"></Warning>
-
-                </div>
-            }
+            </div>
         }
-    </div>
+        @if (!Relations.Known)
+        {
+            <div>
+                <Warning Header="Незаполненность!" Message="Некоторые отношения не заполнены"></Warning>
+
+            </div>
+        }
+    }
 </section>
 
 @code{

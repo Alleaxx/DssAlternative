@@ -10,7 +10,7 @@
                 <col style="width:40%" />
             </colgroup>
             <tbody>
-                <tr>
+                @*<tr>
                     <th class="main-node united" colspan="3">
                         <a href="@NodeLink" @onclick="() => SetNow(Relation.Main)">
                             <h3>
@@ -18,7 +18,7 @@
                             </h3>
                         </a>
                     </th>
-                </tr>
+                </tr>*@
                 <tr>
                     <th class="side-node from">
                         <a href="@NodeLink" @onclick="() => SetNow(Relation.From)">
@@ -69,11 +69,11 @@
             </tbody>
         </table>
     </CascadingValue>
-    <div style="display:flex; justify-content: center">
+    @*<div style="display:flex; justify-content: center">
         <ColoredDefinition Message="Согласованность" Color="#efffef"></ColoredDefinition>
         <ColoredDefinition Message="Рассогласованность" Color="#fff7f8"></ColoredDefinition>
         <ColoredDefinition Message="Неизвестно" Color="white"></ColoredDefinition>
-    </div>
+    </div>*@
 </section>
 
 

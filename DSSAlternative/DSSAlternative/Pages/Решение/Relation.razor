@@ -5,19 +5,98 @@
 
 <div class="relations-grid">
     <nav class="menu-area">
-        <h2 class="rel-menu-header">Список отношений</h2>
-        @foreach (var node in Hierarchy.RelationNodes)
-        {
-            <NodeRelations Node="node" Context="rel">
-                <RelationView>
-                    <span>@rel.From.Name - @rel.To.Name</span>
-                </RelationView>
-            </NodeRelations>
-        }
+        <NodeRelations Node="RelationActive.Main" Context="rel">
+            <RelationView>
+                <span>@rel.From.Name - @rel.To.Name</span>
+            </RelationView>
+        </NodeRelations>
     </nav>
 
+    <section class="criterias">
+        <style>
+            .criterias-list {
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+            }
+
+            .criteria {
+                display: flex;
+                margin: 2px;
+                padding: 3px;
+                border: 1px solid gainsboro;
+                font-size: 0.8em;
+                border-radius: 3px;
+                cursor: pointer;
+            }
+            .criteria.selected-now{
+                font-weight: bold;
+            }
+
+                .criteria:hover {
+                    background-color: whitesmoke;
+                }
+
+            .progress {
+                height: 4px;
+                background: lightgreen;
+                margin-left: 3px;
+                transition-property: width;
+                transition-duration: 0.4s;
+            }
+            .criteria-char{
+                font-size: 1.5em;
+                text-align: center;
+                margin-right: 5px;
+                width: 20px;
+            }
+        </style>
+        @*
+        Учитывать только требуемые отношения в цифрах
+        Добавить светло-серый фон к прогрессу
+        Уровень иерархии?*@
+
+        <header style="display:flex; justify-content:space-between">
+            <h2>
+                Критерии
+            </h2>
+        </header>
+        <div class="criterias-list">
+            @foreach (var criteria in Relations.Where(r => r.Any()))
+            {
+                <a class="criteria @(RelationActive.Main == criteria.Key ? "selected-now" : "")" role="button" @onclick="() => SetNow(criteria.FirstRequired)">
+                    <span class="criteria-char">
+                        @(!criteria.Known ? "~" : !criteria.Consistent ? "X" : "✓")
+                    </span>
+                    <div style="flex:1; margin: 0 3px">
+                        <div style="display: flex; justify-content:space-between; align-items: center;">
+                            <span style="margin: 2px 0">
+                                @criteria.Key.Level: @criteria.Key.Name
+                            </span>
+                            <span style="font-size:0.8em; color: gray;">
+                                @criteria.Required.Where(r => !r.Unknown && !r.Self).Count() / @Math.Max(1, criteria.Required.Where(r => !r.Self).Count())
+                            </span>
+                        </div>
+                        <div class="progress" style="width:@(((double)criteria.Where(r => !r.Unknown && !r.Self).Count() / Math.Max(1, criteria.Where(r => !r.Self).Count()) * 100).ToString("0"))%; background-color:@(criteria.Consistent ? "lightgreen" : "lightpink")"></div>
+                    </div>
+                </a>
+            }
+            <span style="text-align:right; font-size: 0.9em">
+                @Relations.SelectMany(c => c.Required).Where(r => !r.Unknown && !r.Self).Count() / @Math.Max(1, Relations.SelectMany(c => c.Required).Where(r => !r.Self).Count())
+            </span>
+            @if (Relations.Correct)
+            {
+                <a class="res" href="@ResultsLink">
+                    РЕЗУЛЬТАТ
+                </a>
+            }
+        </div>
+    </section>
     <section class="relation-area">
-        <h2>Отношение</h2>
+        <h2>@RelationActive.Main.Name</h2>
+
+
+
         <Tab>
             <TabItem>
                 <Title>
@@ -60,22 +139,12 @@
             </TabItem>
         </Tab>
         <div class="prev-next-stages">
-            <div>
-                <a class="prev" @onclick="SetPrev">
-                    ← предыдущее
-                </a>
-            </div>
-            @if (Relations.Correct)
-            {
-                <a class="res" href="@ResultsLink">
-                    ДОСТУПЕН РЕЗУЛЬТАТ!
-                </a>
-            }
-            <div>
-                <a class="next" @onclick="SetNext">
-                    следующее →
-                </a>
-            </div>
+            <a class="prev" @onclick="SetPrev">
+                ← Вернуться
+            </a>
+            <a class="next" @onclick="SetNext">
+                Далее →
+            </a>
         </div>
     </section>
 

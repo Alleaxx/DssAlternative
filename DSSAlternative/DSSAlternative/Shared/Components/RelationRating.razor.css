@@ -1,6 +1,9 @@
 ﻿td{
-    text-align: center;
     padding: 8px 24px;
+}
+.rating {
+    display: flex;
+    justify-content: space-between;
 }
 .selectable {
     color: #323232;

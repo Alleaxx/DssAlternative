@@ -2,17 +2,16 @@
 
 <style>
     .navside ul a {
-        padding: 4px;
+        padding: 10px 2px;
         text-decoration: none;
-        border-right: 5px solid gainsboro;
+        border-bottom: 5px solid transparent;
         cursor: pointer;
+        color: black;
     }
 
         .navside ul a.active {
-            background-color: white;
-            border-right: 5px solid orange;
+            border-bottom: 5px solid orange;
             color: black;
-            font-weight: 600;
         }
 
         .navside ul a:hover {
@@ -20,12 +19,12 @@
         }
 
 .stage-menu a {
-    border-top: 1px solid gainsboro;
-    border-bottom: 1px solid lightgreen;
-    border-left: 2px solid lightgreen;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    border-left: 2px solid transparent;
 }
 
-    .stage-menu a.warning {
+/*    .stage-menu a.warning {
         border-bottom-color: #cccc10;
         border-left-color: #cccc10;
     }
@@ -33,7 +32,7 @@
     .stage-menu a.error {
         border-bottom-color: red;
         border-left-color: red;
-    }
+    }*/
 
     .stage-menu a.none {
         display: none;
@@ -49,7 +48,7 @@
     flex: 1;
     margin: 0 10px;
     opacity: 50%;
-    width: 25px;
+    height: 25px;
 }
 
 .active .stage-element-image {
@@ -60,61 +59,51 @@
     flex: 9;
     font-family: "Calibri Light";
     font-size: 1.4em;
+    margin: 0 5px;
+}
+.stage-menu-element .small{
+    font-size: 1em;
 }
 
 .navside ul.inner-list {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    padding: 5px 20px;
+    padding: 5px 4px;
 }
 
     .navside ul.inner-list a {
         display: block;
         font-size: 0.8em;
-        border-top-right-radius: 3px;
-        border-bottom-right-radius: 3px;
-        padding: 5px 10px;
+        padding: 5px 4px;
     }
 </style>
 
 <nav class="navside">
     <div>
         <section class="stage-menu">
-            <h2 class="stage-menu-header">Этапы решения задачи:</h2>
             <ul>
                 <li>
                     <NavLink class="@HierClass" href="@HierLink">
                         <img class="stage-element-image" src="Images/Иерархия.png" />
-                        <span class="stage-element-name">I ИЕРАРХИЯ</span>
+                        <span class="stage-element-name">I ИЕРАРХИЯ @(Project.UnsavedChanged ? "*" : "")</span>
                     </NavLink>
                 </li>
                 <li>
-                    <ul class="inner-list">
-                        <li>
-                            <NavLink style="margin-left: 1em" class="@HierClass" href="@NodeLink">
-                                I - Редактирование
-                            </NavLink>
-                        </li>
-                    </ul>
+                    <NavLink class="@HierClass" href="@NodeLink">
+                        <span class="stage-element-name small">(ред.)</span>
+                    </NavLink>
                 </li>
                 <li>
                     <NavLink class="@ViewClass" href="@ViewLink">
                         <img class="stage-element-image" src="Images/Отношения.png" />
-                        <span class="stage-element-name">II ОТНОШЕНИЯ</span>
+                        <span class="stage-element-name">II ОТНОШЕНИЯ @(Relations.Correct ? "" : !Relations.Known ? "?" : "!")</span>
                     </NavLink>
                 </li>
                 <li>
-                    <ul class="inner-list">
-                        @foreach (var criteria in NavNodes)
-                        {
-                            <li>
-                                <a href="@RelationsLink" style="@LeftMarginNode(criteria)" class="@NodeClass(criteria)" @onclick="() => SetRelFromNode(criteria)" >
-                                    II - @NodeIndex(criteria): @criteria.Name
-                                </a>
-                            </li>
-                        }
-                    </ul>
+                    <NavLink class="@ViewClass" href="@RelationsLink">
+                        <span class="stage-element-name small">(ред.)</span>
+                    </NavLink>
                 </li>
                 <li>
                     <NavLink class="@ResultsClass" href="@ResultsLink">
@@ -140,7 +129,7 @@
 
     private string NodeClass(INode node)
     {
-        var rel = Relations[node].FirstRequired; //Problem.FirstRequiredRelation(node);
+        var rel = Relations[node].FirstRequired;
         return new CssRelation(Project, rel).CssClass();
     }
 

@@ -1,29 +1,25 @@
 ﻿@inherits DSSProject
-<nav>
-    <div class="task-row">
-        <ul class="task-menu">
-            <CascadingValue Value="this">
-                @foreach (var project in DSSApp.Projects)
-                {
-                    <li>
-                        <ProjectTask Project="project"></ProjectTask>
-                    </li>
-                }
-            </CascadingValue>
-            <li>
-                <button class="add-task" @onclick="CreateProblem">
-                    <span>Создать</span>
-                </button>
-            </li>
-        </ul>
-    </div>
+<nav class="menu-projects">
+    <h2 class="stage-menu-header" style="text-align:center">Задачи:</h2>
+    <ul class="task-menu">
+        <CascadingValue Value="this">
+            @foreach (var project in DSSApp.Projects)
+            {
+                <li>
+                    <ProjectTask Project="project"></ProjectTask>
+                </li>
+            }
+        </CascadingValue>
+    </ul>
     <div class="state-control">
+        <button class="add-task action-button" @onclick="CreateProblem">
+            <span>Создать задачу</span>
+        </button>
         <button class="action-button save" @onclick="SaveProgress">
             <span>Сохранить прогресс</span>
         </button>
-        <br />
         <button class="action-button load" @onclick="LoadProgress">
-            <span>Загрузить</span>
+            <span>Восстановить</span>
         </button>
     </div>
 </nav>

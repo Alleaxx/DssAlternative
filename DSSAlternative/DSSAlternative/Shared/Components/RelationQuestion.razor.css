@@ -6,7 +6,6 @@
 
     .matrix th, .matrix td {
         padding: 8px 24px;
-        text-align: center;
         border: 5px solid transparent;
         border-top: 0;
         border-bottom: 0;

@@ -71,7 +71,6 @@ namespace DSSAlternative.AHP
             SetNow(HierarchyActive.MainGoal);
             CreateSetNewRelations();
             Relations_OnChanged(Relations);
-
             void CreateSetNewRelations()
             {
                 if (Relations != null)
@@ -80,6 +79,7 @@ namespace DSSAlternative.AHP
                 }
                 Relations = new Relations(HierarchyActive);
                 Relations.OnChanged += Relations_OnChanged;
+                SetNow(Relations[HierarchyActive.MainGoal].FirstRequired);
             }
             void Relations_OnChanged(IRelations obj)
             {
