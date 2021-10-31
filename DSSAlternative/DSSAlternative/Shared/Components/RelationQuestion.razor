@@ -1,81 +1,86 @@
 ﻿@inherits DSSComponentParamRelation
 @layout EditorLayout
 
-<section>
-    <CascadingValue Value="RatingMatrix">
-        <table class="matrix" @onclick="@RelationUpdated">
-            <colgroup>
-                <col style="width:40%" />
-                <col style="width:20%" />
-                <col style="width:40%" />
-            </colgroup>
-            <tbody>
-                @*<tr>
-                    <th class="main-node united" colspan="3">
-                        <a href="@NodeLink" @onclick="() => SetNow(Relation.Main)">
-                            <h3>
-                                @Relation.Main.Name
-                            </h3>
-                        </a>
-                    </th>
-                </tr>*@
-                <tr>
-                    <th class="side-node from">
-                        <a href="@NodeLink" @onclick="() => SetNow(Relation.From)">
-                            @Relation.From.Name
-                        </a>
-                    </th>
-                    <RelationRating Node="Relation.From" Rating="RatingNone" ColSpan="1" Relation="Relation">
-
-                    </RelationRating>
-                    <th class="side-node to">
-                        <a href="@NodeLink" @onclick="() => SetNow(Relation.To)">
-                            @Relation.To.Name
-                        </a>
-                    </th>
-                </tr>
-
-
-                <tr>
-                    <RelationRating Node="Relation.From" Rating="RatingEqual" ColSpan="3" Relation="Relation">
-
-                    </RelationRating>
-                </tr>
-
-                @foreach (var group in Ratings)
+@if (Relations.Any(c => c.Key == Relation.Main))
+{
+    <section>
+        <p>
+            @if (Relation.Unknown)
+            {
+                <span>
+                    Сейчас <b>приоритет</b> <i>неизвестен</i>, его необходимо выбрать.
+                </span>
+            }
+            else if (Relations[Relation.Main].Consistent)
+            {
+                if (Relation.Value > 1)
                 {
-                    @if (group.forRating.Value != 1)
+                    <span><b>Приоритет</b> выбран. @Relation.From.Name <i>@GetTextRelation(Relation).ToLower()</i> @Relation.To.Name</span>
+                }
+                else if (Relation.Value < 1)
+                {
+                    <span><b>Приоритет</b> выбран. @Relation.To.Name <i>@GetTextRelation(Relation).ToLower()</i>  @Relation.From.Name</span>
+                }
+                else
+                {
+                    <span><b>Приоритет</b> выбран. Оба критерия более-менее <i>равны</i></span>
+                }
+            }
+            else
+            {
+                <span><b>Приоритет</b> выбран, однако отношения по критерию <i>несогласованы</i>! Стоит их пересмотреть.</span>
+            }
+        </p>
+        <CascadingValue Value="RatingMatrix">
+            <table class="matrix" @onclick="@RelationUpdated">
+                <colgroup>
+                    <col style="width:50%" />
+                    <col style="width:50%" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th class="side-node from">
+                            <a href="@NodeLink" @onclick="() => SetNow(Relation.From)">
+                                @Relation.From.Name
+                            </a>
+                        </th>
+                        <th class="side-node to">
+                            <a href="@NodeLink" @onclick="() => SetNow(Relation.To)">
+                                @Relation.To.Name
+                            </a>
+                        </th>
+                    </tr>
+
+
+
+                    @foreach (var group in Ratings)
                     {
                         <tr>
                             <RelationRating Node="Relation.From" Rating="group.forRating" ColSpan="1" Relation="Relation">
 
                             </RelationRating>
-                            <td class="between">
-                                &nbsp;
-                            </td>
                             <RelationRating Node="Relation.To" Rating="group.toRating" ColSpan="1" Relation="Relation">
 
                             </RelationRating>
                         </tr>
                     }
-                }
 
-                <tr>
-                    <td colspan="3" class="results-message">
-                        '@Relation.From.Name' @Relation.GetTextRelation() '@Relation.To.Name'
-                    </td>
-                </tr>
+                    @*<tr>
+                            <RelationRating Node="Relation.From" Rating="RatingEqual" ColSpan="2" Relation="Relation">
 
-            </tbody>
-        </table>
-    </CascadingValue>
-    @*<div style="display:flex; justify-content: center">
-        <ColoredDefinition Message="Согласованность" Color="#efffef"></ColoredDefinition>
-        <ColoredDefinition Message="Рассогласованность" Color="#fff7f8"></ColoredDefinition>
-        <ColoredDefinition Message="Неизвестно" Color="white"></ColoredDefinition>
-    </div>*@
-</section>
+                            </RelationRating>
+                        </tr>*@
+                    <tr>
+                        <RelationRating Node="Relation.From" Rating="RatingNone" ColSpan="2" Relation="Relation">
 
+                        </RelationRating>
+                    </tr>
+                </tbody>
+            </table>
+        </CascadingValue>
+    </section>
+}
+else
+{
 
-@code {
 }

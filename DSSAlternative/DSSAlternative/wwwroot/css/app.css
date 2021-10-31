@@ -5,13 +5,13 @@
 
 .grid {
     display: grid;
-    grid-template-columns: 20fr 80fr;
+    grid-template-columns: 5fr 20fr 70fr 5fr;
     grid-template-rows: auto auto 1fr auto;
     grid-template-areas:
-        "logo header"
-        "menu navside"
-        "menu content"
-        "footer footer";
+        "logo logo header header"
+        ". menu navside ."
+        ". menu content ."
+        "footer footer footer footer";
 }
 
 .menu{
@@ -25,6 +25,7 @@
     background-color: rgb(230, 230, 230);
     border-bottom: 2px solid gainsboro;
     border-right: 1px solid gainsboro;
+    border-left: 1px solid gainsboro;
     display: flex;
     justify-content: center;
     text-align: center;
@@ -34,6 +35,7 @@
     grid-area: header;
     background-color: rgb(240, 240, 240);
     border-bottom: 2px solid gainsboro;
+    border-right: 1px solid gainsboro;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -41,11 +43,13 @@
 
 .navside {
     grid-area: navside;
-    border-bottom: 2px solid gainsboro;
+    border-bottom: 1px solid gainsboro;
+    border-right: 2px solid gainsboro;
 }
 .menu-projects {
     grid-area: menu;
     border-right: 1px solid gainsboro;
+    border-left: 2px solid gainsboro;
 }
 
 main {
@@ -54,6 +58,7 @@ main {
     margin: 0;
     max-width: 1300px;
     min-height: 60vh;
+    border-right: 2px solid gainsboro;
 }
 
 .grid > footer {
@@ -64,9 +69,19 @@ main {
     line-height: 1.5;
     align-items: center;
     text-align: center;
-    border-top: 1px solid gainsboro;
-    border-bottom: 1px solid gainsboro;
+    border: 1px solid gainsboro;
     padding: 5px 20px;
+}
+.grid > footer p{
+    line-height: 140%;
+    margin: 4px 0;
+}
+.grid > footer a{
+    color: royalblue;
+    text-decoration: none;
+}
+.grid > footer a:hover{
+    color: blue;
 }
 
 

@@ -80,40 +80,44 @@
 </style>
 
 <nav class="navside">
-    <div>
-        <section class="stage-menu">
-            <ul>
-                <li>
-                    <NavLink class="@HierClass" href="@HierLink">
-                        <img class="stage-element-image" src="Images/Иерархия.png" />
-                        <span class="stage-element-name">I ИЕРАРХИЯ @(Project.UnsavedChanged ? "*" : "")</span>
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink class="@HierClass" href="@NodeLink">
-                        <span class="stage-element-name small">(ред.)</span>
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink class="@ViewClass" href="@ViewLink">
-                        <img class="stage-element-image" src="Images/Отношения.png" />
-                        <span class="stage-element-name">II ОТНОШЕНИЯ @(Relations.Correct ? "" : !Relations.Known ? "?" : "!")</span>
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink class="@ViewClass" href="@RelationsLink">
-                        <span class="stage-element-name small">(ред.)</span>
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink class="@ResultsClass" href="@ResultsLink">
-                        <img class="stage-element-image" src="Images/Результаты.png" />
-                        <span class="stage-element-name">III РЕЗУЛЬТАТЫ</span>
-                    </NavLink>
-                </li>
-            </ul>
-        </section>
-    </div>
+    <h2>@Project.HierarchyActive.MainGoal?.Name</h2>
+    <section class="stage-menu">
+        <ul>
+            <li>
+                <NavLink class="@HierClass" href="@HierLink">
+                    <img class="stage-element-image" src="Images/layers.svg" />
+                    <span class="stage-element-name">Иерархия @(Project.UnsavedChanged ? "*" : "")</span>
+                </NavLink>
+            </li>
+            <li>
+                <NavLink class="@HierClass" href="@NodeLink">
+                    <span class="stage-element-name small">(ред.)</span>
+                </NavLink>
+            </li>
+            <li>
+                <NavLink class="@ViewClass" href="@ViewLink">
+                    <img class="stage-element-image" src="Images/share-2.svg" />
+                    <span class="stage-element-name">@(Relations.Correct ? "" : !Relations.Known ? "?" : "!") Отношения и связи</span>
+                </NavLink>
+            </li>
+            <li>
+                <NavLink class="@ViewClass" href="@RelationsLink">
+                    <span class="stage-element-name small">(ред.)</span>
+                </NavLink>
+            </li>
+            <li>
+                <NavLink class="@ViewClass" href="@OptionsLink">
+                    <span class="stage-element-name small">(опции)</span>
+                </NavLink>
+            </li>
+            <li>
+                <NavLink class="@ResultsClass" href="@ResultsLink">
+                    <img class="stage-element-image" src="Images/list.svg" />
+                    <span class="stage-element-name">Результаты</span>
+                </NavLink>
+            </li>
+        </ul>
+    </section>
 </nav>
 
 @code{

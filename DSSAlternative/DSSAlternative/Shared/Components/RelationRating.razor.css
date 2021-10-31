@@ -23,10 +23,20 @@
     font-weight: 600;
 }
 
-.safe {
-    background-color: #efffef;
+.cr{
+
 }
 
+.safe {
+
+}
+    .safe .cr {
+        color: #00d885;
+    }
+
 .dangerous {
-    background-color: #fff7f8;
+
+}
+.dangerous .cr{
+    color: red;
 }

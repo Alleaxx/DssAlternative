@@ -4,14 +4,6 @@
 
 
 <div class="relations-grid">
-    <nav class="menu-area">
-        <NodeRelations Node="RelationActive.Main" Context="rel">
-            <RelationView>
-                <span>@rel.From.Name - @rel.To.Name</span>
-            </RelationView>
-        </NodeRelations>
-    </nav>
-
     <section class="criterias">
         <style>
             .criterias-list {
@@ -29,9 +21,10 @@
                 border-radius: 3px;
                 cursor: pointer;
             }
-            .criteria.selected-now{
-                font-weight: bold;
-            }
+
+                .criteria.selected-now {
+                    font-weight: bold;
+                }
 
                 .criteria:hover {
                     background-color: whitesmoke;
@@ -44,23 +37,18 @@
                 transition-property: width;
                 transition-duration: 0.4s;
             }
-            .criteria-char{
+
+            .criteria-char {
                 font-size: 1.5em;
                 text-align: center;
                 margin-right: 5px;
                 width: 20px;
             }
         </style>
-        @*
-        Учитывать только требуемые отношения в цифрах
-        Добавить светло-серый фон к прогрессу
-        Уровень иерархии?*@
 
-        <header style="display:flex; justify-content:space-between">
-            <h2>
-                Критерии
-            </h2>
-        </header>
+        <h3>
+            Критерии
+        </h3>
         <div class="criterias-list">
             @foreach (var criteria in Relations.Where(r => r.Any()))
             {
@@ -77,30 +65,28 @@
                                 @criteria.Required.Where(r => !r.Unknown && !r.Self).Count() / @Math.Max(1, criteria.Required.Where(r => !r.Self).Count())
                             </span>
                         </div>
-                        <div class="progress" style="width:@(((double)criteria.Where(r => !r.Unknown && !r.Self).Count() / Math.Max(1, criteria.Where(r => !r.Self).Count()) * 100).ToString("0"))%; background-color:@(criteria.Consistent ? "lightgreen" : "lightpink")"></div>
+                        <div class="progress" style="width:@(((double)criteria.Where(r => !r.Unknown && !r.Self).Count() / Math.Max(1, criteria.Where(r => !r.Self).Count()) * 100).ToString("0"))%; background-color:@(!criteria.Known ? "#e7de79" : criteria.Consistent ? "lightgreen" : "lightpink")"></div>
                     </div>
                 </a>
-            }
-            <span style="text-align:right; font-size: 0.9em">
-                @Relations.SelectMany(c => c.Required).Where(r => !r.Unknown && !r.Self).Count() / @Math.Max(1, Relations.SelectMany(c => c.Required).Where(r => !r.Self).Count())
-            </span>
-            @if (Relations.Correct)
-            {
-                <a class="res" href="@ResultsLink">
-                    РЕЗУЛЬТАТ
-                </a>
+                if (RelationActive.Main == criteria.Key)
+                {
+                    <div style="font-size:0.8em; margin-right: 1em;">
+                        <NodeRelations Node="RelationActive.Main" Context="rel" ShowState="false" ShowHeader="false">
+                            <RelationView>
+                                <span>@rel.From.Name - @rel.To.Name</span>
+                            </RelationView>
+                        </NodeRelations>
+                    </div>
+                }
             }
         </div>
     </section>
     <section class="relation-area">
-        <h2>@RelationActive.Main.Name</h2>
-
-
-
+        <h3>@RelationActive.Main.Name</h3>
         <Tab>
             <TabItem>
                 <Title>
-                    <h4>Сравнение</h4>
+                    <span>Сравнение</span>
                 </Title>
                 <ChildContent>
                     <RelationQuestion Relation="@RelationActive" />
@@ -108,49 +94,36 @@
             </TabItem>
             <TabItem>
                 <Title>
-                    <h4>Матрица</h4>
+                    <span>Матрица</span>
                 </Title>
                 <ChildContent>
                     <NodeMatrix Node="@RelationActive.Main" />
                 </ChildContent>
             </TabItem>
-            <TabItem>
-                <Title>
-                    <h4>Настройки</h4>
-                </Title>
-                <ChildContent>
-                    <section>
-                        <h5>Настройки</h5>
-                        <div>
-                            <label for="amount">Количество градаций оценок:</label><br />
-                            <input id="amount" type="number" @bind-value="@DSSApp.RatingSystem.Amount" min="1" max="12" />
-                        </div>
-                        <div>
-                            <label for="border-cons">Граница согласованности</label><br />
-                            <input id="border-cons" type="number" @bind-value="@MtxConsistency.BorderDefault" />
-                        </div>
-                        <p>
-                            <a class="options-link" href="@OptionsLink">
-                                <span>Все настройки</span>
-                            </a>
-                        </p>
-                    </section>
-                </ChildContent>
-            </TabItem>
         </Tab>
         <div class="prev-next-stages">
-            <a class="prev" @onclick="SetPrev">
-                ← Вернуться
+            <a class="prev" @onclick="SetPrev" role="button">
+                ← назад
             </a>
-            <a class="next" @onclick="SetNext">
-                Далее →
+            <a class="next" @onclick="SetNext" role="button">
+                К следующему отношению →
             </a>
         </div>
+        <div style="text-align:right; font-size: 0.9em">
+            <span>
+                @NowProgress / @AllProgress
+            </span>
+        </div>
+        <div class="progress" style="width:@((NowProgress / AllProgress * 100).ToString("0"))%; background-color:@(!Relations.Known ? "#e7de79" : Relations.Consistent ? "lightgreen" : "lightpink")"></div>
+
     </section>
 
 </div>
 
 @code {
+    protected double NowProgress => Relations.SelectMany(c => c.Required).Where(r => !r.Unknown && !r.Self).Count();
+    protected double AllProgress => Math.Max(1, Relations.SelectMany(c => c.Required).Where(r => !r.Self).Count());
+
 
     protected INodeRelation Prev => Relations.PrevRequiredRel(RelationActive);
     protected INodeRelation Next => Relations.NextRequiredRel(RelationActive);
@@ -158,7 +131,12 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Project.OnRelationChanged += () => StateHasChanged();
+        Project.OnRelationChanged += OnRelationChanged;
+    }
+    private void OnRelationChanged()
+    {
+        Console.WriteLine("Отношение сменилось");
+        StateHasChanged();
     }
 
     private void SetNext()
@@ -168,6 +146,5 @@
     private void SetPrev()
     {
         SetNow(Prev);
-        StateHasChanged();
     }
 }

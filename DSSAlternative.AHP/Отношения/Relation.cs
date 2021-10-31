@@ -24,8 +24,6 @@ namespace DSSAlternative.AHP
 
         IRating Rating { get; }
         void SetRating(IRating rating);
-
-        string GetTextRelation();
     }
     public class NodeRelation : INodeRelation
     {
@@ -165,67 +163,6 @@ namespace DSSAlternative.AHP
         public void SetUnknown()
         {
             Value = 0;
-        }
-
-
-
-
-
-        public string GetTextRelation()
-        {
-            double val = Value;
-            if (Unknown)
-            {
-                return "??????";
-            }
-
-            if (val == 1)
-            {
-                return $"РАВНОЗНАЧЕН";
-            }
-            else if(val > 1)
-            {
-                if (val >= 9)
-                    return "АБСОЛЮТНО ПРЕВОСХОДИТ";
-                else if (val >= 8)
-                    return "СИЛЬНО ПРЕОБЛАДАЕТ над";
-                else if (val >= 7)
-                    return "СИЛЬНО ПРЕОБЛАДАЕТ над";
-                else if (val >= 6)
-                    return "ПРЕОБЛАДАЕТ над";
-                else if (val >= 5)
-                    return "ПРЕОБЛАДАЕТ над";
-                else if (val >= 4)
-                    return "НЕМНОГО ПРЕОБЛАДАЕТ над";
-                else if (val >= 3)
-                    return "НЕМНОГО ПРЕОБЛАДАЕТ над";
-                else if (val >= 2)
-                    return "СЛЕГКА ПРЕОБЛАДАЕТ над";
-                else
-                    return "СЛЕГКА ПРЕОБЛАДАЕТ над";
-            }
-            else
-            {
-                double reflectVal = 1 / val;
-                if (reflectVal >= 9)
-                    return "АБСОЛЮТНО ПРОИГРЫВАЕТ";
-                else if (reflectVal >= 8)
-                    return "СИЛЬНО ПРОИГРЫВАЕТ";
-                else if (reflectVal >= 7)
-                    return "СИЛЬНО ПРОИГРЫВАЕТ";
-                else if (reflectVal >= 6)
-                    return "ПРОИГРЫВАЕТ";
-                else if (reflectVal >= 5)
-                    return "ПРОИГРЫВАЕТ";
-                else if (reflectVal >= 4)
-                    return "НЕМНОГО ПРОИГРЫВАЕТ";
-                else if (reflectVal >= 3)
-                    return "НЕМНОГО ПРОИГРЫВАЕТ";
-                else if (reflectVal >= 2)
-                    return "СЛЕГКА ПРОИГРЫВАЕТ";
-                else
-                    return "СЛЕГКА ПРОИГРЫВАЕТ";
-            }
         }
     }
 }

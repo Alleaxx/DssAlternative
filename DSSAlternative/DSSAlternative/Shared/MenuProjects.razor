@@ -1,6 +1,5 @@
 ﻿@inherits DSSProject
 <nav class="menu-projects">
-    <h2 class="stage-menu-header" style="text-align:center">Задачи:</h2>
     <ul class="task-menu">
         <CascadingValue Value="this">
             @foreach (var project in DSSApp.Projects)
@@ -13,10 +12,13 @@
     </ul>
     <div class="state-control">
         <button class="add-task action-button" @onclick="CreateProblem">
-            <span>Создать задачу</span>
+            <span>Создать новую задачу</span>
+        </button>
+        <button class="action-button" @onclick="() => Account.SetTemplate(Project)">
+            Сохранить текущую задачу
         </button>
         <button class="action-button save" @onclick="SaveProgress">
-            <span>Сохранить прогресс</span>
+            <span>Сохранить все</span>
         </button>
         <button class="action-button load" @onclick="LoadProgress">
             <span>Восстановить</span>
@@ -25,10 +27,15 @@
 </nav>
 
 @code{
-
-    private void CreateProblem()
+    protected override void OnInitialized()
     {
-        DSSApp.AddProject(DSSExample.CreateNewProblem());
+        base.OnInitialized();
+        DSSApp.OnProjectRemoved += StateHasChanged;
+    }
+
+        private void CreateProblem()
+    {
+        DSSApp.AddProject(AhpHierarchy.CreateNewProblem());
     }
 
     private void SaveProgress()

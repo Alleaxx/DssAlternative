@@ -5,6 +5,7 @@
     padding: 2px 0;
     border: 1px solid gainsboro;
     text-decoration: none;
+    margin: 4px;
 }
 
     .task-menu-element:hover {

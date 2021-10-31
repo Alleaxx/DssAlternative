@@ -1,0 +1,164 @@
+{
+  "Name": "Оценка рисков Legacy",
+  "Description": "Задача ранжирования списка рисков для проекта по их опасности",
+  "Img": "Images/Riscs.png",
+  "Nodes": [
+    {
+      "Name": "Оценка рисков проекта",
+      "Level": 0,
+      "Group": 0,
+      "GroupIndex": -1
+    },
+    {
+      "Name": "Финансовый",
+      "Level": 1,
+      "Group": 1,
+      "GroupIndex": 0
+    },
+    {
+      "Name": "Маркетинговый",
+      "Level": 1,
+      "Group": 2,
+      "GroupIndex": 0
+    },
+    {
+      "Name": "Организационный",
+      "Level": 1,
+      "Group": 3,
+      "GroupIndex": 0
+    },
+    {
+      "Name": "Ф1",
+      "Level": 2,
+      "Group": 4,
+      "GroupIndex": 1
+    },
+    {
+      "Name": "Ф2",
+      "Level": 2,
+      "Group": 4,
+      "GroupIndex": 1
+    },
+    {
+      "Name": "Ф3",
+      "Level": 2,
+      "Group": 4,
+      "GroupIndex": 1
+    },
+    {
+      "Name": "М1",
+      "Level": 2,
+      "Group": 4,
+      "GroupIndex": 2
+    },
+    {
+      "Name": "М2",
+      "Level": 2,
+      "Group": 4,
+      "GroupIndex": 2
+    },
+    {
+      "Name": "М3",
+      "Level": 2,
+      "Group": 4,
+      "GroupIndex": 2
+    },
+    {
+      "Name": "О1",
+      "Level": 2,
+      "Group": 4,
+      "GroupIndex": 3
+    },
+    {
+      "Name": "О2",
+      "Level": 2,
+      "Group": 4,
+      "GroupIndex": 3
+    },
+    {
+      "Name": "О3",
+      "Level": 2,
+      "Group": 4,
+      "GroupIndex": 3
+    }
+  ],
+
+  "Relations": [
+    {
+      "Main": "Оценка рисков проекта",
+      "From": "Финансовый",
+      "To": "Маркетинговый",
+      "Value": 2
+    },
+    {
+      "Main": "Оценка рисков проекта",
+      "From": "Финансовый",
+      "To": "Организационный",
+      "Value": 2
+    },
+    {
+      "Main": "Оценка рисков проекта",
+      "From": "Маркетинговый",
+      "To": "Организационный",
+      "Value": 2
+    },
+
+    {
+      "Main": "Финансовый",
+      "From": "Ф1",
+      "To": "Ф2",
+      "Value": 2
+    },
+    {
+      "Main": "Финансовый",
+      "From": "Ф1",
+      "To": "Ф3",
+      "Value": 4
+    },
+    {
+      "Main": "Финансовый",
+      "From": "Ф2",
+      "To": "Ф3",
+      "Value": 2
+    },
+
+    {
+      "Main": "Маркетинговый",
+      "From": "М1",
+      "To": "М2",
+      "Value": 5
+    },
+    {
+      "Main": "Маркетинговый",
+      "From": "М1",
+      "To": "М3",
+      "Value": 9
+    },
+    {
+      "Main": "Маркетинговый",
+      "From": "М2",
+      "To": "М3",
+      "Value": 2
+    },
+
+    {
+      "Main": "Организационный",
+      "From": "О1",
+      "To": "О2",
+      "Value": 4
+    },
+    {
+      "Main": "Организационный",
+      "From": "О1",
+      "To": "О3",
+      "Value": 8
+    },
+    {
+      "Main": "Организационный",
+      "From": "О2",
+      "To": "О3",
+      "Value": 2
+    }
+  ]
+}
+

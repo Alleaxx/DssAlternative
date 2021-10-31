@@ -54,11 +54,14 @@
 .bad {
     background-color: #ffdee3;
 }
+.sel {
+    background-color: #d1ecff;
+}
 
 .warn {
     background-color: antiquewhite;
 }
 
 .best {
-    background-color: #dfffdf;
+    background-color: #ebe3fc;
 }

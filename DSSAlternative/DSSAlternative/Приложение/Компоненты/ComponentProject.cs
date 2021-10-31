@@ -26,11 +26,17 @@ namespace DSSAlternative.AppComponents
         public INodeRelation RelationActive => Project.RelationSelected;
         protected void SetNow(INodeRelation rel)
         {
-            Project.SetNow(rel);
+            if(rel != null)
+            {
+                Project.SetNow(rel);
+            }
         }
         protected void SetNow(INode node)
         {
-            Project.SetNow(node);
+            if(node != null)
+            {
+                Project.SetNow(node);
+            }
         }
 
 

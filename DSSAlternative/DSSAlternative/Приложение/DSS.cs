@@ -16,9 +16,11 @@ namespace DSSAlternative.AppComponents
     public class DSS
     {
         private readonly HttpClient HttpClient;
-        public DSS(HttpClient client)
+        private readonly NavigationManager Navigation;
+        public DSS(HttpClient client, NavigationManager manager)
         {
             HttpClient = client;
+            Navigation = manager;
             JsonOptions = new JsonSerializerOptions()
             {
                 WriteIndented = true,
@@ -32,6 +34,9 @@ namespace DSSAlternative.AppComponents
         {
             string[] Pathes = new string[]
             {
+                "legacy-study.json",
+                "legacy-study-advanced.json",
+                "legacy-riscs.json",
                 "project-team-task.json",
                 "project-riscs-task.json",
                 "project-tools-task.json",
@@ -45,6 +50,7 @@ namespace DSSAlternative.AppComponents
                 ITemplate template = await LoadTemplate($"sample-data/{path}");
                 Templates.Add(template);
             }
+            OnTemplatesLoaded?.Invoke();
             Console.WriteLine("Шаблоны загружены");
         }
         private async Task<Template> LoadTemplate(string path)
@@ -59,9 +65,13 @@ namespace DSSAlternative.AppComponents
 
 
         public event Action<IProject> OnProjectSelectChange;
+        public event Action OnTemplatesLoaded;
+        public event Action OnStateLoaded;
+        public event Action OnProjectRemoved;
 
         public IRatingSystem RatingSystem { get; private set; } = new RatingSystem();
-        public List<ITemplate> Templates { get; set; }
+        public List<ITemplate> Templates { get; private set; }
+       
         //Все проблемы
         public List<IProject> Projects { get; private set; } = new List<IProject>();
         public IProject Project { get; private set; }
@@ -69,15 +79,14 @@ namespace DSSAlternative.AppComponents
 
         public void SelectProject(IProject project)
         {
-            IProject old = Project;
-            Project = project;
-            Update();
-
-            if(old != null)
+            if (Project != null)
             {
-                old.UpdatedHierOrRelationChanged -= Update;
+                Project.UpdatedHierOrRelationChanged -= Update;
             }
+
+            Project = project;
             project.UpdatedHierOrRelationChanged += Update;
+            Update();
 
             void Update()
             {
@@ -102,8 +111,10 @@ namespace DSSAlternative.AppComponents
             }
             else if (!anotherProjectAvail)
             {
-                Project = null;
+                Navigation.NavigateTo("Start");
             }
+
+            OnProjectRemoved?.Invoke();
         }
 
         public void LoadState(DssState state)
@@ -121,6 +132,7 @@ namespace DSSAlternative.AppComponents
                     var selected = Project = Projects[state.SelectedTemplateIndex];
                     SelectProject(selected);
                 }
+                OnStateLoaded?.Invoke();
             }
         }
     }

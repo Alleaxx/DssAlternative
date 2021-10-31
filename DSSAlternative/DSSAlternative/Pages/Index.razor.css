@@ -1,7 +1,6 @@
 ﻿.main-grid {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    grid-template-areas: "about problem info";
+    display: flex;
+    margin-top: 3em;
 }
 
     .main-grid a {
@@ -9,16 +8,15 @@
     }
 
 .about-area {
-    grid-area: about;
+    flex: 1;
     text-decoration: none;
     color: black;
     padding: 5px;
+    border-right: 0;
 }
 
 .problem-area {
-    grid-area: problem;
-    border-right: 1px solid gainsboro;
-    border-left: 1px solid gainsboro;
+    flex: 2;
     text-decoration: none;
     color: black;
     padding: 5px;
@@ -26,15 +24,17 @@
 }
 
 .info-area {
-    grid-area: info;
+    flex: 1;
     text-decoration: none;
     color: black;
     padding: 5px;
+    border-left: 0;
 }
 
 .about-area, .problem-area, .info-area {
     text-align: center;
-    border-bottom: 1px solid gainsboro;
+    border: 1px solid gainsboro;
+    border-radius: 8px;
 }
 
     .about-area img, .problem-area img, .info-area img {
@@ -48,13 +48,9 @@
 
     .about-area:hover, .problem-area:hover, .info-area:hover {
         cursor: pointer;
-        background-color: whitesmoke;
+        background-color: rgb(250,250,250);
     }
 
-.pr-arrow {
-    content: "->";
-    margin: 0 1em;
-}
 
 .process {
     display: flex;

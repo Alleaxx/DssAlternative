@@ -13,7 +13,7 @@ namespace DSSAlternative.AHP
         string Description { get; }
         string Img { get; }
 
-        List<Node> Nodes { get; }
+        Node[] Nodes { get; }
         TemplateRelation[] Relations { get; }
 
         ITemplate CloneThis();
@@ -26,40 +26,40 @@ namespace DSSAlternative.AHP
         public string Img { get; set; }
 
         public DateTime Creation { get; set; }
-        public List<Node> Nodes { get; set; }
-        public TemplateRelation[] Relations { get; set; } = Array.Empty<TemplateRelation>();
+        public Node[] Nodes { get; set; }
+        public TemplateRelation[] Relations { get; set; }
+
 
         public Template()
         {
             Creation = DateTime.Now;
+            Relations = Array.Empty<TemplateRelation>();
         }
-        public Template(IEnumerable<Node> nodes) : this()
+        public Template(IProject project) : this(project.HierarchyActive, project.Relations.SelectMany(c => c.Required))
         {
-            Nodes = new List<Node>(nodes);
+            Img = "Images/settings.svg";
+            Description = "Сохраненная задача выбора";
         }
-        public Template(IHierarchy hier)
+        public Template(IHierarchy hier, IEnumerable<INodeRelation> relations = null)
         {
-            Nodes = new List<Node>(hier.OfType<Node>());
-        }
-        public Template(IEnumerable<Node> nodes, IEnumerable<INodeRelation> relations)
-        {
-            var goal = nodes.First(n => n.Level == 0);
+            Creation = DateTime.Now;
 
+            var goal = hier.MainGoal;
             Name = $"Задача '{goal.Name}'";
-            Description = $"Созданный шаблон на основе открытой задачи c {nodes.Count()} узлами";
+            Description = $"Созданный пресет на основе открытой задачи c {hier.Count()} узлами";
             Img = "Images/settings.svg";
    
-            Nodes = new List<Node>(nodes.Select(n => n.CloneThis()));
-            Relations = relations.Select(r => new TemplateRelation() {
-                Main = r.Main.Name,
-                From = r.From.Name,
-                To = r.To.Name,
-                Value = r.Value
-            }).ToArray();
-            Creation = DateTime.Now;
+            Nodes = hier.OfType<Node>().Select(n => n.CloneThis()).ToArray();
+            if(relations != null)
+            {
+                Relations = relations.Select(r => new TemplateRelation(r)).ToArray();
+            }
+            else
+            {
+                Relations = Array.Empty<TemplateRelation>();
+            }
         }
-        public Template(IProject project)
-            : this(project.HierarchyActive.OfType<Node>(), project.Relations.SelectMany(c => c.Required)) { }
+
 
         public object Clone()
         {
@@ -67,8 +67,12 @@ namespace DSSAlternative.AHP
         }
         public ITemplate CloneThis()
         {
-            IEnumerable<Node> copiedNodes = Nodes.Select(n => new Node(n.Level, n.Name, n.Group, n.GroupIndex));
-            return new Template(copiedNodes.ToArray());
+            Node[] copyNodes = Nodes.Select(n => new Node(n.Level, n.Name, n.Group, n.GroupIndex)).ToArray();
+            return new Template()
+            {
+                Nodes = copyNodes,
+                Relations = Relations
+            };
         }
     }
 
@@ -78,5 +82,17 @@ namespace DSSAlternative.AHP
         public string From { get; set; }
         public string To { get; set; }
         public double Value { get; set; }
+
+        public TemplateRelation()
+        {
+
+        }
+        public TemplateRelation(INodeRelation relation)
+        {
+            Main = relation.Main.Name;
+            From = relation.From.Name;
+            To = relation.To.Name;
+            Value = relation.Value;
+        }
     }
 }

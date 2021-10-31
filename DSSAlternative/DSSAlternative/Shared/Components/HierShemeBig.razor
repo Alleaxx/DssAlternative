@@ -59,7 +59,11 @@
         }
         else
         {
-            ProjectSheme.SetNow(ProjectSheme.Relations[node].FirstRequired);
+            var rel = ProjectSheme.Relations[node].FirstRequired;
+            if(rel != null)
+            {
+                ProjectSheme.SetNow(rel);
+            }
         }
     }
 

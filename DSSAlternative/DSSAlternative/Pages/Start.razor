@@ -12,52 +12,7 @@
     <div class="tab-presets">
         <Tab>
             <TabItem>
-                <Title><h3 class="tab-header">Загрузка</h3></Title>
-                <ChildContent>
-                    <div class="tab-section">
-                        <section class="load-own">
-                            <h4>Создание с нуля</h4>
-                            <p class="load-note">
-                                Формирование иерархии проблемы с нуля. Подходит для нетипичных задач.
-                            </p>
-                            <input type="button" @onclick="LoadOwn" value="Создать" />
-                            <p class="load-note">
-                                Образцовая задача показывает возможности системы на примере уже решенной проблемы.
-                            </p>
-                            <input type="button" @onclick="LoadExample" value="Загрузить" />
-                            <br />
-                            <input type="button" @onclick="LoadEx1" value="Образец задачи с подкритериями" />
-                            <br />
-                            <input type="button" @onclick="LoadEx2" value="Образец задачи с подкритериям II" />
-                        </section>
-                        <section class="saved-session">
-                            <h4>Сохраненная сессия</h4>
-                            <p class="load-note">
-                                Загрузить сохраненный прогресс решения задач 
-                            </p>
-                            <button class="action-button" @onclick="() => { Account.LoadState(); StateHasChanged(); }">
-                                Восстановить все
-                            </button>
-                            
-                            @if (Account.CurrentUser.State != null)
-                            {
-                                <ul class="presets">
-                                    <CascadingValue Value="this">
-                                        @foreach (var template in Account.CurrentUser.State.OpenedTemplates)
-                                        {
-                                            <li>
-                                                <HierTemplate Template="template"></HierTemplate>
-                                            </li>
-                                        }
-                                    </CascadingValue>
-                                </ul>
-                            }
-                        </section>
-                    </div>
-                </ChildContent>
-            </TabItem>
-            <TabItem>
-                <Title><h3 class="tab-header">Шаблоны и пресеты</h3></Title>
+                <Title><h3 class="tab-header">Свои пресеты</h3></Title>
                 <ChildContent>
                     <div class="tab-section">
 
@@ -100,8 +55,40 @@
 
                         </div>
 
+                        <section class="saved-session">
+                            <h4>Сохраненная сессия</h4>
+                            <p class="load-note">
+                                Загрузить сохраненный прогресс решения задач
+                            </p>
+
+                            @if (Account.CurrentUser.State != null)
+                            {
+                                <ul class="presets">
+                                    <CascadingValue Value="this">
+                                        @foreach (var template in Account.CurrentUser.State.OpenedTemplates)
+                                        {
+                                            <li>
+                                                <HierTemplate Template="template"></HierTemplate>
+                                            </li>
+                                        }
+                                    </CascadingValue>
+                                </ul>
+                            }
+                            <button class="action-button" @onclick="() => { Account.LoadState(); StateHasChanged(); }">
+                                Восстановить все
+                            </button>
+                        </section>
+                    </div>
+                </ChildContent>
+            </TabItem>
+
+            <TabItem>
+                <Title><h3 class="tab-header">Общие шаблоны</h3></Title>
+                <ChildContent>
+                    <div class="tab-section">
+
                         <section class="load-preset saved-session">
-                            <h3>Модификация шаблона</h3>
+                            <h4>Модификация общего шаблона</h4>
                             <p class="load-note">
                                 Позволяет задать типовую задачу, которую можно изменить под свои условия.
                             </p>
@@ -128,11 +115,14 @@
         <p class="load-note">
             Список уже загруженных задач выбора.
         </p>
+        <button class="action-button" @onclick="LoadOwn">
+            <span>Создать новую</span>
+        </button>
         <ul class="problems">
             @foreach (IProject project in Projects)
             {
                 <ProjectTask Project="project" Removed="() => StateHasChanged()">
-                    
+
                 </ProjectTask>
             }
         </ul>
@@ -144,7 +134,7 @@
 @code {
     private void LoadOwn()
     {
-        DSSApp.AddProject(DSSExample.CreateNewProblem());
+        DSSApp.AddProject(AhpHierarchy.CreateNewProblem());
     }
     public void LoadTemplate(ITemplate template)
     {
@@ -152,17 +142,11 @@
         StateHasChanged();
     }
 
-    private void LoadExample()
+    protected override void OnInitialized()
     {
-        DSSApp.AddProject(DSSExample.CreateSampleProblem());
-    }
-    private void LoadEx1()
-    {
-        DSSApp.AddProject(DSSExample.CreateSampleTreeProblem());
-    }
-    private void LoadEx2()
-    {
-        DSSApp.AddProject(DSSExample.CreateSampleTree2Problem());
+        base.OnInitialized();
+        DSSApp.OnStateLoaded += StateHasChanged;
+        DSSApp.OnTemplatesLoaded += StateHasChanged;
     }
 
 

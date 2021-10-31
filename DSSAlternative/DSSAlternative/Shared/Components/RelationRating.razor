@@ -1,15 +1,23 @@
 ﻿@inherits DSSComponentParamRelation
-
-<td colspan="@ColSpan" title="@Rating.Value"  class="@CssClass" @onclick="Set">
-    <div class="rating">
-        <span style="@CssStyle">
-            @Name()
-        </span>
-        <span>
-            @CrDelta()
-        </span>
-    </div> 
-</td>
+@if (AsCell)
+{
+    <td colspan="@ColSpan" title="@Rating.Value" class="@CssClass" @onclick="Set">
+        <div class="rating">
+            <span style="@CssStyle">
+                @Name()
+            </span>
+            <span class="cr">
+                @CrDelta()
+            </span>
+        </div>
+    </td>
+}
+else
+{
+    <div style="flex:1;padding:2px 8px;text-align:center" title="@CrDelta()" @onclick="Set">
+        @Rating.Value
+    </div>
+}
 
 @code {
     [CascadingParameter]
@@ -21,6 +29,8 @@
     public int ColSpan { get; set; }
     [Parameter]
     public IRating Rating { get; set; }
+    [Parameter]
+    public bool AsCell { get; set; } = true;
 
     private ICss Css { get; set; }
     private string CssClass => Css.CssClass();

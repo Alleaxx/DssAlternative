@@ -26,11 +26,6 @@ namespace DSSAlternative.Shared.Components
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            if (Relation == null)
-            {
-                Relation = Relations.First().First(); // Problem.RelationsRequired.First();
-            }
-
             CreateRatings();
             CreateMatrixes();
         }
@@ -62,6 +57,31 @@ namespace DSSAlternative.Shared.Components
                 }
             }
         }
-
+        public string GetTextRelation(INodeRelation relation)
+        {
+            if (relation.Unknown)
+                return "??????";
+            double val = relation.Value > 1 ? relation.Value : 1 / relation.Value;
+            if (val == 1)
+                return $"РАВНОЗНАЧЕН";
+            if (val >= 9)
+                return "АБСОЛЮТНО ПРЕВОСХОДИТ";
+            else if (val >= 8)
+                return "СИЛЬНО ПРЕОБЛАДАЕТ над";
+            else if (val >= 7)
+                return "СИЛЬНО ПРЕОБЛАДАЕТ над";
+            else if (val >= 6)
+                return "ПРЕОБЛАДАЕТ над";
+            else if (val >= 5)
+                return "ПРЕОБЛАДАЕТ над";
+            else if (val >= 4)
+                return "НЕМНОГО ПРЕОБЛАДАЕТ над";
+            else if (val >= 3)
+                return "НЕМНОГО ПРЕОБЛАДАЕТ над";
+            else if (val >= 2)
+                return "СЛЕГКА ПРЕОБЛАДАЕТ над";
+            else
+                return "СЛЕГКА ПРЕОБЛАДАЕТ над";
+        }
     }
 }

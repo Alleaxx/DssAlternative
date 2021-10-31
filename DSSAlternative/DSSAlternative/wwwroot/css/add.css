@@ -60,3 +60,25 @@ th {
     }
 
 
+.option-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 24em;
+    margin: 6px 0;
+}
+
+.option-name {
+    font-size: 0.9em;
+}
+
+.option-input {
+    border: 0;
+    border-bottom: 1px solid gainsboro;
+    outline-color: gainsboro;
+    text-align: right;
+}
+
+    .option-input[type=number] {
+        width: 8em;
+    }

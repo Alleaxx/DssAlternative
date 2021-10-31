@@ -23,7 +23,7 @@ namespace DSSAlternative.AppComponents
             AddRuleClass(() => viewSelection == HierShemeBig.ViewSelections.Relations && isUnknown, "warn");
             AddRuleClass(() => viewSelection == HierShemeBig.ViewSelections.Relations && !isConsistenct, "bad");
             AddRuleClass(() => viewSelection == HierShemeBig.ViewSelections.Relations && filled, "good");
-            AddRuleClass(() => viewSelection == HierShemeBig.ViewSelections.Selection && isSelected, "good");
+            AddRuleClass(() => viewSelection == HierShemeBig.ViewSelections.Selection && isSelected, "sel");
         }
         public CssNode(INode node, INode hovered)
         {

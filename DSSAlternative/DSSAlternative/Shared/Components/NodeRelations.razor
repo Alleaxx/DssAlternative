@@ -1,14 +1,17 @@
 ﻿@inherits DSSComponentParamNode
 
 <section class="criteria-relations">
-    <div class="rel-menu-list-header @NodeRelClass()">
-        <h3>
-            @Node.Name
-        </h3>
-        <span class="cr">
-            [@FormatNumber(Cr)]
-        </span>
-    </div>
+    @if (ShowHeader)
+    {
+        <div class="rel-menu-list-header @NodeRelClass()">
+            <h3>
+                @Node.Name
+            </h3>
+            <span class="cr">
+                [@FormatNumber(Cr)]
+            </span>
+        </div>
+    }
     <ul class="rel-menu-list">
         @foreach (var relation in ShowedRelations())
         {
@@ -19,9 +22,9 @@
             </li>
         }
     </ul>
-    <p class="criteria-state">
-        @if (ShowState)
-        {
+    @if (ShowState)
+    {
+        <p class="criteria-state">
             @if (IsNotConsistenct)
             {
                 <span><b>↑</b> Нужна корректировка согласованности</span>
@@ -34,9 +37,9 @@
             {
                 <span><b>✓</b> Всё в порядке</span>
             }
-        }
-    </p>
-</section>
+        </p>
+    }
+    </section>
 
 @code {
     [Parameter]
@@ -44,6 +47,8 @@
 
     [Parameter]
     public bool ShowState { get; set; } = true;
+    [Parameter]
+    public bool ShowHeader { get; set; } = true;
 
     [Parameter]
     public RenderFragment<INodeRelation> RelationView { get; set; }

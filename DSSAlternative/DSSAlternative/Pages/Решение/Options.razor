@@ -3,57 +3,50 @@
 @layout EditorLayout
 
 <section>
-    <h3>Настройки</h3>
+    <h4>Настройки отношений </h4>
     <section>
-        <h4>Согласованность</h4>
-        <div>
-            <label for="border-cons">Граница согласованности</label><br />
-            <input id="border-cons" type="number" @bind-value="@MtxConsistency.BorderDefault" />
+        <div class="option-section">
+            <label class="option-name" for="border-cons">Граница согласованности (0.2 ст.)</label>
+            <input class="option-input" id="border-cons" type="number" @bind-value="@MtxConsistency.BorderDefault" />
+        </div>
+        <div class="option-section">
+            <label class="option-name" for="amount">Градации оценок:</label>
+            <input class="option-input" id="amount" type="number" @bind-value="@RatingSystem.Amount" min="1" max="9" />
         </div>
     </section>
     <section>
-        <h4>Система опроса</h4>
-        <p>
-            Текущая система: @RatingSystem
-        </p>
-        <div>
-            <label for="amount">Количество градаций оценок:</label>
-            <input id="amount" type="number" @bind-value="@RatingSystem.Amount" min="1" max="9" />
-        </div>
-        <section>
-            <h5>Правила</h5>
-            <table class="rating-system">
-                <colgroup>
-                    <col style="width:10%" />
-                    <col style="width:10%" />
-                    <col style="width:30%" />
-                    <col style="width:50%" />
-                </colgroup>
+        <h5>Правила</h5>
+        <table class="rating-system">
+            <colgroup>
+                <col style="width:10%" />
+                <col style="width:10%" />
+                <col style="width:30%" />
+                <col style="width:50%" />
+            </colgroup>
+            <tr>
+                <th>От >=</th>
+                <th>До</th>
+                <th>Имя</th>
+                <th>Стиль</th>
+            </tr>
+            @foreach (var rule in RatingRules.Rules)
+            {
                 <tr>
-                    <th>От >=</th>
-                    <th>До</th>
-                    <th>Имя</th>
-                    <th>Стиль</th>
+                    <td>
+                        <input type="number" @bind-value="@rule.FromVal" />
+                    </td>
+                    <td>
+                        <input type="number" @bind-value="@rule.ToVal" />
+                    </td>
+                    <td>
+                        <input type="text" @bind-value="@rule.Name" />
+                    </td>
+                    <td>
+                        <input type="text" style="@rule.Style" @bind-value="@rule.Style" />
+                    </td>
                 </tr>
-                @foreach (var rule in RatingRules.Rules)
-                {
-                    <tr>
-                        <td>
-                            <input type="number" @bind-value="@rule.FromVal" />
-                        </td>
-                        <td>
-                            <input type="number" @bind-value="@rule.ToVal" />
-                        </td>
-                        <td>
-                            <input type="text" @bind-value="@rule.Name" />
-                        </td>
-                        <td>
-                            <input type="text" style="@rule.Style" @bind-value="@rule.Style" />
-                        </td>
-                    </tr>
-                }
-            </table>
-        </section>
+            }
+        </table>
     </section>
 </section>
 

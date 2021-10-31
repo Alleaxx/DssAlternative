@@ -13,5 +13,14 @@ namespace DSSAlternative.AppComponents
     {
         [Parameter]
         public INodeRelation Relation { get; set; }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            if (Relation == null || !Relations.SelectMany(c => c).Contains(Relation))
+            {
+                Relation = Relations.First().First();
+            }
+        }
     }
 }

@@ -5,10 +5,6 @@
 @inject Clipboard Clipboard
 
 <section>
-    <h2>
-        Иерархия задачи выбора
-    </h2>
-
     <div class="sheme basic-border">
         <div class="confirm">
             <div>
@@ -47,7 +43,7 @@
                 <span class="property-name">Узлов: </span>
                 <span class="property-value">@HierarchyEdit.Count()</span>
             </div>
-            <div>
+            <div hidden>
                 <span class="property-name">Отношений: </span>
                 <span class="property-value">@HierarchyEdit.RelationsCount</span>
             </div>
@@ -150,14 +146,14 @@
 
                         <table class="structure">
                             <tr>
-                                <th>Группа №</th>
+                                <th class="num">Группа №</th>
                                 <th>Критерии</th>
                                 <th>Зависимые</th>
                             </tr>
                             @foreach (var group in HierarchyEdit.GroupBy(n => n.Group))
                             {
                                 <tr>
-                                    <td>
+                                    <td class="num">
                                         @group.Key
                                     </td>
                                     <td>
@@ -203,12 +199,7 @@
 
 
 @code {
-    private Template TemplateCurrent => new Template(HierarchyEdit.OfType<Node>().ToArray())
-    {
-        Name = HierarchyEdit.MainGoal.Name,
-        Img = "Images/tech.png",
-        Description = "Сохраненная задача выбора"
-    };
+    private Template TemplateCurrent => new Template(HierarchyEdit);
     private string JsonCurrent => JsonSerializer.Serialize<Template>(TemplateCurrent, DSSApp.JsonOptions);
 
     private INode NodeHovered { get; set; }

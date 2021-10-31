@@ -11,8 +11,9 @@
         cursor: pointer;
         display: block;
         color: royalblue;
-        font-size: 1.4em;
+        font-size: 1.25em;
         border-radius: 5px;
+        user-select: none;
     }
 
         .prev-next-stages a:hover {
@@ -31,8 +32,15 @@
         color: blue;
         background-color: rgb(250,250,250);
     }
+    .res:active{
+        color: blue;
+        background-color: rgb(230,230,230);
+    }
 .prev, .next {
     flex: 2;
+}
+.next{
+    flex: 6;
 }
 .prev, .next, .res{
     margin-top: 10px;
@@ -42,14 +50,12 @@
 
 
 .relations-grid {
-    display: grid;
-    grid-template-columns: 4fr 11fr 5fr;
-    grid-template-areas: "criterias relation menu";
+    display: flex;
     min-height: 75vh;
 }
 
 .relation-area {
-    grid-area: relation;
+    flex: 10;
     padding: 10px;
     border-left: 1px solid gainsboro;
 }
@@ -61,22 +67,6 @@
 }
 
 .criterias{
-    grid-area: criterias;
+    flex: 4;
     padding: 10px;
-}
-
-
-.menu-area {
-    grid-area: menu;
-    padding: 10px;
-    border-left: 1px solid gainsboro;
-}
-
-.rel-menu-header {
-    font-size: 1.2em;
-}
-
-.relation-area h4 {
-    margin: 3px 0;
-    font-weight: 500;
 }

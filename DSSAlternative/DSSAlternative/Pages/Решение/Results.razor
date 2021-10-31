@@ -7,11 +7,11 @@
     @if (Relations.Correct)
     {
         <div class="sheme">
-            <h3>Иерерхия</h3>
+            @*<h3>Иерархия</h3>*@
             <HierShemeBig ProjectSheme="Project" ViewSelection="HierShemeBig.ViewSelections.Best"></HierShemeBig>
         </div>
         <div class="res-info">
-            <h3>Результаты</h3>
+            @*<h3>Результаты</h3>*@
             @foreach (var levelGroup in GroupedResults())
             {
                 <section class="results-list">
@@ -36,11 +36,7 @@
                             }
                         </ul>
                         <p class="level-best-nodes">
-                            ЛУЧШИЙ ВЫБОР –
-                            @foreach (var bestNode in Hierarchy.Best(levelGroup.Key))
-                            {
-                                <span class="node-best">@bestNode.Name,</span>
-                            }
+                            ЛУЧШИЙ ВЫБОР – <span class="node-best">@string.Join(", ", Hierarchy.Best(levelGroup.Key).Select(n => n.Name))</span>
                         </p>
 
                     </div>

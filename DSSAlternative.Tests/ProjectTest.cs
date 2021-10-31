@@ -9,20 +9,30 @@ using DSSAlternative.AHP;
 namespace DSSAlternative.Tests
 {
     [TestClass]
-    class ProjectTest
+    public class ProjectTest
     {
-
         //При создании проекта в редактируемой и текущей иерархии разные узлы
         //При обновлении с редактируемой на текущую иерархии разные узлы
-        //При загрузке из шаблона с отношениями отношения инициализируются сразу
-
-        //Проект сохраняется в шаблон и восстанавливается в фактически равном состоянии
-        
-
-        public void TemplateSave()
+        [TestMethod]
+        public void DifferentNodes_Check()
         {
+            IProject project = AhpHierarchy.CreateNewProblem();
 
+            bool same = project.HierarchyActive.First() == project.HierarchyEditing.First();
+
+            Assert.IsTrue(!same, "При создании проекта редактируемая и активная иерархия ссылаются на одни и те же узлы");
         }
-        //Шаблон сохраняется в JSON и восстанавливается эквивалентно
+        [TestMethod]
+        public void DifferentNodesUpdate_Check()
+        {
+            IProject project = AhpHierarchy.CreateNewProblem();
+
+            project.HierarchyEditing.AddNode(new Node());
+            project.UpdateHierarchy();
+            bool same = project.HierarchyActive.First() == project.HierarchyEditing.First();
+
+            Assert.IsTrue(!same, "При обновлении с редактируемой иерархии в проекте они ссылаются на одинаковые узлы");
+        }
+
     }
 }

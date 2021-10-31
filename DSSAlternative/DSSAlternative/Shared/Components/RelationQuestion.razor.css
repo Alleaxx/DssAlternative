@@ -31,6 +31,7 @@ td.between {
 
 .matrix .side-node {
     border: 0;
+    border-bottom: 1px solid gainsboro;
 }
 
 .main-node h3 {
@@ -38,12 +39,11 @@ td.between {
 }
 
 .side-node {
-    font-size: 1.1em;
 }
 
 .matrix a {
     text-decoration: none;
-    color: royalblue;
+    color: darkblue;
 }
 
     .matrix a:hover {
@@ -55,6 +55,6 @@ td.between {
 .matrix .results-message {
     padding: 20px 0;
     border-bottom: 1px solid whitesmoke;
-    border-top: 1px solid whitesmoke;
+    border-top: 1px solid gainsboro;
     text-align: center;
 }

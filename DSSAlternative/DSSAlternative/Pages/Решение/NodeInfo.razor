@@ -3,26 +3,9 @@
 @layout EditorLayout
 
 <div>
-    @*<section class="problem-info">
-        <h2>Структура иерархии</h2>
-        <details>
-            <summary>
-                <span>JSON-схема</span>
-            </summary>
-            <textarea id="jsonsheme" rows="15" cols="50">
-                @JsonSheme()
-            </textarea>
-        </details>
-    </section>*@
-
     <section class="row">
         <section class="navigation">
             <h3>Схема иерархии</h3>
-            <div style="margin:5px 10px">
-                <button class="action-button" @onclick="() => Account.SetTemplate(Project)">
-                    Сохранить как шаблон
-                </button>
-            </div>
             <div>
                 <HierShemeBig ProjectSheme="Project" LinkType="@NodeLink"></HierShemeBig>
             </div>
@@ -30,60 +13,61 @@
         <section class="edit">
             <h3>Редактирование '@Node.Name'</h3>
             @Node.LevelName()
-            <dl>
+        <dl>
+            <dt>
+                <label for="nodename">
+                    Название:
+                </label>
+            </dt>
+            <dd>
+                <input id="nodename" type="text" style="width:20em" @bind-value="@Node.Name" />
+            </dd>
+            <dt>
+                <label for="nodedescr" >
+                    Краткое описание:
+                </label>
+            </dt>
+            <dd>
+                <input id="nodedescr" type="text" style="width:25em" @bind-value="@Node.Description" />
+            </dd>
+            <dt>Итоговый коэффициент:</dt>
+            <dd>
+                <span>
+                    @FormatNumber(Node.Coefficient)
+                </span>
+            </dd>
+            @*<dt>Согласованность (Cr):</dt>
+        <dd>
+            <span>
+                @FormatNumber(Cr)
+            </span>
+        </dd>*@
+            @if (HasRelations())
+            {
                 <dt>
-                    <label for="nodename">
-                        Название:
-                    </label>
+                    <span>
+                        Отношения:
+                    </span>
+                    <NodeRelations Node="Node" Context="rel" ShowHeader="false">
+                        <RelationView>
+                            <span>@rel.From.Name - @rel.To.Name</span>
+                        </RelationView>
+                    </NodeRelations>
                 </dt>
                 <dd>
-                    <input id="nodename" type="text" @bind-value="@Node.Name" />
-                </dd>
-                <dt>
-                    <label for="nodedescr">
-                        Краткое описание:
-                    </label>
-                </dt>
-                <dd>
-                    <input id="nodedescr" type="text" @bind-value="@Node.Description" />
-                </dd>
-                <dt>Итоговый коэффициент:</dt>
-                <dd>
-                    <span>
-                        @FormatNumber(Node.Coefficient)
-                    </span>
-                </dd>
-                <dt>Согласованность (Cr):</dt>
-                <dd>
-                    <span>
-                        @FormatNumber(Cr)
-                    </span>
-                </dd>
-                <dt>Отношения:</dt>
-                <dd>
-                    <div>
-                        @if (HasRelations())
-                        {
-                            <NodeRelations Node="Node" Context="rel">
-                                <RelationView>
-                                    <span>@rel.From.Name - @rel.To.Name</span>
-                                </RelationView>
-                            </NodeRelations>
-                            <div class="actions-section">
-                                <button class="action clear-relations" href="@NodeLink" @onclick="ClearRelations">
-                                    <span class="action-name">Сбросить все отношения</span>
-                                    <img class="action-icon" src="Images/tech.png" />
-                                </button>
-                            </div>
-                        }
+                    <div class="actions-section">
+                        <button class="action clear-relations" href="@NodeLink" @onclick="ClearRelations">
+                            <span class="action-name">Сбросить все отношения</span>
+                            <img class="action-icon" src="Images/tech.png" />
+                        </button>
                     </div>
-
                 </dd>
                 <dt>Матрица отношений:</dt>
                 <dd>
                     <NodeMatrix Node="@Node" />
                 </dd>
-            </dl>
+            }
+        </dl>
         </section>
     </section>
 </div>

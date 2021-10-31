@@ -30,9 +30,7 @@ td {
 }
 
 .good-mtx, .bad-mtx {
-    display: flex;
-    justify-content: center;
-    padding: 0 4px;
+
 }
 
 .good-mtx {

@@ -10,17 +10,20 @@
                 <table>
                     <tbody>
                         <tr>
-                            <td class="cell-header" colspan="@(1 + NodesCount())">
-                                <div class="@(IsCorrectMtx() ? "good-mtx" : "bad-mtx")">
+                            <td class="cell-header @(IsCorrectMtx() ? "good-mtx" : "bad-mtx")">
+                                <h4><b>@(IsCorrectMtx() ? "✓" : "X")</b></h4> 
+                            </td>
+                            <td class="cell-header" colspan="@(NodesCount())">
+                                <div>
                                     <h4>
-                                        <b>@Node.Name</b>  @(IsCorrectMtx() ? "✓" : "X")
+                                        <b>@Node.Name</b>  
                                     </h4>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td class="cell-node">
-                                &nbsp;
+                                Cr: @Mtx.Cr.ToString("0.00")
                             </td>
                             @foreach (var node in Node.Controlled())
                             {
