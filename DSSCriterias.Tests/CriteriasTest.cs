@@ -247,7 +247,6 @@ namespace DSSCriterias.Tests
             CheckCriteria(game => new CriteriaMulti(game), Values);
         }
 
-
         private void CheckCriteria(Func<IStatGame, ICriteria> func, Dictionary<IStatGame, double> checks)
         {
             foreach (var check in checks)

@@ -22,7 +22,7 @@
 
 .logo {
     grid-area: logo;
-    background-color: rgb(230, 230, 230);
+    background-color: rgb(240, 240, 240);
     border-bottom: 2px solid gainsboro;
     border-right: 1px solid gainsboro;
     border-left: 1px solid gainsboro;
@@ -33,7 +33,7 @@
 
 .main-header {
     grid-area: header;
-    background-color: rgb(240, 240, 240);
+    background-color: whitesmoke;
     border-bottom: 2px solid gainsboro;
     border-right: 1px solid gainsboro;
     display: flex;
@@ -71,6 +71,8 @@ main {
     text-align: center;
     border: 1px solid gainsboro;
     padding: 5px 20px;
+    border-top-width: 2px;
+    font-size: 0.9em;
 }
 .grid > footer p{
     line-height: 140%;

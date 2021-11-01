@@ -7,7 +7,7 @@
 <section>
     <div class="sheme basic-border">
         <div class="confirm">
-            <div>
+            <div class="confirm-info">
                 @if (Project.IsUpdateAvailable)
                 {
                     <span class="not-saved">Есть несохраненные изменения</span>
@@ -16,42 +16,43 @@
                 else if (Project.UnsavedChanged && !Project.IsUpdateAvailable)
                 {
                     <span class="warning">В структуре иерархии обнаружены ошибки:</span>
+
+                    <ul class="fails">
+                        @foreach (var check in HierarchyEdit.Correctness.ErrorsList)
+                        {
+                            <li>
+                                <span>
+                                    @check.Message
+                                </span>
+                            </li>
+                        }
+                    </ul>
                 }
                 else
                 {
                     <span class="all-saved">Все изменения сохранены</span>
                 }
             </div>
+            <div class="information">
+                <div>
+                    <span class="property-name">Уровней: </span>
+                    <span class="property-value">@HierarchyEdit.LevelsCount</span>
+                </div>
+                <div>
+                    <span class="property-name">Узлов: </span>
+                    <span class="property-value">@HierarchyEdit.Count()</span>
+                </div>
+                <div hidden>
+                    <span class="property-name">Отношений: </span>
+                    <span class="property-value">@HierarchyEdit.RelationsCount</span>
+                </div>
+                <div hidden>
+                    <span class="property-name">~ Времени на решение: </span>
+                    <span class="property-value">@HierarchyEdit.CountEstTime().Minutes мин. @HierarchyEdit.CountEstTime().Seconds сек.</span>
+                </div>
+            </div>
         </div>
-        <ul class="fails">
-            @foreach (var check in HierarchyEdit.Correctness.ErrorsList)
-            {
-                <li>
-                    <span>
-                        @check.Message
-                    </span>
-                </li>
-            }
-        </ul>
 
-        <div class="information">
-            <div>
-                <span class="property-name">Уровней: </span>
-                <span class="property-value">@HierarchyEdit.LevelsCount</span>
-            </div>
-            <div>
-                <span class="property-name">Узлов: </span>
-                <span class="property-value">@HierarchyEdit.Count()</span>
-            </div>
-            <div hidden>
-                <span class="property-name">Отношений: </span>
-                <span class="property-value">@HierarchyEdit.RelationsCount</span>
-            </div>
-            <div hidden>
-                <span class="property-name">~ Времени на решение: </span>
-                <span class="property-value">@HierarchyEdit.CountEstTime().Minutes мин. @HierarchyEdit.CountEstTime().Seconds сек.</span>
-            </div>
-        </div>
 
         <Tab>
             <TabItem>
@@ -238,25 +239,4 @@
         return new CssNode(node, NodeHovered).CssClass();
     }
 
-    private void ShowStructure()
-    {
-        Console.WriteLine("Новая структура");
-        foreach (var node in Hierarchy)
-        {
-            Console.WriteLine($"{node.Level} - {node.Name}:");
-            Console.Write("Расчет: ");
-            foreach (var countNode in node.Criterias())
-            {
-                Console.Write($"{countNode.Name}, ");
-            }
-            Console.WriteLine(Matrix.CreateRelations(Relations, node).GetText());
-            Console.WriteLine("Матрица локальных");
-            Console.WriteLine(Matrix.CreateLocalCoeffs(Relations, node).GetText());
-            Console.WriteLine("Матрица глобальных");
-            Console.WriteLine(VectorMtx.CreateGlobalCoeffs(node).ToString());
-            Console.WriteLine("Матрица коэфф.");
-            Console.WriteLine(VectorMtx.CreateCoeffs(Relations, node).ToString());
-            Console.WriteLine();
-        }
-    }
 }

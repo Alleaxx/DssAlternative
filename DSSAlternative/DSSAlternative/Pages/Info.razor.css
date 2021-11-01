@@ -6,6 +6,9 @@ main {
 main p{
     line-height: 140%;
 }
+main li, main p{
+    font-size: 0.9em;
+}
 
     main img {
         padding: 8px;

@@ -13,7 +13,9 @@ namespace DSSAlternative.Tests
     {
         public IRelations Relations { get; set; }
         public IRelations RelationsAdvanced { get; set; }
-        public RelationsTest()
+        
+        [TestInitialize]
+        public void CreateRelations()
         {
             Relations = CreateDefault();
             RelationsAdvanced = CreateAdvanced();
@@ -71,6 +73,8 @@ namespace DSSAlternative.Tests
                 return relations;
             } 
         }
+
+
 
         //Кол-во всех отношений соответствует ожидаемому
         //Число созданных критериев ожидаемое

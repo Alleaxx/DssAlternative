@@ -14,9 +14,11 @@ namespace DSSAlternative.AppComponents
         public DSS DSSApp { get; set; }
         [Inject]
         public Account Account { get; set; }
+        [Inject]
+        public TemplatesEditor TemplatesEditor { get; set; }
 
         public IEnumerable<IProject> Projects => DSSApp.Projects;
-        public IEnumerable<ITemplate> Templates => DSSApp.Templates;
+        public IEnumerable<ITemplate> Templates => TemplatesEditor.Templates;
         public IRatingSystem RatingSystem => DSSApp.RatingSystem;
         public IRatingRules RatingRules { get; set; } = RatingCssSystem.DefaultSystem;
 

@@ -45,6 +45,7 @@
 }
     .node-element:hover{
         color: blue;
+        border: 1px solid royalblue;
     }
 
 .good {

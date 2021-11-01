@@ -23,6 +23,7 @@ namespace DSSAlternative
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddScoped<DSS>();
+            builder.Services.AddScoped<TemplatesEditor>();
             builder.Services.AddScoped<Clipboard>();
             builder.Services.AddScoped<Account>();
             builder.Services.AddScoped<LocalStorage>();

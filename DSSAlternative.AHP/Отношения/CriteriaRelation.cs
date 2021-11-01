@@ -130,30 +130,5 @@ namespace DSSAlternative.AHP
 
     }
 
-    public class RelationPair
-    {
-        public readonly NodeRelation FromRelation;
-        public readonly NodeRelation ToRelation;
 
-        public INode MainNode => FromRelation.Main;
-        public INode FromNode => FromRelation.From;
-        public INode ToNode => FromRelation.To;
-
-        public IRating Rating { get; set; }
-        public void SetRating(IRating rating)
-        {
-
-        }
-
-        public RelationPair(NodeRelation from, NodeRelation to)
-        {
-            FromRelation = from;
-            ToRelation = to;
-        }
-        public RelationPair(NodeRelation main)
-        {
-            FromRelation = main;
-            ToRelation = main.Mirrored as NodeRelation;
-        }
-    }
 }

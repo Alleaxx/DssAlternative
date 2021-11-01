@@ -1,38 +1,52 @@
 ﻿<style>
     .main-header a {
+
+        display: flex;
+        align-items: center;
         text-decoration: none;
-        font-family: "Calibri Light";
-        font-size: 1.35em;
-        text-align: center;
+/*        font-family: "Calibri Light";
+*/        font-size: 1.1em;
     }
 
     .main-header .links {
-        text-transform: uppercase;
+    }
+    .main-header a{
+        color: royalblue;
+    }
+    .main-header a img{
+        height: 30px;
+        margin: 0 6px;
+        opacity: 0.25;
     }
 
         .main-header a:hover {
-            color: black;
+            color: blue;
         }
 
     .main-header a.active{
-        color: black;
-        font-weight: 600;
+        color: darkblue;
+    }
+    .main-header a.active img{
+        opacity: 1;
     }
 </style>
 <div class="main-header">
     <ul class="links">
         <li>
             <NavLink href="info">
+                <img src="Images/clipboard.svg"/>
                 О приложении
             </NavLink>
         </li>
         <li>
             <NavLink href="start">
+                <img src="Images/play.svg" />
                 Принятие решений
             </NavLink>
         </li>
         <li>
-            <NavLink href="info">
+            <NavLink href="example">
+                <img src="Images/bookmark.svg" />
                 Пример задачи
             </NavLink>
         </li>

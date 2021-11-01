@@ -15,11 +15,10 @@ namespace DSSAlternative.AppComponents
 {
     public class DSS
     {
-        private readonly HttpClient HttpClient;
         private readonly NavigationManager Navigation;
-        public DSS(HttpClient client, NavigationManager manager)
+        public JsonSerializerOptions JsonOptions { get; set; }
+        public DSS(NavigationManager manager)
         {
-            HttpClient = client;
             Navigation = manager;
             JsonOptions = new JsonSerializerOptions()
             {
@@ -27,37 +26,6 @@ namespace DSSAlternative.AppComponents
                 IgnoreNullValues = true,
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
             };
-            LoadTemplates();
-        }
-        public JsonSerializerOptions JsonOptions { get; set; }
-        private async void LoadTemplates()
-        {
-            string[] Pathes = new string[]
-            {
-                "legacy-study.json",
-                "legacy-study-advanced.json",
-                "legacy-riscs.json",
-                "project-team-task.json",
-                "project-riscs-task.json",
-                "project-tools-task.json",
-                "work-task.json",
-                "study-task.json",
-                "buy-task.json",
-            };
-            Templates = new List<ITemplate>();
-            foreach (var path in Pathes)
-            {
-                ITemplate template = await LoadTemplate($"sample-data/{path}");
-                Templates.Add(template);
-            }
-            OnTemplatesLoaded?.Invoke();
-            Console.WriteLine("Шаблоны загружены");
-        }
-        private async Task<Template> LoadTemplate(string path)
-        {
-            string json = await HttpClient.GetStringAsync($"{path}");
-            Template template = JsonSerializer.Deserialize<Template>(json, JsonOptions);
-            return template;
         }
 
 
@@ -65,12 +33,10 @@ namespace DSSAlternative.AppComponents
 
 
         public event Action<IProject> OnProjectSelectChange;
-        public event Action OnTemplatesLoaded;
         public event Action OnStateLoaded;
         public event Action OnProjectRemoved;
 
         public IRatingSystem RatingSystem { get; private set; } = new RatingSystem();
-        public List<ITemplate> Templates { get; private set; }
        
         //Все проблемы
         public List<IProject> Projects { get; private set; } = new List<IProject>();

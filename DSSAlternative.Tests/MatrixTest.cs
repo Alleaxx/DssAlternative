@@ -11,39 +11,32 @@ namespace DSSAlternative.Tests
     [TestClass]
     public class MatrixTest
     {
-        private readonly double[,] PositiveMtx;
-        private readonly double[,] ZerosMtx;
-        private readonly double[,] NegativeMtx;
-        private readonly double[,] ExampleMtx;
-        private readonly double[,] NotConsistentMtx;
-
-        public MatrixTest()
+        private readonly double[,] PositiveMtx = new double[,]
         {
-            PositiveMtx = new double[,]
-            {
-                { 1.00, 2.00, 4.00 },
-                { 0.50, 1.00, 2.00 },
-                { 0.25, 0.50, 1.00 }
-            };
-            ZerosMtx = new double[,]
-            {
-                { 1.00, 0.00, 4.00 },
-                { 0.50, 1.00, 2.00 },
-                { 0.25, 0.00, 1.00 }
-            };
-            NotConsistentMtx = new double[,]
-            {
-                { 1, 5, 0.2 },
-                { 0.2, 1, 9 },
-                { 5, (double)1 / 9, 1 }
-            };
-            ExampleMtx = new double[,]
-            {
-                { 1, 1, 3 },
-                { 1, 1, 5 },
-                { (double)1 / 3, 0.2, 1 }
-            };
-        }
+            { 1.00, 2.00, 4.00 },
+            { 0.50, 1.00, 2.00 },
+            { 0.25, 0.50, 1.00 }
+        };
+        private readonly double[,] ZerosMtx = new double[,]
+        {
+            { 1.00, 0.00, 4.00 },
+            { 0.50, 1.00, 2.00 },
+            { 0.25, 0.00, 1.00 }
+        };
+        private readonly double[,] ExampleMtx = new double[,]
+        {
+            { 1, 1, 3 },
+            { 1, 1, 5 },
+            { 1.0 / 3, 0.2, 1 }
+        };
+        private readonly double[,] NotConsistentMtx = new double[,]
+        {
+            { 1, 5, 0.2 },
+            { 0.2, 1, 9 },
+            { 5, 1.0 / 9, 1 }
+        };
+
+        private readonly double[,] NegativeMtx;
 
         //Проверка общих выводов касательно матрицы
         [TestMethod]
@@ -197,7 +190,7 @@ namespace DSSAlternative.Tests
             double[] expected = new double[] { 3, 5, 0.0666 };
 
             var geometricMulti = ExampleMtx.GeometricMultiVector();
-            
+
             CheckEqualArrays(expected, geometricMulti, 0.01, "Геометрическое произведение рассчитывается неверно");
         }
         [TestMethod]
@@ -236,7 +229,7 @@ namespace DSSAlternative.Tests
 
         public static void CheckEqualArrays(double[] expected, double[] received, double delta, string message)
         {
-            if(expected.Length != received.Length)
+            if (expected.Length != received.Length)
             {
                 Assert.Fail($"{message}: Массивы не равны");
             }
@@ -255,7 +248,7 @@ namespace DSSAlternative.Tests
             {
                 for (int c = 0; c < expected.GetLength(1); c++)
                 {
-                    Assert.AreEqual(expected[r,c], received[r,c], delta, $"{message}: Массивы не равны");
+                    Assert.AreEqual(expected[r, c], received[r, c], delta, $"{message}: Массивы не равны");
                 }
             }
         }

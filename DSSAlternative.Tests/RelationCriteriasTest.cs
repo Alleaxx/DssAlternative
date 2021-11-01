@@ -11,8 +11,10 @@ namespace DSSAlternative.Tests
     [TestClass]
     public class RelationCriteriasTest
     {
-        private ICriteriaRelation Criteria { get; init; }
-        public RelationCriteriasTest()
+        private ICriteriaRelation Criteria { get; set; }
+        
+        [TestInitialize]
+        public void SetCriteria()
         {
             INode main = new Node("Цель");
             INode a1 = new Node(1, "А1", 1, 0);
@@ -58,13 +60,13 @@ namespace DSSAlternative.Tests
 
             double[,] mtx = Criteria.Mtx.Array;
 
-            MatrixTest.CheckEqualArrays(expected, mtx, 0.0001, "Матрица не соответствует ожиданиям");
+            CollectionAssert.AreEquivalent(expected, mtx, "Матрица не соответствует ожиданиям");
         }
 
         [TestMethod]
         public void Required_Check()
         {
-            INodeRelation[] expected = new INodeRelation[]
+            var expected = new INodeRelation[]
             {
                 Criteria.First(r => r.From.Name == "А1" && r.To.Name == "А2"),
                 Criteria.First(r => r.From.Name == "А1" && r.To.Name == "А3"),
@@ -74,9 +76,9 @@ namespace DSSAlternative.Tests
                 Criteria.First(r => r.From.Name == "А3" && r.To.Name == "А4"),
             };
 
-            var required = Criteria.Required;
+            var required = Criteria.Required.ToList();
 
-            Assert.IsTrue(Enumerable.SequenceEqual(expected, required), "Список только требуемых отношений не соответствует ожидаемому");
+            CollectionAssert.AreEquivalent(expected, required, "Список только требуемых отношений не соответствует ожидаемому");
         }
     }
 }

@@ -30,7 +30,7 @@ namespace DSSCriterias.Tests
                 { 0, 0, 0 },
                 { 0, 0, 0 }
             };
-            CheckArray(expected, mtx.Values);
+            CollectionAssert.AreEqual(expected, mtx.Values);
         }
         [TestMethod]
         public void CreateFromArray()
@@ -42,7 +42,7 @@ namespace DSSCriterias.Tests
                 { 3, 6, 9 }
             };
             var mtx = MtxStat.CreateFromArray(expected);
-            CheckArray(expected, mtx.Values);
+            CollectionAssert.AreEqual(expected, mtx.Values);
         }
         [TestMethod]
         public void CreateEmpty()
@@ -71,7 +71,7 @@ namespace DSSCriterias.Tests
                 { 5, 0 },
                 { 0, 0 },
             };
-            CheckArray(expected, mtx);
+            CollectionAssert.AreEqual(expected, mtx.Values);
         }
         [TestMethod]
         public void SetValueException()
@@ -96,7 +96,7 @@ namespace DSSCriterias.Tests
                 { 0, 5 },
                 { 0, 0 }
             };
-            CheckArray(expected, mtx.Values);
+            CollectionAssert.AreEqual(expected, mtx.Values);
         }
         [TestMethod]
         public void RemoveRowLast()
@@ -111,7 +111,7 @@ namespace DSSCriterias.Tests
                 { 5, 0, 0 },
                 { 0, 5, 0 }
             };
-            CheckArray(expected, mtx.Values);
+            CollectionAssert.AreEqual(expected, mtx.Values);
         }
         
         [TestMethod]
@@ -128,7 +128,7 @@ namespace DSSCriterias.Tests
                 { 0, 0 },
                 { 0, 5 }
             };
-            CheckArray(expected, mtx.Values);
+            CollectionAssert.AreEqual(expected, mtx.Values);
         }
         [TestMethod]
         public void RemoveRowBetween()
@@ -143,7 +143,7 @@ namespace DSSCriterias.Tests
                 { 5, 0, 0 },
                 { 0, 0, 5 }
             };
-            CheckArray(expected, mtx.Values);
+            CollectionAssert.AreEqual(expected, mtx.Values);
         }
         
 
@@ -162,7 +162,7 @@ namespace DSSCriterias.Tests
                 { 1, 2, 0 },
                 { 3, 4, 0 }
             };
-            CheckArray(expected, mtx.Values);
+            CollectionAssert.AreEqual(expected, mtx.Values);
         }
         [TestMethod]
         public void AddRowLast()
@@ -179,7 +179,7 @@ namespace DSSCriterias.Tests
                 { 3, 4 },
                 { 0, 0 }
             };
-            CheckArray(expected, mtx.Values);
+            CollectionAssert.AreEqual(expected, mtx.Values);
         }
         
         [TestMethod]
@@ -196,7 +196,7 @@ namespace DSSCriterias.Tests
                 { 1, 0, 2 },
                 { 3, 0, 4 }
             };
-            CheckArray(expected, mtx.Values);
+            CollectionAssert.AreEqual(expected, mtx.Values);
         }
         [TestMethod]
         public void AddRowBetween()
@@ -213,27 +213,7 @@ namespace DSSCriterias.Tests
                 { 0, 0 },
                 { 3, 4 }
             };
-            CheckArray(expected, mtx.Values);
-        }
-
-
-
-
-        private void CheckArray(double[,] expected, MtxStat mtx)
-        {
-            CheckArray(expected, mtx.Values);
-        }
-        private void CheckArray(double[,] expected, double[,] received)
-        {
-            Assert.AreEqual(expected.GetLength(0), received.GetLength(0), "Количество строк не совпадает");
-            Assert.AreEqual(expected.GetLength(1), received.GetLength(1), "Количество столбцов не совпадает");
-            for (int r = 0; r < expected.GetLength(0); r++)
-            {
-                for (int c = 0; c < expected.GetLength(1); c++)
-                {
-                    Assert.AreEqual(expected[r, c], received[r, c], $"[{r},{c}] значение {expected[r,c]} ожидаемой матрицы не совпадает с полученным {received[r,c]}");
-                }
-            }
+            CollectionAssert.AreEqual(expected, mtx.Values);
         }
     }
 }

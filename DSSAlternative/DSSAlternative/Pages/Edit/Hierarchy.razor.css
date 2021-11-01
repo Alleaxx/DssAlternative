@@ -109,8 +109,17 @@
 .confirm {
     margin: 10px;
     display: flex;
-    align-items: center;
+    align-items: start;
+    justify-content: space-between;
     min-height: 2em;
+    font-size: 0.9em;
+    border-top: 1px solid gainsboro;
+    border-bottom: 1px solid gainsboro;
+    padding: 8px 0;
+}
+.confirm-info{
+    align-self: center;
+    flex: 6;
 }
 
     .confirm .add {
@@ -181,9 +190,6 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    border-top: 1px solid whitesmoke;
-    border-bottom: 1px solid whitesmoke;
-    padding: 14px 0;
     margin: 5px 10px;
     font-size: 0.9em;
 }

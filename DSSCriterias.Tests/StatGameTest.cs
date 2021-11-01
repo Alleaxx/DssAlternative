@@ -12,16 +12,13 @@ namespace DSSCriterias.Tests
     [TestClass]
     public class StatGameTest
     {
-        private readonly double[,] MatrixExample;
-        public StatGameTest()
-        {
-            MatrixExample = new double[,]
+        private readonly double[,] MatrixExample =
+            new double[,]
             {
                 { 9, 9, 9 },
                 { 0, 0, 0 },
                 { 0, 0, 0 }
             };
-        }
 
 
         //Проверка на обновление результатов критериев и выбранных альтернатив

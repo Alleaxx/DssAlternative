@@ -28,7 +28,7 @@
 .progress-filler {
     height: 100%;
     position: absolute;
-    background-color: rgb(6,176,37);
+    background-color: #67e37d;
 }
 
 .res {
@@ -71,5 +71,5 @@
         }
 
     .results span {
-        margin-bottom: 5px;
+        margin: 0 5px 5px 0;
     }
