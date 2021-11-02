@@ -12,6 +12,7 @@ namespace DSSAlternative.AHP
 
         bool UnsavedChanged { get; }
         bool IsUpdateAvailable { get; }
+        bool Created { get; }
 
 
         IHierarchy HierarchyEditing { get; }

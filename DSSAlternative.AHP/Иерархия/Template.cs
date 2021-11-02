@@ -37,17 +37,16 @@ namespace DSSAlternative.AHP
         }
         public Template(IProject project) : this(project.HierarchyActive, project.Relations.SelectMany(c => c.Required))
         {
-            Img = "Images/settings.svg";
-            Description = "Сохраненная задача выбора";
+
         }
         public Template(IHierarchy hier, IEnumerable<INodeRelation> relations = null)
         {
             Creation = DateTime.Now;
 
             var goal = hier.MainGoal;
-            Name = $"Задача '{goal.Name}'";
-            Description = $"Созданный пресет на основе открытой задачи c {hier.Count()} узлами";
-            Img = "Images/settings.svg";
+            Name = $"{goal.Name}";
+            Description = !string.IsNullOrEmpty(goal.Description) ? goal.Description : $"Созданный пресет на основе открытой задачи c {hier.Count()} узлами";
+            Img = !string.IsNullOrEmpty(goal.ImgPath) ? goal.ImgPath : "settings.svg";
    
             Nodes = hier.OfType<Node>().Select(n => n.CloneThis()).ToArray();
             if(relations != null)
@@ -67,7 +66,7 @@ namespace DSSAlternative.AHP
         }
         public ITemplate CloneThis()
         {
-            Node[] copyNodes = Nodes.Select(n => new Node(n.Level, n.Name, n.Group, n.GroupIndex)).ToArray();
+            Node[] copyNodes = Nodes.Select(n => new Node(n.Level, n.Name, n.Group, n.GroupIndex) { ImgPath = n.ImgPath }).ToArray();
             return new Template()
             {
                 Nodes = copyNodes,

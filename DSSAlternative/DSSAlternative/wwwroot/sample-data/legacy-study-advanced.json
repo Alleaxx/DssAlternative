@@ -1,7 +1,7 @@
 {
   "Name": "Место учебы Advanced",
   "Description": "Подбор подходящего учебного заведения для абитуриента",
-  "Img": "Images/study.png",
+  "Img": "bookmark.svg",
 
   "Nodes": [
     {

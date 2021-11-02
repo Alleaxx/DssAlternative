@@ -10,23 +10,22 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AppComponents
 {
-
-    public class TemplatesEditor
+    public interface IDssTemplates
+    {
+        event Action OnTemplatesLoaded;
+        List<ITemplate> Templates { get;}
+    }
+    public class DssTemplates : IDssTemplates
     {
         private readonly HttpClient HttpClient;
-        public JsonSerializerOptions JsonOptions { get; set; }
+        private readonly IDssJson Json;
 
         public event Action OnTemplatesLoaded;
         public List<ITemplate> Templates { get; private set; }
-        public TemplatesEditor(HttpClient client)
+        public DssTemplates(HttpClient client, IDssJson json)
         {
             HttpClient = client;
-            JsonOptions = new JsonSerializerOptions()
-            {
-                WriteIndented = true,
-                IgnoreNullValues = true,
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-            };
+            Json = json;
             LoadTemplates();
         }
         private async void LoadTemplates()
@@ -47,7 +46,10 @@ namespace DSSAlternative.AppComponents
             foreach (var path in Pathes)
             {
                 ITemplate template = await LoadTemplate($"sample-data/{path}");
-                Templates.Add(template);
+                if(template != null)
+                {
+                    Templates.Add(template);
+                }
             }
             OnTemplatesLoaded?.Invoke();
             Console.WriteLine("Шаблоны загружены");
@@ -55,7 +57,7 @@ namespace DSSAlternative.AppComponents
         private async Task<Template> LoadTemplate(string path)
         {
             string json = await HttpClient.GetStringAsync($"{path}");
-            Template template = JsonSerializer.Deserialize<Template>(json, JsonOptions);
+            Template template = Json.FromJson<Template>(json);
             return template;
         }
     }

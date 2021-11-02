@@ -29,11 +29,18 @@ namespace DSSAlternative.AppComponents
         {
 
         }
-        public DssState(DSS dss)
+        public DssState(IDssProjects dss)
         {
             Saved = DateTime.Now;
-            OpenedTemplates = dss.Projects.Select(pr => new Template(pr)).ToArray();
-            SelectedTemplateIndex = dss.Projects.IndexOf(dss.Project);
+            OpenedTemplates = dss.Projects.Where(p => p.Created).Select(pr => new Template(pr)).ToArray();
+            if (OpenedTemplates.Contains(dss.Project as Template))
+            {
+                SelectedTemplateIndex = dss.Projects.IndexOf(dss.Project);
+            }
+            else
+            {
+                SelectedTemplateIndex = 0;
+            }
         }
     }
 }

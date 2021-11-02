@@ -1,8 +1,6 @@
 ﻿@page "/hierarchy"
 @inherits DSSProject
 @layout EditorLayout
-@using DSSAlternative.Services
-@inject Clipboard Clipboard
 
 <section>
     <div class="sheme basic-border">
@@ -200,8 +198,11 @@
 
 
 @code {
-    private Template TemplateCurrent => new Template(HierarchyEdit);
-    private string JsonCurrent => JsonSerializer.Serialize<Template>(TemplateCurrent, DSSApp.JsonOptions);
+    [Inject]
+    public Services.IClipboard Clipboard { get; set; }
+    [Inject]
+    public IDssJson Json { get; set; }
+    private string JsonCurrent => Json.ToJson(HierarchyEdit);
 
     private INode NodeHovered { get; set; }
 

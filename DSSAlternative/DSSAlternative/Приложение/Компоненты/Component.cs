@@ -11,15 +11,13 @@ namespace DSSAlternative.AppComponents
     public class DSSComponent : ComponentBase
     {
         [Inject]
-        public DSS DSSApp { get; set; }
+        public IDssProjects Dss { get; set; }
         [Inject]
-        public Account Account { get; set; }
+        public IAccount Account { get; set; }
         [Inject]
-        public TemplatesEditor TemplatesEditor { get; set; }
+        public IRatingSystem RatingSystem { get; set; }
 
-        public IEnumerable<IProject> Projects => DSSApp.Projects;
-        public IEnumerable<ITemplate> Templates => TemplatesEditor.Templates;
-        public IRatingSystem RatingSystem => DSSApp.RatingSystem;
+        public IEnumerable<IProject> Projects => Dss.Projects;
         public IRatingRules RatingRules { get; set; } = RatingCssSystem.DefaultSystem;
 
         protected const string OptionsLink = "Options";

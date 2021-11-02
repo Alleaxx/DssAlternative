@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.Services
 {
-    public class LocalStorage
+    public interface ILocalStorage
+    {
+        ValueTask<string> GetValueAsync(string key);
+        ValueTask SetPropAsync(string key, object item);
+        ValueTask RemovePropAsync(string key);
+        ValueTask ClearAll();
+    }
+    public class LocalStorage : ILocalStorage
     {
         private readonly IJSRuntime jSRuntime;
 

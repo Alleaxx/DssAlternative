@@ -13,33 +13,42 @@ using DSSAlternative.AHP;
 
 namespace DSSAlternative.AppComponents
 {
-    public class DSS
+    public interface IDssProjects
+    {
+        event Action<IProject> OnProjectSelectChange;
+        event Action OnStateLoaded;
+        event Action OnProjectAdded;
+        event Action OnProjectRemoved;
+
+
+        public List<IProject> Projects { get; }
+        public IProject Project { get; }
+
+
+        void SelectProject(IProject project);
+        void AddProject();
+        void AddProject(ITemplate template); 
+        void RemoveProject(IProject project);
+        void LoadState(DssState state);
+    }
+    public class DssProjects : IDssProjects
     {
         private readonly NavigationManager Navigation;
-        public JsonSerializerOptions JsonOptions { get; set; }
-        public DSS(NavigationManager manager)
+        public DssProjects(NavigationManager manager)
         {
             Navigation = manager;
-            JsonOptions = new JsonSerializerOptions()
-            {
-                WriteIndented = true,
-                IgnoreNullValues = true,
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-            };
+            Projects = new List<IProject>();
         }
-
-
-
 
 
         public event Action<IProject> OnProjectSelectChange;
         public event Action OnStateLoaded;
+        public event Action OnProjectAdded;
         public event Action OnProjectRemoved;
 
-        public IRatingSystem RatingSystem { get; private set; } = new RatingSystem();
-       
-        //Все проблемы
-        public List<IProject> Projects { get; private set; } = new List<IProject>();
+
+        //Все задачи
+        public List<IProject> Projects { get; private set; }
         public IProject Project { get; private set; }
 
 
@@ -59,12 +68,21 @@ namespace DSSAlternative.AppComponents
                 OnProjectSelectChange?.Invoke(project);
             }
         }
-
-        public void AddProject(IProject project)
+        public void AddProject(ITemplate template)
         {
-            Projects.Add(project);
+            AddProject(new Project(template.CloneThis()));
         }
+        public void AddProject()
+        {
+            AddProject(AhpHierarchy.CreateNewProblem());
+        }
+        private void AddProject(IProject project)
+        {
+            bool alreadyExist = Projects.Any(p => HierarchyNodes.CompareEqual(p.HierarchyActive, project.HierarchyActive));
 
+            Projects.Add(project);
+            OnProjectAdded?.Invoke();
+        }
         public void RemoveProject(IProject project)
         {
             Projects.Remove(project);
@@ -82,7 +100,6 @@ namespace DSSAlternative.AppComponents
 
             OnProjectRemoved?.Invoke();
         }
-
         public void LoadState(DssState state)
         {
             Projects.Clear();
@@ -96,7 +113,7 @@ namespace DSSAlternative.AppComponents
                 if (projects.Any())
                 {
                     var selected = Project = Projects[state.SelectedTemplateIndex];
-                    SelectProject(selected);
+                    SelectProject(Projects.First());
                 }
                 OnStateLoaded?.Invoke();
             }

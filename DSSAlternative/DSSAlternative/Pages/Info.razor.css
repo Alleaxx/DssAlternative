@@ -1,7 +1,6 @@
 ﻿
-
-main {
-    max-width: 50em;
+.info{
+    max-width: 750px;
 }
 main p{
     line-height: 140%;

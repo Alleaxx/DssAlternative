@@ -17,7 +17,7 @@ namespace DSSAlternative.AppComponents
         protected const string NodeLink = "node";
 
 
-        protected IProject Project => DSSApp.Project;
+        protected IProject Project => Dss.Project;
         protected IHierarchy Hierarchy => Project.HierarchyActive;
         protected IRelations Relations => Project.Relations;
 
@@ -43,7 +43,7 @@ namespace DSSAlternative.AppComponents
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            DSSApp.OnProjectSelectChange += DSS_ProjectChanged;
+            Dss.OnProjectSelectChange += DSS_ProjectChanged;
         }
         private void DSS_ProjectChanged(IProject obj)
         {

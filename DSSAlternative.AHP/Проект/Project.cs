@@ -30,20 +30,24 @@ namespace DSSAlternative.AHP
             get
             {
                 string status = "Готова";
+                if (!Created)
+                {
+                    return "Нужна иерархия";
+                }
                 if (!Relations.Known)
                 {
-                    return "Нужна информация";
+                    return "Есть незаполненные связи";
                 }
                 if (!Relations.Consistent)
                 {
-                    return "Нужна корректировка";
+                    return "Есть несогласованность";
                 }
                 return status;
             }
         }
         public bool UnsavedChanged => !HierarchyNodes.CompareEqual(HierarchyActive, HierarchyEditing);
         public bool IsUpdateAvailable => UnsavedChanged && HierarchyEditing.Correctness.IsCorrect;
-
+        public bool Created => HierarchyActive.Correctness.IsCorrect;
 
         //Создание проекта
         public Project(ITemplate template)
@@ -55,7 +59,7 @@ namespace DSSAlternative.AHP
         public Project(IEnumerable<INode> nodes)
         {
             HierarchyEditing = new HierarchyNodes(nodes);
-            UpdateHierarchy();
+            UpdateHierarchy(new HierarchyNodes(new Node("???")));
         }
         public void UpdateHierarchy()
         {

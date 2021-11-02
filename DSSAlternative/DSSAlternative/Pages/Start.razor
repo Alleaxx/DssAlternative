@@ -2,23 +2,59 @@
 @inherits DSSComponent
 
 @using DSSAlternative.Services;
-@inject Clipboard Clipboard
+
 
 <div class="load-task-grid">
-    <header class="load-header">
-        <h2>Формирование задачи выбора</h2>
-    </header>
+    <section class="loaded">
+        <h3>Открытые задачи</h3>
+        <button class="action-button" @onclick="LoadOwn">
+            <img src="Images/plus-square.svg" />
+            <span>Создать новую</span>
+        </button>
+        <ul class="problems">
+
+            @foreach (IProject project in Projects)
+            {
+            <li>
+                <ProjectTask Project="project" Removed="() => StateHasChanged()">
+
+                </ProjectTask>
+            </li>
+            }
+        </ul>
+    </section>
 
     <div class="tab-presets">
+        <h3>Создание новой задачи</h3>
         <Tab>
             <TabItem>
-                <Title><h3 class="tab-header">Свои пресеты</h3></Title>
+                <Title><h4 class="tab-header">Общие шаблоны</h4></Title>
                 <ChildContent>
                     <div class="tab-section">
-
+                        <section class="load-preset saved-session">
+                            <p class="load-note">
+                                Позволяет задать типовую задачу, которую можно изменить под свои условия.
+                            </p>
+                            <ul class="presets">
+                                <CascadingValue Value="this">
+                                    @foreach (var template in Templates)
+                                    {
+                                        <li>
+                                            <HierTemplate Template="template"></HierTemplate>
+                                        </li>
+                                    }
+                                </CascadingValue>
+                            </ul>
+                        </section>
+                    </div>
+                </ChildContent>
+            </TabItem>
+            <TabItem>
+                <Title><h4 class="tab-header">Сохраненные задачи</h4></Title>
+                <ChildContent>
+                    <div class="tab-section">
                         <div class="load-own">
                             <section>
-                                <h4>Пользовательские пресеты</h4>
                                 <p class="load-note">
                                     Создать задачу по пользовательскому шаблону
                                 </p>
@@ -39,7 +75,6 @@
                                             Правда, сохраненных шаблонов нет. Тогда можно воспользоваться иным методом:
                                         </p>
                                         <section>
-                                            <h3>Загрузка задачи из JSON</h3>
                                             <p class="load-note">
                                                 <button class="action-button" @onclick="async () => LoadJSON(new ChangeEventArgs() { Value = await Clipboard.ReadTextAsync() })">
                                                     Вставить из буфера обмена
@@ -54,9 +89,14 @@
                             </section>
 
                         </div>
-
+                    </div>
+                </ChildContent>
+            </TabItem>
+            <TabItem>
+                <Title><h4 class="tab-header">Активные задачи</h4></Title>
+                <ChildContent>
+                    <div class="tab-section">
                         <section class="saved-session">
-                            <h4>Сохраненная сессия</h4>
                             <p class="load-note">
                                 Загрузить сохраненный прогресс решения задач
                             </p>
@@ -81,71 +121,37 @@
                     </div>
                 </ChildContent>
             </TabItem>
-
-            <TabItem>
-                <Title><h3 class="tab-header">Общие шаблоны</h3></Title>
-                <ChildContent>
-                    <div class="tab-section">
-
-                        <section class="load-preset saved-session">
-                            <h4>Модификация общего шаблона</h4>
-                            <p class="load-note">
-                                Позволяет задать типовую задачу, которую можно изменить под свои условия.
-                            </p>
-                            <ul class="presets">
-                                <CascadingValue Value="this">
-                                    @foreach (var template in Templates)
-                                    {
-                                        <li>
-                                            <HierTemplate Template="template"></HierTemplate>
-                                        </li>
-                                    }
-                                </CascadingValue>
-                            </ul>
-                        </section>
-                    </div>
-                </ChildContent>
-            </TabItem>
         </Tab>
 
     </div>
-
-    <section class="loaded">
-        <h3>Открытые задачи</h3>
-        <p class="load-note">
-            Список уже загруженных задач выбора.
-        </p>
-        <button class="action-button" @onclick="LoadOwn">
-            <span>Создать новую</span>
-        </button>
-        <ul class="problems">
-            @foreach (IProject project in Projects)
-            {
-                <ProjectTask Project="project" Removed="() => StateHasChanged()">
-
-                </ProjectTask>
-            }
-        </ul>
-    </section>
 </div>
 
 
 
 @code {
+    [Inject]
+    public IClipboard Clipboard { get; set; }
+    [Inject]
+    public IDssTemplates TemplatesEditor { get; set; }
+
+
+    public IEnumerable<ITemplate> Templates => TemplatesEditor.Templates;
+
     private void LoadOwn()
     {
-        DSSApp.AddProject(AhpHierarchy.CreateNewProblem());
+        Dss.AddProject();
     }
     public void LoadTemplate(ITemplate template)
     {
-        DSSApp.AddProject(new Project(template));
+        Dss.AddProject(template);
         StateHasChanged();
     }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        DSSApp.OnStateLoaded += StateHasChanged;
+        Dss.OnStateLoaded += StateHasChanged;
+        Dss.OnProjectAdded += StateHasChanged;
         TemplatesEditor.OnTemplatesLoaded += StateHasChanged;
     }
 
@@ -157,7 +163,7 @@
         try
         {
             ITemplate obj = JsonSerializer.Deserialize<Template>(json);
-            DSSApp.AddProject(new Project(obj));
+            Dss.AddProject(obj);
             JSONLoadResult = "Проблема успешно загружена";
         }
         catch (JsonException ex)

@@ -14,6 +14,7 @@ namespace DSSAlternative.AHP
 
         string Name { get; set; }
         string Description { get; set; }
+        string ImgPath { get; set; }
 
 
         int Level { get; set; }
@@ -40,6 +41,7 @@ namespace DSSAlternative.AHP
 
         public string Name { get; set; }
         public string Description { get; set; }
+        public string ImgPath { get; set; }
 
         public int Level
         {

@@ -25,10 +25,12 @@ namespace DSSAlternative.AppComponents
         {
             bool areRelationsKnown = project.Relations.Known;
             bool areRelationsConsistent = project.Relations.Consistent;
+            bool isCreated = project.Created;
 
             AddRuleClass("stage-menu-element");
             AddRuleClass(() => !areRelationsKnown, "warning");
             AddRuleClass(() => !areRelationsConsistent, "error");
+            AddRuleClass(() => !isCreated, "none");
         }
     }
     public class CssResults : CssCheck
@@ -36,9 +38,11 @@ namespace DSSAlternative.AppComponents
         public CssResults(IProject project)
         {
             bool areRelationsCorrect = project.Relations.Correct;
+            bool created = project.Created;
 
             AddRuleClass("stage-menu-element");
             AddRuleClass(() => !areRelationsCorrect, "none");
+            AddRuleClass(() => !created, "none");
         }
     }
     public class CssRelation : CssCheck

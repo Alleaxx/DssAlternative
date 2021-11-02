@@ -9,13 +9,16 @@ th {
     align-items: center;
 }
 
-.action-button{
+.action-button {
     background-color: white;
     border: 1px solid silver;
     border-radius: 2px;
     padding: 4px 8px;
     outline-color: gray;
     cursor: pointer;
+
+    display: flex;
+    align-items: center;
 }
 .action-button:hover{
     background-color: whitesmoke;
@@ -23,6 +26,12 @@ th {
 .action-button:active{
     background-color: gainsboro;
 }
+
+    .action-button img {
+        height: 20px;
+        margin: 2px 6px;
+        opacity: 0.7;
+    }
 
 
 .add-button{

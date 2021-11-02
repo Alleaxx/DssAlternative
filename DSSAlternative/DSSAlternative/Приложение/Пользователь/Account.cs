@@ -10,26 +10,34 @@ using System.Threading.Tasks;
 using DSSAlternative.Services;
 namespace DSSAlternative.AppComponents
 {
-    public class Account
+    public interface IAccount
     {
-        private readonly DSS App;
-        private readonly LocalStorage Storage;
+        User CurrentUser { get; }
+        void LoadState();
+        Task SaveState();
+        Task RemoveState();
+
+        Task SetTemplate(IProject project);
+        Task RemoveTemplate(ITemplate template);
+    }
+    public class Account : IAccount
+    {
+        private readonly IDssProjects DssProjects;
+        private readonly IDssJson Json;
+        private readonly ILocalStorage Storage;
 
         public User CurrentUser { get; private set; }
 
 
-        public Account(DSS app, LocalStorage storage)
+        public Account(IDssProjects app, ILocalStorage storage, IDssJson json)
         {
-            App = app;
+            DssProjects = app;
             CurrentUser = new User();
             Storage = storage;
-            JsonOptions = new JsonSerializerOptions()
-            {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-            };
+            Json = json;
             LoadStored();
         }
-        private async void LoadStored()
+        private async Task LoadStored()
         {
             CurrentUser.State = await GetState();
             CurrentUser.Templates = (await GetTemplates()).ToList();
@@ -60,13 +68,13 @@ namespace DSSAlternative.AppComponents
         public void LoadState()
         {
             DssState savedState = CurrentUser.State;
-            App.LoadState(savedState);
+            DssProjects.LoadState(savedState);
         }
-        public async void SaveState()
+        public async Task SaveState()
         {
-            await SaveState(new DssState(App));
+            await SaveState(new DssState(DssProjects));
         }
-        public async void RemoveState()
+        public async Task RemoveState()
         {
             DssState newState = new DssState() { Saved = DateTime.Now };
             await SaveState(newState);
@@ -79,16 +87,16 @@ namespace DSSAlternative.AppComponents
 
         //Шаблоны
         const string Templates = "Templates";
-        public void SetTemplate(IProject project)
+        public async Task SetTemplate(IProject project)
         {
-            SetTemplate(new Template(project));
+            await SetTemplate(new Template(project));
         }
-        public async void RemoveTemplate(ITemplate template)
+        public async Task RemoveTemplate(ITemplate template)
         {
             CurrentUser.Templates.Remove(template as Template);
             await SaveTemplates();
         }
-        private async void SetTemplate(ITemplate template)
+        private async Task SetTemplate(ITemplate template)
         {
             if(template is Template save)
             {
@@ -103,37 +111,19 @@ namespace DSSAlternative.AppComponents
 
 
         //Json
-        private readonly JsonSerializerOptions JsonOptions;
         private async Task WriteJson(string key, object obj)
         {
-            try
+            string json = Json.ToJson(obj);
+            if (!string.IsNullOrEmpty(json))
             {
-                string json = JsonSerializer.Serialize(obj, JsonOptions);
                 await Storage.SetPropAsync(key, json);
-            }
-            catch (JsonException ex)
-            {
-                Console.WriteLine($"Не удалось сериализовать и сохранить объект [{key}]: {ex.Message}");
             }
         }
         private async Task<T> ReadFromJson<T>(string key)
         {
-            try
-            {
-                string json = await Storage.GetValueAsync(key);
-                if(json == null)
-                {
-                    return default;
-                }
-
-                T obj = JsonSerializer.Deserialize<T>(json, JsonOptions);
-                return obj;
-            }
-            catch (JsonException ex)
-            {
-                Console.WriteLine($"Не удалось десериализовать объект [{key}]: {ex.Message}");
-                return default;
-            }
+            string json = await Storage.GetValueAsync(key);
+            T obj = Json.FromJson<T>(json);
+            return obj;
         }
     }
 }

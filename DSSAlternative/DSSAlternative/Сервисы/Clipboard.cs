@@ -6,7 +6,12 @@ using Microsoft.JSInterop;
 
 namespace DSSAlternative.Services
 {
-    public class Clipboard
+    public interface IClipboard
+    {
+        ValueTask<string> ReadTextAsync();
+        ValueTask WriteTextAsync(string text);
+    }
+    public class Clipboard : IClipboard
     {
         private readonly IJSRuntime jSRuntime;
 

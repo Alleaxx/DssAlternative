@@ -9,6 +9,7 @@
 }
 
     .task-menu-element:hover {
+        color: darkblue;
         background-color: whitesmoke;
     }
 
@@ -17,7 +18,7 @@
         background-color: whitesmoke;
     }
     .selected .task-element-name{
-        font-weight: 600;
+        color: blue;
     }
 
 

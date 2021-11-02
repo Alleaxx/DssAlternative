@@ -19,15 +19,15 @@
     [Parameter]
     public EventCallback Removed { get; set; }
 
-    public string IsSelected => Project == DSSApp.Project ? "selected" : "";
+    public string IsSelected => Project == Dss.Project ? "selected" : "";
 
     private void SelectProblem()
     {
-        DSSApp.SelectProject(Project);
+        Dss.SelectProject(Project);
     }
     private void RemoveProblem()
     {
-        DSSApp.RemoveProject(Project);
+        Dss.RemoveProject(Project);
         Removed.InvokeAsync();
     }
 }

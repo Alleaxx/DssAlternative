@@ -3,12 +3,12 @@
 <style>
     .grid {
         display: grid;
-        grid-template-columns: 25fr 75fr;
+        grid-template-columns: 5fr 20fr 70fr 5fr;
         grid-template-rows: auto 1fr auto;
         grid-template-areas:
-            "logo header"
-            "content content"
-            "footer footer";
+            "logo logo header header"
+            ". content content ."
+            "footer footer footer footer";
     }
 
     main {

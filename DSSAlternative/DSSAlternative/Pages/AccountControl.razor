@@ -1,27 +1,32 @@
 ﻿@inherits DSSComponent
 
 @page "/account"
-<section>
-    <h2>Сохраненные данные</h2>
-    <p>
-        <button class="action-button">
+
+<style>
+    .account-control p{
+        font-size: 0.9em;
+    }
+</style>
+<section class="account-control">
+    <p hidden>
+        <button class="action-button" @onclick="() => Account.RemoveState()">
             Сбросить всё
         </button>
     </p>
     <section>
-        <h3>Состояние</h3>
+        <h3>Активные задачи, прогресс</h3>
         @if (DssState != null)
         {
             <p>
                 @User.State
             </p>
-            @foreach (var template in DssState.OpenedTemplates)
+            @*@foreach (var template in DssState.OpenedTemplates)
             {
                 <HierTemplate Template="template">
 
                 </HierTemplate>
-            }
-            <p>
+            }*@
+            <div class="row">
                 <button class="action-button" @onclick="() => Account.LoadState()">
                     Загрузить
                 </button>
@@ -31,21 +36,22 @@
                 <button class="action-button" @onclick="() => Account.RemoveState()">
                     Сбросить
                 </button>
-            </p>
+            </div>
         }
     </section>
     <section>
         <h3>Свои шаблоны</h3>
         @foreach (var template in OwnTemplates)
         {
-            <HierTemplate Template="template">
+            <div style="display: flex; justify-content: space-between">
 
-            </HierTemplate>
-            <p style="border-bottom: 1px solid gainsboro; margin: 0; padding: 5px 0;">
-                <button class="action-button" @onclick="() => Account.RemoveTemplate(template)">
+                <HierTemplate Template="template">
+
+                </HierTemplate>
+                <button style="border-bottom: 1px solid gainsboro; margin: 0; padding: 5px;" class="action-button" @onclick="() => Account.RemoveTemplate(template)">
                     Удалить
                 </button>
-            </p>
+            </div>
         }
         @if (!OwnTemplates.Any())
         {
