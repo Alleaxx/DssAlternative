@@ -3,6 +3,11 @@
     max-width: 750px;
     font-size: 0.9em;
 }
+
+.info h2, .info h4 {
+    border-bottom: 1px solid gainsboro;
+    padding-bottom: 2px;
+}
 .info a{
     color: royalblue;
     text-decoration: none;

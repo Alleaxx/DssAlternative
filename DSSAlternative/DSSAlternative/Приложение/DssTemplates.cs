@@ -19,6 +19,17 @@ namespace DSSAlternative.AppComponents
     {
         private readonly HttpClient HttpClient;
         private readonly IDssJson Json;
+        private readonly string[] LoadPathes = new string[]
+        {
+            "legacy-study.json",
+            "legacy-study-advanced.json",
+            "legacy-riscs.json",
+            "project-team-task.json",
+            "project-tools-task.json",
+            "work-task.json",
+            "buy-task.json",
+        };
+
 
         public event Action OnTemplatesLoaded;
         public List<ITemplate> Templates { get; private set; }
@@ -30,20 +41,8 @@ namespace DSSAlternative.AppComponents
         }
         private async void LoadTemplates()
         {
-            string[] Pathes = new string[]
-            {
-                "legacy-study.json",
-                "legacy-study-advanced.json",
-                "legacy-riscs.json",
-                "project-team-task.json",
-                "project-riscs-task.json",
-                "project-tools-task.json",
-                "work-task.json",
-                "study-task.json",
-                "buy-task.json",
-            };
             Templates = new List<ITemplate>();
-            foreach (var path in Pathes)
+            foreach (var path in LoadPathes)
             {
                 ITemplate template = await LoadTemplate($"sample-data/{path}");
                 if(template != null)

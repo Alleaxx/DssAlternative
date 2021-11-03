@@ -18,8 +18,8 @@ namespace DSSAlternative.AHP
 
 
         int Level { get; set; }
-        int Group { get; set; }
-        int GroupIndex { get; set; }
+        string Group { get; set; }
+        string GroupIndex { get; set; }
         double Coefficient { get; set; }
 
         IHierarchy Hierarchy { get; }
@@ -54,7 +54,7 @@ namespace DSSAlternative.AHP
         }                
         private int level;
         //Критерий составляет группу, которой могут принадлежать другие критерии
-        public int Group
+        public string Group
         {
             get => group;
             set
@@ -63,9 +63,9 @@ namespace DSSAlternative.AHP
                 OnChanged?.Invoke(this);
             }
         }                
-        private int group;
+        private string group;
         //Критерий принадлежит группе критериев c этим индексом
-        public int GroupIndex
+        public string GroupIndex
         {
             get => groupIndex;
             set
@@ -74,7 +74,7 @@ namespace DSSAlternative.AHP
                 OnChanged?.Invoke(this);
             }
         }      
-        private int groupIndex;
+        private string groupIndex;
 
         [JsonIgnore]
         public double Coefficient { get; set; }
@@ -89,6 +89,13 @@ namespace DSSAlternative.AHP
 
         }
         public Node(int level, string name, int group, int groupIndex)
+        {
+            Name = name;
+            Level = level;
+            Group = group.ToString();
+            GroupIndex = groupIndex.ToString();
+        }
+        public Node(int level, string name, string group, string groupIndex)
         {
             Name = name;
             Level = level;

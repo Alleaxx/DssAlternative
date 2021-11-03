@@ -109,17 +109,17 @@
                         <table class="node-table-edit">
                             <colgroup>
                                 <col style="width:20%" />
-                                <col style="width:38%" />
-                                <col style="width:14%" />
-                                <col style="width:14%" />
-                                <col style="width:14%" />
+                                <col style="width:24%" />
+                                <col style="width:8%" />
+                                <col style="width:24%" />
+                                <col style="width:24%" />
                             </colgroup>
                             <tr class="node-table-edit-header">
                                 <th>Тип</th>
                                 <th>Имя</th>
                                 <th class="num">Уровень</th>
-                                <th class="num">Группа</th>
-                                <th class="num">Подчинена</th>
+                                <th>Группа</th>
+                                <th>Подчинена</th>
                             </tr>
                             @foreach (var node in HierarchyEdit.OrderBy(n => n.Level))
                             {
@@ -134,20 +134,25 @@
                                         <input type="number" @bind-value="@node.Level" />
                                     </td>
                                     <td class="edit-cell">
-                                        <input type="number" @bind-value="@node.Group" />
+                                        <input @bind-value="@node.Group" list="dataGroups"/>
                                     </td>
                                     <td class="edit-cell">
-                                        <input type="number" @bind-value="@node.GroupIndex" />
+                                        <input @bind-value="@node.GroupIndex" list="dataGroups"/>
                                     </td>
                                 </tr>
                             }
                         </table>
-
+                        <datalist id="dataGroups">
+                            @foreach (var group in HierarchyEdit.Select(n => n.Group).Distinct())
+                            {
+                                <option value="@group"></option>
+                            }
+                        </datalist>
                         <table class="structure">
                             <tr>
-                                <th class="num">Группа №</th>
-                                <th>Критерии</th>
-                                <th>Зависимые</th>
+                                <th class="num">Группа</th>
+                                <th>Состоит из:</th>
+                                <th>Критерии для:</th>
                             </tr>
                             @foreach (var group in HierarchyEdit.GroupBy(n => n.Group))
                             {
@@ -221,8 +226,23 @@
         bool isAlternative = level == HierarchyEdit.MaxLevel || level == HierarchyEdit.MaxLevel + 1;
 
         string name = isAlternative ? $"А{HierarchyEdit.Alternatives.Count() + 1}" : $"К{HierarchyEdit.Criterias.Count() + 1}";
-        INode newNode = new Node(level, name, level, level - 1);
+
+        string group = $"Уровень {level}";
+        string groupIndex = $"Уровень {level - 1}";
+        if (HierarchyEdit.Where(n => n.Level == level).FirstOrDefault() is INode nodeCurrentLevel)
+        {
+            group = nodeCurrentLevel.Group;
+        }
+        if (HierarchyEdit.Where(n => n.Level == level - 1).FirstOrDefault() is INode nodePrevLevel)
+        {
+            groupIndex = nodePrevLevel.Group;
+        }
+
+        INode newNode = new Node(level, name, group, groupIndex);
         newNode.SetHierarchy(HierarchyEdit);
+
+
+
     }
     private void RemoveNode(INode e)
     {

@@ -7,44 +7,44 @@
     {
       "Name": "Выбор места учебы",
       "Level": 0,
-      "Group": 0,
-      "GroupIndex": -1
+      "Group": "Цель",
+      "GroupIndex": "Нет"
     },
     {
       "Name": "Репутация",
       "Level": 1,
-      "Group": 1,
-      "GroupIndex": 0
+      "Group": "Критерии",
+      "GroupIndex": "Цель"
     },
     {
       "Name": "Местоположение",
       "Level": 1,
-      "Group": 2,
-      "GroupIndex": 0
+      "Group": "Критерий-Место",
+      "GroupIndex": "Цель"
     },
     {
       "Name": "Маршрут",
       "Level": 2,
-      "Group": 1,
-      "GroupIndex": 2
+      "Group": "Критерии",
+      "GroupIndex": "Критерий-Место"
     },
     {
       "Name": "Расстояние",
       "Level": 2,
-      "Group": 1,
-      "GroupIndex": 2
+      "Group": "Критерии",
+      "GroupIndex": "Критерий-Место"
     },
     {
       "Name": "Вариант А",
       "Level": 3,
-      "Group": 3,
-      "GroupIndex": 1
+      "Group": "Альтернативы",
+      "GroupIndex": "Критерии"
     },
     {
       "Name": "Вариант Б",
       "Level": 3,
-      "Group": 3,
-      "GroupIndex": 1
+      "Group": "Альтернативы",
+      "GroupIndex": "Критерии"
     }
   ],
 

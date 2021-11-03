@@ -6,26 +6,26 @@
     {
       "Name": "Оценка рисков проекта",
       "Level": 0,
-      "Group": 0,
-      "GroupIndex": -1
+      "Group": "Цель",
+      "GroupIndex": "Нет"
     },
     {
       "Name": "Финансовый",
       "Level": 1,
-      "Group": 1,
-      "GroupIndex": 0
+      "Group": "Критерий-Ф",
+      "GroupIndex": "Цель"
     },
     {
       "Name": "Маркетинговый",
       "Level": 1,
-      "Group": 2,
-      "GroupIndex": 0
+      "Group": "Критерий-М",
+      "GroupIndex": "Цель"
     },
     {
       "Name": "Организационный",
       "Level": 1,
-      "Group": 3,
-      "GroupIndex": 0
+      "Group": "Критерий-О",
+      "GroupIndex": "Цель"
     },
     {
       "Name": "Ф1",

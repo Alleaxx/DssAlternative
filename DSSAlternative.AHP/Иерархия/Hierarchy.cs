@@ -8,7 +8,6 @@ namespace DSSAlternative.AHP
     public interface IHierarchy : IEnumerable<INode>
     {
         IEnumerable<IGrouping<int, INode>> GroupedByLevel { get; }
-        IEnumerable<IGrouping<int, INode>> GroupedByGroup { get; }
         IEnumerable<INode> Best(int level);
 
 
@@ -23,7 +22,7 @@ namespace DSSAlternative.AHP
         public int RelationsCount { get; }
         TimeSpan CountEstTime();
         public int MaxLevel { get; }
-        IEnumerable<int> ExistingGroups { get; }
+        IEnumerable<string> ExistingGroups { get; }
 
 
         event Action OnChanged;
@@ -96,7 +95,6 @@ namespace DSSAlternative.AHP
 
         //Структура
         public IEnumerable<IGrouping<int, INode>> GroupedByLevel => this.OrderBy(n => n.Level).GroupBy(h => h.Level);
-        public IEnumerable<IGrouping<int, INode>> GroupedByGroup => this.OrderBy(n => n.Group).GroupBy(h => h.Group);
 
         public ILookup<int, INode> Dictionary => this.ToLookup(n => n.Level);
         public IEnumerable<INode> Best(int level)
@@ -128,10 +126,10 @@ namespace DSSAlternative.AHP
             return new TimeSpan(0, 0, RelationsCount * 8);
         }
         public int MaxLevel => this.Max(s => s.Level);
-        public IEnumerable<int> ExistingGroups => this.Select(n => n.Group).Distinct();
+        public IEnumerable<string> ExistingGroups => this.Select(n => n.Group).Distinct();
 
         //Узлы
-        public INode MainGoal => this.FirstOrDefault(h => h.Level == 0 && h.GroupIndex == -1);
+        public INode MainGoal => this.FirstOrDefault(h => h.Level == 0);
         public IEnumerable<INode> Criterias => this.Where(h => h.Level > 0 && h.Level < MaxLevel);
         public IEnumerable<INode> Alternatives => this.Where(h => h.Level == MaxLevel);
 

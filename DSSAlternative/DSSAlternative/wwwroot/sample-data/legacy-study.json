@@ -7,50 +7,50 @@
     {
       "Name": "Выбор места учебы",
       "Level": 0,
-      "Group": 0,
-      "GroupIndex": -1
+      "Group": "Цель",
+      "GroupIndex": "Нет"
     },
     {
       "Name": "Репутация",
       "Level": 1,
-      "Group": 1,
-      "GroupIndex": 0
+      "Group": "Критерии",
+      "GroupIndex": "Цель"
     },
     {
       "Name": "Местоположение",
       "Level": 1,
-      "Group": 1,
-      "GroupIndex": 0
+      "Group": "Критерии",
+      "GroupIndex": "Цель"
     },
     {
       "Name": "Вариант А",
       "Level": 2,
-      "Group": 2,
-      "GroupIndex": 1
+      "Group": "Альтернативы",
+      "GroupIndex": "Критерии"
     },
     {
       "Name": "Вариант B",
       "Level": 2,
-      "Group": 2,
-      "GroupIndex": 1
+      "Group": "Альтернативы",
+      "GroupIndex": "Критерии"
     },
     {
       "Name": "Вариант C",
       "Level": 2,
-      "Group": 2,
-      "GroupIndex": 1
+      "Group": "Альтернативы",
+      "GroupIndex": "Критерии"
     },
     {
       "Name": "Факультет А",
       "Level": 3,
-      "Group": 3,
-      "GroupIndex": 2
+      "Group": "Альтернативы-факультеты",
+      "GroupIndex": "Альтернативы"
     },
     {
       "Name": "Факультет Б",
       "Level": 3,
-      "Group": 3,
-      "GroupIndex": 2
+      "Group": "Альтернативы-факультеты",
+      "GroupIndex": "Альтернативы"
     }
   ],
 
