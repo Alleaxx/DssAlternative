@@ -60,14 +60,14 @@ namespace DSSAlternative.AppComponents
         protected virtual void CreateRules()
         {
             DefaultRule = new RuleForRating(double.NegativeInfinity, double.PositiveInfinity, "?? отношение ??", "color: black");
-            Add(new RuleForRating(0, 1, "Неизвестное отношение", "color:black"));
-            Add(new RuleForRating(1, 2, "Нет приоритета", "color:black"));
+            Add(new RuleForRating(0, 1, "??????", "color:black"));
+            Add(new RuleForRating(1, 2, "Приоритета нет", "color:black"));
             Add(new RuleForRating(2, 3, "Малый приоритет", "color:green;font-size:0.9em;"));
             Add(new RuleForRating(3, 4, "Небольшой приоритет", "color:green"));
-            Add(new RuleForRating(4, 5, "Обычный приоритет", "color:#0070dd;font-size:0.9em;"));
+            Add(new RuleForRating(4, 5, "Некоторый приоритет", "color:#0070dd;font-size:0.9em;"));
             Add(new RuleForRating(5, 6, "Заметный приоритет", "color:#0070dd"));
             Add(new RuleForRating(6, 7, "Сильный приоритет", "color:#0070dd;font-size:0.9em;"));
-            Add(new RuleForRating(7, 8, "Крупный приоритет", "color:#9345ff"));
+            Add(new RuleForRating(7, 8, "Значительный приоритет", "color:#9345ff"));
             Add(new RuleForRating(8, 9, "Значительный приоритет", "color:#9345ff;font-size:0.9em;"));
             Add(new RuleForRating(9, 11, "Абсолютный приоритет", "color:#ff8000"));
 

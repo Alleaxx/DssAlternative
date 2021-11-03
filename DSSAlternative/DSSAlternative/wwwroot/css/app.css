@@ -1,5 +1,5 @@
 ﻿body {
-    background-color: rgb(255, 255, 255);
+    background-color: #ffffff;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
@@ -88,10 +88,10 @@ main {
 
 
 .loading{
-    background-color: whitesmoke;
 }
 .loading p{
     margin: auto;
+    width: 30em;
     padding: 30px 20px;
     background-color: white;
     border: 1px solid gainsboro;

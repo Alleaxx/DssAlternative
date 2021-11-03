@@ -15,15 +15,15 @@
             {
                 if (Relation.Value > 1)
                 {
-                    <span><b>Приоритет</b> выбран. @Relation.From.Name <i>@GetTextRelation(Relation).ToLower()</i> @Relation.To.Name</span>
+                    <span>@Relation.From.Name <i>@GetTextRelation(Relation).ToLower()</i> @Relation.To.Name</span>
                 }
                 else if (Relation.Value < 1)
                 {
-                    <span><b>Приоритет</b> выбран. @Relation.To.Name <i>@GetTextRelation(Relation).ToLower()</i>  @Relation.From.Name</span>
+                    <span>@Relation.To.Name <i>@GetTextRelation(Relation).ToLower()</i>  @Relation.From.Name</span>
                 }
                 else
                 {
-                    <span><b>Приоритет</b> выбран. Оба критерия более-менее <i>равны</i></span>
+                    <span>Оба критерия более-менее <i>равны</i></span>
                 }
             }
             else

@@ -1,17 +1,36 @@
 ﻿
 .info{
     max-width: 750px;
+    font-size: 0.9em;
 }
+.info a{
+    color: royalblue;
+    text-decoration: none;
+}
+.info a:hover{
+    color: blue;
+}
+.info p {
+    line-height: 1.4;
+}
+
+.info li {
+    line-height: 1.4;
+}
+
+.info h4 {
+    font-weight: normal;
+    font-size: 1.1em;
+}
+
+
 main p{
     line-height: 140%;
-}
-main li, main p{
-    font-size: 0.9em;
 }
 
     main img {
         padding: 8px;
-        max-width: 90%;
+        max-width: 75%;
     }
 
 img.right {

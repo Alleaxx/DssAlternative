@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using DSSAlternative.AHP;
+using Microsoft.AspNetCore.Components;
 
 namespace DSSAlternative.AppComponents
 {
@@ -21,6 +22,8 @@ namespace DSSAlternative.AppComponents
         protected IHierarchy Hierarchy => Project.HierarchyActive;
         protected IRelations Relations => Project.Relations;
 
+        [Inject]
+        public NavigationManager Navigation { get; set; }
 
 
         public INodeRelation RelationActive => Project.RelationSelected;
