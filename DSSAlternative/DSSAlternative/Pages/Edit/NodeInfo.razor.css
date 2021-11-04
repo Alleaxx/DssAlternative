@@ -31,7 +31,7 @@ a.action {
 
 .action-icon {
     height: 16px;
-    margin: auto;
+    margin: 0 5px;
     opacity: 50%;
 }
 

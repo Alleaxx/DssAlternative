@@ -1,5 +1,5 @@
 {
-  "Name": "Оценка рисков Legacy",
+  "Name": "Оценка рисков",
   "Description": "Ранжирование списка рисков для проекта по их опасности",
   "Img": "bar-chart.svg",
   "Nodes": [
@@ -30,56 +30,56 @@
     {
       "Name": "Ф1",
       "Level": 2,
-      "Group": 4,
-      "GroupIndex": 1
+      "Group": "Риски",
+      "GroupIndex": "Критерий-Ф"
     },
     {
       "Name": "Ф2",
       "Level": 2,
-      "Group": 4,
-      "GroupIndex": 1
+      "Group": "Риски",
+      "GroupIndex": "Критерий-Ф"
     },
     {
       "Name": "Ф3",
       "Level": 2,
-      "Group": 4,
-      "GroupIndex": 1
+      "Group": "Риски",
+      "GroupIndex": "Критерий-Ф"
     },
     {
       "Name": "М1",
       "Level": 2,
-      "Group": 4,
-      "GroupIndex": 2
+      "Group": "Риски",
+      "GroupIndex": "Критерий-М"
     },
     {
       "Name": "М2",
       "Level": 2,
-      "Group": 4,
-      "GroupIndex": 2
+      "Group": "Риски",
+      "GroupIndex": "Критерий-М"
     },
     {
       "Name": "М3",
       "Level": 2,
-      "Group": 4,
-      "GroupIndex": 2
+      "Group": "Риски",
+      "GroupIndex": "Критерий-М"
     },
     {
       "Name": "О1",
       "Level": 2,
-      "Group": 4,
-      "GroupIndex": 3
+      "Group": "Риски",
+      "GroupIndex": "Критерий-О"
     },
     {
       "Name": "О2",
       "Level": 2,
-      "Group": 4,
-      "GroupIndex": 3
+      "Group": "Риски",
+      "GroupIndex": "Критерий-О"
     },
     {
       "Name": "О3",
       "Level": 2,
-      "Group": 4,
-      "GroupIndex": 3
+      "Group": "Риски",
+      "GroupIndex": "Критерий-О"
     }
   ],
 

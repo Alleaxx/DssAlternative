@@ -6,8 +6,8 @@
     <h4>Настройки отношений </h4>
     <section>
         <div class="option-section">
-            <label class="option-name" for="border-cons">Граница согласованности (0.2 ст.)</label>
-            <input class="option-input" id="border-cons" type="number" @bind-value="@MtxConsistency.BorderDefault" />
+            <label class="option-name" for="border-cons">Граница согласованности (0.2)</label>
+            <input class="option-input" id="border-cons" type="number" step="0.01" @bind-value="@MtxConsistency.BorderDefault" />
         </div>
         <div class="option-section">
             <label class="option-name" for="amount">Градации оценок:</label>

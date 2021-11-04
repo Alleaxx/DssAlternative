@@ -72,9 +72,9 @@
                                     @if (!Account.CurrentUser.Templates.Any())
                                     {
                                         <p class="load-note">
-                                            Правда, сохраненных шаблонов нет. Тогда можно воспользоваться иным методом:
+                                            Правда, сохраненных шаблонов нет на данный момент нет.
                                         </p>
-                                        <section>
+                                        <section hidden>
                                             <p class="load-note">
                                                 <button class="action-button" @onclick="async () => LoadJSON(new ChangeEventArgs() { Value = await Clipboard.ReadTextAsync() })">
                                                     Вставить из буфера обмена
@@ -114,9 +114,12 @@
                                     </CascadingValue>
                                 </ul>
                             }
-                            <button class="action-button" @onclick="() => { Account.LoadState(); StateHasChanged(); }">
-                                Восстановить все
-                            </button>
+                            @if (Account.CurrentUser.State.OpenedTemplates.Any())
+                            {
+                                <button class="action-button" @onclick="() => { Account.LoadState(); StateHasChanged(); }">
+                                    Восстановить все (текущие задачи будут сброшены)
+                                </button>
+                            }
                         </section>
                     </div>
                 </ChildContent>

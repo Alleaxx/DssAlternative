@@ -7,11 +7,9 @@
     @if (Relations.Correct)
     {
         <div class="sheme">
-            @*<h3>Иерархия</h3>*@
             <HierShemeBig ProjectSheme="Project" ViewSelection="HierShemeBig.ViewSelections.Best"></HierShemeBig>
         </div>
         <div class="res-info">
-            @*<h3>Результаты</h3>*@
             @foreach (var levelGroup in GroupedResults())
             {
                 <section class="results-list">
