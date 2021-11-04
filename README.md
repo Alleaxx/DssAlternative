@@ -8,7 +8,7 @@
 
 **Ссылка**
 
-https://alleaxx.github.io/DssAlternative/
+https://alleaxxrmca.github.io/DssAlternativeV3/
 
 ![Создание задачи](https://i.ibb.co/qB4ddc8/image.png)
 
@@ -26,7 +26,7 @@ https://alleaxx.github.io/DssAlternative/
 
 ## Использование
 
-Сперва, разумеется, стоит перейти в [само приложение](https://alleaxx.github.io/DssAlternative/). При этом регистрация или установка чего-либо не требуется от слова совсем.
+Сперва, разумеется, стоит перейти в [само приложение](https://alleaxxrmca.github.io/DssAlternativeV3/). При этом регистрация или установка чего-либо не требуется от слова совсем.
 
 Секреты работы системы можно познать несколькими способами:
 1. Прочитать раздел о принципах работы системы в приложении.
