@@ -3,11 +3,22 @@
 {
     <td colspan="@ColSpan" title="@Rating.Value" class="@CssClass" @onclick="Set">
         <div class="rating">
-            <span style="@CssStyle">
-                @Name()
-            </span>
-            <span class="cr">
-                @CrDelta()
+            <span>
+                @if (IsSelected)
+                {
+                    <input type="checkbox" checked />
+                }
+                else
+                {
+                    <input type="checkbox" />
+                }
+
+                <span style="@CssStyle">
+                    @Name()
+                </span>
+                <span class="cr">
+                    @CrDelta()
+                </span>
             </span>
         </div>
     </td>
@@ -32,6 +43,8 @@ else
     [Parameter]
     public bool AsCell { get; set; } = true;
 
+    public bool IsSelected { get; set; }
+
     private ICss Css { get; set; }
     private string CssClass => Css.CssClass();
     private string CssStyle => Css.CssStyle();
@@ -39,7 +52,8 @@ else
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-
+        IsSelected = Relation.Rating.CheckEqual(Rating)
+                || ((Relation.Value == 1 || Relation.Value == 0) && Relation.Value == Rating.Value);
         Css = new CssRating(RatingMatrix, Relation, Rating);
     }
 

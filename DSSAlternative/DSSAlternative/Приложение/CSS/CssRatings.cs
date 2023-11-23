@@ -32,6 +32,7 @@ namespace DSSAlternative.AppComponents
                 if (RatingMatrix.ContainsKey(ratingFor))
                 {
                     AddRuleClass(() => RatingMatrix[ratingFor].IsCorrect, "safe", "dangerous");
+                    AddRuleClass(() => RatingMatrix[ratingFor].WithZeros(), "unknown", "");
                 }
                 else
                 {
@@ -60,8 +61,8 @@ namespace DSSAlternative.AppComponents
         protected virtual void CreateRules()
         {
             DefaultRule = new RuleForRating(double.NegativeInfinity, double.PositiveInfinity, "?? отношение ??", "color: black");
-            Add(new RuleForRating(0, 1, "??????", "color:black"));
-            Add(new RuleForRating(1, 2, "Приоритета нет", "color:black"));
+            Add(new RuleForRating(0, 1, "Отношения между ними неизвестны", "color:black"));
+            Add(new RuleForRating(1, 2, "Одинаковы по значимости", "color:black"));
             Add(new RuleForRating(2, 3, "Малый приоритет", "color:green;font-size:0.9em;"));
             Add(new RuleForRating(3, 4, "Небольшой приоритет", "color:green"));
             Add(new RuleForRating(4, 5, "Некоторый приоритет", "color:#0070dd;font-size:0.9em;"));

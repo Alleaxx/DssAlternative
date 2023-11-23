@@ -5,98 +5,134 @@
 <div>
     <section class="row">
         <section class="navigation">
-            <h3>Схема иерархии</h3>
+            <p>
+                ЛКМ по узлу для его выбора
+            </p>
             <div>
-                <HierShemeBig ProjectSheme="Project" LinkType="@NodeLink"></HierShemeBig>
+                <HierShemeBig ProjectSheme="Project" UseEditing="true" UseAdvancedGrouping="true" UseLegend="true" LinkType="@HierLink"></HierShemeBig>
             </div>
         </section>
         <section class="edit">
-            <h3>Редактирование элемента</h3>
-            Категория: <i>@Node.LevelName()</i>
-                       <dl>
-                           <dt>
-                               <label for="nodename">
-                                   Название:
-                               </label>
-                           </dt>
-                           <dd>
-                               <input id="nodename" type="text" style="width:20em" @bind-value="@Node.Name" />
-                           </dd>
-                           <dt>
-                               <label for="nodedescr">
-                                   Краткое описание:
-                               </label>
-                           </dt>
-                           <dd>
-                               <input id="nodedescr" type="text" style="width:25em" @bind-value="@Node.Description" />
-                           </dd>
-                           <dt>
-                               <label for="nodedescr">
-                                   Изображение:
-                               </label>
-                           </dt>
-                           <dd>
-                               <div style="display: flex; align-items: center">
-                                   @if (!string.IsNullOrEmpty(Node.ImgPath))
-                                   {
-                                       <img src="Images/@Node.ImgPath" style="width:24px; margin-right: 5px;" />
-                                   }
-                               <select id="nodedescr" @bind="@Node.ImgPath">
-                                   <option value="">Нет</option>
-                                   <option value="settings.svg">Настройки</option>
-                                   <option value="user.svg">Пользователь</option>
-                                   <option value="bar-chart.svg">Гистограмма</option>
-                                   <option value="check.svg">Галочка</option>
-                                   <option value="bookmark.svg">Закладка</option>
-                                   <option value="clipboard.svg">Планшет</option>
-                                   <option value="download.svg">Загрузка</option>
-                                   <option value="save.svg">Сохранить</option>
-                                   <option value="layers.svg">Слои</option>
-                                   <option value="list.svg">Список</option>
-                                   <option value="plus-square.svg">Плюс</option>
-                                   <option value="share-2.svg">Связь</option>
-                                   <option value="sidebar.svg">Макет</option>
-                               </select>
-                               </div>
-                           </dd>
-                           <dt>Итоговый коэффициент:</dt>
-                           <dd>
-                               <span>
-                                   @FormatNumber(Node.Coefficient)
-                               </span>
-                           </dd>
-                           @*<dt>Согласованность (Cr):</dt>
-        <dd>
-            <span>
-                @FormatNumber(Cr)
-            </span>
-        </dd>*@
-                           @if (HasRelations())
-                           {
-                               <dt>
-                                   <span>
-                                       Отношения:
-                                   </span>
-                                   <NodeRelations Node="Node" Context="rel" ShowHeader="false">
-                                       <RelationView>
-                                           <span>@rel.From.Name - @rel.To.Name</span>
-                                       </RelationView>
-                                   </NodeRelations>
-                               </dt>
-                               <dd>
-                                   <div class="actions-section">
-                                       <button class="action clear-relations" href="@NodeLink" @onclick="ClearRelations">
-                                           <span class="action-name">Сбросить все отношения</span>
-                                           <img class="action-icon" src="Images/settings.svg" />
-                                       </button>
-                                   </div>
-                               </dd>
-                               <dt>Матрица отношений:</dt>
-                               <dd>
-                                   <NodeMatrix Node="@Node" />
-                               </dd>
-                           }
-                       </dl>
+            <h3>@Node.Name</h3>
+            
+            <section>
+
+                <h5>Структура</h5>
+                <dl>
+                    <dt>
+                        <label for="nodename">
+                            Название:
+                        </label>
+                    </dt>
+                    <dd>
+                        <input id="nodename" type="text" style="width:20em" @bind-value="@Node.Name" />
+                    </dd>
+                    <dt>
+                        <label for="nodegroupindex">
+                            Подчиняется:
+                        </label>
+                    </dt>
+                    <dd>
+                        <input id="nodegroupindex" type="text" style="width:20em" @bind-value="@Node.GroupIndex" />
+                    </dd>
+
+                    <dt>
+                        <label for="nodegroup">
+                            Категория:
+                        </label>
+                    </dt>
+                    <dd>
+                        <input id="nodegroup" type="text" style="width:20em" @bind-value="@Node.Group" />
+                    </dd>
+
+                    <dt>
+                        <label for="nodelevel">
+                            Уровень
+                        </label>
+                    </dt>
+                    <dd>
+                        <input id="nodelevel" type="number" style="width:20em" @bind-value="@Node.Level" />
+                    </dd>
+                </dl>
+            </section>
+
+            <section>
+                <h5>Дополнительная информация</h5>
+                <dl>
+                    <dt>
+                        <label for="nodedescr">
+                            Краткое описание:
+                        </label>
+                    </dt>
+                    <dd>
+                        <input id="nodedescr" type="text" style="width:25em" @bind-value="@Node.Description" />
+                    </dd>
+                    <dt>
+                        <label for="nodeimage">
+                            Изображение:
+                        </label>
+                    </dt>
+                    <dd>
+                        <div style="display: flex; align-items: center">
+                            @if (!string.IsNullOrEmpty(Node.ImgPath))
+                            {
+                                <img src="Images/@Node.ImgPath" style="width:24px; margin-right: 5px;" />
+                            }
+                            <select id="nodeimage" @bind="@Node.ImgPath">
+                                <option value="">Нет</option>
+                                <option value="settings.svg">Настройки</option>
+                                <option value="user.svg">Пользователь</option>
+                                <option value="bar-chart.svg">Гистограмма</option>
+                                <option value="check.svg">Галочка</option>
+                                <option value="bookmark.svg">Закладка</option>
+                                <option value="clipboard.svg">Планшет</option>
+                                <option value="download.svg">Загрузка</option>
+                                <option value="save.svg">Сохранить</option>
+                                <option value="layers.svg">Слои</option>
+                                <option value="list.svg">Список</option>
+                                <option value="plus-square.svg">Плюс</option>
+                                <option value="share-2.svg">Связь</option>
+                                <option value="sidebar.svg">Макет</option>
+                            </select>
+                        </div>
+                    </dd>
+                </dl>
+            </section>
+        </section>
+        <section class="groups">
+            <table class="structure">
+                <tr>
+                    <th class="num">Состав группы</th>
+                    <th>Подчинение группы:</th>
+                </tr>
+                @foreach (var group in Project.HierarchyEditing.GroupBy(n => n.Group))
+                {
+                    <tr>
+                        <th colspan="2">
+                            <span>@group.Key</span>
+                        </th>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <ul>
+                                @foreach (var node in group)
+                                {
+                                    <li>@node.Name</li>
+                                }
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                @foreach (var node in Project.HierarchyEditing.Where(n => n.GroupIndex == group.Key))
+                                {
+                                    <li>@node.Name</li>
+                                }
+                            </ul>
+                        </td>
+                    </tr>
+                }
+            </table>
         </section>
     </section>
 </div>

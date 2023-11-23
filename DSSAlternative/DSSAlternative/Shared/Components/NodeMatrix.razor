@@ -10,7 +10,7 @@
                 <table>
                     <tbody>
                         <tr>
-                            <td class="cell-header @(IsCorrectMtx() ? "good-mtx" : "bad-mtx")">
+                            <td class="cell-header @(IsCorrectMtx() ? "good-mtx" : "bad-mtx")" title="@Relations[Node].SymbolTooltip()" style="border-right: 1px solid gainsboro">
                                 <h4><b>@Relations[Node].Symbol()</b></h4> 
                             </td>
                             <td class="cell-header" colspan="@(NodesCount())">
@@ -22,13 +22,13 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="cell-node">
+                            <td class="cell-node" title="Показатель согласованности. Граница согласованности - @MtxConsistency.BorderDefault">
                                 Cr: @Mtx.Cr.ToString("0.00")
                             </td>
                             @foreach (var node in Node.Controlled())
                             {
                                 <td class="cell-node">
-                                    <a href="@NodeLink" @onclick="() => SetNow(node)">
+                                    <a href="@HierLink" @onclick="() => SetNow(node)">
                                         @node.Name
                                     </a>
                                 </td>
@@ -44,8 +44,8 @@
                                 </td>
                                 @foreach (var relation in node)
                                 {
-                                    <td class="@RelationClass(relation)">
-                                        <input disabled="@Disabled(relation)" type="text" @bind-value="@relation.Value" @onfocus="@(() => RelationSelected = relation)" />
+                                    <td class="@RelationClass(relation)" title="@relation.Value">
+                                        <input disabled="@Disabled(relation)" type="text" @bind-value="@relation.ValueRounded" @onfocus="@(() => RelationSelected = relation)" />
                                     </td>
                                 }
                             </tr>

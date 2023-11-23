@@ -1,6 +1,6 @@
 ﻿h2 {
-    margin: 12px 6px;
-    font-size: 1.5em;
+    margin: 10px 4px;
+    font-size: 1.4em;
     font-weight: normal;
 }
 h3{
@@ -8,10 +8,27 @@ h3{
     font-size: 1.35em;
     font-weight: normal;
 }
-.tab-header {
-    margin: 5px 0;
-    font-weight: 500;
+h4{
+    margin: 6px 0;
 }
+h5{
+    margin: 4px 0;
+}
+
+
+.tab-header {
+    margin: 2px 4px;
+}
+    h3.tab-header {
+        font-weight: 500;
+        font-size: 1em;
+    }
+    h4.tab-header{
+        font-weight: 400;
+    }
+    h5.tab-header {
+        font-weight: 400;
+    }
 
 
 .warning {
@@ -27,8 +44,4 @@ a.warning {
 
 a.error {
     color: darkred;
-}
-
-.tab-items h4{
-    margin: 2px 4px;
 }

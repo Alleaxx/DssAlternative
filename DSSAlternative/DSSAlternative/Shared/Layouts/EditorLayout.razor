@@ -8,10 +8,19 @@
 
     <MenuProjects />
 
+
+
     <Menu />
 
     <main>
-        @Body
+        @if (!Dss.Project.IsEmpty)
+        {
+            @Body
+        }
+        else
+        {
+            <div></div>
+        }
     </main>
 
     <nav class="lower-menu"></nav>
@@ -29,13 +38,11 @@
     {
         base.OnInitialized();
 
+        Dss.OnProjectSelectChange += project => StateHasChanged();
+
         if (Dss.Project == null)
         {
-            if (!Dss.Projects.Any())
-            {
-                Dss.AddProject();
-            }
-            Dss.SelectProject(Dss.Projects.First());
+            Dss.SelectEmptyProject();
         }
     }
 }

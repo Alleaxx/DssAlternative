@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP
 {
     public interface IHierarchy : IEnumerable<INode>
     {
+        void SetConnectedHierarchy(IHierarchy hierarchy);
+
         IEnumerable<IGrouping<int, INode>> GroupedByLevel { get; }
         IEnumerable<INode> Best(int level);
 
@@ -35,7 +38,10 @@ namespace DSSAlternative.AHP
         {
             return $"{MainGoal.Name} [{GroupedByLevel.Count()}] ({Count})";
         }
-        
+
+
+        public IHierarchy HierarchyEditing { get; private set; }
+
         public ICorrectness Correctness { get; init; }
         public HierarchyNodes(ITemplate template) : this(template.Nodes.OfType<INode>().ToArray())
         {
@@ -55,7 +61,10 @@ namespace DSSAlternative.AHP
                 node.OnMoved += NodeMoved;
             }
         }
-
+        public void SetConnectedHierarchy(IHierarchy hierarchy)
+        {
+            HierarchyEditing = hierarchy;
+        }
 
         //Изменение коллекции
         public event Action OnChanged;

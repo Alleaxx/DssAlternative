@@ -41,7 +41,7 @@ namespace DSSAlternative.AppComponents
             bool created = project.Created;
 
             AddRuleClass("stage-menu-element");
-            AddRuleClass(() => !areRelationsCorrect, "none");
+            //AddRuleClass(() => !areRelationsCorrect, "none");
             AddRuleClass(() => !created, "none");
         }
     }

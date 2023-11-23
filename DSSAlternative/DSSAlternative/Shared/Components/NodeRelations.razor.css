@@ -31,7 +31,6 @@
 
 .rel-menu-element {
     display: block;
-    font-size: 0.8em;
     color: black;
     padding: 4px 0;
     border-bottom: 1px solid gainsboro;
@@ -43,16 +42,19 @@
 }
 
     .rel-menu-element.safe {
+        border-left-color: lightgreen;
         border-right: 1px solid lightgreen;
         border-bottom: 1px solid lightgreen;
     }
 
     .rel-menu-element.warning {
+        border-left-color: #cccc10;
         border-right: 1px solid #cccc10;
         border-bottom: 1px solid #cccc10;
     }
 
     .rel-menu-element.error {
+        border-left-color: red;
         border-right: 1px solid red;
         border-bottom: 1px solid red;
     }
@@ -72,8 +74,7 @@
     }
 
 .rel-menu-element.active {
-    border-left-color: orange;
-    font-weight: bold;
+    font-weight: 500;
 }
 
 

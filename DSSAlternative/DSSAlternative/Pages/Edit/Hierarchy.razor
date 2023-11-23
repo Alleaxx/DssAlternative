@@ -4,200 +4,114 @@
 
 <section>
     <div class="sheme basic-border">
-        <div class="confirm">
-            <div class="confirm-info">
-                @if (Project.IsUpdateAvailable)
-                {
-                    <span class="not-saved">Есть несохраненные изменения</span>
-                    <input class="add" type="button" value="Обновить иерархию" @onclick="UpdateHierarchy" />
-                }
-                else if (Project.UnsavedChanged && !Project.IsUpdateAvailable)
-                {
-                    <span class="warning">В структуре иерархии обнаружены ошибки:</span>
 
-                    <ul class="fails">
-                        @foreach (var check in HierarchyEdit.Correctness.ErrorsList)
-                        {
-                            <li>
-                                <span>
-                                    @check.Message
-                                </span>
-                            </li>
-                        }
-                    </ul>
-                }
-                else
-                {
-                    <span class="all-saved">Все изменения сохранены</span>
-                }
-            </div>
-            <div class="information">
-                <div>
-                    <span class="property-name">Уровней: </span>
-                    <span class="property-value">@HierarchyEdit.LevelsCount</span>
-                </div>
-                <div>
-                    <span class="property-name">Узлов: </span>
-                    <span class="property-value">@HierarchyEdit.Count()</span>
-                </div>
-                <div hidden>
-                    <span class="property-name">Отношений: </span>
-                    <span class="property-value">@HierarchyEdit.RelationsCount</span>
-                </div>
-                <div hidden>
-                    <span class="property-name">~ Времени на решение: </span>
-                    <span class="property-value">@HierarchyEdit.CountEstTime().Minutes мин. @HierarchyEdit.CountEstTime().Seconds сек.</span>
-                </div>
-            </div>
-        </div>
-
-
-        <Tab>
-            <TabItem>
-                <Title>
-                    <h4 class="tab-header">Иерархия</h4>
-                </Title>
-                <ChildContent>
-                    <div>
-                        @foreach (var levelGroup in HierarchyEdit.GroupedByLevel)
-                        {
-                            <section class="level @(levelGroup.Key == 0 ? "main-goal-level" : "")">
-                                <div class="level-name">
-                                    <span class="level-index">Уровень @levelGroup.Key</span>
-                                    <br>
-                                    <span>@levelGroup.ElementAt(0).LevelName()</span>
-                                    <br />
-
-                                </div>
-                                <div class="level-elements">
-                                    @foreach (var node in levelGroup)
-                                    {
-                                        <div class="@HierClass(node) node-element" @onclick="@(() => NodeHovered = node)">
-                                            <input class="input-text" type="text" @bind-value="@node.Name" />
-                                            <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" />
-                                        </div>
-                                    }
-                                </div>
-
-                                <div class="level-add">
-                                    <input class="add" type="button" value="+" @onclick="@(() => AddNode(levelGroup.Key))" />
-                                </div>
-
+        @if (Project.Created)
+        {
+            <HierarchyEditElement></HierarchyEditElement>
+        }
+        else
+        {
+            <Tab>
+                <TabItem>
+                    <Title><h4 class="tab-header">Создать с нуля</h4></Title>
+                    <ChildContent>
+                        <HierarchyEditElement></HierarchyEditElement>
+                    </ChildContent>
+                </TabItem>
+                <TabItem>
+                    <Title><h4 class="tab-header">Загрузить по шаблону</h4></Title>
+                    <ChildContent>
+                        <div>
+                            @if (Templates.Any())
+                            {
+                                <section class="load-preset saved-session">
+                                    <p class="load-note">
+                                        Предустановленные шаблоны
+                                    </p>
+                                    <ul class="presets">
+                                        <CascadingValue Value="this">
+                                            @foreach (var template in Templates)
+                                            {
+                                                <li>
+                                                    <HierTemplate Template="template"></HierTemplate>
+                                                </li>
+                                            }
+                                        </CascadingValue>
+                                    </ul>
+                                </section>
+                            }
+                            <section>
+                                <p class="load-note">
+                                    Сохраненные шаблоны
+                                </p>
+                                @if (Account.CurrentUser.Templates.Any())
+                                {
+                                    <ul class="presets">
+                                        <CascadingValue Value="this">
+                                            @foreach (var template in Account.CurrentUser.Templates)
+                                            {
+                                                <li>
+                                                    <HierTemplate Template="template"></HierTemplate>
+                                                </li>
+                                            }
+                                        </CascadingValue>
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <span style="margin-left: 25px">
+                                        Таких пока нет.
+                                    </span>
+                                }
                             </section>
-                        }
-                        <section class="level new-level">
-                            <div class="level-name">
-                                <span>Уровень @HierarchyEdit.LevelsCount</span>
-                            </div>
-                            <input class="add " type="button" value="++" @onclick="@(() => AddNode(HierarchyEdit.LevelsCount))" />
-                            <input class="add" type="button" value="+" style="visibility:hidden" />
-                        </section>
-                        <section style="display:flex">
-                            <ColoredDefinition ColorBorder="orange" Color="White" Message="Контролирующие узлы"></ColoredDefinition>
-                            <ColoredDefinition ColorBorder="red" Color="White" Message="Зависимые узлы"></ColoredDefinition>
-                        </section>
-                    </div>
-                </ChildContent>
-            </TabItem>
-            <TabItem>
-                <Title>
-                    <h4 class="tab-header">Подробная структура</h4>
-                </Title>
-                <ChildContent>
-                    <section style="padding: 1em 0.5em">
+                        @if (Account.CurrentUser.State != null && Account.CurrentUser.State.OpenedTemplates.Any())
+                            {
+                                <section class="saved-session">
+                                    <p class="load-note">
+                                        Активные задачи
+                                    </p>
 
-                        <table class="node-table-edit">
-                            <colgroup>
-                                <col style="width:20%" />
-                                <col style="width:24%" />
-                                <col style="width:8%" />
-                                <col style="width:24%" />
-                                <col style="width:24%" />
-                            </colgroup>
-                            <tr class="node-table-edit-header">
-                                <th>Тип</th>
-                                <th>Имя</th>
-                                <th class="num">Уровень</th>
-                                <th>Группа</th>
-                                <th>Подчинена</th>
-                            </tr>
-                            @foreach (var node in HierarchyEdit.OrderBy(n => n.Level))
-                            {
-                                <tr class="node-table-edit-node">
-                                    <td class="edit-text">
-                                        <span class="node-text">@node.LevelName()</span>
-                                    </td>
-                                    <td class="edit-cell">
-                                        <input type="text" @bind-value="@node.Name" />
-                                    </td>
-                                    <td class="edit-cell">
-                                        <input type="number" @bind-value="@node.Level" />
-                                    </td>
-                                    <td class="edit-cell">
-                                        <input @bind-value="@node.Group" list="dataGroups"/>
-                                    </td>
-                                    <td class="edit-cell">
-                                        <input @bind-value="@node.GroupIndex" list="dataGroups"/>
-                                    </td>
-                                </tr>
-                            }
-                        </table>
-                        <datalist id="dataGroups">
-                            @foreach (var group in HierarchyEdit.Select(n => n.Group).Distinct())
-                            {
-                                <option value="@group"></option>
-                            }
-                        </datalist>
-                        <table class="structure">
-                            <tr>
-                                <th class="num">Группа</th>
-                                <th>Состоит из:</th>
-                                <th>Критерии для:</th>
-                            </tr>
-                            @foreach (var group in HierarchyEdit.GroupBy(n => n.Group))
-                            {
-                                <tr>
-                                    <td class="num">
-                                        @group.Key
-                                    </td>
-                                    <td>
-                                        <ul>
-                                            @foreach (var node in group)
-                                            {
-                                                <li>@node.Name</li>
-                                            }
+                                    @if (Account.CurrentUser.State != null)
+                                    {
+                                        <ul class="presets">
+                                            <CascadingValue Value="this">
+                                                @foreach (var template in Account.CurrentUser.State.OpenedTemplates)
+                                                {
+                                                    <li>
+                                                        <HierTemplate Template="template"></HierTemplate>
+                                                    </li>
+                                                }
+                                            </CascadingValue>
                                         </ul>
-                                    </td>
-                                    <td>
-                                        <ul>
-                                            @foreach (var node in HierarchyEdit.Where(n => n.GroupIndex == group.Key))
-                                            {
-                                                <li>@node.Name</li>
-                                            }
-                                        </ul>
-                                    </td>
-                                </tr>
+                                    }
+                                </section>
                             }
-                        </table>
-                    </section>
-                </ChildContent>
-            </TabItem>
-            <TabItem>
-                <Title>
-                    <h4 class="tab-header">JSON</h4>
-                </Title>
-                <ChildContent>
-                    <p>
-                        <button class="action-button" @onclick="() => Clipboard.WriteTextAsync(JsonCurrent)">
-                            Скопировать в буфер обмена
-                        </button>
-                    </p>
-                    <textarea rows="20" cols="75">
-                     @JsonCurrent
-                </textarea>
-                </ChildContent>
-            </TabItem>
-        </Tab>
+                        </div>
+                    </ChildContent>
+                </TabItem>
+                <TabItem>
+                    <Title><h4 class="tab-header">Из JSON</h4></Title>
+                    <ChildContent>
+                        <div class="tab-section">
+                            <section>
+                                <p class="load-note">
+                                    Когда-нибудь здесь можно будет выбрать .json файл из компьютера. Ну а пока только через ctrl-c
+                                    <button class="action-button" @onclick="async () => { JSONText = await Clipboard.ReadTextAsync(); CheckJSON(); } ">
+                                        Вставить из буфера обмена
+                                    </button>
+                                    <br />
+                                    <button class="action-button" @onclick="async () => LoadJSON()">
+                                        Загрузить JSON
+                                    </button>
+                                    <span>@JSONLoadResult</span>
+                                </p>
+                                <textarea class="load-json" rows="30" readonly>@JSONText</textarea>
+                            </section>
+                        </div>
+                    </ChildContent>
+                </TabItem>
+            </Tab>
+        }
     </div>
 </section>
 
@@ -205,59 +119,55 @@
 @code {
     [Inject]
     public Services.IClipboard Clipboard { get; set; }
+
     [Inject]
-    public IDssJson Json { get; set; }
-    private string JsonCurrent => Json.ToJson(HierarchyEdit);
+    public IDssTemplates TemplatesEditor { get; set; }
+    public IEnumerable<ITemplate> Templates => TemplatesEditor.Templates;
 
-    private INode NodeHovered { get; set; }
-
-
-    private IHierarchy HierarchyEdit => Project.HierarchyEditing;
-
-
-    //Подтверждение иерархии
-    private void UpdateHierarchy() => Project.UpdateHierarchy();
-
-
-    //Редактирование иерархии
-    private void AddNode(int level = -1)
+    protected override void OnInitialized()
     {
-        level = level == -1 ? HierarchyEdit.LevelsCount - 1 : level;
-        bool isAlternative = level == HierarchyEdit.MaxLevel || level == HierarchyEdit.MaxLevel + 1;
-
-        string name = isAlternative ? $"А{HierarchyEdit.Alternatives.Count() + 1}" : $"К{HierarchyEdit.Criterias.Count() + 1}";
-
-        string group = $"Уровень {level}";
-        string groupIndex = $"Уровень {level - 1}";
-        if (HierarchyEdit.Where(n => n.Level == level).FirstOrDefault() is INode nodeCurrentLevel)
-        {
-            group = nodeCurrentLevel.Group;
-        }
-        if (HierarchyEdit.Where(n => n.Level == level - 1).FirstOrDefault() is INode nodePrevLevel)
-        {
-            groupIndex = nodePrevLevel.Group;
-        }
-
-        INode newNode = new Node(level, name, group, groupIndex);
-        newNode.SetHierarchy(HierarchyEdit);
-
-
-
+        base.OnInitialized();
+        Dss.OnStateLoaded += StateHasChanged;
+        Dss.OnProjectAdded += StateHasChanged;
+        Dss.OnProjectSelectChange += project => StateHasChanged();
+        Account.OnTemplatesChanged += StateHasChanged;
+        TemplatesEditor.OnTemplatesLoaded += StateHasChanged;
     }
-    private void RemoveNode(INode e)
+
+    private string JSONText { get; set; }
+    private string JSONLoadResult { get; set; } = "Ожидание JSON...";
+    private void CheckJSON()
     {
-        if (e != HierarchyEdit.MainGoal)
+        string json = JSONText;
+        try
         {
-            if(NodeHovered == e)
-            {
-                NodeHovered = null;
-            }
-            e.RemoveFromHierarchy();
+            ITemplate obj = JsonSerializer.Deserialize<Template>(json);
+            JSONLoadResult = "JSON успешно прочитан, можно загружать";
+        }
+        catch (JsonException ex)
+        {
+            JSONLoadResult = $"Неверный формат данных, попробуйте ещё раз ({ex.Message})";
         }
     }
-    private string HierClass(INode node)
+    private void LoadJSON()
     {
-        return new CssNode(node, NodeHovered).CssClass();
+        string json = JSONText;
+        if (string.IsNullOrEmpty(json))
+        {
+            JSONLoadResult = "JSON не указан";
+            return;
+        }
+        try
+        {
+            ITemplate obj = JsonSerializer.Deserialize<Template>(json);
+            Dss.SetProject(obj);
+            JSONLoadResult = "JSON успешно загружен";
+        }
+        catch (JsonException ex)
+        {
+            JSONLoadResult = $"Неверный формат данных, попробуйте ещё раз ({ex.Message})";
+            Console.WriteLine(ex.Message);
+        }
     }
 
 }

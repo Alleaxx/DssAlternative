@@ -1,11 +1,19 @@
 ﻿@inherits DSSProject
 
 <nav class="menu-projects">
-    <a href="start" class="link-return">
-        <h2>
-            Открытые задачи
-        </h2>
-    </a>
+    <h2 class="text-center">
+        Список задач
+    </h2>
+    <div class="actions-panel">
+        <button class="action-button save" @onclick="SaveProgress" title="Сохранить все текущие задачи">
+            <img src="Images/save.svg" />
+            <span>Сохранить все</span>
+        </button>
+        <button class="action-button load" @onclick="LoadProgress" title="Восстановить все ранее сохраненные задачи">
+            <img src="Images/download.svg" />
+            <span>Восстановить все</span>
+        </button>
+    </div>
     <ul class="task-menu">
         <CascadingValue Value="this">
             @foreach (var project in Projects)
@@ -21,44 +29,22 @@
             <img src="Images/plus-square.svg" />
             <span>Создать новую задачу</span>
         </button>
-        @if (Project.Created)
-        {
-            <h3>Текущая задача</h3>
-            <button class="action-button save-as" @onclick="() => Account.SetTemplate(Project)">
-                Сохранить как шаблон
-            </button>
-            <button class="action-button copy" @onclick="CopyJson">
-                Скопировать JSON
-            </button>
-        }
-        <h3>Все задачи</h3>
-        <button class="action-button save" @onclick="SaveProgress">
-            <img src="Images/save.svg" />
-            <span>Сохранить прогресс</span>
-        </button>
-        <button class="action-button load" @onclick="LoadProgress">
-            <img src="Images/download.svg" />
-            <span>Восстановить прогресс</span>
-        </button>
     </div>
 </nav>
 
 @code{
 
-    [Inject]
-    public IDssJson Json { get; set; }
-    [Inject]
-    public Services.IClipboard Clipboard { get; set; }
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
         Dss.OnProjectRemoved += StateHasChanged;
+        Dss.OnProjectAdded += StateHasChanged;
     }
 
     private void CreateProblem()
     {
         Dss.AddProject();
+        Dss.SelectProject(Dss.Projects.Last());
     }
 
     private void SaveProgress()
@@ -68,10 +54,5 @@
     private void LoadProgress()
     {
         Account.LoadState();
-    }
-    private async Task CopyJson()
-    {
-        string text = Json.ToJson(Project);
-        await Clipboard.WriteTextAsync(text);
     }
 }

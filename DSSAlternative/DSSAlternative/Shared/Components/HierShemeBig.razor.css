@@ -30,6 +30,10 @@
     align-items: center;
     justify-content: center;
 }
+.level-elements-more {
+    display: flex;
+    flex-direction: column;
+}
 
 .node-element {
     display: block;
@@ -55,9 +59,6 @@
 .bad {
     background-color: #ffdee3;
 }
-.sel {
-    background-color: #d1ecff;
-}
 
 .warn {
     background-color: antiquewhite;
@@ -65,4 +66,17 @@
 
 .best {
     background-color: #ebe3fc;
+}
+
+.sel {
+    background-color: #b5e0ff;
+}
+.owner {
+    background-color: #f3e0bc;
+}
+.owned {
+    background-color: #ffdede;
+}
+.neighbor {
+    background-color: #f1f9ff;
 }

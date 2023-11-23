@@ -18,6 +18,7 @@ namespace DSSAlternative.AHP
         INodeRelation Mirrored { get; set; }
         bool Unknown { get;  }
         double Value { get; set; }
+        double ValueRounded { get; set; }
 
         void Reflect();
         void SetUnknown();
@@ -59,7 +60,14 @@ namespace DSSAlternative.AHP
         public bool Self => From == To;
         public INodeRelation Mirrored { get; set; }
 
-
+        public double ValueRounded
+        {
+            get => Math.Round(Value, 4);
+            set
+            {
+                Value = value;
+            }
+        }
         public double Value
         {
             get => Self ? 1 : value;

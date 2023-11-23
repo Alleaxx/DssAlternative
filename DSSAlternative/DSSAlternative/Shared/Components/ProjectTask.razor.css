@@ -1,11 +1,11 @@
 ﻿.task-menu-element {
     display: flex;
-    opacity: 80%;
     cursor: pointer;
     padding: 2px 0;
-    border: 1px solid gainsboro;
+    border-top: 1px solid gainsboro;
+    border-bottom: 1px solid gainsboro;
     text-decoration: none;
-    margin: 4px;
+    margin: 2px 0px;
 }
 
     .task-menu-element:hover {
@@ -15,10 +15,10 @@
 
     .task-menu-element.selected {
         opacity: 100%;
-        background-color: whitesmoke;
+        background-color: gainsboro;
     }
     .selected .task-element-name{
-        color: blue;
+        color: black;
     }
 
 
@@ -40,7 +40,6 @@
 }
 
 .task-element-name {
-    font-size: 0.9em;
     margin: 0;
     color: black;
     font-weight: 500;
@@ -51,18 +50,3 @@
     font-size: 0.8em;
     margin: 3px 0;
 }
-
-
-.remove-task {
-    background-color: transparent;
-    border: 0;
-    cursor: pointer;
-    align-self: flex-start;
-    margin: 5px 0;
-    padding: 5px 7px;
-    color: darkred;
-}
-
-    .remove-task:hover {
-        background-color: lightpink;
-    }

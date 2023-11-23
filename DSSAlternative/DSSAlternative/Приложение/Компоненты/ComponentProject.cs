@@ -51,6 +51,10 @@ namespace DSSAlternative.AppComponents
         private void DSS_ProjectChanged(IProject obj)
         {
             StateHasChanged();
+            if (!obj.Created && Navigation.Uri != HierLink)
+            {
+                Navigation.NavigateTo(HierLink);
+            }
         }
     }
 }

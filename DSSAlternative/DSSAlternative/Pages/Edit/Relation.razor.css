@@ -37,7 +37,7 @@
         background-color: rgb(230,230,230);
     }
 .prev, .next {
-    flex: 2;
+    flex: 6;
 }
 .next{
     flex: 6;
@@ -51,7 +51,7 @@
 
 .relations-grid {
     display: flex;
-    min-height: 75vh;
+    height: 100%;
 }
 
 .relation-area {
@@ -86,13 +86,26 @@
     margin: 2px;
     padding: 3px;
     border: 1px solid gainsboro;
-    font-size: 0.8em;
+    font-size: 0.9em;
     border-radius: 3px;
     cursor: pointer;
 }
 
+    .criteria.unknown {
+        border-color: orange;
+    }
+    .criteria.dangerous {
+        border-color: red;
+    }
     .criteria.selected-now {
-        font-weight: bold;
+        font-weight: 500;
+        border-color: gray;
+    }
+    .criteria.selected-now.unknown {
+        border-color: orange;
+    }
+    .criteria.selected-now.dangerous {
+        border-color: red;
     }
 
     .criteria:hover {
@@ -100,12 +113,18 @@
     }
 
 .progress {
-    height: 4px;
+    height: 3px;
     background: lightgreen;
     margin-left: 3px;
     transition-property: width;
     transition-duration: 0.4s;
 }
+.progress.light{
+    height: 0px;
+}
+    .progress.medium {
+        height: 2px;
+    }
 
 .criteria-char {
     font-size: 1.5em;
@@ -141,5 +160,13 @@
 
 .progress-total-text {
     text-align: right;
-    font-size: 0.9em;
+    font-size: 0.8em;
+}
+
+
+
+
+.category-header {
+    margin: 5px;
+    text-align: center;
 }

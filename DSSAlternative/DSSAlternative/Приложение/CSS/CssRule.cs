@@ -18,6 +18,9 @@ namespace DSSAlternative.AppComponents
         private List<CssRule> Rules { get; set; } = new List<CssRule>();
 
 
+        protected static string EmptyCssRule = string.Empty;
+
+
         //Добавление
         public void AddRuleClass(string clas)
         {

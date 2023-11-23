@@ -33,7 +33,7 @@
 
 .res {
     display: flex;
-    font-size: 0.9em;
+    height: 100%;
 }
 .sheme {
     flex: 3;
@@ -41,9 +41,9 @@
 
 .res-info {
     flex: 7;
-    min-height: 75vh;
     padding-right: 20px;
     border-left: 1px solid gainsboro;
+    font-size: 0.9em;
     padding-left: 15px;
 }
 
@@ -65,11 +65,78 @@
     }
 
         .results li:before {
-            content: "—";
+            content: "-";
             position: relative;
             left: -5px;
         }
 
     .results span {
         margin: 0 5px 5px 0;
+    }
+
+
+
+
+
+.relations-state {
+    display: flex;
+}
+
+.sheme-nav {
+    flex: 3;
+}
+
+.sheme-info {
+    flex: 7;
+    /*    padding: 5px 10px;*/
+    padding-right: 20px;
+    border-left: 1px solid gainsboro;
+    padding-left: 15px;
+}
+
+.sheme-info-total {
+}
+
+.sheme-info-fill {
+}
+
+.sheme-info-cons {
+}
+
+.info-details {
+    margin: 0 1em;
+}
+
+.sheme-info ul {
+    list-style-type: circle;
+}
+
+
+.msg-text {
+    margin-bottom: 10px;
+}
+
+.errors, .warnings, .no-errors {
+    font-size: 1.15em;
+}
+
+.no-errors {
+    color: green;
+}
+
+.errors {
+    color: red;
+}
+
+.warnings {
+    color: darkgoldenrod;
+}
+
+.sheme-info a {
+    text-decoration: none;
+    color: royalblue;
+}
+
+    .sheme-info a:hover {
+        color: blue;
     }

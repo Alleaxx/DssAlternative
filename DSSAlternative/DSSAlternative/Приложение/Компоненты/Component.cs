@@ -20,7 +20,7 @@ namespace DSSAlternative.AppComponents
         public IEnumerable<IProject> Projects => Dss.Projects;
         public IRatingRules RatingRules { get; set; } = RatingCssSystem.DefaultSystem;
 
-        protected const string OptionsLink = "Options";
+        protected const string SettingsLink = "settings";
         protected static string FormatNumber(double num)
         {
             if (double.IsNaN(num))

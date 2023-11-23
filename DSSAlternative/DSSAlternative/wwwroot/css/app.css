@@ -1,6 +1,6 @@
 ﻿body {
     background-color: #ffffff;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .grid {
@@ -50,13 +50,14 @@
     grid-area: menu;
     border-right: 1px solid gainsboro;
     border-left: 2px solid gainsboro;
+    min-height: 80vh;
 }
 
 main {
     grid-area: content;
     padding: 0px 5px;
     margin: 0;
-    max-width: 1300px;
+    max-width: 2000px;
     min-height: 60vh;
     border-right: 2px solid gainsboro;
 }

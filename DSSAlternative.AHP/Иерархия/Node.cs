@@ -13,6 +13,13 @@ namespace DSSAlternative.AHP
         public event Action<INode, IHierarchy> OnMoved;
 
         string Name { get; set; }
+
+        /// <summary>
+        /// При редактировании обновляет также имя в редактируемой иерархии помимо утвержденной
+        /// </summary>
+        string NameActive { get; set; }
+
+
         string Description { get; set; }
         string ImgPath { get; set; }
 
@@ -40,6 +47,20 @@ namespace DSSAlternative.AHP
         public event Action<INode, IHierarchy> OnMoved;
 
         public string Name { get; set; }
+        public string NameActive
+        {
+            get => Name;
+            set
+            {
+                string oldName = Name;
+                Name = value;
+                if(Hierarchy is HierarchyNodes hier && hier.HierarchyEditing != null)
+                {
+                    var sameNode = hier.HierarchyEditing.FirstOrDefault(n => n.Name == oldName && n.Level == Level);
+                    sameNode.Name = value;
+                }
+            }
+        }
         public string Description { get; set; }
         public string ImgPath { get; set; }
 

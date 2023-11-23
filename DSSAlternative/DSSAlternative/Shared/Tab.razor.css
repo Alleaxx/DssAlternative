@@ -6,11 +6,10 @@
     display: flex;
     align-items: flex-end;
     margin: 0;
-    padding-left: 1.1em;
+    padding-left: 0;
+    border-bottom: 1px solid gainsboro;
 }
 
 .tab-content {
-    border: 1px solid whitesmoke;
-    border-radius: 1px;
     padding: 0.25em;
 }

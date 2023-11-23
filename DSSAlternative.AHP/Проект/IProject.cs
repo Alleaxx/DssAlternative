@@ -13,6 +13,7 @@ namespace DSSAlternative.AHP
         bool UnsavedChanged { get; }
         bool IsUpdateAvailable { get; }
         bool Created { get; }
+        bool IsEmpty { get; }
 
 
         IHierarchy HierarchyEditing { get; }
@@ -28,6 +29,7 @@ namespace DSSAlternative.AHP
         event Action OnNodeChanged;
 
         void UpdateHierarchy();
+        void CancelHierChanges();
         string Status { get; }
     }
 }

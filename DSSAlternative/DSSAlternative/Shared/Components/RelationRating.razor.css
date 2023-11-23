@@ -1,30 +1,62 @@
-﻿td{
+﻿td {
     padding: 8px 24px;
+    border-right: 1px solid gainsboro;
 }
 .rating {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    padding-bottom: 3px;
+    border-radius: 5px;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
-.selectable {
+.non-selectable{
+    background: whitesmoke;
+}
+.selectable .rating {
     color: #323232;
-    font-size: 0.9em;
+    border-bottom: 3px solid transparent;
 }
-    .selectable:hover {
+.selectable:hover.safe .rating {
+    cursor: pointer;
+    border-bottom: 3px solid lightgreen;
+}
+    .selectable:hover.usual .rating {
         cursor: pointer;
-        font-weight: 600;
-        /*            border-right: 5px solid gainsboro;
-            border-left: 5px solid gainsboro;*/
+        border-bottom: 3px solid gainsboro;
     }
-
-
-.selected {
-    /*        border-right: 5px solid orange;
-        border-left: 5px solid orange;*/
-    font-weight: 600;
+    .selectable:hover.dangerous .rating {
+        cursor: pointer;
+        border-bottom: 3px solid darkred;
+    }
+.selectable:hover.unknown .rating {
+    cursor: pointer;
+    border-bottom: 3px solid gainsboro;
 }
 
-.cr{
+.selected.safe .rating {
+    border-bottom: 3px solid lightgreen;
+}
+.selected.usual .rating {
+    border-bottom: 3px solid gainsboro;
+}
+.selected.dangerous .rating {
+    border-bottom: 3px solid red;
+}
+.selected.unknown .rating {
+    border-bottom: 3px solid #e7de79;
+}
 
+
+
+.cr {
+    min-width: 40px;
+    margin-right: 4px;
+    margin-left: 4px;
 }
 
 .safe {

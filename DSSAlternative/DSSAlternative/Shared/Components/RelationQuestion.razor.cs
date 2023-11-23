@@ -37,7 +37,7 @@ namespace DSSAlternative.Shared.Components
         }
         private void CreateMatrixes()
         {
-            if(UseSafeWarnings && Relations[Relation.Main].Known)
+            if(UseSafeWarnings && (Relations[Relation.Main].Known))
             {
                 RatingMatrix.Add(RatingNone, GetMatrixForRating(0));
                 RatingMatrix.Add(RatingEqual, GetMatrixForRating(1));

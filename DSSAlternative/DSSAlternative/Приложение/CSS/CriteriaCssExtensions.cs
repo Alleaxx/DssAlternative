@@ -23,13 +23,25 @@ namespace DSSAlternative.AppComponents
         {
             return criteria.Required.Where(r => !r.Unknown).Count();
         }
+        public static int ProgressNow(this IGrouping<int, ICriteriaRelation> criteriaGroup)
+        {
+            return criteriaGroup.SelectMany(criteria => criteria.Required.Where(r => !r.Unknown)).Count();
+        }
         public static int ProgressMax(this ICriteriaRelation criteria)
         {
             return Math.Max(1, criteria.Required.Where(r => !r.Self).Count());
         }
+        public static int ProgressMax(this IGrouping<int, ICriteriaRelation> criteriaGroup)
+        {
+            return Math.Max(1, criteriaGroup.SelectMany(criteria => criteria.Required.Where(r => !r.Self)).Count());
+        }
         public static double Progress(this ICriteriaRelation criteria)
         {
-            return Math.Round(criteria.ProgressNow() / criteria.ProgressMax() * 100.0);
+            return Math.Round((double)criteria.ProgressNow() / criteria.ProgressMax() * 100.0);
+        }
+        public static double Progress(this IGrouping<int, ICriteriaRelation> criteriaGroup)
+        {
+            return Math.Round((double)criteriaGroup.ProgressNow() / criteriaGroup.ProgressMax() * 100.0);
         }
 
 
@@ -39,6 +51,10 @@ namespace DSSAlternative.AppComponents
         public static string CssColor(this ICriteriaRelation criteria)
         {
             return !criteria.Known ? UnknownColor : criteria.Consistent ? OkColor : UnconsistentColor;
+        }
+        public static string CssColorClass(this ICriteriaRelation criteria)
+        {
+            return !criteria.Known ? "unknown" : criteria.Consistent ? "safe" : "dangerous";
         }
         public static string CssColor(this IRelations Relations)
         {
@@ -60,6 +76,19 @@ namespace DSSAlternative.AppComponents
                 return 'X';
             }
             return '✓';
+
+        }
+        public static string SymbolTooltip(this ICriteriaRelation criteria)
+        {
+            if (!criteria.Known)
+            {
+                return "Не все отношения известны";
+            }
+            if (!criteria.Consistent)
+            {
+                return "Внимание, отношения несогласованы!";
+            }
+            return "Отлично, отношения заполнены и согласованы";
 
         }
     }

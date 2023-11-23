@@ -19,7 +19,7 @@ namespace DSSAlternative.AHP
 
 
         //Редактируемое состояние
-        public IHierarchy HierarchyEditing { get; init; }
+        public IHierarchy HierarchyEditing { get; private set; }
         public IHierarchy HierarchyActive { get; private set; }
         public IRelations Relations { get; private set; }
 
@@ -48,6 +48,7 @@ namespace DSSAlternative.AHP
         public bool UnsavedChanged => !HierarchyNodes.CompareEqual(HierarchyActive, HierarchyEditing);
         public bool IsUpdateAvailable => UnsavedChanged && HierarchyEditing.Correctness.IsCorrect;
         public bool Created => HierarchyActive.Correctness.IsCorrect;
+        public bool IsEmpty { get; private set; }
 
         //Создание проекта
         public Project(ITemplate template)
@@ -56,10 +57,11 @@ namespace DSSAlternative.AHP
             UpdateHierarchy();
             Relations.SetFromTemplate(template);
         }
-        public Project(IEnumerable<INode> nodes)
+        public Project(IEnumerable<INode> nodes, bool isEmpty = false)
         {
             HierarchyEditing = new HierarchyNodes(nodes);
             UpdateHierarchy(new HierarchyNodes(new Node("???")));
+            IsEmpty = isEmpty;
         }
         public void UpdateHierarchy()
         {
@@ -72,6 +74,7 @@ namespace DSSAlternative.AHP
         private void UpdateHierarchy(IHierarchy problem)
         {
             HierarchyActive = problem;
+            HierarchyActive.SetConnectedHierarchy(HierarchyEditing);
             SetNow(HierarchyActive.MainGoal);
             CreateSetNewRelations();
             Relations_OnChanged(Relations);
@@ -89,6 +92,13 @@ namespace DSSAlternative.AHP
             {
                 UpdatedHierOrRelationChanged?.Invoke();
             }
+        }
+
+        public void CancelHierChanges()
+        {
+            ITemplate copy = new Template(HierarchyActive).CloneThis();
+            HierarchyEditing = new HierarchyNodes(copy);
+            HierarchyActive.SetConnectedHierarchy(HierarchyEditing);
         }
 
 

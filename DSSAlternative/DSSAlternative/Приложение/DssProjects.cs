@@ -26,8 +26,10 @@ namespace DSSAlternative.AppComponents
 
 
         void SelectProject(IProject project);
+        void SelectEmptyProject();
         void AddProject();
-        void AddProject(ITemplate template); 
+        void AddProject(ITemplate template);
+        void SetProject(ITemplate template);
         void RemoveProject(IProject project);
         void LoadState(DssState state);
     }
@@ -68,6 +70,8 @@ namespace DSSAlternative.AppComponents
                 OnProjectSelectChange?.Invoke(project);
             }
         }
+
+        //Добавляет новую задачу по шаблону
         public void AddProject(ITemplate template)
         {
             AddProject(new Project(template.CloneThis()));
@@ -76,6 +80,21 @@ namespace DSSAlternative.AppComponents
         {
             AddProject(AhpHierarchy.CreateNewProblem());
         }
+
+        //Заменяет текущую задачу
+        public void SetProject(ITemplate template)
+        {
+            var oldProject = Project;
+
+            var newProject = new Project(template.CloneThis());
+
+            Projects.Remove(oldProject);
+            Projects.Add(newProject);
+
+            SelectProject(newProject);
+        }
+
+
         private void AddProject(IProject project)
         {
             bool alreadyExist = Projects.Any(p => HierarchyNodes.CompareEqual(p.HierarchyActive, project.HierarchyActive));
@@ -85,17 +104,21 @@ namespace DSSAlternative.AppComponents
         }
         public void RemoveProject(IProject project)
         {
+            int indexOfRemoved = Projects.IndexOf(project);
+
             Projects.Remove(project);
+            bool isRemovingProjectSelected = Project == project;
             bool anotherProjectAvail = Projects.Count > 0;
 
 
-            if (project == Project && anotherProjectAvail)
+            if (isRemovingProjectSelected && anotherProjectAvail)
             {
-                SelectProject(Projects.First());
+                int newIndex = indexOfRemoved == 0 ? 0 : indexOfRemoved - 1;
+                SelectProject(Projects.ElementAt(newIndex));
             }
             else if (!anotherProjectAvail)
             {
-                Navigation.NavigateTo("Start");
+                SelectEmptyProject();
             }
 
             OnProjectRemoved?.Invoke();
@@ -117,6 +140,12 @@ namespace DSSAlternative.AppComponents
                 }
                 OnStateLoaded?.Invoke();
             }
+        }
+
+        public void SelectEmptyProject()
+        {
+            var emptyProject = AhpHierarchy.CreateEmptyProblem();
+            SelectProject(emptyProject);
         }
     }
 }

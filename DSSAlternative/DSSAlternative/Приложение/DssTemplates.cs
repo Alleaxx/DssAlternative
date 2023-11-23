@@ -14,6 +14,7 @@ namespace DSSAlternative.AppComponents
     {
         event Action OnTemplatesLoaded;
         List<ITemplate> Templates { get;}
+        void RemoveTemplate(ITemplate template);
     }
     public class DssTemplates : IDssTemplates
     {
@@ -58,6 +59,11 @@ namespace DSSAlternative.AppComponents
             string json = await HttpClient.GetStringAsync($"{path}");
             Template template = Json.FromJson<Template>(json);
             return template;
+        }
+
+        public void RemoveTemplate(ITemplate template)
+        {
+            Templates.Remove(template);
         }
     }
 }

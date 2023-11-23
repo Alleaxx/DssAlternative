@@ -58,6 +58,7 @@ td {
 .cell-header {
     border-bottom: 1px solid gainsboro;
     text-align: center;
+    background: whitesmoke;
 }
 
 .cell-node {
@@ -66,6 +67,8 @@ td {
     min-width: 4.5em;
     padding-left: 5px;
     padding-right: 5px;
+    background: whitesmoke;
+    border: 1px solid gainsboro;
 }
 
 td.cell-value {

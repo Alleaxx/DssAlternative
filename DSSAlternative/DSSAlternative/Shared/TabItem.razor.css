@@ -1,14 +1,16 @@
 ﻿.tab-item {
     padding: 5px 15px;
-    border-bottom: 1px solid gainsboro;
+    border: 1px solid transparent;
 }
 
 
     .tab-item:hover {
-        background-color: gainsboro;
         cursor: pointer;
+        background-color: whitesmoke;
+        border: 1px solid silver;
     }
 
     .tab-item.selected {
-        background-color: gainsboro;
+        background-color: whitesmoke;
+        border: 1px solid gainsboro;
     }

@@ -4,33 +4,6 @@
 @if (Relations.Any(c => c.Key == Relation.Main))
 {
     <section>
-        <p style="font-size:0.9em;">
-            @if (Relation.Unknown)
-            {
-                <span>
-                    Сейчас <b>приоритет</b> <i>неизвестен</i>, его необходимо выбрать.
-                </span>
-            }
-            else if (Relations[Relation.Main].Consistent)
-            {
-                if (Relation.Value > 1)
-                {
-                    <span>@Relation.From.Name <i>@GetTextRelation(Relation).ToLower()</i> @Relation.To.Name</span>
-                }
-                else if (Relation.Value < 1)
-                {
-                    <span>@Relation.To.Name <i>@GetTextRelation(Relation).ToLower()</i>  @Relation.From.Name</span>
-                }
-                else
-                {
-                    <span>Оба критерия более-менее <i>равны</i></span>
-                }
-            }
-            else
-            {
-                <span><b>Приоритет</b> выбран, однако отношения по критерию <i>несогласованы</i>! Стоит их пересмотреть.</span>
-            }
-        </p>
         <CascadingValue Value="RatingMatrix">
             <table class="matrix" @onclick="@RelationUpdated">
                 <colgroup>
@@ -39,21 +12,36 @@
                 </colgroup>
                 <tbody>
                     <tr>
-                        <th class="side-node from">
-                            <a href="@NodeLink" @onclick="() => SetNow(Relation.From)">
+                        <th class="main-node" colspan="2">@Relation.Main.Name</th>
+                    </tr>
+                    <tr>
+                        <th class="side-node from non-selectable">
+                            <span>
                                 @Relation.From.Name
-                            </a>
+                            </span>
                         </th>
-                        <th class="side-node to">
-                            <a href="@NodeLink" @onclick="() => SetNow(Relation.To)">
+                        <th class="side-node to non-selectable">
+                            <span>
                                 @Relation.To.Name
-                            </a>
+                            </span>
                         </th>
                     </tr>
 
+                    <tr>
+                        <RelationRating Node="Relation.To" Rating="RatingNone" ColSpan="2" Relation="Relation">
 
+                        </RelationRating>
+                    </tr>
 
-                    @foreach (var group in Ratings)
+                    <tr>
+                        <RelationRating Node="Relation.To" Rating="RatingEqual" ColSpan="2" Relation="Relation">
+
+                        </RelationRating>
+                    </tr>
+                    <tr>
+                        <td style="padding:0;border-bottom: 1px solid gainsboro" colspan="2"></td>
+                    </tr>
+                    @foreach (var group in Ratings.Where(r => r.forRating.Value != 1))
                     {
                         <tr>
                             <RelationRating Node="Relation.From" Rating="group.forRating" ColSpan="1" Relation="Relation">
@@ -64,16 +52,10 @@
                             </RelationRating>
                         </tr>
                     }
-
-                    @*<tr>
-                            <RelationRating Node="Relation.From" Rating="RatingEqual" ColSpan="2" Relation="Relation">
-
-                            </RelationRating>
-                        </tr>*@
                     <tr>
-                        <RelationRating Node="Relation.From" Rating="RatingNone" ColSpan="2" Relation="Relation">
-
-                        </RelationRating>
+                        <td colspan="2" class="side-node non-selectable" style="border-top: 1px solid gainsboro; border-bottom: 1px solid gainsboro;">
+                            <RelationVerdict Relation="Relation"></RelationVerdict>
+                        </td>
                     </tr>
                 </tbody>
             </table>

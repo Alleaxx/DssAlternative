@@ -12,6 +12,8 @@ namespace DSSAlternative.AppComponents
 {
     public interface IAccount
     {
+        event Action OnTemplatesChanged;
+
         User CurrentUser { get; }
         void LoadState();
         Task SaveState();
@@ -22,6 +24,9 @@ namespace DSSAlternative.AppComponents
     }
     public class Account : IAccount
     {
+        public event Action OnTemplatesChanged;
+
+
         private readonly IDssProjects DssProjects;
         private readonly IDssJson Json;
         private readonly ILocalStorage Storage;
@@ -87,6 +92,8 @@ namespace DSSAlternative.AppComponents
 
         //Шаблоны
         const string Templates = "Templates";
+
+
         public async Task SetTemplate(IProject project)
         {
             await SetTemplate(new Template(project));
@@ -95,6 +102,7 @@ namespace DSSAlternative.AppComponents
         {
             CurrentUser.Templates.Remove(template as Template);
             await SaveTemplates();
+            OnTemplatesChanged?.Invoke();
         }
         private async Task SetTemplate(ITemplate template)
         {

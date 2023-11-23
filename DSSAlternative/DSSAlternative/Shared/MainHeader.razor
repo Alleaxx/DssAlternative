@@ -1,11 +1,9 @@
 ﻿<style>
+    /* Стили для ссылок здесь, чтобы они нормально применялись для NavLink */
     .main-header a {
-
         display: flex;
         align-items: center;
         text-decoration: none;
-/*        font-family: "Calibri Light";
-*/        font-size: 1.1em;
     }
 
     .main-header .links {
@@ -24,32 +22,40 @@
         }
 
     .main-header a.active{
-        color: darkblue;
+        color: black;
     }
     .main-header a.active img{
         opacity: 1;
     }
 </style>
+
 <div class="main-header">
     <ul class="links">
         <li>
-            <NavLink href="info">
+            <NavLink href="info" class="text-em-12">
                 <img src="Images/clipboard.svg"/>
                 О приложении
             </NavLink>
         </li>
         <li>
-            <NavLink href="start">
+            <NavLink href="hierarchy" class="text-em-12">
                 <img src="Images/play.svg" />
                 Принятие решений
             </NavLink>
         </li>
         <li>
-            <NavLink href="example">
+            <NavLink href="example" class="text-em-12">
                 <img src="Images/bookmark.svg" />
                 Принцип работы
             </NavLink>
         </li>
+        <li>
+            <NavLink href="settings"class="text-em-12">
+                <img src="Images/settings.svg" />
+                <span>Настройки</span>
+            </NavLink>
+        </li>
     </ul>
+
     <AccountView></AccountView>
 </div>

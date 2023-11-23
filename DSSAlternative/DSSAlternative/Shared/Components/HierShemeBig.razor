@@ -1,7 +1,9 @@
 ﻿@inherits DSSComponent
 
-<section class="sheme">
-    @foreach (var levelGroup in ProjectSheme.Grouped())
+@if (!UseAdvancedGrouping)
+{
+    <section class="sheme">
+    @foreach (var levelGroup in Grouped)
     {
         <div class="level">
             @if (ShowHeaders)
@@ -14,7 +16,7 @@
             <div class="level-elements">
                 @foreach (var node in levelGroup)
                 {
-                    <a class="node-element @(GetClass(node))" href="@LinkType" @onclick="() => SetNowMatched(node)">
+                    <a class="node-element @(GetClass(node)) @(CssNode.GetCssClassesAdvanced(ProjectSheme, node, ViewSelection))" href="@LinkType" @onclick="() => SetNowMatched(node)">
                         <span>
                             @if (DisplayProperty != null)
                             {
@@ -27,13 +29,69 @@
             </div>
         </div>
     }
-</section>
+    </section>
+}
+else
+{
+    <section class="sheme">
+        @foreach (var levelGroup in GroupedByGroup.GroupBy(g => g.First().Level))
+        {
+                <div class="level">
+                @if (ShowHeaders)
+                {
+                        <div class="level-name">
+                            <span class="level-text">Уровень @levelGroup.Key</span>
+                        </div>
+                }
+                    <div class="level-elements-more">
+                    @foreach (var nodeGroup in levelGroup)
+                    {
+                            <div class="level-elements">
+                            <span class="level-index">@nodeGroup.Key :</span>
+                            @foreach (var node in nodeGroup)
+                            {
+
+                                    <a class="node-element @(GetClass(node)) @(CssNode.GetCssClassesAdvanced(ProjectSheme, node, ViewSelection))" href="@LinkType" @onclick="() => SetNowMatched(node)">
+                                            <span>
+                                        @if (DisplayProperty != null)
+                                        {
+                                            @FormatNumber(DisplayProperty(node)) <span>| </span>
+                                        }
+                                        @node.Name
+                                                </span>
+                                            </a>
+                            }
+                            </div>
+                    }
+                    </div>
+                </div>
+        }
+    </section>
+}
+@if (UseLegend)
+{
+    if(ViewSelection == ViewSelections.Selection)
+    {
+        <section>
+            <ColoredDefinition ColorBorder="gray" Color="#b5e0ff" Message="Выбранный узел"></ColoredDefinition>
+            <ColoredDefinition ColorBorder="gray" Color="#f3e0bc" Message="Контролирующие узлы"></ColoredDefinition>
+            <ColoredDefinition ColorBorder="gray" Color="#ffdede" Message="Зависимые узлы"></ColoredDefinition>
+            <ColoredDefinition ColorBorder="gray" Color="#f1f9ff" Message="Соседние узлы"></ColoredDefinition>
+        </section>
+    }
+}
 
 
 
 @code {
     [Parameter]
     public IProject ProjectSheme { get; set; }
+    [Parameter]
+    public bool UseEditing { get; set; }
+    [Parameter]
+    public bool UseAdvancedGrouping { get; set; }
+    [Parameter]
+    public bool UseLegend { get; set; } = true;
 
     [Parameter]
     public bool ShowHeaders { get; set; } = true;
@@ -49,6 +107,9 @@
 
     [Parameter]
     public string LinkType { get; set; } = "relation-edit";
+
+    private IEnumerable<IGrouping<int, INode>> Grouped => !UseEditing ? ProjectSheme.Grouped() : ProjectSheme.HierarchyEditing.GroupedByLevel;
+    private IEnumerable<IGrouping<string, INode>> GroupedByGroup => !UseEditing ? ProjectSheme.HierarchyActive.GroupBy(n => n.Group) : ProjectSheme.HierarchyEditing.GroupBy(n => n.Group);
 
 
     private void SetNowMatched(INode node)

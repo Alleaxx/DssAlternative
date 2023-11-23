@@ -117,14 +117,15 @@
     border-bottom: 1px solid gainsboro;
     padding: 8px 0;
 }
-.confirm-info{
+
+.confirm-info {
     align-self: center;
     flex: 6;
 }
 
-    .confirm .add {
-        margin: 0 1em;
-    }
+.confirm .add {
+    margin: 0 1em;
+}
 
 .fails {
     list-style-type: square;
@@ -254,7 +255,7 @@
         text-align: right;
         padding: 5px 10px;
         border: 0;
-        border-bottom: 1px solid gainsboro;
+        border-bottom: 0px solid gainsboro;
     }
 
 .num {
@@ -265,24 +266,26 @@
     text-align: left;
     padding: 5px 10px;
     border: 0;
-    border-bottom: 1px solid gainsboro;
+    border-bottom: 0px solid gainsboro;
 }
 
-.structure{
+.structure {
     border-collapse: collapse;
     margin: 10px 0;
 }
+
     .structure td,
     .structure th {
         font-size: 0.9em;
         border-bottom: 1px solid gainsboro;
     }
 
-.structure th {
-    padding: 4px 6px;
-}
-.structure td{
-}
+    .structure th {
+        padding: 4px 6px;
+    }
+
+    .structure td {
+    }
 
 
 
@@ -354,8 +357,6 @@
 .presets {
     display: flex;
     flex-wrap: wrap;
-    margin-left: 25px;
-    margin-top: 5px;
 }
 
     .presets li {
@@ -403,13 +404,11 @@
 
 
 .load-note {
-    margin-bottom: 10px;
-    font-weight: 500;
+    color: gray;
+    font-size: 0.8em;
 }
 
 .load-json {
     min-width: 400px;
     width: 90%;
 }
-
-
