@@ -1,0 +1,407 @@
+﻿@inherits DSSComponentProject
+
+<div hidden>
+    @foreach (var levelGroup in HierarchyEditing.NodesGroupedByLevel())
+    {
+        <section class="level @(levelGroup.Key == 0 ? "main-goal-level" : "")">
+            <div class="level-name">
+                <span>Уровень @levelGroup.Key</span>
+            </div>
+            <div class="level-elements">
+                @foreach (var node in levelGroup)
+                {
+                    <div class="node-element @CssNode.GetCssClasses(Project, NodeActive, node, HierarchySchemeComponent.SchemeFilters.Selection) " @onclick="@(() => SelectNode(node))">
+                        <input class="input-text" type="text" @bind-value="@node.NameActive" />
+                        <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" title="удалить этот элемент" />
+                    </div>
+                }
+            </div>
+
+            <div class="level-add">
+                <input class="add" type="button" value="+" title="добавить новый элемент на этот уровень" @onclick="@(() => AddNode(levelGroup.Key))" />
+            </div>
+        </section>
+    }
+    <section class="level new-level">
+        <div class="level-name">
+            <span>Уровень @HierarchyEditing.LevelsCount</span>
+        </div>
+        <input class="add " type="button" value="добавить" title="добавить следующий уровень узлов" @onclick="@(() => AddNode(HierarchyEditing.LevelsCount))" />
+        <input class="add" type="button" value="+" style="visibility:hidden" />
+    </section>
+    <section class="row">
+        <ColoredDefinition ColorBorder="blue" Color="White" Message="Выбранный узел"></ColoredDefinition>
+        <ColoredDefinition ColorBorder="#adc0f7" Color="White" Message="Соседние узлы"></ColoredDefinition>
+        <ColoredDefinition ColorBorder="orange" Color="White" Message="Контролирующие узлы"></ColoredDefinition>
+        <ColoredDefinition ColorBorder="red" Color="White" Message="Зависимые узлы"></ColoredDefinition>
+    </section>
+</div>
+
+
+<div>
+    @foreach (var level in LevelsToShow)
+    {
+            <section class="level @(level == 0 ? "main-goal-level" : "")">
+                <div class="level-name">
+                    <span>Уровень @level</span>
+                </div>
+                <div class="level-groups">
+                    @foreach (var nodeGroup in GetLevelNodeGroups(level))
+                    {
+                        <div class="group-section">
+                            <div class="group-name-header">
+                            <input type="text" size="@nodeGroup.Key.Length" value="@nodeGroup.Key" @onchange="args => UpdateGroupName(nodeGroup.Key, args)" />
+                                <div class="group-element-add" hidden>
+                                    <input class="add" type="button" value="+" title="добавить новый элемент на этот уровень" @onclick="@(() => AddNode(level, nodeGroup.Key))" />
+                                </div>
+                            </div>
+                            <div class="group-elements">
+                                @foreach (var node in nodeGroup)
+                                {
+                                    @if(level != 0)
+                                    {
+                                        <div class="node-element-less @CssNode.GetCssClasses(Project, NodeActive, node, HierarchySchemeComponent.SchemeFilters.Selection) " @onclick="@(() => SelectNode(node))">
+                                            <input class="input-text" type="text" size="@node.NameActive.Length" @bind-value="@node.NameActive" />
+                                            <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" title="удалить этот элемент" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div  class="node-element-less @CssNode.GetCssClasses(Project, NodeActive, node, HierarchySchemeComponent.SchemeFilters.Selection) " @onclick="@(() => SelectNode(node))">
+                                            <input class="input-text" type="text" size="@node.NameActive.Length" @bind-value="@node.NameActive" />
+                                            <input class="remove" type="button" value="X" @onclick="@(() => RemoveNode(node))" title="удалить главный узел иерархии нельзя!" disabled />
+                                        </div>
+                                    }
+                                }
+                                @if(level != 0)
+                                {
+                                    <div class="group-element-add">
+                                        <input class="add" type="button" value="+" title="добавить новый элемент на этот уровень" @onclick="@(() => AddNode(level, nodeGroup.Key))" />
+                                    </div>
+                                }
+                             </div>
+                        </div>
+                    }
+                </div>
+                @if(level != 0)
+                {
+                    <div class="level-group-add">
+                    <input class="add" type="button" value="+ группа" title="добавить новый элемент на этот уровень" @onclick="@(() => AddNewGroup(level))" />
+                    </div>
+                }
+                else
+                {
+                    <div class="level-group-add" style="visibility: hidden">
+                    <input class="add" type="button" value="+ группа" title="добавить новый элемент на этот уровень" @onclick="@(() => AddNewGroup(level + 1))" />
+                    </div>
+                }
+            </section>
+    }
+    <section class="level new-level">
+        <div class="level-name">
+            <span>Уровень @HierarchyEditing.LevelsCount</span>
+        </div>
+        <input class="add " type="button" value="добавить" title="добавить следующий уровень узлов" @onclick="@(() => AddNewGroup(HierarchyEditing.LevelsCount))" />
+        <input class="add" type="button" value="+" style="visibility:hidden" />
+    </section>
+    <section class="row">
+        <ColoredDefinition ColorBorder="blue" Color="#b5e0ff" Message="Выбранный узел"></ColoredDefinition>
+        <ColoredDefinition ColorBorder="gray" Color="whitesmoke" Message="Соседние узлы"></ColoredDefinition>
+        <ColoredDefinition ColorBorder="gray" Color="#ffc6c6" Message="Контролирующие узлы"></ColoredDefinition>
+        <ColoredDefinition ColorBorder="gray" Color="lightgoldenrodyellow" Message="Зависимые узлы"></ColoredDefinition>
+        <ColoredDefinition ColorBorder="gray" Color="white" Message="Прочие"></ColoredDefinition>
+    </section>
+
+
+    <section class="node-edit">
+        @if (NodeActive == null)
+        {
+            <h3>Узел не выбран</h3>
+        }
+        else
+        {
+            <Tab>
+                <TabItem>
+                    <Title><h3 class="tab-header">Узел: @NodeActive.Name</h3></Title>
+                    <ChildContent>
+                        <div>
+                            <section class="node-properties">
+                                <h5>Структура</h5>
+                                <div class="row">
+                                    <div class="node-property">
+                                        <label for="nodename">
+                                            Название:
+                                        </label>
+                                        <div class="node-property-value">
+                                            <input id="nodename" type="text" style="width:20em" @bind-value="@NodeActive.NameActive" />
+                                        </div>
+                                    </div>
+                                    <div class="node-property">
+                                        <label for="nodegroup">
+                                            Входит в группу:
+                                        </label>
+                                        <div class="node-property-value">
+                                            @if (IsMainNode)
+                                            {
+                                                <input id="nodegroup" type="text" style="width:20em" @bind-value="@NodeActive.Group" disabled />
+                                            }
+                                            else
+                                            {
+                                                <input id="nodegroup" type="text" style="width:20em" @bind-value="@NodeActive.Group" />
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="node-property">
+                                        <label for="nodegroupindex">
+                                            Подчиняется группе:
+                                        </label>
+                                        <div class="node-property-value">
+                                            @if (IsMainNode)
+                                            {
+                                                <select id="nodegroupindex" @bind="@NodeActive.GroupOwner" disabled>
+                                                    @foreach (var level in LevelsAvailable)
+                                                    {
+                                                        <option value="@level">@level: @string.Join(',', GetGroupsForLevel(level))</option>
+                                                    }
+                                                </select>
+                                            }
+                                            else
+                                            {
+                                                <select id="nodegroupindex" @bind="@NodeActive.GroupOwner">
+                                                    @foreach (var group in Project.HierarchyEditing.GroupsOfNodes().Where(g => g != NodeActive.Group))
+                                                    {
+                                                        <option value="@group">@group</option>
+                                                    }
+                                                </select>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="node-property">
+                                        <label for="nodelevel">
+                                            Уровень
+                                        </label>
+                                        <div class="node-property-value">
+                                            @if (IsMainNode)
+                                            {
+                                                <select id="nodelevel" disabled>
+                                                    <option>0 - главный</option>
+                                                </select>
+                                            }
+                                            else
+                                            {
+                                                <select id="nodelevel" @bind="@NodeActive.Level">
+                                                    @foreach (var level in LevelsAvailable)
+                                                    {
+                                                        <option value="@level">@level - @string.Join(", ", GetGroupsForLevel(level))</option>
+                                                    }
+                                                </select>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="node-properties">
+                                <h5>Дополнительная информация</h5>
+                                <div class="row">
+                                    <div class="node-property">
+                                        <label for="nodedescr">
+                                            Краткое описание:
+                                        </label>
+                                        <div class="node-property-value">
+                                            <input id="nodedescr" size="200" type="text" style="width:25em" @bind-value="@NodeActive.Description" />
+                                        </div>
+                                    </div>
+                                    <div class="node-property">
+                                        @if (IsMainNode)
+                                        {
+                                            <label for="nodeimage">
+                                                Изображение:
+                                            </label>
+                                            <div class="node-property-value" style="display: flex; align-items: center">
+                                                @if (!string.IsNullOrEmpty(NodeActive.ImgPath))
+                                                {
+                                                    <img src="Images/@NodeActive.ImgPath" style="width:24px; margin-right: 5px;" />
+                                                }
+                                                <select id="nodeimage" @bind="@NodeActive.ImgPath">
+                                                    <option value="">Нет</option>
+                                                    <option value="settings.svg">Настройки</option>
+                                                    <option value="user.svg">Пользователь</option>
+                                                    <option value="bar-chart.svg">Гистограмма</option>
+                                                    <option value="check.svg">Галочка</option>
+                                                    <option value="bookmark.svg">Закладка</option>
+                                                    <option value="clipboard.svg">Планшет</option>
+                                                    <option value="download.svg">Загрузка</option>
+                                                    <option value="save.svg">Сохранить</option>
+                                                    <option value="layers.svg">Слои</option>
+                                                    <option value="list.svg">Список</option>
+                                                    <option value="plus-square.svg">Плюс</option>
+                                                    <option value="share-2.svg">Связь</option>
+                                                    <option value="sidebar.svg">Макет</option>
+                                                </select>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </ChildContent>
+                </TabItem>
+                <TabItem>
+                    <Title><h3 class="tab-header">Группа: @NodeActive.Group</h3></Title>
+                    <ChildContent>
+                        <div>
+                            <section class="node-properties">
+                                <h5>Структура</h5>
+                                <div class="row">
+                                    <div class="node-property">
+                                        <label for="nodename">
+                                            Название:
+                                        </label>
+                                        <div class="node-property-value">
+                                            <input id="nodename" type="text" style="width:20em" @bind-value="@NodeActive.Group" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </ChildContent>
+                </TabItem>
+                <TabItem>
+                    <Title><h3 class="tab-header">Настройки отображения</h3></Title>
+                    <ChildContent>
+                        <div>
+                            <p>
+                                Тут пока ничего нет
+                            </p>
+                        </div>
+                    </ChildContent>
+                </TabItem>
+            </Tab>
+        }
+    </section>
+</div>
+
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Project.OnSelectedNodeChanged += StateHasChanged;
+        Project.OnEditingHierUpdated += (hier) => StateHasChanged();
+        Project.OnEditingHierChanged += (hier) => StateHasChanged();
+    }
+
+    private INode NodeActive => Project.NodeSelected;
+
+    private void AddNewGroup(int level, string groupOwner = null)
+    {
+        int groupsOnLevel = HierarchyEditing.Nodes.Where(n => n.Level == level).Select(n => n.Group).Distinct().Count();
+
+        string name = $"Группа {level}-{groupsOnLevel}";
+        AddNode(level, name);
+    }
+    private void AddNode(int level, string groupNode, string groupNodeOwner = null)
+    {
+        //Рассчитываем имя
+        int maxLevel = HierarchyEditing.GetMaxLevel();
+        if(level == -1)
+        {
+            level = HierarchyEditing.LevelsCount - 1;
+        }
+        bool isAlternative = level == maxLevel || level == maxLevel + 1;
+        string position = $"{level} - {HierarchyEditing.CountNodesWithLevel(level) + 1}";
+        string name = isAlternative ? $"А{position}" : $"К{position}";
+
+        //Рассчитываем принадлежность к группам
+        string group = groupNode;
+        string groupIndex = groupNodeOwner;
+        if (string.IsNullOrEmpty(groupNodeOwner))
+        {
+            var lastNodePrevLevel = HierarchyEditing.Nodes.Where(n => n.Level == level - 1).LastOrDefault();
+            if(lastNodePrevLevel != null)
+            {
+                groupIndex = lastNodePrevLevel.Group;
+            }
+            else
+            {
+                groupIndex = Node.MainGroupName;
+            }
+        }
+
+        INode newNode = new Node(level, name, group, groupIndex);
+        HierarchyEditing.AddNode(newNode);
+    }
+    private void AddNode(int level = -1)
+    {
+        //Рассчитываем имя
+        int maxLevel = HierarchyEditing.GetMaxLevel();
+        if (level == -1)
+        {
+            level = HierarchyEditing.LevelsCount - 1;
+        }
+        bool isAlternative = level == maxLevel || level == maxLevel + 1;
+        string position = $"{level} - {HierarchyEditing.CountNodesWithLevel(level) + 1}";
+        string name = isAlternative ? $"А{position}" : $"К{position}";
+
+        //Рассчитываем принадлежность к группам
+        string group = $"Уровень {level}";
+        string groupIndex = $"Уровень {level - 1}";
+        if (HierarchyEditing.Nodes.Where(n => n.Level == level).FirstOrDefault() is INode nodeCurrentLevel)
+        {
+            group = nodeCurrentLevel.Group;
+        }
+        if (HierarchyEditing.Nodes.Where(n => n.Level == level - 1).FirstOrDefault() is INode nodePrevLevel)
+        {
+            groupIndex = nodePrevLevel.Group;
+        }
+
+        INode newNode = new Node(level, name, group, groupIndex);
+        HierarchyEditing.AddNode(newNode);
+    }
+    private void RemoveNode(INode e)
+    {
+        if (e != HierarchyEditing.MainGoal)
+        {
+            if (NodeActive == e)
+            {
+                Project.SelectNode(null);
+            }
+            HierarchyEditing.RemoveNode(e);
+        }
+    }
+
+    private void UpdateGroupName(string groupName, ChangeEventArgs e)
+    {
+        var groupNodes = HierarchyEditing.Nodes.Where(n => n.Group == groupName).ToArray();
+        var groupNodesControlled = HierarchyEditing.Nodes.Where(n => n.GroupOwner == groupName).ToArray();
+        foreach (var item in groupNodes)
+        {
+            item.Group = e.Value.ToString();
+        }
+        foreach (var item in groupNodesControlled)
+        {
+            item.GroupOwner = e.Value.ToString();
+        }
+    }
+
+    private IEnumerable<IGrouping<int, INode>> NodesGroupedByLevel => HierarchyEditing.NodesGroupedByLevel();
+    private IEnumerable<IGrouping<string, INode>> NodesGroupedByGroup => HierarchyEditing.NodesGroupedByGroup();
+
+
+    //Список показывыемых уровней
+    private IEnumerable<int> LevelsToShow => Project.HierarchyEditing.Nodes.Select(n => n.Level).Distinct();
+    private IEnumerable<IGrouping<string, INode>> GetLevelNodeGroups(int level)
+    {
+        return Project.HierarchyEditing.Nodes.Where(n => n.Level == level).GroupBy(g => g.Group);
+    }
+
+
+
+    private bool IsMainNode => NodeActive == Project.HierarchyEditing.MainGoal;
+    private IEnumerable<int> LevelsAvailable => Enumerable.Range(1, Project.HierarchyEditing.LevelsCount + 1);
+    private IEnumerable<string> GetGroupsForLevel(int level)
+    {
+        return Project.HierarchyEditing.Nodes.Where(n => n.Level == level).Select(n => n.Group).Distinct().ToArray();
+    }
+}

@@ -1,0 +1,96 @@
+﻿
+.scheme {
+    margin: 5px;
+}
+
+.level {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid whitesmoke;
+    padding: 5px;
+}
+
+.level-name {
+    text-align: center;
+}
+
+.level-index {
+    font-size: 0.85em;
+    color: gray;
+}
+
+.level-text {
+    font-size: 0.9em;
+}
+
+.level-elements {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+.level-elements-more {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+}
+.level-group{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+.align-center{
+    align-self: center;
+}
+
+.node-element {
+    display: block;
+    padding: 3px;
+    margin: 4px;
+    border: 1px solid gray;
+    text-align: center;
+    border-radius: 1px;
+    text-decoration: none;
+    min-width: 50px;
+    color: royalblue;
+}
+    .node-element:hover{
+        color: blue;
+        border: 1px solid royalblue;
+    }
+
+
+    .filter-select{
+        font-size: 0.9em;
+    }
+    .legend{
+        margin-left: 15px;
+    }
+
+.safe-node {
+    background-color: #dfffdf;
+}
+.unkonsistent-node {
+    background-color: #ffdee3;
+}
+.unknown-node {
+    background-color: lightyellow;
+}
+.best-node {
+    background-color: #ebe3fc;
+}
+
+.selected-node {
+    background-color: #b5e0ff;
+}
+.owner-node {
+    background-color: #f3e0bc;
+}
+.owned-node {
+    background-color: #ffdede;
+}
+.neighbor-node {
+    background-color: #ececec;
+}

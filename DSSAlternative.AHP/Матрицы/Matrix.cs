@@ -84,7 +84,7 @@ namespace DSSAlternative.AHP
         //Матрица -1 локальных коэффициентов для узла
         public static IMatrix CreateLocalCoeffs(IRelationsGrouped problem, INode node)
         {
-            var nodes = node.Criterias();
+            var nodes = node.NodeControllers();
             double[,] array = null;
             if (nodes.Any())
             {

@@ -20,10 +20,6 @@ namespace DSSAlternative.AHP
 
 
 
-        public static IEnumerable<IGrouping<int, INode>> Grouped(this IProject project)
-        {
-            return project.HierarchyActive.GroupedByLevel;
-        }
         public static IEnumerable<INode> UnknownNodes(this IProject project)
         {
             return project.Relations.Where(c => !c.Known).Select(c => c.Key);

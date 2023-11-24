@@ -1,0 +1,37 @@
+﻿@using System.IO;
+@inherits DSSComponentProject
+
+<div>
+    <HierarchyStatusComponent></HierarchyStatusComponent>
+</div>
+
+<Tab>
+    <TabItem>
+        <Title>
+            <h3 class="tab-header">Структура иерархии</h3>
+        </Title>
+        <ChildContent>
+            <HierarchyEditStructureComponent></HierarchyEditStructureComponent>
+        </ChildContent>
+    </TabItem>
+    <TabItem>
+        <Title>
+            <h3 class="tab-header">Редактирование узлов</h3>
+        </Title>
+        <ChildContent>
+            <HierarchyEditAdvancedComponent></HierarchyEditAdvancedComponent>
+        </ChildContent>
+    </TabItem>
+</Tab>
+
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Project.OnSelectedNodeChanged += StateHasChanged;
+        Project.OnActiveHierChanged += (hier) => StateHasChanged();
+        //Project.OnEditingHierChanged += (hier) => StateHasChanged();
+        //Project.OnEditingHierUpdated += (hier) => StateHasChanged();
+    }
+}

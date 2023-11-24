@@ -63,7 +63,7 @@ namespace DSSAlternative.AHP
         {
             Relations = hier;
             Node = node;
-            Nodes = node.Controlled().ToArray();
+            Nodes = node.NodesControlled().ToArray();
 
             CreateRelations();
         }

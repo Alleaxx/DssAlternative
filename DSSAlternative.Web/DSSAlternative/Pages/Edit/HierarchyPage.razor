@@ -1,0 +1,41 @@
+﻿@page "/hierarchy"
+@inherits DSSComponentProject
+@layout EditorLayout
+
+<section>
+    <div class="sheme basic-border">
+
+        @if (Project.IsActiveHierCreated)
+        {
+            <HierarchyEditOverallComponent></HierarchyEditOverallComponent>
+        }
+        else
+        {
+            <Tab>
+                <TabItem>
+                    <Title><h4 class="tab-header">Создать с нуля</h4></Title>
+                    <ChildContent>
+                        <HierarchyEditOverallComponent></HierarchyEditOverallComponent>
+                    </ChildContent>
+                </TabItem>
+                <TabItem>
+                    <Title><h4 class="tab-header">Загрузить по шаблону</h4></Title>
+                    <ChildContent>
+                        <HierarchyEditTemplatesComponent></HierarchyEditTemplatesComponent>
+                    </ChildContent>
+                </TabItem>
+            </Tab>
+        }
+    </div>
+</section>
+
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Dss.OnStateLoaded += StateHasChanged;
+        Dss.OnSelectedProjectChanged += project => StateHasChanged();
+        Dss.OnSelectedProjectUpdated += (hier) => StateHasChanged();
+    }
+}

@@ -1,0 +1,51 @@
+﻿.navigation {
+    flex: 12;
+}
+
+    .navigation h5 {
+        margin: 5px 0;
+    }
+
+.navigation-element {
+    font-size: 1em;
+    cursor: pointer;
+    color: gray;
+}
+
+.navigation-header {
+    font-size: 0.9em;
+}
+
+.navigation-element.active {
+    color: black;
+}
+
+.navigation-element:hover {
+    color: rgb(64,64,64);
+}
+
+.navigation-list {
+    margin: 4px 0;
+    list-style-type: circle;
+}
+
+
+.edit {
+    flex: 8;
+    padding-right: 20px;
+    border-left: 1px solid gainsboro;
+    padding-left: 15px;
+    border-right: 1px solid gainsboro;
+}
+
+
+dt {
+    font-size: 0.8em;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+dd {
+    font-size: 0.8em;
+    margin-bottom: 5px;
+}

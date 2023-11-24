@@ -28,6 +28,6 @@ namespace DSSAlternative.AHP
 
         void SetUnknown();
 
-        void SetFromTemplate(ITemplate template);
+        void SetFromTemplate(ITemplateProject template);
     }
 }

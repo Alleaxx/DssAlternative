@@ -1,0 +1,84 @@
+﻿@using System.IO;
+@inherits DSSComponentProject
+
+<nav class="menu-projects">
+    <h2 class="text-center">
+        Список задач
+    </h2>
+    <div class="actions-panel">
+        <button class="action-button save" @onclick="SaveProgress" title="Сохранить все текущие задачи">
+            <img src="Images/save.svg" />
+            <span>Сохранить все</span>
+        </button>
+        <button class="action-button load" @onclick="LoadProgress" title="Восстановить все ранее сохраненные задачи">
+            <img src="Images/download.svg" />
+            <span>Восстановить все</span>
+        </button>
+    </div>
+    <ul class="task-menu">
+        <CascadingValue Value="this">
+            @foreach (var project in ProjectsOpened)
+            {
+                <li>
+                    <ProjectItemComponent Project="project"></ProjectItemComponent>
+                </li>
+            }
+        </CascadingValue>
+    </ul>
+    <div class="state-control">
+        <button class="add-task action-button" @onclick="CreateProblem">
+            <img src="Images/plus-square.svg" />
+            <span>Создать новую задачу</span>
+        </button>
+        <InputFile OnChange="FileUpload"></InputFile>
+    </div>
+</nav>
+
+@code {
+    [Inject]
+    public IDssJson Json { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Dss.OnProjectRemoved += StateHasChanged;
+        Dss.OnProjectAdded += StateHasChanged;
+        Dss.OnSelectedProjectUpdated += (proj) => StateHasChanged();
+    }
+
+    private async Task FileUpload(InputFileChangeEventArgs e)
+    {
+        MemoryStream ms = new MemoryStream();
+        try
+        {
+            await e.File.OpenReadStream().CopyToAsync(ms);
+            var bytes = ms.ToArray();
+            var res = System.Text.Encoding.Default.GetString(bytes);
+            var projectTask = Json.FromJson<TemplateProject>(res);
+            Dss.AddProject(projectTask);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            ms.Close();
+        }
+    }
+
+    private void CreateProblem()
+    {
+        Dss.AddProject();
+        Dss.SelectProject(Dss.Projects.Last());
+    }
+
+    private void SaveProgress()
+    {
+        Account.SaveState();
+    }
+    private void LoadProgress()
+    {
+        Account.LoadState();
+    }
+}

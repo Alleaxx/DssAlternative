@@ -23,7 +23,7 @@ namespace DSSAlternative.AHP
         private void CheckElementsExisting()
         {
             string name = "Наличие";
-            if (Hierarchy.Count() < 2)
+            if (Hierarchy.Nodes.Count() < 2)
             {
                 AddFail(name, "Отстутствует иерархия");
             }
@@ -31,23 +31,23 @@ namespace DSSAlternative.AHP
             {
                 AddFail(name, "Отсутствует главная цель проблемы");
             }
-            if (!Hierarchy.Criterias.Any())
-            {
-                AddWarning(name, "Отсутствуют критерии");
-            }
-            if (!Hierarchy.Alternatives.Any())
-            {
-                AddFail(name, "Отсутствуют альтернативы");
-            }
-            if (Hierarchy.MainGoal != null && !Hierarchy.Any(n => n.GroupIndex == Hierarchy.MainGoal.Group))
+            //if (!Hierarchy.Criterias.Any())
+            //{
+            //    AddWarning(name, "Отсутствуют критерии");
+            //}
+            //if (!Hierarchy.Alternatives.Any())
+            //{
+            //    AddFail(name, "Отсутствуют альтернативы");
+            //}
+            if (Hierarchy.MainGoal != null && !Hierarchy.Nodes.Any(n => n.GroupOwner == Hierarchy.MainGoal.Group))
             {
                 AddFail(name, "Отсутствуют элементы, подчиненные главной цели");
             }
-            if (Hierarchy.Any(n => n.Group == n.GroupIndex))
+            if (Hierarchy.Nodes.Any(n => n.Group == n.GroupOwner))
             {
                 AddFail(name, "Есть элементы, зависимые от самих себя");
             }
-            if (Hierarchy.Any(n => !Hierarchy.ExistingGroups.Contains(n.Group)))
+            if (Hierarchy.Nodes.Any(n => !Hierarchy.GroupsOfNodes().Contains(n.Group)))
             {
                 AddFail(name, "Есть элементы, зависимые от несуществующих групп");
             }
@@ -59,8 +59,8 @@ namespace DSSAlternative.AHP
         private void CheckElementsPlacement()
         {
             string name = "Последовательность";
-            int lastLevel = Hierarchy.GroupedByLevel.Last().Key;
-            int levelsAmount = Hierarchy.GroupedByLevel.Count();
+            int lastLevel = Hierarchy.NodesGroupedByLevel().Last().Key;
+            int levelsAmount = Hierarchy.NodesGroupedByLevel().Count();
 
             if (lastLevel != levelsAmount - 1)
             {
@@ -70,7 +70,7 @@ namespace DSSAlternative.AHP
         private void CheckElementsAmount()
         {
             string name = "Количество узлов";
-            foreach (var group in Hierarchy.GroupedByLevel)
+            foreach (var group in Hierarchy.NodesGroupedByLevel())
             {
                 int level = group.Key;
                 int levelAmount = group.Count();

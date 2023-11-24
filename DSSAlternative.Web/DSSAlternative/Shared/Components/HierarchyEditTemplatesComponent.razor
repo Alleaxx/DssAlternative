@@ -1,0 +1,82 @@
+﻿@inherits DSSComponentProject
+
+<div>
+    @if (Templates.Any())
+    {
+        <section class="load-preset saved-session">
+            <p class="load-note">
+                Предустановленные шаблоны
+            </p>
+            <ul class="presets">
+                <CascadingValue Value="this">
+                    @foreach (var template in Templates)
+                    {
+                        <li>
+                            <HierTemplate Template="template"></HierTemplate>
+                        </li>
+                    }
+                </CascadingValue>
+            </ul>
+        </section>
+    }
+    <section>
+        <p class="load-note">
+            Сохраненные шаблоны
+        </p>
+        @if (Account.CurrentUser.Templates.Any())
+        {
+            <ul class="presets">
+                <CascadingValue Value="this">
+                    @foreach (var template in Account.CurrentUser.Templates)
+                    {
+                        <li>
+                            <HierTemplate Template="template"></HierTemplate>
+                        </li>
+                    }
+                </CascadingValue>
+            </ul>
+        }
+        else
+        {
+            <span style="margin-left: 25px">
+                Таких пока нет.
+            </span>
+        }
+    </section>
+    @if (Account.CurrentUser.State != null && Account.CurrentUser.State.OpenedTemplates.Any())
+    {
+        <section class="saved-session">
+            <p class="load-note">
+                Активные задачи
+            </p>
+
+            @if (Account.CurrentUser.State != null)
+            {
+                <ul class="presets">
+                    <CascadingValue Value="this">
+                        @foreach (var template in Account.CurrentUser.State.OpenedTemplates)
+                        {
+                            <li>
+                                <HierTemplate Template="template"></HierTemplate>
+                            </li>
+                        }
+                    </CascadingValue>
+                </ul>
+            }
+        </section>
+    }
+</div>
+@code {
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Dss.OnStateLoaded += StateHasChanged;
+        Account.OnTemplatesChanged += StateHasChanged;
+        TemplatesEditor.OnTemplatesLoaded += StateHasChanged;
+    }
+
+    [Inject]
+    public IDssTemplates TemplatesEditor { get; set; }
+    public IEnumerable<ITemplateProject> Templates => TemplatesEditor.Templates;
+}

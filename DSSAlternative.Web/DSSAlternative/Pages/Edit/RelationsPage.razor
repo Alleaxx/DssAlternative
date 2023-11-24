@@ -1,0 +1,136 @@
+﻿@page "/relation-edit"
+@inherits DSSComponentProject
+@layout EditorLayout
+
+@if (Project.IsActiveHierCreated && !Project.IsEmptyProject)
+{
+    <div class="relations-grid">
+        <section class="criterias">
+            <div class="criterias-list">
+                @foreach (var criteriaGroup in Relations.Where(r => r.Any()).GroupBy(r => r.Key.Group))
+                {
+                    <div class="category-header">
+                        <span style="color:gray">Ур. @criteriaGroup.First().Key.Level - </span>
+                        <span>@criteriaGroup.Key</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="progress-text">
+                            @criteriaGroup.ProgressNow() / @criteriaGroup.ProgressMax()
+                        </span>
+                        <div class="progress medium" style="width:@criteriaGroup.Progress()%; background-color:lightgreen"></div>
+                    </div>
+                    @foreach (var criteria in criteriaGroup)
+                    {
+                        <a class="criteria @criteria.CssSelected(RelationSelected) @criteria.CssColorClass()" role="button" @onclick="() => SelectRelation(criteria.FirstRequired)" title="@criteria.SymbolTooltip()">
+                            <span class="criteria-char">
+                                @criteria.Symbol()
+                            </span>
+                            <div class="criteria-right">
+                                <div class="criteria-info">
+                                    <span class="criteria-name">
+                                        @criteria.Key.Name
+                                    </span>
+                                </div>
+                                <div class="progress light" style="width:@criteria.Progress()%; background-color:@criteria.CssColor()"></div>
+                            </div>
+                        </a>
+                        if (RelationSelected.Main == criteria.Key)
+                        {
+                            <div class="local-relations">
+                                <NodeRelations Node="RelationSelected.Main" Context="rel" ShowState="false" ShowHeader="false">
+                                    <RelationView>
+                                        <span>@rel.From.Name - @rel.To.Name</span>
+                                    </RelationView>
+                                </NodeRelations>
+                            </div>
+                        }
+                    }
+
+                }
+            </div>
+
+            <div style="margin:25px">
+            </div>
+            <div class="progress-total-text" hidden>
+                <div>
+                    <span style="color: dimgray; margin: 4px">
+                        Заполненность: @(Math.Round(Relations.NowProgress() / Relations.AllProgress() * 100))%
+                    </span>
+                </div>
+                <div class="progress" style="width:@(Math.Round(Relations.NowProgress() / Relations.AllProgress() * 100))%; background-color:@Relations.CssColor()"></div>
+            </div>
+        </section>
+        <section class="relation-area">
+            <Tab>
+                <TabItem>
+                    <Title>
+                        <h4 class="tab-header">Выбор приоритета</h4>
+                    </Title>
+                    <ChildContent>
+                        <RelationQuestion Relation="@RelationSelected" />
+                    </ChildContent>
+                </TabItem>
+                <TabItem>
+                    <Title>
+                        <h4 class="tab-header">Матрица отношений</h4>
+                    </Title>
+                    <ChildContent>
+                        <NodeMatrix Node="@RelationSelected.Main" />
+                    </ChildContent>
+                </TabItem>
+            </Tab>
+
+
+
+            <div class="prev-next-stages">
+                <a class="prev" @onclick="SetPrev" role="button">
+                    ← назад
+                </a>
+                <a class="next" @onclick="SetNext" role="button">
+                    вперед →
+                </a>
+            </div>
+            @if (Project.Relations.Correct)
+            {
+                <div class="prev-next-stages">
+                    <a class="prev" href="@ResultsLink">
+                        Доступен результат!
+                    </a>
+                </div>
+            }
+
+
+
+        </section>
+
+    </div>
+}
+
+
+@code {
+    protected INodeRelation Prev => Relations.PrevRequiredRel(RelationSelected);
+    protected INodeRelation Next => Relations.NextRequiredRel(RelationSelected);
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Project.OnSelectedRelationChanged += OnRelationChanged;
+        Project.OnRelationChanged += rel => StateHasChanged();
+    }
+    private void OnRelationChanged()
+    {
+        StateHasChanged();
+    }
+
+    private void SetNext()
+    {
+        SelectRelation(Next);
+    }
+    private void SetPrev()
+    {
+        SelectRelation(Prev);
+    }
+
+
+
+}

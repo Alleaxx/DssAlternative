@@ -1,0 +1,21 @@
+﻿@inherits DSSComponent
+<section class="preset" @onclick="() => Dss.SetProject(Template)" title="Применить этот шаблон к текущей задаче">
+    <img class="preset-img" title="@Template.Name" src="Images/@Template.Img" />
+    <div class="preset-info">
+        <div class="row" style="justify-content: space-between">
+            <h4 class="preset-name">@Template.Name</h4>
+            @if (Account.CurrentUser.Templates.Contains(Template))
+            {
+                <button class="remove-task" @onclick="() => Account.RemoveTemplate(Template)" title="удалить этот шаблон">
+                    X
+                </button>
+            }
+        </div>
+        <p class="preset-descr">@Template.Description</p>
+    </div>
+</section>
+
+@code {
+    [Parameter]
+    public ITemplateProject Template { get; set; }
+}

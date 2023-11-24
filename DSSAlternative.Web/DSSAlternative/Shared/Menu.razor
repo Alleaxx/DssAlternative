@@ -1,0 +1,231 @@
+﻿@inject IJSRuntime JSRuntime
+@inherits DSSComponentProject
+
+<style>
+    .navside ul a {
+        padding: 10px 2px;
+        text-decoration: none;
+        border-bottom: 5px solid transparent;
+        cursor: pointer;
+        color: darkblue;
+    }
+
+        .navside ul a.active {
+            border-bottom: 5px solid orange;
+            color: black;
+        }
+
+        .navside .warning ul a.active {
+            color: #986b00;
+        }
+
+        .navside ul a:hover {
+            color: blue;
+        }
+
+.stage-menu a {
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    border-left: 2px solid transparent;
+}
+
+/*    .stage-menu a.warning {
+        border-bottom-color: #cccc10;
+        border-left-color: #cccc10;
+    }
+
+    .stage-menu a.error {
+        border-bottom-color: red;
+        border-left-color: red;
+    }*/
+
+    .stage-menu a.none {
+        display: none;
+    }
+
+
+.stage-menu-element {
+    display: flex;
+    align-items: center;
+}
+
+.stage-element-image {
+    flex: 1;
+    margin: 0 10px;
+    opacity: 50%;
+    height: 25px;
+}
+
+    .active .stage-element-image:hover {
+        opacity: 80%;
+    }
+
+.active .stage-element-image {
+    opacity: 100%;
+}
+
+.stage-element-name {
+    flex: 20;
+    font-size: 1.2em;
+    margin: 0 5px;
+}
+.stage-menu-element .small{
+    font-size: 1em;
+}
+
+.navside ul.inner-list {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    padding: 5px 4px;
+}
+
+    .navside ul.inner-list a {
+        display: block;
+        font-size: 0.8em;
+        padding: 5px 4px;
+    }
+</style>
+
+<nav class="navside">
+    @if (!Project.IsEmptyProject)
+    {
+        <h2 class="text-center">Текущая задача: @Project.Name</h2>
+        <div class="actions-panel">
+                @if (Project.IsActiveHierCreated)
+            {
+                    <button class="action-button save-as" @onclick="SaveJsonAsFile">
+                        <img src="Images/save.svg" />
+                        <span>Сохранить файл</span>
+                    </button>
+                    <button class="action-button save-as" @onclick="() => Account.SetTemplate(Project)">
+                        <img src="Images/save.svg" />
+                        <span>Сохранить как шаблон</span>
+                    </button>
+                    <button class="action-button copy" @onclick="CopyProblem">
+                        <img src="Images/clipboard.svg" />
+                        <span>Скопировать задачу</span>
+                    </button>
+                    <button class="action-button copy" @onclick="ClearAllRelations">
+                        <img src="Images/share-2.svg" />
+                        <span>Сбросить все отношения</span>
+                    </button>
+                }
+                <button class="action-button copy" @onclick="RemoveProblem">
+                    <img src="Images/alert-octagon.svg" />
+                    <span>Удалить задачу</span>
+                </button>
+            </div>
+        <section class="stage-menu">
+            <ul>
+                <li>
+                    <NavLink class="@HierClass" href="@HierLink">
+                        <img class="stage-element-image" src="Images/layers.svg" />
+                        <span class="stage-element-name">@(Project.IsActiveHierCreated ? "Иерархия" : "Формирование иерархии") @(Project.UnsavedChanged ? "*" : "") </span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink class="@ViewClass" href="@RelationsLink">
+                        <img class="stage-element-image" src="Images/share-2.svg" />
+                        <span class="stage-element-name">@(Relations.Correct ? "" : !Relations.Known ? "" : "") Отношения и связи</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink class="@ResultsClass" href="@ResultsLink">
+                        <img class="stage-element-image" src="Images/list.svg" />
+                        <span class="stage-element-name">Результаты</span>
+                    </NavLink>
+                </li>
+            </ul>
+        </section>
+    }
+    else
+    {
+        <h2>Нет открытой задачи</h2>
+    }
+</nav>
+
+@code {
+    [Inject]
+    public Services.IClipboard Clipboard { get; set; }
+
+    [Inject]
+    public IDssJson Json { get; set; }
+
+
+
+    protected ICss HierCss => new CssHierarchy(Project);
+    protected ICss ViewCss => new CssView(Project);
+    protected ICss ResultsCss => new CssResults(Project);
+
+    private string HierClass => HierCss.CssClass();
+    private string ViewClass => ViewCss.CssClass();
+    private string ResultsClass => ResultsCss.CssClass();
+
+    private string NodeClass(INode node)
+    {
+        var rel = Relations[node].FirstRequired;
+        return new CssRelation(Project, rel).CssClass();
+    }
+
+
+    private void SetRelFromNode(INode node)
+    {
+        SelectRelation(Relations[node].FirstRequired);
+    }
+
+    private string LeftMarginNode(INode node)
+    {
+        return $"margin-left:{node.Level * 2}em";
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        //Project.OnActiveHierChanged += (test) => StateHasChanged();
+        Dss.OnSelectedProjectUpdated += (proj) => StateHasChanged();
+    }
+
+    private async Task SaveJsonAsFile()
+    {
+        string fileName = $"{Project.Name}.json";
+        string text = Json.ToJson(Project);
+        await JsHelper.SaveAs(JSRuntime, fileName, text);
+    }
+
+    private async Task CopyJson()
+    {
+        string text = Json.ToJson(Project);
+        await Clipboard.WriteTextAsync(text);
+    }
+
+
+
+    private void RemoveProblem()
+    {
+        Dss.RemoveProject(Project);
+    }
+    private void CopyProblem()
+    {
+        ITemplateProject template = new TemplateProject(Project);
+        Dss.AddProject(template);
+
+        var lastAdded = Dss.Projects.Last();
+        if(lastAdded != null && lastAdded.HierarchyActive.MainGoal != null)
+        {
+            var mainGoal = lastAdded.HierarchyActive.MainGoal;
+            mainGoal.Name = $"{mainGoal.Name} (копия)";
+            mainGoal = lastAdded.HierarchyEditing.MainGoal;
+            mainGoal.Name = $"{mainGoal.Name} (копия)";
+        }
+    }
+    private void ClearAllRelations()
+    {
+        foreach (var node in Project.HierarchyActive.Nodes)
+        {
+            Relations[node].SetUnknown();
+        }
+    }
+}
+
+

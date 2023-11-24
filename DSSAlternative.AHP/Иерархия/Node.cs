@@ -7,35 +7,72 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP
 {
-    public interface INode : ICloneable
+    /// <summary>
+    /// Элемент иерархии задачи принятия решений. Альтернатива / Критерий / Цель
+    /// </summary>
+    public interface INode : ICloneable, IHierNode
     {
-        public event Action<INode> OnChanged;
-        public event Action<INode, IHierarchy> OnMoved;
+        public event Action<INode> OnNodeFieldsChanged;
 
+        /// <summary>
+        /// Название узла в иерархии
+        /// </summary>
         string Name { get; set; }
 
         /// <summary>
-        /// При редактировании обновляет также имя в редактируемой иерархии помимо утвержденной
+        /// При редактировании также пытается обновить имя сходного узла в связанной иерархии (если такая есть)
         /// </summary>
         string NameActive { get; set; }
 
-
+        /// <summary>
+        /// Краткое описание узла
+        /// </summary>
         string Description { get; set; }
+
+        /// <summary>
+        /// Путь к изображению. Актуален для главного узла 
+        /// </summary>
         string ImgPath { get; set; }
 
 
+        /// <summary>
+        /// Уровень узла в иерархии. В основном визуальный параметр
+        /// </summary>
         int Level { get; set; }
+
+        /// <summary>
+        /// Собственная группа узла в иерархии
+        /// </summary>
         string Group { get; set; }
-        string GroupIndex { get; set; }
+
+        /// <summary>
+        /// Группа, которой подчиняется данный узел
+        /// </summary>
+        string GroupOwner { get; set; }
+
+        /// <summary>
+        /// Итоговый весовой коэффициент для узла в его группе
+        /// </summary>
         double Coefficient { get; set; }
 
+
+        /// <summary>
+        /// Сформировать уникальный ключ для узла для сравнения
+        /// </summary>
+        /// <returns>Уникальная строка</returns>
+        string GetNodeKeyID();
+    }
+    
+    public interface IHierNode
+    {
         IHierarchy Hierarchy { get; }
         void SetHierarchy(IHierarchy hier);
-        void RemoveFromHierarchy();
-
-        bool CompareValuesWith(INode node);
-        string CreateNodeId();
+        void RemoveHierarchy();
     }
+
+    /// <summary>
+    /// Элемент иерархии задачи принятия решений. Альтернатива / Критерий / Цель
+    /// </summary>
     public class Node : INode
     {
         public override string ToString()
@@ -43,10 +80,22 @@ namespace DSSAlternative.AHP
             return $"{Name} [{Level}]";
         }
 
-        public event Action<INode> OnChanged;
-        public event Action<INode, IHierarchy> OnMoved;
+        //События
+        public event Action<INode> OnNodeFieldsChanged;
 
-        public string Name { get; set; }
+        //Общая информация
+        public string Name
+        {
+            get => name;
+            set
+            {
+                name = value;
+                OnNodeFieldsChanged?.Invoke(this);
+            }
+        }
+        private string name;
+
+        [JsonIgnore]
         public string NameActive
         {
             get => Name;
@@ -54,96 +103,85 @@ namespace DSSAlternative.AHP
             {
                 string oldName = Name;
                 Name = value;
-                if(Hierarchy is HierarchyNodes hier && hier.HierarchyEditing != null)
+                if(Hierarchy.ConnectedHierarchy != null)
                 {
-                    var sameNode = hier.HierarchyEditing.FirstOrDefault(n => n.Name == oldName && n.Level == Level);
-                    sameNode.Name = value;
+                    var sameNode = Hierarchy.ConnectedHierarchy.Nodes.FirstOrDefault(n => n.Name == oldName && n.Level == Level);
+                    if(sameNode != null)
+                    {
+                        sameNode.Name = value;
+                    }
                 }
             }
         }
         public string Description { get; set; }
         public string ImgPath { get; set; }
 
+
+        //Информация о структуре
         public int Level
         {
             get => level;
             set
             {
                 level = value > 0 ? value : 0;
-                OnChanged?.Invoke(this);
+                OnNodeFieldsChanged?.Invoke(this);
             }
         }                
         private int level;
-        //Критерий составляет группу, которой могут принадлежать другие критерии
         public string Group
         {
             get => group;
             set
             {
                 group = value;
-                OnChanged?.Invoke(this);
+                OnNodeFieldsChanged?.Invoke(this);
             }
         }                
         private string group;
-        //Критерий принадлежит группе критериев c этим индексом
-        public string GroupIndex
+        public string GroupOwner
         {
-            get => groupIndex;
+            get => groupOwner;
             set
             {
-                groupIndex = value;
-                OnChanged?.Invoke(this);
+                groupOwner = value;
+                OnNodeFieldsChanged?.Invoke(this);
             }
         }      
-        private string groupIndex;
+        private string groupOwner;
 
         [JsonIgnore]
         public double Coefficient { get; set; }
 
+        #region Конструкторы
 
         public Node()
         {
 
-        }
-        public Node(string name) : this(0, name, 0, -1)
-        {
-
-        }
-        public Node(int level, string name, int group, int groupIndex)
-        {
-            Name = name;
-            Level = level;
-            Group = group.ToString();
-            GroupIndex = groupIndex.ToString();
         }
         public Node(int level, string name, string group, string groupIndex)
         {
             Name = name;
             Level = level;
             Group = group;
-            GroupIndex = groupIndex;
+            GroupOwner = groupIndex;
         }
-
+        
+        #endregion
 
 
         [JsonIgnore]
         public IHierarchy Hierarchy { get; private set; }
-
         public void SetHierarchy(IHierarchy hierarchy)
         {
             Hierarchy = hierarchy;
-            OnMoved?.Invoke(this, hierarchy);
-            if (hierarchy != null)
-            {
-                hierarchy.AddNode(this);
-            }
         }
-        public void RemoveFromHierarchy()
+        public void RemoveHierarchy()
         {
-            SetHierarchy(null);
+            Hierarchy = null;
         }
 
 
+        //Реализация клонирования
         public object Clone()
         {
             return CloneThis();
@@ -152,101 +190,16 @@ namespace DSSAlternative.AHP
         {
             return MemberwiseClone() as Node;
         }
-        public bool CompareValuesWith(INode node)
-        {
-            if (!node.Name.Equals(Name))
-            {
-                return false;
-            }
-            if (Level != node.Level)
-            {
-                return false;
-            }
-            if (Group != node.Group)
-            {
-                return false;
-            }
-            if (GroupIndex != node.GroupIndex)
-            {
-                return false;
-            }
-            return true;
-        }
 
-        public string CreateNodeId()
+
+        //Константы для групп
+        public const string MainGroupOwnerName = "Нет";
+        public const string MainGroupName = "Цель";
+
+        public string GetNodeKeyID()
         {
-            return $"{Name}{Level}{Group}{GroupIndex}";
+            return $"{Name}{Level}{Group}{GroupOwner}";
         }
     }
 
-    public static class NodeExtensions
-    {
-        //Критерии для данного узла
-        public static IEnumerable<INode> Criterias(this INode node)
-        {
-            return node.Hierarchy.Where(n => n.Group == node.GroupIndex).ToArray();
-        }
-        public static IEnumerable<INode> Controlled(this INode node)
-        {
-            return node.Hierarchy.Where(n => n.GroupIndex == node.Group);
-        }
-
-        //Навигация по иерархии
-        public static IEnumerable<INode> UpperLevel(this INode node)
-        {
-            return node.Hierarchy.Where(n => n.Level == node.Level - 1);
-        }
-        public static IEnumerable<INode> LowerLevel(this INode node)
-        {
-            return node.Hierarchy.Where(n => n.Level == node.Level + 1);
-        }
-
-        //Узлы на том же уровне и в тех же группах
-        public static IEnumerable<INode> NeighborsLevel(this INode node)
-        {
-            return node.Hierarchy.Where(n => n.Level == node.Level);
-        }
-        public static IEnumerable<INode> NeighborsGroup(this INode node)
-        {
-            return node.Hierarchy.Where(n => n.Group == node.Group);
-        }
-        public static IEnumerable<INode> NeighborsGroupIndex(this INode node)
-        {
-            return node.Hierarchy.Where(n => n.GroupIndex == node.GroupIndex);
-        }
-
-        //Контролируемые узлы
-        public static string LevelName(this INode node)
-        {
-            int maxLevel = node.Hierarchy.Select(n => n.Level).Max();
-            if (node.Level == 0)
-            {
-                return "Цель";
-            }
-            else if (node.Level == maxLevel)
-            {
-                return "Альтернативы";
-            }
-            else if (node.Level == 1)
-            {
-                return "Критерии";
-            }
-            else if (node.Level < 0)
-            {
-                return "???";
-            }
-            return "Подкритерии";
-        }
-
-
-        //Порядковые номера в группе и на уровне
-        public static int OrderIndexLevel(this INode node)
-        {
-            return node.NeighborsLevel().ToList().IndexOf(node);
-        }
-        public static int OrderIndexGroup(this INode node)
-        {
-            return node.NeighborsGroupIndex().ToList().IndexOf(node);
-        }
-    }
 }

@@ -1,0 +1,175 @@
+﻿@inherits DSSComponentProject
+@layout EditorLayout
+
+<div>
+    <section class="row">
+
+        <section class="navigation">
+            <h3>Схема задачи</h3>
+            <div>
+                <HierarchySchemeComponent ProjectActive="Project" UseEditing="true" UseLegend="true" LinkType="@HierLink" ShowProperty="false">
+
+                </HierarchySchemeComponent>
+            </div>
+        </section>
+
+        <section class="edit">
+            @if(Node == null)
+            {
+                <h3>Узел не выбран</h3>
+            }
+            else
+            {
+                <h3>Узел: @Node.Name</h3>
+
+                <section>
+                    <h5>Структура</h5>
+                    <dl>
+                        <dt>
+                            <label for="nodename">
+                                Название:
+                            </label>
+                        </dt>
+                        <dd>
+                            <input id="nodename" type="text" style="width:20em" @bind-value="@Node.NameActive" />
+                        </dd>
+                        <dt>
+                            <label for="nodegroupindex">
+                                Подчиняется:
+                            </label>
+                        </dt>
+                        <dd>
+                            @if (IsMainNode)
+                            {
+                                <select id="nodegroupindex" @bind="@Node.GroupOwner" disabled>
+                                    @foreach (var level in LevelsAvailable)
+                                    {
+                                        <option value="@level">@level: @string.Join(',', GetGroupsForLevel(level))</option>
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <select id="nodegroupindex" @bind="@Node.GroupOwner">
+                                    @foreach (var group in Project.HierarchyEditing.GroupsOfNodes().Where(g => g != Node.Group))
+                                    {
+                                        <option value="@group">@group</option>
+                                    }
+                                </select>
+                            }
+                        </dd>
+
+                        <dt>
+                            <label for="nodegroup">
+                                Категория:
+                            </label>
+                        </dt>
+                        <dd>
+                            @if (IsMainNode)
+                            {
+                                <input id="nodegroup" type="text" style="width:20em" @bind-value="@Node.Group" disabled />
+                            }
+                            else
+                            {
+                                <input id="nodegroup" type="text" style="width:20em" @bind-value="@Node.Group" />
+                            }
+                        </dd>
+
+                        <dt>
+                            <label for="nodelevel">
+                                Уровень
+                            </label>
+                        </dt>
+                        <dd>
+                            @if (IsMainNode)
+                            {
+                                <select id="nodelevel" disabled>
+                                    <option>0 - главный</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <select id="nodelevel" @bind="@Node.Level">
+                                    @foreach (var level in LevelsAvailable)
+                                    {
+                                        <option value="@level">@level - @string.Join(", ", GetGroupsForLevel(level))</option>
+                                    }
+                                </select>
+                            }
+                        </dd>
+                    </dl>
+                </section>
+
+                <section>
+                    <h5>Дополнительная информация</h5>
+                    <dl>
+                        <dt>
+                            <label for="nodedescr">
+                                Краткое описание:
+                            </label>
+                        </dt>
+                        <dd>
+                            <input id="nodedescr" type="text" style="width:25em" @bind-value="@Node.Description" />
+                        </dd>
+                        @if (IsMainNode)
+                        {
+                            <dt>
+                                <label for="nodeimage">
+                                    Изображение:
+                                </label>
+                            </dt>
+                            <dd>
+                                <div style="display: flex; align-items: center">
+                                    @if (!string.IsNullOrEmpty(Node.ImgPath))
+                                    {
+                                        <img src="Images/@Node.ImgPath" style="width:24px; margin-right: 5px;" />
+                                    }
+                                    <select id="nodeimage" @bind="@Node.ImgPath">
+                                        <option value="">Нет</option>
+                                        <option value="settings.svg">Настройки</option>
+                                        <option value="user.svg">Пользователь</option>
+                                        <option value="bar-chart.svg">Гистограмма</option>
+                                        <option value="check.svg">Галочка</option>
+                                        <option value="bookmark.svg">Закладка</option>
+                                        <option value="clipboard.svg">Планшет</option>
+                                        <option value="download.svg">Загрузка</option>
+                                        <option value="save.svg">Сохранить</option>
+                                        <option value="layers.svg">Слои</option>
+                                        <option value="list.svg">Список</option>
+                                        <option value="plus-square.svg">Плюс</option>
+                                        <option value="share-2.svg">Связь</option>
+                                        <option value="sidebar.svg">Макет</option>
+                                    </select>
+                                </div>
+                            </dd>
+                        }
+                    </dl>
+                </section>
+            }
+        </section>
+
+    </section>
+</div>
+
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Project.OnSelectedNodeChanged += () => StateHasChanged();
+        Project.OnEditingHierUpdated += (hier) => StateHasChanged();
+        Project.OnEditingHierChanged += (hier) => StateHasChanged();
+    }
+    public INode Node => NodeParam ?? Project.NodeSelected;
+
+    [Parameter]
+    public INode NodeParam { get; set; }
+
+
+    private bool IsMainNode => Node == Project.HierarchyEditing.MainGoal;
+    private IEnumerable<int> LevelsAvailable => Enumerable.Range(1, Project.HierarchyEditing.LevelsCount + 1);
+    private IEnumerable<string> GetGroupsForLevel(int level)
+    {
+        return Project.HierarchyEditing.Nodes.Where(n => n.Level == level).Select(n => n.Group).Distinct().ToArray();
+    }
+}

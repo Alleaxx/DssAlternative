@@ -36,7 +36,7 @@ namespace DSSAlternative.AHP
         //Создание критериев и отношений
         private void CreateCriterias()
         {
-            foreach (var node in Hierarchy)
+            foreach (var node in Hierarchy.Nodes)
             {
                 var criteria = new CriteriaRelation(this, node);
                 Add(criteria);
@@ -54,7 +54,7 @@ namespace DSSAlternative.AHP
         private void RecountCoefficients()
         {
             Hierarchy.MainGoal.Coefficient = 1;
-            foreach (var levelNodes in Hierarchy.GroupedByLevel)
+            foreach (var levelNodes in Hierarchy.NodesGroupedByLevel())
             {
                 int level = levelNodes.Key;
                 if (level > 0)
@@ -114,14 +114,14 @@ namespace DSSAlternative.AHP
                 criteria.SetUnknown();
             }
         }
-        public void SetFromTemplate(ITemplate template)
+        public void SetFromTemplate(ITemplateProject template)
         {
             SetUnknown();
             foreach (var rel in template.Relations)
             {
-                INode main = Hierarchy.FirstOrDefault(n => n.Name == rel.Main);
-                INode from = Hierarchy.FirstOrDefault(n => n.Name == rel.From);
-                INode to = Hierarchy.FirstOrDefault(n => n.Name == rel.To);
+                INode main = Hierarchy.Nodes.FirstOrDefault(n => n.Name == rel.Main);
+                INode from = Hierarchy.Nodes.FirstOrDefault(n => n.Name == rel.From);
+                INode to = Hierarchy.Nodes.FirstOrDefault(n => n.Name == rel.To);
                 if (main != null && from != null && to != null)
                 {
                     Set(main, from, to, rel.Value);
