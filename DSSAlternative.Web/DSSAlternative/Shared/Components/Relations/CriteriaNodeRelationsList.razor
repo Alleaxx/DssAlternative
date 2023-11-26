@@ -1,0 +1,72 @@
+﻿@inherits DSSComponentProjectV2
+<section class="criteria-relations">
+    @if (ShowHeader)
+    {
+        <div class="rel-menu-list-header @CssExtensions.GetRelationNodeCssClasses(Project, RelationsCriteria.FirstNodeCompareRequired())">
+            <h3>
+                @RelationsCriteria.NodeMain.Name
+            </h3>
+            <span class="cr">
+                [@FormatNumber(Cr)]
+            </span>
+        </div>
+
+    }
+    <ul class="rel-menu-list">
+        @foreach (var relation in FilteredNodeRelations())
+        {
+            <li>
+                <a class="rel-menu-element @CssExtensions.GetRelationNodeCssClasses(Project, relation)" @onclick="() => SelectRelation(relation)" href="@LinksEnum.LinkRelations">
+                    @RelationView.Invoke(relation)
+                </a>
+            </li>
+        }
+    </ul>
+    @if (ShowState)
+    {
+        <p class="criteria-state">
+            @if (!RelationsCriteria.Consistent)
+            {
+                <span><b>↑</b> Нужна корректировка согласованности</span>
+            }
+            else if (!RelationsCriteria.Known)
+            {
+                <span><b>↑</b> Нужно заполнение</span>
+            }
+            else
+            {
+                <span><b>✓</b> Всё в порядке</span>
+            }
+        </p>
+    }
+    </section>
+
+@code {
+    [Parameter]
+    public Predicate<IRelationNode> RelationNodeFilter { get; set; } = rel => true;
+
+    [Parameter]
+    public IRelationsCriteria RelationsCriteria { get; set; }
+
+    [Parameter]
+    public bool ShowState { get; set; } = true;
+    [Parameter]
+    public bool ShowHeader { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment<IRelationNode> RelationView { get; set; }
+
+
+    public double Cr => RelationsCriteria.Mtx.Cr;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        Project.OnSelectedRelationChanged += () => StateHasChanged();
+    }
+
+    private IEnumerable<IRelationNode> FilteredNodeRelations()
+    {
+        return RelationsCriteria.NodeComparesMini.Where(r => RelationNodeFilter.Invoke(r));
+    }
+}

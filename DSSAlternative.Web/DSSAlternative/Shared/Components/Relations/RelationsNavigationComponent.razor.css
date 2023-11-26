@@ -1,0 +1,38 @@
+﻿.relations-navigation{
+
+}
+    .relations-navigation a {
+        text-decoration: none;
+        cursor: pointer;
+        display: block;
+        color: royalblue;
+        font-size: 1.25em;
+        border-radius: 5px;
+        user-select: none;
+    }
+
+        .relations-navigation a:hover {
+            color: blue;
+            background-color: rgb(250,250,250);
+        }
+
+.nav-prevnext {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    margin: 12px 0;
+}
+.nav-result{
+
+}
+
+
+
+.link-prev, .link-next, .link-result {
+    flex: 6;
+    margin-top: 10px;
+    padding: 10px 5px;
+}
+.link-result{
+
+}

@@ -1,0 +1,145 @@
+﻿@inherits DSSComponentRelationV2
+@if (AsCell)
+{
+    <td colspan="@ColSpan" title="@Rating.Value" class="@CssClassSelection() @CssClassWarnings()" @onclick="ApplyRating">
+        <div class="rating">
+            <span>
+                @if (IsSelected)
+                {
+                    <input type="checkbox" checked />
+                }
+                else
+                {
+                    <input type="checkbox" />
+                }
+
+                <span style="@CssStyle()">
+                    @RatingName()
+                </span>
+                <span class="cr">
+                    @CrDeltaText()
+                </span>
+            </span>
+        </div>
+    </td>
+}
+else
+{
+    <div style="flex:1;padding:2px 8px;text-align:center" title="@CrDeltaText()" @onclick="ApplyRating">
+        @Rating.Value
+    </div>
+}
+
+@code {
+    //Матрица расчитывается на уровне узла и передается сюда
+    [CascadingParameter]
+    public Dictionary<IRating, IMatrix> RatingMatrix { get; set; }
+
+    [Parameter]
+    public INode Node { get; set; }
+    [Parameter]
+    public int ColSpan { get; set; }
+    [Parameter]
+    public IRating Rating { get; set; }
+    [Parameter]
+    public bool AsCell { get; set; } = true;
+
+    private bool IsSelected { get; set; }
+
+
+    private void ApplyRating()
+    {
+        Relation.SetRating(Rating);
+    }
+
+    private IRatingRules Rules { get; set; }
+    private RuleForRating RuleUsed => Rules.GetRuleForRating(Rating);
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        Rules = RatingCssSystem.DefaultSystem;
+
+        bool ratingsEqual = Relation.Rating.CheckEqual(Rating);
+        bool ratingsDefined = ((Relation.Value == 1 || Relation.Value == 0) && Relation.Value == Rating.Value);
+
+        IsSelected = ratingsEqual || ratingsDefined;
+    }
+
+
+    private string CssStyle()
+    {
+        return IsSelected ? RuleUsed.Style : string.Empty;
+    }
+    private string CssClassSelection()
+    {
+        return IsSelected ? "selected" : "selectable";
+    }
+    private string CssClassWarnings()
+    {
+        bool isUnknown = Rating.Value == 0;
+        bool isAllKnown = Relation.CriteriaContext.Known;
+        bool isLastUnknownNode = Relation.Unknown && Relation.CriteriaContext.WithLastUnknownRelation();
+        bool isUnknownMoreThanOne = Relation.CriteriaContext.NodeComparesMini.Count(n => n.Unknown) > 1;
+
+        if (isUnknown)
+        {
+            return "unknown";
+        }
+        if (isUnknownMoreThanOne)
+        {
+            return "undefined";
+        }
+
+        if((isAllKnown || isLastUnknownNode) && RatingMatrix.ContainsKey(Rating) && RatingMatrix[Rating].IsCorrect)
+        {
+            return "safe";
+        }
+        if ((isAllKnown || isLastUnknownNode) && RatingMatrix.ContainsKey(Rating) && !RatingMatrix[Rating].IsCorrect)
+        {
+            return "dangerous";
+        }
+        return "undefined";
+    }
+
+    public string RatingName()
+    {
+        return RuleUsed.Name;
+    }
+    private string CrDeltaText()
+    {
+        bool isSmallMatrix = Relation.CriteriaContext.NodesControlled.Count() <= 2;
+        bool isUnknownRating = Rating.Value == 0;
+        bool isUnknownMoreThanOne = Relation.CriteriaContext.NodeComparesMini.Count(n => n.Unknown) > 1;
+
+        bool isAllKnown = Relation.CriteriaContext.Known;
+        bool isLastUnknownNode = Relation.Unknown && Relation.CriteriaContext.WithLastUnknownRelation();
+        bool isOtherLastUnknownNode = !Relation.Unknown && Relation.CriteriaContext.WithLastUnknownRelation();
+
+
+        if (isUnknownRating || isUnknownMoreThanOne || isOtherLastUnknownNode)
+        {
+            return "?";
+        }
+        if (isSmallMatrix)
+        {
+            return "✓";
+        }
+
+
+        if ((isAllKnown || isLastUnknownNode) && RatingMatrix.ContainsKey(Rating))
+        {
+            var cr = RatingMatrix[Rating].Cr;
+
+            if (double.IsInfinity(cr) || double.IsNaN(cr))
+            {
+                return "~";
+            }
+            else
+            {
+                return Math.Abs(cr).ToString("0.00");
+            }
+        }
+        return "???";
+    }
+}

@@ -2,51 +2,151 @@
 @inherits DSSComponent
 @layout MainLayout
 
+<style>
+    main{
+        width: 75%;
+    }
+</style>
+
 <section>
-    <h4>Настройки отношений </h4>
-    <section>
-        <div class="option-section">
-            <label class="option-name" for="border-cons">Граница согласованности (0.2)</label>
-            <input class="option-input" id="border-cons" type="number" step="0.01" @bind-value="@MtxConsistency.BorderDefault" />
-        </div>
-        <div class="option-section">
-            <label class="option-name" for="amount">Градации оценок:</label>
-            <input class="option-input" id="amount" type="number" @bind-value="@RatingSystem.Amount" min="1" max="9" />
-        </div>
-    </section>
-    <section>
-        <h5>Правила</h5>
-        <table class="rating-system">
-            <colgroup>
-                <col style="width:10%" />
-                <col style="width:10%" />
-                <col style="width:30%" />
-                <col style="width:50%" />
-            </colgroup>
-            <tr>
-                <th>От >=</th>
-                <th>До</th>
-                <th>Имя</th>
-                <th>Стиль</th>
-            </tr>
-            @foreach (var rule in RatingRules.Rules)
-            {
-                <tr>
-                    <td>
-                        <input type="number" @bind-value="@rule.FromVal" />
-                    </td>
-                    <td>
-                        <input type="number" @bind-value="@rule.ToVal" />
-                    </td>
-                    <td>
-                        <input type="text" @bind-value="@rule.Name" />
-                    </td>
-                    <td>
-                        <input type="text" style="@rule.Style" @bind-value="@rule.Style" />
-                    </td>
-                </tr>
-            }
-        </table>
-    </section>
+    <Tab>
+        <TabItem>
+            <Title>
+                <h4 class="tab-header">Логи</h4>
+            </Title>
+            <ChildContent>
+                <table class="table-logs">
+                    <colgroup>
+                        <col style="width:5%" />
+                        <col style="width:5%" />
+                        <col style="width:10%" />
+                        <col style="width:10%" />
+                        <col style="width:65%" />
+                        @*<col style="width:45%" />*@
+                        @*<col style="width:10%" />*@
+                    </colgroup>
+                    <tbody>
+                        <tr class="log-header-row">
+                            <th>#</th>
+                            <th>Уровень</th>
+                            <th>Дата</th>
+                            <th>Категория</th>
+                            <th>Сообщение</th>
+                            @*<th>Подробно</th>*@
+                            @*<th>Объект</th>*@
+                        </tr>
+                        @foreach (var log in Logger.Logs.OrderByDescending(l => l.ID))
+                        {
+                            <tr class="log-object-row">
+                                <td>@log.ID</td>
+                                <td>@log.State.ToString().ToUpper()</td>
+                                <td>@log.CreationDate.ToString("HH:mm:ss:ffff")</td>
+                                <td>@log.Category</td>
+                                <td>
+                                    <span>@log.Title</span> 
+                                    <br />
+                                    <span style="font-size:0.9em; color: #838383">@log.Message</span>
+                                </td>
+                                @*<td style="font-size:0.9em;">@log.Message</td>*@
+                                @*<td>@log.SourceObject.GetType().Name</td>*@
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </ChildContent>
+        </TabItem>
+        <TabItem>
+            <Title>
+                <h4 class="tab-header">Настройки отношений </h4>
+            </Title>
+            <ChildContent>
+                <section>
+                    <div class="option-section">
+                        <label class="option-name" for="border-cons">Граница согласованности (0.2)</label>
+                        <input class="option-input" id="border-cons" type="number" step="0.01" @bind-value="@MtxConsistency.BorderDefault" />
+                    </div>
+                    <div class="option-section">
+                        <label class="option-name" for="amount">Градации оценок:</label>
+                        <input class="option-input" id="amount" type="number" @bind-value="@RatingSystem.Amount" min="1" max="9" />
+                    </div>
+                </section>
+            </ChildContent>
+        </TabItem>
+        <TabItem>
+            <Title>
+                <h4 class="tab-header">Состояние</h4>
+            </Title>
+            <ChildContent>
+                <style>
+                    .account-control p {
+                        font-size: 0.9em;
+                    }
+                </style>
+                <section class="account-control">
+                    <p hidden>
+                        <button class="action-button" @onclick="() => Account.RemoveState()">
+                            Сбросить всё
+                        </button>
+                    </p>
+                    <section>
+                        <h3>Активные задачи, прогресс</h3>
+                        @if (DssState != null)
+                        {
+                            <p>
+                                @User.State
+                            </p>
+                            @foreach (var template in DssState.OpenedTemplates)
+                            {
+                                <TemplateHierarchyItemComponent Template="template" OnClickAction="() => Dss.AddProject(template)">
+
+                                </TemplateHierarchyItemComponent>
+                            }
+                            <div class="row">
+                                <button class="action-button" @onclick="() => Account.LoadState()">
+                                    Загрузить
+                                </button>
+                                <button class="action-button" @onclick="() => Account.SaveState()">
+                                    Заменить текущим состоянием
+                                </button>
+                                <button class="action-button" @onclick="() => Account.RemoveState()">
+                                    Сбросить
+                                </button>
+                            </div>
+                        }
+                    </section>
+                    <section>
+                        <h3>Свои шаблоны</h3>
+                        @foreach (var template in OwnTemplates)
+                        {
+                            <div>
+                                <TemplateHierarchyItemComponent Template="template" OnClickAction="() => Dss.AddProject(template)">
+
+                                </TemplateHierarchyItemComponent>
+                            </div>
+                        }
+                        @if (!OwnTemplates.Any())
+                        {
+                            <p>Нет сохраненных шаблонов</p>
+                        }
+                    </section>
+                </section>
+            </ChildContent>
+        </TabItem>
+    </Tab>
+
+
 </section>
+
+@code{
+
+    public User User => Account.CurrentUser;
+    public DssState DssState => User.State;
+    public IEnumerable<ITemplateProject> OwnTemplates => User.Templates;
+
+
+    private void AddTemplate(ITemplateProject template)
+    {
+
+    }
+}
 

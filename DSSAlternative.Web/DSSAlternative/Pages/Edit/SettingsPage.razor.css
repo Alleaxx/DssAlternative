@@ -23,3 +23,26 @@
         padding: 2px 5px;
         border-bottom: 1px solid gainsboro;
     }
+
+
+
+    .table-logs{
+        font-size: 0.8em;
+        border: 1px solid silver;
+        border-collapse: collapse;
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+    .log-header-row{
+    }
+        .log-header-row th {
+            border-bottom: 1px solid silver;
+            padding: 4px;
+        }
+    .log-object-row{
+
+    }
+        .log-object-row td {
+            padding: 8px 4px;
+            border-bottom: 1px solid gainsboro;
+        }

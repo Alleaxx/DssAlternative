@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DSSAlternative.Services
+namespace DSSAlternative.Web.Services
 {
     public interface ILocalStorage
     {

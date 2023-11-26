@@ -1,32 +1,34 @@
 ﻿@page "/hierarchy"
-@inherits DSSComponentProject
+@inherits DSSComponent
 @layout EditorLayout
 
 <section>
-    <div class="sheme basic-border">
+    <CascadingValue Name="Project" Value="@Dss.Project">
+        <div class="sheme basic-border">
 
-        @if (Project.IsActiveHierCreated)
-        {
-            <HierarchyEditOverallComponent></HierarchyEditOverallComponent>
-        }
-        else
-        {
-            <Tab>
-                <TabItem>
-                    <Title><h4 class="tab-header">Создать с нуля</h4></Title>
-                    <ChildContent>
-                        <HierarchyEditOverallComponent></HierarchyEditOverallComponent>
-                    </ChildContent>
-                </TabItem>
-                <TabItem>
-                    <Title><h4 class="tab-header">Загрузить по шаблону</h4></Title>
-                    <ChildContent>
-                        <HierarchyEditTemplatesComponent></HierarchyEditTemplatesComponent>
-                    </ChildContent>
-                </TabItem>
-            </Tab>
-        }
-    </div>
+                @if (Dss.Project.IsActiveHierCreated)
+                {
+                    <HierarchyEditOverallComponent></HierarchyEditOverallComponent>
+                }
+                else
+                {
+                    <Tab>
+                        <TabItem>
+                            <Title><h4 class="tab-header">Создать с нуля</h4></Title>
+                            <ChildContent>
+                                <HierarchyEditOverallComponent></HierarchyEditOverallComponent>
+                            </ChildContent>
+                        </TabItem>
+                        <TabItem>
+                            <Title><h4 class="tab-header">Загрузить по шаблону</h4></Title>
+                            <ChildContent>
+                                <HierarchyEditTemplatesComponent></HierarchyEditTemplatesComponent>
+                            </ChildContent>
+                        </TabItem>
+                    </Tab>
+                }
+        </div>
+    </CascadingValue>
 </section>
 
 
@@ -36,6 +38,7 @@
         base.OnInitialized();
         Dss.OnStateLoaded += StateHasChanged;
         Dss.OnSelectedProjectChanged += project => StateHasChanged();
-        Dss.OnSelectedProjectUpdated += (hier) => StateHasChanged();
+        Dss.OnSelectedProjectActiveHierChanged += (hier) => StateHasChanged();
+        Dss.OnSelectedProjectEditingHierChanged += (hier) => StateHasChanged();
     }
 }

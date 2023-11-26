@@ -1,4 +1,8 @@
-﻿using System;
+﻿using DSSAlternative.AHP.HierarchyInfo;
+using DSSAlternative.AHP.Logs;
+using DSSAlternative.AHP.Relations;
+using DSSAlternative.AHP.Templates;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,7 +17,7 @@ namespace DSSAlternative.AHP
         /// <summary>
         /// Возникает при изменении любого отношения в задаче
         /// </summary>
-        event Action<IRelations> OnRelationChanged;
+        event Action<IRelationsHierarchy> OnRelationChanged;
 
         /// <summary>
         /// Возникает при полной смене подтвержденной иерархии
@@ -21,15 +25,9 @@ namespace DSSAlternative.AHP
         event Action<IHierarchy> OnActiveHierChanged;
 
         /// <summary>
-        /// Возникает при полной смене редактируемой иерархии
+        /// Возникает при полной смене редактируемой иерархии или её внутренних изменениях
         /// </summary>
         event Action<IHierarchy> OnEditingHierChanged;
-
-        /// <summary>
-        /// Возникает при внутренних изменениях редактируемой иерархии
-        /// </summary>
-        event Action<IHierarchy> OnEditingHierUpdated;
-
 
         /// <summary>
         /// Имя задачи (= главному узлу утвержденной иерархии)
@@ -67,6 +65,11 @@ namespace DSSAlternative.AHP
         /// </summary>
         bool IsEmptyProject { get; }
 
+        /// <summary>
+        /// Карта изменений узлов текущей редактируемой и прошлой утвержденной иерархии
+        /// </summary>
+        INodeMap NodeMap { get; }
+
 
 
 
@@ -84,7 +87,7 @@ namespace DSSAlternative.AHP
         /// <summary>
         /// Отношения для утвержденной иерархии задачи
         /// </summary>
-        IRelations Relations { get; }
+        IRelationsHierarchy Relations { get; }
 
 
         /// <summary>
@@ -109,9 +112,9 @@ namespace DSSAlternative.AHP
         /// <summary>
         /// Выбранное отношение
         /// </summary>
-        INodeRelation RelationSelected { get; }
+        IRelationNode RelationSelected { get; }
 
-        void SelectNodeRelation(INodeRelation rel);
+        void SelectNodeRelation(IRelationNode rel);
         void SelectNode(INode node);
 
     }
@@ -128,16 +131,16 @@ namespace DSSAlternative.AHP
 
         #region События
 
-        public event Action<IRelations> OnRelationChanged;
+        public event Action<IRelationsHierarchy> OnRelationChanged;
         public event Action<IHierarchy> OnActiveHierChanged;
         public event Action<IHierarchy> OnEditingHierChanged;
-        public event Action<IHierarchy> OnEditingHierUpdated;
 
         #endregion
 
         public IHierarchy HierarchyEditing { get; private set; }
-        public IHierarchy HierarchyActive { get; private set; }   
-        public IRelations Relations { get; private set; }
+        public IHierarchy HierarchyActive { get; private set; }
+        public IRelationsHierarchy Relations { get; private set; }
+        public INodeMap NodeMap { get; private set; }
 
 
 
@@ -163,7 +166,7 @@ namespace DSSAlternative.AHP
                 return status;
             }
         }
-        public bool UnsavedChanged => !HierarchyExtensions.CompareEqual(HierarchyActive, HierarchyEditing);     
+        public bool UnsavedChanged => NodeMap.GetState(HierarchyEditing).State != CompareHierState.NoChanges;     
         public bool IsUpdateAvailable => UnsavedChanged && HierarchyEditing.Correctness.IsCorrect;
         public bool IsActiveHierCreated => !IsEmptyProject && HierarchyActive.Correctness.IsCorrect;  
         public bool IsEmptyProject { get; init; }
@@ -174,47 +177,50 @@ namespace DSSAlternative.AHP
 
         public Project(ITemplateProject template)
         {
+            NodeMap = new NodeMap(this);
             SetEditingHierarchy(new HierarchyNodesList(template));
             SetActiveHierarchyAsEditing();
-            Relations.SetFromTemplate(template);
+            Relations.SetValuesFromTemplate(template);
+            Logger.Default.AddInfo(this, "Создание проекта из шаблона", Name, cate: LogCategory.Projects);
         }
         public Project(IEnumerable<INode> nodes, bool isEmpty = false)
         {
+            NodeMap = new NodeMap(this);
             SetEditingHierarchy(new HierarchyNodesList(nodes));
             SetActiveHierarchy(HierarchyExamples.CreateEmptyHierarchy());
             IsEmptyProject = isEmpty;
+            Logger.Default.AddInfo(this, "Создание проект по узлам", Name, cate: LogCategory.Projects);
         }
         
         #endregion
 
         public void SetActiveHierarchyAsEditing()
         {
-            SetActiveHierarchy(HierarchyEditing.GetNodesCopy());
+            SetActiveHierarchy(HierarchyEditing.CreateCopy());
         }
         private void SetActiveHierarchy(IHierarchy hierarchy)
         {
             HierarchyActive = hierarchy;
-            HierarchyActive.SetConnectedHierarchy(HierarchyEditing);
-            HierarchyEditing.SetConnectedHierarchy(HierarchyActive);
 
-            SelectNode(HierarchyEditing.MainGoal);
+            HierarchyActive.SealThisHierarchy();
             CreateSetNewRelations();
-            Relations_OnChanged(Relations);
+            Relations_OnChanged(Relations, Relations.RelationsCriteria.FirstOrDefault(), Relations.GetAllNodeComparesMini().FirstOrDefault());
             OnActiveHierChanged?.Invoke(HierarchyActive);
+            NodeMap = new NodeMap(HierarchyEditing, HierarchyActive);
 
 
             void CreateSetNewRelations()
             {
                 if (Relations != null)
                 {
-                    Relations.OnChanged -= Relations_OnChanged;
+                    Relations.OnInnerRelationValueChanged -= Relations_OnChanged;
                 }
-                Relations = new Relations(HierarchyActive);
-                Relations.OnChanged += Relations_OnChanged;
-                SelectNodeRelation(Relations[HierarchyActive.MainGoal].FirstRequired);
+                Relations = new RelationsHierarchy(HierarchyActive);
+                Relations.OnInnerRelationValueChanged += Relations_OnChanged;
+                SelectNodeRelation(Relations[HierarchyActive.MainGoal].FirstNodeCompareRequired());
             }
 
-            void Relations_OnChanged(IRelations obj)
+            void Relations_OnChanged(IRelationsHierarchy obj, IRelationsCriteria criteria, IRelationNode node)
             {
                 OnRelationChanged?.Invoke(obj);
             }
@@ -222,30 +228,37 @@ namespace DSSAlternative.AHP
 
         public void SetEditingHierarchyAsActive()
         {
-            SetEditingHierarchy(HierarchyActive.GetNodesCopy());
+            SetEditingHierarchy(HierarchyActive.CreateCopy());
         }
         private void SetEditingHierarchy(IHierarchy hierarchy)
         {
             var oldHier = HierarchyEditing;
             if (oldHier != null)
             {
-                HierarchyEditing.OnChanged -= HierarchyEditing_OnUpdated;
+                HierarchyEditing.OnNodeFieldsUpdated -= Hierarchy_OnNodeFieldsUpdated;
+                HierarchyEditing.OnNodesListUpdated -= Hierarchy_OnNodesListUpdated;
             }
 
             HierarchyEditing = hierarchy;
-            HierarchyEditing.OnChanged += HierarchyEditing_OnUpdated;
+            HierarchyEditing.OnNodeFieldsUpdated += Hierarchy_OnNodeFieldsUpdated;
+            HierarchyEditing.OnNodesListUpdated += Hierarchy_OnNodesListUpdated;
             OnEditingHierChanged?.Invoke(HierarchyEditing);
             if (HierarchyActive != null)
             {
-                HierarchyActive.SetConnectedHierarchy(HierarchyEditing);
-                HierarchyEditing.SetConnectedHierarchy(HierarchyActive);
+                NodeMap = new NodeMap(HierarchyEditing, HierarchyActive);
             }
         }
 
-        private void HierarchyEditing_OnUpdated()
+        private void Hierarchy_OnNodesListUpdated(IHierarchy obj)
         {
-            OnEditingHierUpdated?.Invoke(HierarchyEditing);
+            OnEditingHierChanged?.Invoke(obj);
         }
+        private void Hierarchy_OnNodeFieldsUpdated(INode obj)
+        {
+            OnEditingHierChanged?.Invoke(obj.Hierarchy);
+        }
+
+
 
 
         #region Выбранные узлы в интерфейсе
@@ -254,7 +267,7 @@ namespace DSSAlternative.AHP
         public event Action OnSelectedRelationChanged;
         public event Action OnSelectedNodeChanged;
 
-        public INodeRelation RelationSelected { get; private set; }
+        public IRelationNode RelationSelected { get; private set; }
         public INode NodeSelected { get; private set; }
 
         public void SelectNode(INode node)
@@ -267,7 +280,7 @@ namespace DSSAlternative.AHP
             NodeSelected = node;
             OnSelectedNodeChanged?.Invoke();
         }
-        public void SelectNodeRelation(INodeRelation rel)
+        public void SelectNodeRelation(IRelationNode rel)
         {
             RelationSelected = rel;
             OnSelectedRelationChanged?.Invoke();

@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace DSSAlternative.Web.AppComponents
+namespace DSSAlternative.Web.Services
 {
     public static class JsHelper
     {

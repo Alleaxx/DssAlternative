@@ -1,0 +1,258 @@
+﻿.level {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid gainsboro;
+}
+.level-name {
+    text-align: center;
+    width: 150px;
+}
+
+.level-index {
+    color: gray;
+    font-size: 0.8em;
+}
+
+.level-elements {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    margin: 5px 0;
+}
+
+.level-groups {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    margin: 5px 0;
+    flex: 1;
+    align-items: center;
+}
+.group-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.group-name-header {
+    display: flex;
+    align-items: baseline;
+}
+.group-elements {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+.group-name-header h5{
+    font-size: 1em;
+    font-weight: 500;
+}
+.group-name-header input[type=text] {
+    border-color: transparent;
+    outline-color: gainsboro;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 500;
+    font-size: 1em;
+    margin-bottom: 2px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+.main-goal-level .group-name-header input[type=text]{
+    user-select: none;
+}
+
+.group-name-header .add {
+    padding: 2px 10px;
+    margin: 0 5px;
+    border: 1px solid lightgreen;
+}
+.group-element-add{
+    align-self: center;
+}
+.group-element-add .add{
+    font-size: 0.8em;
+    padding: 5px 10px;
+}
+.level-group-add{
+    margin: 0 5px;
+}
+.level-group-add .add{
+    font-size: 0.8em;
+    padding: 5px 20px;
+}
+
+
+.level-add {
+}
+
+.node-element, .node-element-less {
+    display: flex;
+    padding: 2px 5px;
+    padding-right: 0;
+    margin: 8px;
+    border: 2px solid silver;
+    min-width: 15%;
+    border-radius: 2px;
+}
+.node-element-less{
+    min-width: 10%;
+    font-size: 1em;
+    margin: 4px;
+}
+    .node-element-less .input-text {
+        padding: 6px 0;
+        min-width: 100px;
+        max-width: 250px;
+        font-size: 0.8em;
+    }
+
+
+.owner-node {
+    background-color: #ffc6c6;
+}
+    .owner-node input {
+        background-color: #ffc6c6;
+    }
+.owned-node {
+    background-color: lightgoldenrodyellow;
+}
+    .owned-node input {
+        background-color: lightgoldenrodyellow;
+    }
+.neighbor-node {
+    background-color: whitesmoke;
+}
+    .neighbor-node input {
+        background-color: whitesmoke;
+    }
+.selected-node {
+    border: 2px solid blue;
+    background-color: #b5e0ff;
+}
+    .selected-node input {
+        background-color: #b5e0ff;
+    }
+    .selected-node input:focus,
+    .neighbor-node input:focus,
+    .owned-node input:focus,
+    .owner-node input:focus{
+        outline: none;
+    }
+
+
+
+.add {
+    color: green;
+    border: 2px solid lightgreen;
+    background: transparent;
+    padding: 5px 30px;
+    font-size: 1em;
+}
+
+    .add:hover {
+        background-color: lightgreen;
+        cursor: pointer;
+    }
+
+.remove {
+    color: red;
+    font-size: 1em;
+    margin: 0;
+    padding: 5px 8px;
+    background-color: transparent;
+    border: 0;
+    border-left: 1px solid gainsboro;
+}
+
+    .remove:hover {
+        background-color: lightpink;
+        cursor: pointer;
+    }
+
+
+.input-text {
+    width: 100%;
+    font-size: 0.85em;
+    border: 0;
+    padding: 10px 0;
+    margin-right: 2px;
+    text-align: center;
+    outline-color: transparent;
+}
+
+
+.main-goal-level {
+}
+    .main-goal-level input[type=text]{
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .main-goal-level .level-index {
+        display: none;
+    }
+
+    .main-goal-level .level-name {
+        font-size: 1.4em;
+    }
+
+    .main-goal-level br {
+        display: none;
+    }
+
+    .main-goal-level .level-add {
+        visibility: hidden;
+    }
+
+    .main-goal-level .node-element {
+        min-width: 14em;
+        font-size: 1.25em;
+    }
+
+    .main-goal-level .remove {
+        display: none;
+    }
+
+
+.new-level {
+    padding: 10px 0;
+}
+
+    .new-level .level-name {
+        color: gray;
+    }
+
+.node-edit{
+    margin: 25px 0;
+}
+.node-edit h3{
+
+}
+.node-properties{
+    margin: 15px 0;
+}
+.node-properties h5{
+
+}
+.node-property{
+    font-size: 0.9em;
+    margin-right: 15px;
+}
+.node-property label{
+
+}
+.node-property-value{
+    margin-left: 25px;
+    margin-top: 3px;
+}
+
+.levels-structure{
+    padding: 5px 0;
+}
+
+
+.properties-section{
+    padding: 0 10px;
+}

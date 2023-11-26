@@ -1,0 +1,82 @@
+﻿@inherits DSSComponentRelationV2
+
+
+<section>
+    <CascadingValue Value="RatingMatrix">
+        <table class="matrix" @onclick="@RelationUpdated">
+            <colgroup>
+                <col style="width:50%" />
+                <col style="width:50%" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th class="main-node" colspan="2">@Relation.Main.Name</th>
+                </tr>
+                <tr>
+                    <td class="criteria-info non-selectable @Relation.CriteriaContext.CssColorClass()" colspan="2">
+                        <span>
+                            Всего отношений по критерию заполнено @Relation.CriteriaContext.FilterComparesCount(c => !c.Unknown).Filtered / @Relation.CriteriaContext.FilterComparesCount(c => !c.Unknown).Total,
+                        </span>
+                        <span>
+                            @if (Relation.CriteriaContext.Known)
+                            {
+                                @(Relation.CriteriaContext.Consistent ? " все согласованы" : " но они несогласованы! Необходимо их скорректировать")
+                            }
+                            else
+                            {
+                                 <span> необходимо дозаполнить</span>
+                            }
+
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="side-node from non-selectable">
+                        <span>
+                            @Relation.From.Name
+                        </span>
+                    </th>
+                    <th class="side-node to non-selectable">
+                        <span>
+                            @Relation.To.Name
+                        </span>
+                    </th>
+                </tr>
+
+                <tr>
+                    <RelationRatingItemComponent Node="Relation.To" Rating="RatingNone" ColSpan="2" RelationParam="Relation">
+
+                    </RelationRatingItemComponent>
+                </tr>
+
+                <tr>
+                    <RelationRatingItemComponent Node="Relation.To" Rating="RatingEqual" ColSpan="2" RelationParam="Relation">
+
+                    </RelationRatingItemComponent>
+                </tr>
+                <tr>
+                    <td style="padding:0;border-bottom: 1px solid gainsboro" colspan="2"></td>
+                </tr>
+                @foreach (var group in Ratings.Where(r => r.forRating.Value != 1))
+                {
+                    <tr>
+                        <RelationRatingItemComponent Node="Relation.From" Rating="group.forRating" ColSpan="1" RelationParam="Relation">
+
+                        </RelationRatingItemComponent>
+                        <RelationRatingItemComponent Node="Relation.To" Rating="group.toRating" ColSpan="1" RelationParam="Relation">
+
+                        </RelationRatingItemComponent>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="2" class="side-node non-selectable" style="border-top: 1px solid gainsboro; border-bottom: 1px solid gainsboro;">
+                        <RelationRatingVerdictComponent RelationParam="Relation"></RelationRatingVerdictComponent>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </CascadingValue>
+</section>
+
+@code {
+}

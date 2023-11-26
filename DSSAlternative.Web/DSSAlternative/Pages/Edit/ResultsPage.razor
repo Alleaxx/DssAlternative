@@ -4,7 +4,8 @@
 
 @if(Project.IsActiveHierCreated && !Project.IsEmptyProject)
 {
-    <section class="res">
+    <CascadingValue Name="Project" Value="Project">
+        <section class="res">
         @if (Relations.Correct)
         {
             <div class="sheme">
@@ -49,20 +50,7 @@
         else
         {
             <div class="sheme">
-                @if (!Relations.Consistent)
-                {
-                    <div hidden>
-                        <Warning Header="Несогласованность" Message="Некоторые отношения являются несогласованными!"></Warning>
-
-                    </div>
-                }
-                @if (!Relations.Known)
-                {
-                    <div hidden>
-                        <Warning Header="Незаполненность!" Message="Некоторые отношения не заполнены"></Warning>
-                    </div>
-                }
-                <HierarchySchemeComponent ProjectActive="Project" UseEditing="false" DisplayProperty="n => n.Cr(Project)" SchemeFilter="HierarchySchemeComponent.SchemeFilters.Relations" LinkType="@RelationsLink">
+                <HierarchySchemeComponent ProjectActive="Project" UseEditing="false" DisplayProperty="n => n.GetCr()" SchemeFilter="HierarchySchemeComponent.SchemeFilters.Relations" LinkType="@LinksEnum.LinkRelations">
 
                 </HierarchySchemeComponent>
             </div>
@@ -70,32 +58,27 @@
             <div class="sheme-info">
                 <section class="sheme-info-total">
                     @*<h3>Отношения</h3>*@
-                    <p>
-                        <a href="view">
-                            Старый обзор
-                        </a>
-                    </p>
                     <div class="info-details">
                         @if (!Relations.Consistent)
                         {
-                            @foreach (var node in Project.UnconsistenctNodes())
+                            @foreach (var nodeCriteria in Project.Relations.GetUnconsistenctNodeCriterias())
                             {
-                                <NodeRelations Node="node" Context="rel">
+                                <CriteriaNodeRelationsList RelationsCriteria="nodeCriteria" Context="rel">
                                     <RelationView>
                                         <span>@rel.From.Name - @rel.To.Name</span>
                                     </RelationView>
-                                </NodeRelations>
+                                </CriteriaNodeRelationsList>
                             }
                         }
                         @if (!Relations.Known)
                         {
-                            @foreach (var node in Project.UnknownNodes())
+                            @foreach (var nodeCriteria in Project.Relations.GetUnknownNodeCriterias())
                             {
-                                <NodeRelations Node="node" Context="rel" RelationFilter="rel => rel.Unknown">
+                                <CriteriaNodeRelationsList RelationsCriteria="nodeCriteria" Context="rel" RelationNodeFilter="rel => rel.Unknown">
                                     <RelationView>
                                         <span>@rel.From.Name ??? @rel.To.Name</span>
                                     </RelationView>
-                                </NodeRelations>
+                                </CriteriaNodeRelationsList>
                             }
                         }
                     </div>
@@ -103,6 +86,7 @@
             </div>
         }
     </section>
+    </CascadingValue>
 }
 
 @code{
@@ -118,7 +102,6 @@
 
     private string HeaderText(IGrouping<string, INode> group)
     {
-        string name = group.First().LevelName();
         return $"Сравнение по '{group.Key}', ур. {group.First().Level}";
     }
 

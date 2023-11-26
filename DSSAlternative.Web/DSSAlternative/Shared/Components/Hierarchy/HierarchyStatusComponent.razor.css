@@ -1,0 +1,87 @@
+﻿.add {
+    color: green;
+    border: 2px solid lightgreen;
+    background: transparent;
+    padding: 5px 30px;
+    font-size: 1em;
+}
+
+    .add:hover {
+        background-color: lightgreen;
+        cursor: pointer;
+    }
+
+.cancel {
+    color: black;
+    border: 2px solid darkorange;
+    background: transparent;
+    padding: 5px 30px;
+    font-size: 1em;
+}
+
+    .cancel:hover {
+        background-color: palegoldenrod;
+        cursor: pointer;
+    }
+
+.remove {
+    color: red;
+    font-size: 1em;
+    margin: 0;
+    padding: 5px 8px;
+    background-color: transparent;
+    border: 0;
+    border-left: 1px solid gainsboro;
+}
+
+    .remove:hover {
+        background-color: lightpink;
+        cursor: pointer;
+    }
+
+
+.status-bar .add {
+    margin: 0 1em;
+}
+
+.fails {
+    list-style-type: square;
+    margin: 0 4px;
+    font-size: 0.9em;
+}
+
+.errored {
+    border: 2px solid red;
+    border-radius: 3px;
+    font-size: 0.8em;
+    width: 2em;
+    cursor: pointer;
+    text-align: center;
+    padding: 1px 4px;
+    margin: 0 4px;
+}
+
+    .errored:hover {
+        background-color: lightpink;
+    }
+
+
+
+
+
+
+
+.not-saved, .all-saved, .warning {
+}
+
+.not-saved {
+    color: darkgoldenrod;
+}
+
+.warning {
+    color: darkred;
+}
+
+.all-saved {
+    color: green;
+}

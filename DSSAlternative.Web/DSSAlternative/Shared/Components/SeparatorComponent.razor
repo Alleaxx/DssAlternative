@@ -1,0 +1,14 @@
+﻿<div style="width:100%; margin-top:@(MarginTop)px; margin-bottom:@(MarginBottom)px; border-bottom: @(BorderThickness)px solid @(BorderColor)">
+
+</div>
+
+@code {
+    [Parameter]
+    public int MarginTop { get; set; }
+    [Parameter]
+    public int MarginBottom { get; set; }
+    [Parameter]
+    public string BorderColor { get; set; }
+    [Parameter]
+    public int BorderThickness { get; set; } = 1;
+}

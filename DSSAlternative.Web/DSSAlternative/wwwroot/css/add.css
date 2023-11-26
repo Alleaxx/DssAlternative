@@ -147,3 +147,39 @@ th {
     .margin-bottom-5{
         margin-bottom: 5px;
     }
+
+
+.status-bar {
+    margin: 5px 10px;
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    min-height: 2em;
+    font-size: 0.9em;
+    border-top: 1px solid gainsboro;
+    border-bottom: 1px solid gainsboro;
+    padding: 8px 0;
+    border-width: 0;
+}
+
+.status-bar-info {
+    align-self: center;
+    flex: 6;
+}
+
+.status-bar-properties {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 5px 10px;
+    font-size: 0.9em;
+}
+
+    .status-bar-properties .property-name {
+        color: gray;
+    }
+
+    .status-bar-properties .property-value {
+        margin-right: 2em;
+        margin-left: 4px;
+    }

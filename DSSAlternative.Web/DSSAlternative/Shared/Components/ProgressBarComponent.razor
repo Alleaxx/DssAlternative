@@ -1,0 +1,36 @@
+﻿
+<div class="progress-block">
+    @if (TextPercentage != null)
+    {
+        <div class="progress-text">
+            <span>
+                @TextPercentage @(Math.Round(Percentage))%
+            </span>
+        </div>
+    }
+    <div class="progress-bar" >
+        <div class="progress-bar-filled" style="width:@(Math.Round(Percentage))%; background-color:@ColorFill; height:@(Height)px">
+
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public CountInfo ValueInfo { get; set; }
+    [Parameter]
+    public double Value { get; set; }
+    [Parameter]
+    public double Maximum { get; set; }
+    [Parameter]
+    public int Height { get; set; } = 3;
+
+
+    [Parameter]
+    public string TextPercentage { get; set; }
+    [Parameter]
+    public string ColorFill { get; set; }
+
+
+    private double Percentage => ValueInfo?.Percentage ?? Value / Maximum * 100.0;
+
+}

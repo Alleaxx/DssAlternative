@@ -1,0 +1,21 @@
+﻿.progress-block{
+
+}
+
+.progress-bar {
+    background-color: whitesmoke;
+    transition-property: width;
+    border: 1px solid gray;
+    width: 100%;
+    border: 1px solid #c8c8c8;
+}
+.progress-bar-filled {
+    transition-duration: 0.4s;
+}
+
+.progress-text {
+    text-align: center;
+    font-size: 0.8em;
+    color: dimgray;
+    margin: 4px;
+}

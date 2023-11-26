@@ -55,7 +55,7 @@
 
 main {
     grid-area: content;
-    padding: 0px 5px;
+    /*padding: 0px 5px;*/
     margin: 0;
     max-width: 2000px;
     min-height: 60vh;

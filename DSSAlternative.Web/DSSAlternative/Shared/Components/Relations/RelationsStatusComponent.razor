@@ -1,0 +1,19 @@
+﻿@inherits DSSComponentProjectV2
+
+<div class="status-bar">
+    <div class="status-bar-info">
+        <span>Отношения: </span>
+        <span>согласованы - @Relations.Correct</span>
+        <span>заполнены - @Relations.Known</span>
+    </div>
+    <div class="status-bar-properties">
+        <div>
+            <span class="property-name">Отношений: </span>
+            <span class="property-value">@Relations.GetAllNodeCompares().Count()</span>
+        </div>
+    </div>
+</div>
+
+@code {
+
+}

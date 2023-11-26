@@ -119,19 +119,19 @@
         <section class="stage-menu">
             <ul>
                 <li>
-                    <NavLink class="@HierClass" href="@HierLink">
+                    <NavLink class="stage-menu-element" href="@LinksEnum.LinkHier">
                         <img class="stage-element-image" src="Images/layers.svg" />
                         <span class="stage-element-name">@(Project.IsActiveHierCreated ? "Иерархия" : "Формирование иерархии") @(Project.UnsavedChanged ? "*" : "") </span>
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink class="@ViewClass" href="@RelationsLink">
+                    <NavLink class="stage-menu-element" href="@LinksEnum.LinkRelations">
                         <img class="stage-element-image" src="Images/share-2.svg" />
                         <span class="stage-element-name">@(Relations.Correct ? "" : !Relations.Known ? "" : "") Отношения и связи</span>
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink class="@ResultsClass" href="@ResultsLink">
+                    <NavLink class="stage-menu-element" href="@LinksEnum.LinkResults">
                         <img class="stage-element-image" src="Images/list.svg" />
                         <span class="stage-element-name">Результаты</span>
                     </NavLink>
@@ -141,7 +141,7 @@
     }
     else
     {
-        <h2>Нет открытой задачи</h2>
+        <h2 class="text-center">Нет открытой задачи</h2>
     }
 </nav>
 
@@ -153,25 +153,9 @@
     public IDssJson Json { get; set; }
 
 
-
-    protected ICss HierCss => new CssHierarchy(Project);
-    protected ICss ViewCss => new CssView(Project);
-    protected ICss ResultsCss => new CssResults(Project);
-
-    private string HierClass => HierCss.CssClass();
-    private string ViewClass => ViewCss.CssClass();
-    private string ResultsClass => ResultsCss.CssClass();
-
-    private string NodeClass(INode node)
-    {
-        var rel = Relations[node].FirstRequired;
-        return new CssRelation(Project, rel).CssClass();
-    }
-
-
     private void SetRelFromNode(INode node)
     {
-        SelectRelation(Relations[node].FirstRequired);
+        SelectRelation(Relations[node].FirstNodeCompareRequired());
     }
 
     private string LeftMarginNode(INode node)
@@ -183,7 +167,7 @@
     {
         base.OnInitialized();
         //Project.OnActiveHierChanged += (test) => StateHasChanged();
-        Dss.OnSelectedProjectUpdated += (proj) => StateHasChanged();
+        Dss.OnSelectedProjectActiveHierChanged += (proj) => StateHasChanged();
     }
 
     private async Task SaveJsonAsFile()
@@ -221,9 +205,9 @@
     }
     private void ClearAllRelations()
     {
-        foreach (var node in Project.HierarchyActive.Nodes)
+        foreach (var criteria in Project.Relations.GetActiveNodeCriterias())
         {
-            Relations[node].SetUnknown();
+            criteria.SetUnknown();
         }
     }
 }

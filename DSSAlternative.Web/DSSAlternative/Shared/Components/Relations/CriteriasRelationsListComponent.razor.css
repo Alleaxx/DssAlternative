@@ -1,0 +1,97 @@
+﻿.criterias-list {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.criteria {
+    display: flex;
+    margin: 2px;
+    padding: 3px;
+    border: 2px solid gainsboro;
+    font-size: 0.9em;
+    border-radius: 3px;
+    cursor: pointer;
+    user-select: none;
+}
+
+    .criteria.unknown {
+        border-color: orange;
+    }
+
+    .criteria.dangerous {
+        border-color: red;
+    }
+
+    .criteria.selected-now {
+        border-color: silver;
+        background-color: gainsboro;
+    }
+
+        .criteria.selected-now.unknown {
+            border-color: orange;
+        }
+
+        .criteria.selected-now.dangerous {
+            border-color: red;
+        }
+
+    .criteria:hover {
+        background-color: whitesmoke;
+    }
+
+.progress {
+    height: 3px;
+    background: lightgreen;
+    margin-left: 3px;
+    transition-property: width;
+    transition-duration: 0.4s;
+}
+
+    .progress.light {
+        height: 0px;
+    }
+
+    .progress.medium {
+        height: 2px;
+    }
+
+.criteria-char {
+    font-size: 1.5em;
+    text-align: center;
+    margin-right: 5px;
+    width: 20px;
+}
+
+.local-relations {
+    font-size: 0.8em;
+    margin-right: 1em;
+}
+
+.criteria-right {
+    flex: 1;
+    margin: 0 3px
+}
+
+.criteria-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.criteria-name {
+    margin: 2px 0;
+}
+
+.progress-text {
+    font-size: 0.8em;
+    color: gray;
+}
+
+
+
+
+.category-header {
+    margin: 5px;
+    text-align: center;
+}

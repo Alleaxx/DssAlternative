@@ -10,6 +10,9 @@ using System.Text.Unicode;
 using System.Net.Http;
 
 using DSSAlternative.AHP;
+using DSSAlternative.AHP.HierarchyInfo;
+using DSSAlternative.AHP.Templates;
+using DSSAlternative.AHP.Relations;
 
 namespace DSSAlternative.Web.AppComponents
 {
@@ -21,9 +24,14 @@ namespace DSSAlternative.Web.AppComponents
         event Action<IProject> OnSelectedProjectChanged;
 
         /// <summary>
-        /// Событие при обновлении выбранного проекта (сам выбор не меняется)
+        /// Событие при обновлении активной иерархии выбранного проекта и при изменении отношений
         /// </summary>
-        event Action<IProject> OnSelectedProjectUpdated;
+        event Action<IProject> OnSelectedProjectActiveHierChanged;
+
+        /// <summary>
+        /// Событие при изменении редактируемой иерархии выбранного проекта
+        /// </summary>
+        event Action<IProject> OnSelectedProjectEditingHierChanged;
 
         event Action OnStateLoaded;
         event Action OnProjectAdded;
@@ -52,7 +60,8 @@ namespace DSSAlternative.Web.AppComponents
         }
 
         public event Action<IProject> OnSelectedProjectChanged;
-        public event Action<IProject> OnSelectedProjectUpdated;
+        public event Action<IProject> OnSelectedProjectActiveHierChanged;
+        public event Action<IProject> OnSelectedProjectEditingHierChanged;
 
         public event Action OnStateLoaded;
         public event Action OnProjectAdded;
@@ -74,15 +83,20 @@ namespace DSSAlternative.Web.AppComponents
             {
                 project.OnActiveHierChanged += ProjectSelected_OnActiveHierChanged;
                 project.OnRelationChanged += ProjectSelected_OnRelationChanged;
+                project.OnEditingHierChanged += ProjectSelected_OnEditingHierChanged;
             }
         }
-        private void ProjectSelected_OnRelationChanged(IRelations obj)
+        private void ProjectSelected_OnRelationChanged(IRelationsHierarchy obj)
         {
-            OnSelectedProjectUpdated?.Invoke(Project);
+            OnSelectedProjectActiveHierChanged?.Invoke(Project);
         }
         private void ProjectSelected_OnActiveHierChanged(IHierarchy obj)
         {
-            OnSelectedProjectUpdated?.Invoke(Project);
+            OnSelectedProjectActiveHierChanged?.Invoke(Project);
+        }
+        private void ProjectSelected_OnEditingHierChanged(IHierarchy obj)
+        {
+            OnSelectedProjectEditingHierChanged?.Invoke(Project);
         }
         private void DeselectProject(IProject project)
         {
@@ -121,8 +135,6 @@ namespace DSSAlternative.Web.AppComponents
 
         private void AddProject(IProject project)
         {
-            bool alreadyExist = Projects.Any(p => HierarchyExtensions.CompareEqual(p.HierarchyActive, project.HierarchyActive));
-
             Projects.Add(project);
             OnProjectAdded?.Invoke();
         }

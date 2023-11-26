@@ -20,8 +20,10 @@ h5{
     margin: 2px 4px;
 }
     h3.tab-header {
-        font-weight: 500;
         font-size: 1em;
+    }
+    .selected h3.tab-header{
+        font-weight: 500;
     }
     h4.tab-header{
         font-weight: 400;

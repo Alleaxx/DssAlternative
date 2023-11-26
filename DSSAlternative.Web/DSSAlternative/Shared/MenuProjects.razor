@@ -43,7 +43,7 @@
         base.OnInitialized();
         Dss.OnProjectRemoved += StateHasChanged;
         Dss.OnProjectAdded += StateHasChanged;
-        Dss.OnSelectedProjectUpdated += (proj) => StateHasChanged();
+        Dss.OnSelectedProjectActiveHierChanged += (proj) => StateHasChanged();
     }
 
     private async Task FileUpload(InputFileChangeEventArgs e)
