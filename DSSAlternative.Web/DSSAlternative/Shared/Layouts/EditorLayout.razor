@@ -6,22 +6,23 @@
 
     <MainHeader />
 
-    <MenuProjects />
+    <CascadingValue Name="Project" Value="ProjectsCollection.SelectedProject">
+        <MenuProjects />
 
+        <Menu />
 
+        <main>
+            @if (!ProjectsCollection.SelectedProject.IsEmptyProject)
+            {
+                @Body
+            }
+            else
+            {
+                <div></div>
+            }
+        </main>
+    </CascadingValue>
 
-    <Menu />
-
-    <main>
-        @if (!Dss.Project.IsEmptyProject)
-        {
-            @Body
-        }
-        else
-        {
-            <div></div>
-        }
-    </main>
 
     <nav class="lower-menu"></nav>
 
@@ -30,19 +31,15 @@
 
 @code{
     [Inject]
-    public IDssProjects Dss { get; set; }
+    public IProjectsCollection ProjectsCollection { get; set; }
     [Inject]
     public NavigationManager Navigation { get; set; }
 
-    protected override void OnInitialized()
+
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        await base.OnInitializedAsync();
 
-        Dss.OnSelectedProjectChanged += project => StateHasChanged();
-
-        if (Dss.Project == null)
-        {
-            Dss.SelectEmptyProject();
-        }
+        ProjectsCollection.OnSelectedProjectChanged += project => StateHasChanged();
     }
 }

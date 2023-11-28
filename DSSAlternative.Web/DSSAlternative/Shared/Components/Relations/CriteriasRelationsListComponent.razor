@@ -24,11 +24,14 @@
                         </span>
                     </div>
                 </div>
+                <span style="font-size: 0.9em; color: gray;">
+                    @criteriaGroup.CountFilled().Filtered / @criteriaGroup.CountFilled().Total
+                </span>
             </a>
-            if (RelationSelected.Main == criteria.NodeMain && ShowNodeCompares)
+            if (criteria.NodeCompares.Contains(RelationSelected) && ShowNodeCompares)
             {
                 <div class="local-relations">
-                    <CriteriaNodeRelationsList RelationsCriteria="RelationSelected.CriteriaContext" Context="rel" ShowState="false" ShowHeader="false">
+                    <CriteriaNodeRelationsList RelationsCriteria="criteria" Context="rel" ShowState="false" ShowHeader="false">
                         <RelationView>
                             <div class="row" style="justify-content: space-between">
                                 <span>@rel.From.Name</span>

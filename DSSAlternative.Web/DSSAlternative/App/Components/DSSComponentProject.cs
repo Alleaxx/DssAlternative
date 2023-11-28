@@ -19,7 +19,7 @@ namespace DSSAlternative.Web.AppComponents
         public NavigationManager Navigation { get; set; }
 
 
-        protected virtual IProject Project => Dss.Project;
+        protected virtual IProject Project => ProjectsCollection.SelectedProject;
         protected IHierarchy HierarchyActive => Project.HierarchyActive;
         protected IHierarchy HierarchyEditing => Project.HierarchyEditing;
         protected IRelationsHierarchy Relations => Project.Relations;
@@ -51,7 +51,7 @@ namespace DSSAlternative.Web.AppComponents
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            Dss.OnSelectedProjectChanged += DSS_ProjectChanged;
+            ProjectsCollection.OnSelectedProjectChanged += DSS_ProjectChanged;
         }
         private void DSS_ProjectChanged(IProject obj)
         {

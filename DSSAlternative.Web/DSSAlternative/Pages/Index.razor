@@ -34,6 +34,16 @@
     </a>
 </div>
 
-    @code {
+@code {
+    [Inject]
+    public IAccount Account { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        if (!Account.IsLoaded.HasValue)
+        {
+            await Account.LoadAll();
+        }
     }
+}

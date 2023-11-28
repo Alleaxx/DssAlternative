@@ -43,7 +43,7 @@ td {
     color: darkred;
 }
 
-.mtx input {
+.mtx input[type=text] {
     border: 0;
     width: 94%;
     text-align: center;
@@ -95,12 +95,12 @@ td.cell-value {
 }
 
 
-.cell-selected input {
+.cell-selected {
     border-color: gainsboro;
 }
 
-.cell-mirrored input {
-    border: 1px solid green;
+.mtx .cell-mirrored input[type=text] {
+    border-color: green;
 }
 
 .incorrect input {

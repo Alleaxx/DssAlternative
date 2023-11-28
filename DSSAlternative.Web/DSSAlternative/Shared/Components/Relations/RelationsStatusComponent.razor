@@ -1,11 +1,15 @@
 ﻿@inherits DSSComponentProjectV2
 
 <div class="status-bar">
-    <div class="status-bar-info">
+    <button class="action-button copy button-less-margin" @onclick="ClearAllRelations">
+        <img src="Images/share-2.svg" />
+        <span>Сбросить все отношения</span>
+    </button>
+    @*<div class="status-bar-info">
         <span>Отношения: </span>
         <span>согласованы - @Relations.Correct</span>
         <span>заполнены - @Relations.Known</span>
-    </div>
+    </div>*@
     <div class="status-bar-properties">
         <div>
             <span class="property-name">Отношений: </span>
@@ -15,5 +19,12 @@
 </div>
 
 @code {
-
+    private void ClearAllRelations()
+    {
+        foreach (var criteria in Project.Relations.GetActiveNodeCriterias())
+        {
+            criteria.SetUnknown();
+        }
+        Logger.AddUIInfo(Project, $"Сброшены отношения по задаче \"{Project.Name}\"!", $"");
+    }
 }

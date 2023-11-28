@@ -5,7 +5,7 @@
     <h2 class="text-center">
         Список задач
     </h2>
-    <div class="actions-panel">
+    <div class="actions-panel status-panel">
         <button class="action-button save" @onclick="SaveProgress" title="Сохранить все текущие задачи">
             <img src="Images/save.svg" />
             <span>Сохранить все</span>
@@ -17,7 +17,7 @@
     </div>
     <ul class="task-menu">
         <CascadingValue Value="this">
-            @foreach (var project in ProjectsOpened)
+            @foreach (var project in ProjectsCollection.ActiveProjects)
             {
                 <li>
                     <ProjectItemComponent Project="project"></ProjectItemComponent>
@@ -36,49 +36,45 @@
 
 @code {
     [Inject]
-    public IDssJson Json { get; set; }
+    public IFileService FileService { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-        Dss.OnProjectRemoved += StateHasChanged;
-        Dss.OnProjectAdded += StateHasChanged;
-        Dss.OnSelectedProjectActiveHierChanged += (proj) => StateHasChanged();
+        await base.OnInitializedAsync();
+
+        ProjectsCollection.OnActiveProjectsChanged += StateHasChanged;
+        ProjectsCollection.OnSelectedProjectChanged += proj => StateHasChanged();
     }
 
     private async Task FileUpload(InputFileChangeEventArgs e)
     {
-        MemoryStream ms = new MemoryStream();
-        try
+        if(e.File == null)
         {
-            await e.File.OpenReadStream().CopyToAsync(ms);
-            var bytes = ms.ToArray();
-            var res = System.Text.Encoding.Default.GetString(bytes);
-            var projectTask = Json.FromJson<TemplateProject>(res);
-            Dss.AddProject(projectTask);
+            return;
         }
-        catch (Exception ex)
+        var projectTemplate = await FileService.TryReadFile<TemplateProject>(e.File);
+        if(Project != null)
         {
-            Console.WriteLine(ex.Message);
-        }
-        finally
-        {
-            ms.Close();
+            ProjectsCollection.AddProject(projectTemplate);
+            Logger.AddUIInfo(Project, $"Загружена задача \"{projectTemplate.Name}\" из файла", $"Имя файла: {e.File.Name}");
         }
     }
 
     private void CreateProblem()
     {
-        Dss.AddProject();
-        Dss.SelectProject(Dss.Projects.Last());
+        ProjectsCollection.AddProject();
+        ProjectsCollection.SelectProject(ProjectsCollection.ActiveProjects.Last());
+        Logger.AddUIInfo(Project, $"Создана новая задача", $"");
     }
 
     private void SaveProgress()
     {
-        Account.SaveState();
+        Account.SaveStateWithActiveProjects();
+        Logger.AddUIInfo(Project, $"Все активные задачи сохранены", $"");
     }
     private void LoadProgress()
     {
-        Account.LoadState();
+        Account.LoadLastState();
+        Logger.AddUIInfo(Project, $"Активные задачи восстановлены", $"");
     }
 }

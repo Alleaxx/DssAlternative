@@ -25,16 +25,18 @@ namespace DSSAlternative
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+            //Служебные
             builder.Services.AddScoped<ILogger, LoggerService>();
-            builder.Services.AddScoped<IDssJson, DssJson>();
+            builder.Services.AddScoped<IJsonService, JsonServiceDefault>();
+            builder.Services.AddScoped<IFileService, FileService>();
+            builder.Services.AddScoped<IClipboardService, ClipboardService>();
+            builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
 
-            builder.Services.AddScoped<IDssProjects, DssProjects>();
-            builder.Services.AddScoped<IDssTemplates, DssTemplates>();
+            //DSS-сервисы
+            builder.Services.AddScoped<IProjectsCollection, ProjectsCollection>();
             builder.Services.AddScoped<IRatingSystem, RatingSystem>();
-
-            builder.Services.AddScoped<IClipboard, Clipboard>();
             builder.Services.AddScoped<IAccount, Account>();
-            builder.Services.AddScoped<ILocalStorage, LocalStorage>();
 
             await builder.Build().RunAsync();
         }

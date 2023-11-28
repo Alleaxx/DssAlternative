@@ -1,7 +1,7 @@
 ﻿@inherits DSSComponent
 
 <div>
-    @if (Templates.Any())
+    @if (Account.TemplatesPresets.Any())
     {
         <section class="load-preset saved-session">
             <p class="load-note">
@@ -9,10 +9,10 @@
             </p>
             <ul class="presets">
                 <CascadingValue Value="this">
-                    @foreach (var template in Templates)
+                    @foreach (var template in Account.TemplatesPresets)
                     {
                         <li>
-                            <TemplateHierarchyItemComponent Template="template" OnClickAction="() => Dss.SetProject(template)"></TemplateHierarchyItemComponent>
+                            <TemplateHierarchyItemComponent Template="template" OnClickAction="() => ProjectsCollection.SetProject(template)"></TemplateHierarchyItemComponent>
                         </li>
                     }
                 </CascadingValue>
@@ -23,14 +23,14 @@
         <p class="load-note">
             Сохраненные шаблоны
         </p>
-        @if (Account.CurrentUser.Templates.Any())
+        @if (Account.TemplatesUserSaved.Any())
         {
             <ul class="presets">
                 <CascadingValue Value="this">
-                    @foreach (var template in Account.CurrentUser.Templates)
+                    @foreach (var template in Account.TemplatesUserSaved)
                     {
                         <li>
-                            <TemplateHierarchyItemComponent Template="template" OnClickAction="() => Dss.SetProject(template)"></TemplateHierarchyItemComponent>
+                            <TemplateHierarchyItemComponent Template="template" ShowDescription="false" OnClickAction="() => ProjectsCollection.SetProject(template)"></TemplateHierarchyItemComponent>
                         </li>
                     }
                 </CascadingValue>
@@ -43,39 +43,34 @@
             </span>
         }
     </section>
-    @if (Account.CurrentUser.State != null && Account.CurrentUser.State.OpenedTemplates.Any())
+    @if (ProjectsCollection.ActiveProjects.Any(p => p.IsActiveHierCreated))
     {
         <section class="saved-session">
             <p class="load-note">
                 Активные задачи
             </p>
-
-            @if (Account.CurrentUser.State != null)
-            {
                 <ul class="presets">
                     <CascadingValue Value="this">
-                        @foreach (var template in Account.CurrentUser.State.OpenedTemplates)
+                        @foreach (var project in ProjectsCollection.ActiveProjects.Where(p => p.IsActiveHierCreated))
                         {
                             <li>
-                                <TemplateHierarchyItemComponent Template="template" OnClickAction="()=> Dss.SetProject(template)"></TemplateHierarchyItemComponent>
+                                <TemplateHierarchyItemComponent Template="new TemplateProject(project)" ShowDescription="false" OnClickAction="()=> ProjectsCollection.SetProject(new TemplateProject(project))">
+
+                                </TemplateHierarchyItemComponent>
                             </li>
                         }
                     </CascadingValue>
                 </ul>
-            }
         </section>
     }
 </div>
 @code {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-        Dss.OnStateLoaded += StateHasChanged;
-        Account.OnTemplatesChanged += StateHasChanged;
-        TemplatesEditor.OnTemplatesLoaded += StateHasChanged;
-    }
+        await base.OnInitializedAsync();
 
-    [Inject]
-    public IDssTemplates TemplatesEditor { get; set; }
-    public IEnumerable<ITemplateProject> Templates => TemplatesEditor.Templates;
+        Account.OnLoadEnded += StateHasChanged;
+        ProjectsCollection.OnActiveProjectsChanged += StateHasChanged;
+        Account.OnUserTemplatesChanged += StateHasChanged;
+    }
 }

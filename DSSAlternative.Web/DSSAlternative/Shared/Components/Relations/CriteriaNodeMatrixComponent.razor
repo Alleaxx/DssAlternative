@@ -49,13 +49,14 @@
                                 }
                             </tr>
                         }
+                        <tr>
+                            <td class="cell-header-more-info" colspan="@(NodesCount() + 1)">
+                                <label for="moredetails">Подробные расчеты</label>
+                                <input id="moredetails" type="checkbox" @bind-value="@ShowDetails">
+                            </td>
+                        </tr>
                         @if (ShowDetails)
                         {
-                            <tr>
-                                <td class="cell-header-more-info" colspan="@(NodesCount() + 1)">
-                                    Расчеты
-                                </td>
-                            </tr>
                             <tr>
                                 <td class="cell-property-name">
                                     <span>nmax</span>
@@ -128,8 +129,7 @@
 
     private IMatrix Mtx => Criteria.Mtx;
 
-    [Parameter]
-    public bool ShowDetails { get; set; } = true;
+    private static bool ShowDetails { get; set; } = false;
     [Parameter]
     public IEnumerable<IRelationNode> AllowedRelations { get; set; }
 

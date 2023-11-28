@@ -19,15 +19,17 @@
     [Parameter]
     public EventCallback Removed { get; set; }
 
-    public string IsSelected => Project == Dss.Project ? "selected" : "";
+    public string IsSelected => Project == ProjectsCollection.SelectedProject ? "selected" : "";
 
     private void SelectProblem()
     {
-        Dss.SelectProject(Project);
+        ProjectsCollection.SelectProject(Project);
     }
     private void RemoveProblem()
     {
-        Dss.RemoveProject(Project);
+        string oldName = Project.Name;
+        ProjectsCollection.RemoveProject(Project);
         Removed.InvokeAsync();
+        Logger.AddInfo(Project, $"Задача \"{oldName}\" удалена", "", LogCategory.UI);
     }
 }

@@ -8,12 +8,13 @@ th {
 .center {
     align-items: center;
 }
-
+.status-panel {
+    border-top: 1px solid gainsboro;
+    border-bottom: 1px solid gainsboro;
+}
 .actions-panel {
     display: flex;
     flex-direction: row;
-    border-top: 1px solid gainsboro;
-    border-bottom: 1px solid gainsboro;
     padding: 2px 5px;
 }
 
@@ -36,6 +37,11 @@ th {
 }
 .action-button:active{
     background-color: gainsboro;
+}
+
+
+.button-less-margin {
+    margin: 0 4px;
 }
 
     .action-button img {

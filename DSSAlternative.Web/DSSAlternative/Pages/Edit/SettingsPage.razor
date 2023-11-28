@@ -72,66 +72,6 @@
                 </section>
             </ChildContent>
         </TabItem>
-        <TabItem>
-            <Title>
-                <h4 class="tab-header">Состояние</h4>
-            </Title>
-            <ChildContent>
-                <style>
-                    .account-control p {
-                        font-size: 0.9em;
-                    }
-                </style>
-                <section class="account-control">
-                    <p hidden>
-                        <button class="action-button" @onclick="() => Account.RemoveState()">
-                            Сбросить всё
-                        </button>
-                    </p>
-                    <section>
-                        <h3>Активные задачи, прогресс</h3>
-                        @if (DssState != null)
-                        {
-                            <p>
-                                @User.State
-                            </p>
-                            @foreach (var template in DssState.OpenedTemplates)
-                            {
-                                <TemplateHierarchyItemComponent Template="template" OnClickAction="() => Dss.AddProject(template)">
-
-                                </TemplateHierarchyItemComponent>
-                            }
-                            <div class="row">
-                                <button class="action-button" @onclick="() => Account.LoadState()">
-                                    Загрузить
-                                </button>
-                                <button class="action-button" @onclick="() => Account.SaveState()">
-                                    Заменить текущим состоянием
-                                </button>
-                                <button class="action-button" @onclick="() => Account.RemoveState()">
-                                    Сбросить
-                                </button>
-                            </div>
-                        }
-                    </section>
-                    <section>
-                        <h3>Свои шаблоны</h3>
-                        @foreach (var template in OwnTemplates)
-                        {
-                            <div>
-                                <TemplateHierarchyItemComponent Template="template" OnClickAction="() => Dss.AddProject(template)">
-
-                                </TemplateHierarchyItemComponent>
-                            </div>
-                        }
-                        @if (!OwnTemplates.Any())
-                        {
-                            <p>Нет сохраненных шаблонов</p>
-                        }
-                    </section>
-                </section>
-            </ChildContent>
-        </TabItem>
     </Tab>
 
 
@@ -139,14 +79,5 @@
 
 @code{
 
-    public User User => Account.CurrentUser;
-    public DssState DssState => User.State;
-    public IEnumerable<ITemplateProject> OwnTemplates => User.Templates;
-
-
-    private void AddTemplate(ITemplateProject template)
-    {
-
-    }
 }
 

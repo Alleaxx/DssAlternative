@@ -1,5 +1,4 @@
-﻿@inject IJSRuntime JSRuntime
-@inherits DSSComponentProject
+﻿@inherits DSSComponentProject
 
 <style>
     .navside ul a {
@@ -91,14 +90,15 @@
     @if (!Project.IsEmptyProject)
     {
         <h2 class="text-center">Текущая задача: @Project.Name</h2>
-        <div class="actions-panel">
+        <div class="status-panel">
+            <div class="actions-panel">
                 @if (Project.IsActiveHierCreated)
-            {
+                {
                     <button class="action-button save-as" @onclick="SaveJsonAsFile">
                         <img src="Images/save.svg" />
                         <span>Сохранить файл</span>
                     </button>
-                    <button class="action-button save-as" @onclick="() => Account.SetTemplate(Project)">
+                    <button class="action-button save-as" @onclick="SaveAsTemplate">
                         <img src="Images/save.svg" />
                         <span>Сохранить как шаблон</span>
                     </button>
@@ -106,16 +106,14 @@
                         <img src="Images/clipboard.svg" />
                         <span>Скопировать задачу</span>
                     </button>
-                    <button class="action-button copy" @onclick="ClearAllRelations">
-                        <img src="Images/share-2.svg" />
-                        <span>Сбросить все отношения</span>
-                    </button>
                 }
                 <button class="action-button copy" @onclick="RemoveProblem">
                     <img src="Images/alert-octagon.svg" />
                     <span>Удалить задачу</span>
                 </button>
             </div>
+            <StatusLogComponent></StatusLogComponent>
+        </div>
         <section class="stage-menu">
             <ul>
                 <li>
@@ -124,18 +122,21 @@
                         <span class="stage-element-name">@(Project.IsActiveHierCreated ? "Иерархия" : "Формирование иерархии") @(Project.UnsavedChanged ? "*" : "") </span>
                     </NavLink>
                 </li>
-                <li>
-                    <NavLink class="stage-menu-element" href="@LinksEnum.LinkRelations">
-                        <img class="stage-element-image" src="Images/share-2.svg" />
-                        <span class="stage-element-name">@(Relations.Correct ? "" : !Relations.Known ? "" : "") Отношения и связи</span>
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink class="stage-menu-element" href="@LinksEnum.LinkResults">
-                        <img class="stage-element-image" src="Images/list.svg" />
-                        <span class="stage-element-name">Результаты</span>
-                    </NavLink>
-                </li>
+                @if (Project.IsActiveHierCreated)
+                {
+                    <li>
+                        <NavLink class="stage-menu-element" href="@LinksEnum.LinkRelations">
+                            <img class="stage-element-image" src="Images/share-2.svg" />
+                            <span class="stage-element-name">@(Relations.Correct ? "" : !Relations.Known ? "" : "") Отношения и связи</span>
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink class="stage-menu-element" href="@LinksEnum.LinkResults">
+                            <img class="stage-element-image" src="Images/list.svg" />
+                            <span class="stage-element-name">Результаты</span>
+                        </NavLink>
+                    </li>
+                }
             </ul>
         </section>
     }
@@ -147,54 +148,43 @@
 
 @code {
     [Inject]
-    public Services.IClipboard Clipboard { get; set; }
-
+    public IJsonService Json { get; set; }
     [Inject]
-    public IDssJson Json { get; set; }
+    public IFileService FileService { get; set; }
 
-
-    private void SetRelFromNode(INode node)
+    protected override async Task OnInitializedAsync()
     {
-        SelectRelation(Relations[node].FirstNodeCompareRequired());
+        await base.OnInitializedAsync();
+        ProjectsCollection.OnSelectedProjectChanged += (proj) => StateHasChanged();
     }
 
-    private string LeftMarginNode(INode node)
-    {
-        return $"margin-left:{node.Level * 2}em";
-    }
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        //Project.OnActiveHierChanged += (test) => StateHasChanged();
-        Dss.OnSelectedProjectActiveHierChanged += (proj) => StateHasChanged();
-    }
 
     private async Task SaveJsonAsFile()
     {
         string fileName = $"{Project.Name}.json";
-        string text = Json.ToJson(Project);
-        await JsHelper.SaveAs(JSRuntime, fileName, text);
+        string text = Json.ConvertToJson(Project);
+        await FileService.SaveFile(fileName, text);
+        Logger.AddInfo(Project, $"Файл \"{fileName}\" сохранен", "А вот успешно или нет - этого мы не знаем", LogCategory.UI);
     }
 
-    private async Task CopyJson()
+    private void SaveAsTemplate()
     {
-        string text = Json.ToJson(Project);
-        await Clipboard.WriteTextAsync(text);
+        Account.AddUserTemplate(Project);
+        Logger.AddInfo(Project, $"Задача \"{Project.Name}\" сохранена в шаблон", "", LogCategory.UI);
     }
-
-
 
     private void RemoveProblem()
     {
-        Dss.RemoveProject(Project);
+        string oldName = Project.Name;
+        ProjectsCollection.RemoveProject(Project);
+        Logger.AddInfo(Project, $"Задача \"{oldName}\" удалена", "", LogCategory.UI);
     }
     private void CopyProblem()
     {
         ITemplateProject template = new TemplateProject(Project);
-        Dss.AddProject(template);
+        ProjectsCollection.AddProject(template);
 
-        var lastAdded = Dss.Projects.Last();
+        var lastAdded = ProjectsCollection.ActiveProjects.Last();
         if(lastAdded != null && lastAdded.HierarchyActive.MainGoal != null)
         {
             var mainGoal = lastAdded.HierarchyActive.MainGoal;
@@ -202,13 +192,7 @@
             mainGoal = lastAdded.HierarchyEditing.MainGoal;
             mainGoal.Name = $"{mainGoal.Name} (копия)";
         }
-    }
-    private void ClearAllRelations()
-    {
-        foreach (var criteria in Project.Relations.GetActiveNodeCriterias())
-        {
-            criteria.SetUnknown();
-        }
+        Logger.AddInfo(Project, $"Задача \"{Project.Name}\" скопирована", "", LogCategory.UI);
     }
 }
 

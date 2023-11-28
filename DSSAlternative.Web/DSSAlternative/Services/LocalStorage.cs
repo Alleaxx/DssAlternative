@@ -6,18 +6,40 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.Web.Services
 {
-    public interface ILocalStorage
+    /// <summary>
+    /// Интерфейс сервиса, работающего с LocalStorage браузера
+    /// </summary>
+    public interface ILocalStorageService
     {
+        /// <summary>
+        /// Получить значение из хранилища по ключу
+        /// </summary>
         ValueTask<string> GetValueAsync(string key);
+
+        /// <summary>
+        /// Установить значение из хранилища по ключу
+        /// </summary>
         ValueTask SetPropAsync(string key, object item);
+
+        /// <summary>
+        /// Удалить значение из хранилища по ключу
+        /// </summary>
         ValueTask RemovePropAsync(string key);
+
+        /// <summary>
+        /// Очистить всё хранилище
+        /// </summary>
         ValueTask ClearAll();
     }
-    public class LocalStorage : ILocalStorage
+    
+    /// <summary>
+    /// Cервиса, работающий с LocalStorage браузера
+    /// </summary>
+    public class LocalStorageService : ILocalStorageService
     {
         private readonly IJSRuntime jSRuntime;
 
-        public LocalStorage(IJSRuntime runtime)
+        public LocalStorageService(IJSRuntime runtime)
         {
             jSRuntime = runtime;
         }

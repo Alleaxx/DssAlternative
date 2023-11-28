@@ -85,6 +85,11 @@ namespace DSSAlternative.AHP.HierarchyInfo
         /// Установить отношения, в которых участвует данный узел
         /// </summary>
         void SetRelations(IRelationsCriteria relations);
+
+        /// <summary>
+        /// Скопировать незначимые поля с другого узла
+        /// </summary>
+        void CopyMinorFieldsFrom(INode node);
     }
 
     /// <summary>
@@ -237,7 +242,12 @@ namespace DSSAlternative.AHP.HierarchyInfo
             return MemberwiseClone() as Node;
         }
 
-
+        public void CopyMinorFieldsFrom(INode node)
+        {
+            this.name = node.Name;
+            this.description = node.Description;
+            this.imgPath= node.ImgPath;
+        }
 
         public string GetHashFromFields(bool includeStructuralFields = true)
         {

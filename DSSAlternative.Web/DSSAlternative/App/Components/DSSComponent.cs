@@ -17,16 +17,12 @@ namespace DSSAlternative.Web.AppComponents
     {
         [Inject]
         public ILogger Logger { get; set; }
-
         [Inject]
-        public IDssProjects Dss { get; set; }
+        public IProjectsCollection ProjectsCollection { get; set; }
         [Inject]
         public IAccount Account { get; set; }
         [Inject]
         public IRatingSystem RatingSystem { get; set; }
-
-        public IEnumerable<IProject> ProjectsOpened => Dss.Projects;
-        public IRatingRules RatingRules { get; private set; } = RatingCssSystem.DefaultSystem;
 
         protected static string FormatNumber(double? num)
         {
@@ -43,6 +39,16 @@ namespace DSSAlternative.Web.AppComponents
                 return "∞";
             }
             return num.Value.ToString("0.00");
+        }
+
+
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+            if (!Account.IsLoaded.HasValue)
+            {
+                await Account.LoadAll();
+            }
         }
     }
 }

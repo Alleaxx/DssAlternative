@@ -25,5 +25,9 @@ namespace DSSAlternative.AHP.Logs
             logger.Add(sourceObject, title, LogState.Info, message, cate);
         }
 
+        public static void AddUIInfo(this ILogger logger, object sourceObject, string title, string message = null)
+        {
+            logger.Add(sourceObject, title, LogState.Info, message, LogCategory.UI);
+        }
     }
 }

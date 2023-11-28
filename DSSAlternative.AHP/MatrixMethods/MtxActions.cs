@@ -75,5 +75,20 @@ namespace DSSAlternative.AHP.MatrixMethods
             return results;
         }
 
+        public static double[][] ConvertToArray(this double[,] matrix)
+        {
+            List<double[]> cols = new List<double[]>();
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                List<double> row = new List<double>();
+                for (int a = 0; a < matrix.GetLength(1); a++)
+                {
+                    row.Add(matrix[i, a]);
+                }
+                cols.Add(row.ToArray());
+            }
+            return cols.ToArray();
+        }
+
     } 
 }

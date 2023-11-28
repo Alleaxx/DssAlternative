@@ -15,5 +15,9 @@ namespace DSSAlternative.AHP.Logs
         Templates,
         Misc,
         Components,
+        UI,
+        JSON,
+        Files,
+        Account,
     }
 }

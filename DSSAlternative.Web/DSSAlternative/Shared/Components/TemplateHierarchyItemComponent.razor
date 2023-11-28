@@ -4,14 +4,17 @@
     <div class="preset-info">
         <div class="row" style="justify-content: space-between">
             <h4 class="preset-name">@Template.Name</h4>
-            @if (Account.CurrentUser.Templates.Contains(Template))
+            @if (Account.TemplatesUserSaved.Contains(Template))
             {
-                <button class="remove-task" @onclick="() => Account.RemoveTemplate(Template)" title="удалить этот шаблон">
+                <button class="remove-task" @onclick="() => RemoveTemplate()" title="удалить этот шаблон">
                     X
                 </button>
             }
         </div>
-        <p class="preset-descr">@Template.Description</p>
+        @if (ShowDescription || true)
+        {
+            <p class="preset-descr">@Template.Description</p>
+        }
     </div>
 </section>
 
@@ -21,4 +24,14 @@
 
     [Parameter]
     public Action OnClickAction { get; set; }
+
+    [Parameter]
+    public bool ShowDescription { get; set; } = true;
+
+
+    private void RemoveTemplate()
+    {
+        Account.RemoveUserTemplate(Template);
+        Logger.AddUIInfo(Template, $"Шаблон \"{Template.Name}\" удален", $"");
+    }
 }

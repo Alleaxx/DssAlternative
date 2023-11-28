@@ -21,9 +21,9 @@
 
                             <SeparatorComponent MarginTop="12" MarginBottom="12" BorderColor="gainsboro" BorderThickness="0"></SeparatorComponent>
 
-                            <ProgressBarComponent ValueInfo="Relations.CountFilled()" TextPercentage="Заполненность:" ColorFill="@Relations.CssColor()"></ProgressBarComponent>
+                            <ProgressBarComponent ValueInfo="Relations.CountFilled()" TextPercentage="Заполненность отношений:" ColorFill="@Relations.CssColor()"></ProgressBarComponent>
 
-                            <RelationsNavigationComponent></RelationsNavigationComponent>
+                            @*<RelationsNavigationComponent></RelationsNavigationComponent>*@
                         </section>
                     </div>
                 </ChildContent>
@@ -39,9 +39,9 @@
                         </section>
                         <section class="relation-area">
 
-                            <RelationsNavigationComponent></RelationsNavigationComponent>
+                            @*<RelationsNavigationComponent></RelationsNavigationComponent>*@
 
-                            <ProgressBarComponent ValueInfo="Relations.CountFilled()" TextPercentage="Заполненность:" ColorFill="@Relations.CssColor()"></ProgressBarComponent>
+                            <ProgressBarComponent ValueInfo="Relations.CountFilled()" TextPercentage="Заполненность отношений:" ColorFill="@Relations.CssColor()"></ProgressBarComponent>
 
                             <CriteriaNodeMatrixComponent />
 
@@ -55,11 +55,9 @@
 
 
 @code {
-
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-        Dss.OnSelectedProjectChanged += project => StateHasChanged();
-        Dss.OnSelectedProjectActiveHierChanged += (hier) => StateHasChanged();
+        await base.OnInitializedAsync();
+        ProjectsCollection.OnSelectedProjectChanged += project => StateHasChanged();
     }
 }

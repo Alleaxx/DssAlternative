@@ -20,6 +20,11 @@ namespace DSSAlternative.AHP.HierarchyInfo
         /// Получить отчет о разнице с указанной иерархией
         /// </summary>
         ComparisonHierarchy GetState(IHierarchy editCurrent);
+
+        /// <summary>
+        /// Карта соответствия узлов иерархий
+        /// </summary>
+        Dictionary<INode, INode> ConfirmMap { get; }
     }
 
 
@@ -28,7 +33,7 @@ namespace DSSAlternative.AHP.HierarchyInfo
     /// </summary>
     public class NodeMap : INodeMap
     {
-        private Dictionary<INode, INode> ConfirmMap { get; init; }
+        public Dictionary<INode, INode> ConfirmMap { get; init; }
 
 
         public NodeMap(IProject project) : this(project.HierarchyEditing, project.HierarchyActive)

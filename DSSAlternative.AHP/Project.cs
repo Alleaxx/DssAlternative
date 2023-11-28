@@ -196,7 +196,15 @@ namespace DSSAlternative.AHP
 
         public void SetActiveHierarchyAsEditing()
         {
-            SetActiveHierarchy(HierarchyEditing.CreateCopy());
+            var state = NodeMap.GetState(HierarchyEditing);
+            if (state.State == CompareHierState.MinorFieldsChanges)
+            {
+                UpdateActiveHierarchy();
+            }
+            else if (state.State == CompareHierState.StructureFieldsChanges || state.State == CompareHierState.CollectionChanges)
+            {
+                SetActiveHierarchy(HierarchyEditing.CreateCopy());
+            }
         }
         private void SetActiveHierarchy(IHierarchy hierarchy)
         {
@@ -225,6 +233,17 @@ namespace DSSAlternative.AHP
                 OnRelationChanged?.Invoke(obj);
             }
         }
+        private void UpdateActiveHierarchy()
+        {
+            foreach (var pair in NodeMap.ConfirmMap)
+            {
+                var editNode = pair.Key;
+                var activeNode = pair.Value;
+
+                activeNode.CopyMinorFieldsFrom(editNode);
+            }
+            OnActiveHierChanged?.Invoke(HierarchyActive);
+        }
 
         public void SetEditingHierarchyAsActive()
         {
@@ -247,6 +266,7 @@ namespace DSSAlternative.AHP
             {
                 NodeMap = new NodeMap(HierarchyEditing, HierarchyActive);
             }
+            SelectNode(HierarchyEditing.MainGoal);
         }
 
         private void Hierarchy_OnNodesListUpdated(IHierarchy obj)

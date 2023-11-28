@@ -6,16 +6,31 @@ using Microsoft.JSInterop;
 
 namespace DSSAlternative.Web.Services
 {
-    public interface IClipboard
+    /// <summary>
+    /// Интерфейс сервиса по работе с буфером обмена
+    /// </summary>
+    public interface IClipboardService
     {
+        /// <summary>
+        /// Прочитать текст из буфера обмена
+        /// </summary>
+        /// <returns></returns>
         ValueTask<string> ReadTextAsync();
+
+        /// <summary>
+        /// Записать текст в буфер обмена
+        /// </summary>
         ValueTask WriteTextAsync(string text);
     }
-    public class Clipboard : IClipboard
+
+    /// <summary>
+    /// JS-сервис по работе с буфером обмена
+    /// </summary>
+    public class ClipboardService : IClipboardService
     {
         private readonly IJSRuntime jSRuntime;
 
-        public Clipboard(IJSRuntime runtime)
+        public ClipboardService(IJSRuntime runtime)
         {
             jSRuntime = runtime;
         }

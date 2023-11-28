@@ -1,4 +1,5 @@
 ﻿using DSSAlternative.AHP.HierarchyInfo;
+using DSSAlternative.AHP.MatrixMethods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -115,6 +116,16 @@ namespace DSSAlternative.AHP.Relations
         public static bool WithLastUnknownRelation(this IRelationsCriteria criteria)
         {
             return criteria.NodeComparesMini.Count(n => n.Unknown) == 1;
+        }
+
+        /// <summary>
+        /// Получить матрицу с заполненным отношением сравнения
+        /// </summary>
+        public static IMatrix GetMatrixForRating(this IRelationNode relationNode, double value)
+        {
+            IMatrix source = relationNode.CriteriaContext.Mtx;
+            source.Change(relationNode.From, relationNode.To, value);
+            return source;
         }
 
         #endregion

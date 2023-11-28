@@ -3,42 +3,18 @@
 @layout EditorLayout
 
 <section>
-    <CascadingValue Name="Project" Value="@Dss.Project">
+    <CascadingValue Name="Project" Value="@ProjectsCollection.SelectedProject">
         <div class="sheme basic-border">
-
-                @if (Dss.Project.IsActiveHierCreated)
-                {
-                    <HierarchyEditOverallComponent></HierarchyEditOverallComponent>
-                }
-                else
-                {
-                    <Tab>
-                        <TabItem>
-                            <Title><h4 class="tab-header">Создать с нуля</h4></Title>
-                            <ChildContent>
-                                <HierarchyEditOverallComponent></HierarchyEditOverallComponent>
-                            </ChildContent>
-                        </TabItem>
-                        <TabItem>
-                            <Title><h4 class="tab-header">Загрузить по шаблону</h4></Title>
-                            <ChildContent>
-                                <HierarchyEditTemplatesComponent></HierarchyEditTemplatesComponent>
-                            </ChildContent>
-                        </TabItem>
-                    </Tab>
-                }
+            <HierarchyEditOverallComponent></HierarchyEditOverallComponent>
         </div>
     </CascadingValue>
 </section>
 
 
 @code {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-        Dss.OnStateLoaded += StateHasChanged;
-        Dss.OnSelectedProjectChanged += project => StateHasChanged();
-        Dss.OnSelectedProjectActiveHierChanged += (hier) => StateHasChanged();
-        Dss.OnSelectedProjectEditingHierChanged += (hier) => StateHasChanged();
+        await base.OnInitializedAsync();
+        ProjectsCollection.OnSelectedProjectChanged += project => StateHasChanged();
     }
 }

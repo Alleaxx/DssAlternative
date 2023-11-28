@@ -6,6 +6,7 @@
 
 .criteria {
     display: flex;
+    align-items: center;
     margin: 2px;
     padding: 3px;
     border: 2px solid gainsboro;
@@ -16,7 +17,8 @@
 }
 
     .criteria.unknown {
-        border-color: orange;
+        /*border-color: orange;*/
+        border-color: #cccc10;
     }
 
     .criteria.dangerous {
@@ -29,7 +31,8 @@
     }
 
         .criteria.selected-now.unknown {
-            border-color: orange;
+            /*border-color: orange;*/
+            /*border-color: #cccc10;*/
         }
 
         .criteria.selected-now.dangerous {

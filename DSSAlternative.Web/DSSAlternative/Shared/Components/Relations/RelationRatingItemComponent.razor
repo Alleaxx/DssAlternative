@@ -1,7 +1,7 @@
 ﻿@inherits DSSComponentRelationV2
 @if (AsCell)
 {
-    <td colspan="@ColSpan" title="@Rating.Value" class="@CssClassSelection() @CssClassWarnings()" @onclick="ApplyRating">
+    <td colspan="@ColSpan" title="@TooltipText()" class="@CssClassSelection() @CssClassWarnings()" @onclick="ApplyRating">
         <div class="rating">
             <span>
                 @if (IsSelected)
@@ -31,12 +31,6 @@ else
 }
 
 @code {
-    //Матрица расчитывается на уровне узла и передается сюда
-    [CascadingParameter]
-    public Dictionary<IRating, IMatrix> RatingMatrix { get; set; }
-
-    [Parameter]
-    public INode Node { get; set; }
     [Parameter]
     public int ColSpan { get; set; }
     [Parameter]
@@ -50,6 +44,13 @@ else
     private void ApplyRating()
     {
         Relation.SetRating(Rating);
+    }
+
+    private IMatrix ThisRatingMatrix()
+    {
+        var val = Rating.Node == Relation.From ? Rating.Value : 1 / Rating.Value;
+        var mtx = Relation.GetMatrixForRating(val);
+        return Relation.GetMatrixForRating(val);
     }
 
     private IRatingRules Rules { get; set; }
@@ -91,11 +92,11 @@ else
             return "undefined";
         }
 
-        if((isAllKnown || isLastUnknownNode) && RatingMatrix.ContainsKey(Rating) && RatingMatrix[Rating].IsCorrect)
+        if((isAllKnown || isLastUnknownNode) && ThisRatingMatrix().IsCorrect)
         {
             return "safe";
         }
-        if ((isAllKnown || isLastUnknownNode) && RatingMatrix.ContainsKey(Rating) && !RatingMatrix[Rating].IsCorrect)
+        if ((isAllKnown || isLastUnknownNode) && !ThisRatingMatrix().IsCorrect)
         {
             return "dangerous";
         }
@@ -127,9 +128,9 @@ else
         }
 
 
-        if ((isAllKnown || isLastUnknownNode) && RatingMatrix.ContainsKey(Rating))
+        if ((isAllKnown || isLastUnknownNode))
         {
-            var cr = RatingMatrix[Rating].Cr;
+            var cr = ThisRatingMatrix().Cr;
 
             if (double.IsInfinity(cr) || double.IsNaN(cr))
             {
@@ -141,5 +142,20 @@ else
             }
         }
         return "???";
+    }
+    private string TooltipText()
+    {
+        bool isUnknownRating = Rating.Value == 0;
+
+        if (isUnknownRating)
+        {
+            return "Сбросить сравнение этих элементов";
+        }
+        else
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append($"Выставить приоритет {Rating.Value} для \"{Rating?.Node?.Name}\"");
+            return sb.ToString();
+        }
     }
 }
