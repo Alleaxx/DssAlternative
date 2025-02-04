@@ -1,0 +1,45 @@
+﻿
+.preset {
+    padding: 4px;
+    border: 1px solid gainsboro;
+    border-radius: 4px;
+
+    cursor: pointer;
+    display: flex;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+.preset:hover{
+    background-color: whitesmoke;
+}
+.preset:active{
+    border: 1px solid green;
+    background-color: ghostwhite;
+}
+
+.preset-img {
+    width: 24px;
+    margin: 4px 6px;
+    max-height: 20px;
+    opacity: 0.6;
+}
+
+.preset-info{
+    flex: 5;
+}
+.preset-name {
+    font-size: 0.9em;
+    margin: 0;
+    font-weight: normal;
+}
+.preset-header {
+    display: flex;
+    justify-content: space-between;
+}
+.preset-descr {
+    font-size: 0.8em;
+    margin: 4px 0;
+    color: gray;
+}
+    .remove-task{
+        margin: 0;
+    }

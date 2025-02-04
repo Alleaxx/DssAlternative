@@ -1,30 +1,13 @@
 ﻿@inherits LayoutComponentBase
 
-<style>
-    .grid {
-        display: grid;
-        grid-template-columns: 5fr 20fr 70fr 5fr;
-        grid-template-rows: auto 1fr auto;
-        grid-template-areas:
-            "logo logo header header"
-            ". content content ."
-            "footer footer footer footer";
-    }
-
-    main {
-        grid-area: content;
-        min-width: 640px;
-        max-width: 1000px;
-        margin: auto;
-        border-right: 1px solid gainsboro;
-        border-left: 1px solid gainsboro;
-        padding: 0px 10px;
-    }
-</style>
+@*
+    Макет для информационной части сайта
+*@
 
 <section class="grid">
     <Logo />
-    <MainHeader />
+
+    <NavMenuMain />
 
     <main>
         @Body

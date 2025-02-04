@@ -1,0 +1,83 @@
+﻿@inherits DSSComponentProjectV2
+
+@*
+    Компонент списка критериев и отношений для них для навигации при заполнении
+*@
+
+<div class="criterias-list">
+    @foreach (var criteriaGroup in Relations.GetActiveNodeCriterias().GroupBy(r => r.NodeMain.Group))
+    {
+        <div class="category-header">
+            <span class="category-header-level">Ур. @criteriaGroup.First().NodeMain.Level - </span>
+            <span>
+                @criteriaGroup.Key
+            </span>
+        </div>
+        @foreach (var criteria in criteriaGroup)
+        {
+            <a class="criteria @criteria.CssSelected(RelationSelected) @criteria.CssColorClass()" role="button" @onclick="() => SelectRelation(criteria.FirstNodeCompareRequired())" title="@criteria.Symbol().tooltip">
+                <span class="criteria-char">
+                    @criteria.Symbol().symbol
+                </span>
+                <div class="criteria-right">
+                    <div class="criteria-info">
+                        <span class="criteria-name">
+                            @criteria.NodeMain.Name
+                        </span>
+                    </div>
+                </div>
+                <span class="criteria-count">
+                    @criteria.CountFilled().Filtered / @criteria.CountFilled().Total
+                </span>
+                <div class="progress-info">
+                    <ProgressBarComponent ValueInfo="criteria.CountFilled()" ColorBorder="transparent" Height="2" ColorFill="@criteria.CssColor()">
+
+                    </ProgressBarComponent>
+                </div>
+            </a>
+
+
+            if (criteria.NodeCompares.Contains(RelationSelected) && ShowNodeCompares)
+            {
+                <div class="local-relations">
+                    <CriteriaNodeRelationsList RelationsCriteria="criteria" Context="rel" ShowState="false" ShowHeader="false">
+                        <RelationView>
+                            <div class="relation-item">
+                                <span class="criteria-char">
+                                    @rel.Symbol().symbol
+                                </span>
+                                <span class="relation-titles">
+                                    <span class="relation-left">
+                                        @rel.From.Name
+                                    </span>
+                                    <span class="relation-right">
+                                        @rel.To.Name
+                                    </span>
+                                </span>
+                            </div>
+                        </RelationView>
+                    </CriteriaNodeRelationsList>
+                </div>
+            }
+        }
+
+    }
+</div>
+
+@code {
+    [Parameter]
+    public bool ShowNodeCompares { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Project.OnSelectedRelationChanged += StateHasChanged;
+    }
+    public override async ValueTask DisposeAsync()
+    {
+        await base.DisposeAsync();
+
+        Project.OnSelectedRelationChanged -= StateHasChanged;
+    }
+}

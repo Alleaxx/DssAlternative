@@ -20,6 +20,7 @@ namespace DSSAlternative.AHP.Relations
         {
             return context.RelationsCriteria.SelectMany(c => c.NodeCompares);
         }
+
         /// <summary>
         /// Получить минимально возможный список конкретных сравнений узлов в отношениях, необходимых для заполнения
         /// </summary>
@@ -40,6 +41,7 @@ namespace DSSAlternative.AHP.Relations
 
             return nodes;
         }
+
         /// <summary>
         /// Получить список узлов-критериев, по которым отношения неизвестны
         /// </summary>
@@ -47,6 +49,7 @@ namespace DSSAlternative.AHP.Relations
         {
             return context.RelationsCriteria.Where(c => !c.Known);
         }
+
         /// <summary>
         /// Получить список узлов-критериев, по которым отношения несогласованы
         /// </summary>

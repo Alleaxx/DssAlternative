@@ -1,0 +1,20 @@
+﻿.tabset {
+}
+
+.tab-items {
+    display: flex;
+    align-items: flex-end;
+    list-style: none;
+
+    background-color: whitesmoke;
+
+    margin: 0;
+    padding-left: 0;
+
+    border-top: 1px solid gainsboro;
+    border-bottom: 1px solid gainsboro;
+}
+
+.tab-content {
+
+}

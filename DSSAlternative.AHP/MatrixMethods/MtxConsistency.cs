@@ -6,9 +6,32 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP.MatrixMethods
 {
-    //Согласованность
+    /// <summary>
+    /// Проверка матрицы на согласованность
+    /// </summary>
     public static class MtxConsistency
     {
+        public static double BorderDefault { get; set; } = 0.2;
+        private static Dictionary<int, double> RISize { get; set; } = new Dictionary<int, double>
+        {
+            [1] = 0,
+            [2] = 0,
+            [3] = 0.58,
+            [4] = 0.9,
+            [5] = 1.12,
+            [6] = 1.24,
+            [7] = 1.32,
+            [8] = 1.41,
+            [9] = 1.45,
+            [10] = 1.49,
+            [11] = 1.51,
+            [12] = 1.48,
+            [13] = 1.56,
+            [14] = 1.57,
+            [15] = 1.59,
+        };
+
+
         public static double Nmax(this double[,] mtx)
         {
             return mtx.Multiply(mtx.MultiChecker()).Sum();
@@ -31,27 +54,39 @@ namespace DSSAlternative.AHP.MatrixMethods
 
             return MtxActions.Normalise(rowSum, sumAll);
         }
-        //Индекс согласованности
+
+        /// <summary>
+        /// Индекс согласованности
+        /// </summary>
         public static double CI(this double[,] mtx)
         {
             return (mtx.Nmax() - mtx.Rows()) / (mtx.Rows() - 1);
         }
 
-        //Случайный индекс согласованности
+        /// <summary>
+        /// Случайный индекс согласованности
+        /// </summary>
         public static double RI(this double[,] mtx)
         {
             int size = mtx.Rows();
             return RISize.ContainsKey(size) ? RISize[size] : (1.98 * (size - 2)) / mtx.Rows();
         }
 
-        //Отношение согласованности
+        /// <summary>
+        /// Отношение согласованности
         public static double Cr(this double[,] mtx) => mtx.CI() / mtx.RI();
 
-
+        /// <summary>
+        /// Проверка на согласованность матрицы
+        /// </summary>
         public static bool IsCorrect(this double[,] mtx)
         {
             return mtx.IsCorrect(BorderDefault);
         }
+
+        /// <summary>
+        /// Проверка на согласованность матрицы с указанным мин. значением согласованности
+        /// </summary>
         public static bool IsCorrect(this double[,] mtx, double border)
         {
             int Size = mtx.Rows();
@@ -61,26 +96,5 @@ namespace DSSAlternative.AHP.MatrixMethods
 
             return little || unknown || consistent;
         }
-
-        public static double BorderDefault { get; set; } = 0.2;
-
-        private static Dictionary<int, double> RISize { get; set; } = new Dictionary<int, double>
-        {
-            [1] = 0,
-            [2] = 0,
-            [3] = 0.58,
-            [4] = 0.9,
-            [5] = 1.12,
-            [6] = 1.24,
-            [7] = 1.32,
-            [8] = 1.41,
-            [9] = 1.45,
-            [10] = 1.49,
-            [11] = 1.51,
-            [12] = 1.48,
-            [13] = 1.56,
-            [14] = 1.57,
-            [15] = 1.59,
-        };
     }
 }

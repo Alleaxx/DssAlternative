@@ -21,7 +21,10 @@ namespace DSSAlternative.AHP.Ratings
         public INode Node { get; set; }
         public double Value { get; private set; }
 
-        public Rating(double val) : this(null, val) { }
+        public Rating(double val) : this(null, val)
+        {
+
+        }
         public Rating(INode node, double val)
         {
             Node = node;

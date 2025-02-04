@@ -1,0 +1,117 @@
+﻿
+.node-name {
+    flex: 22;
+}
+
+.node-rating {
+    flex: 8;
+}
+
+.node-best {
+    font-weight: 600;
+}
+
+.node-progress {
+    flex: 70;
+    height: 6px;
+    position: relative;
+    background-color: rgb(230,230,230);
+}
+
+.progress-filler {
+    height: 100%;
+    position: absolute;
+    background-color: #67e37d;
+}
+
+.res {
+    display: flex;
+    height: 100%;
+}
+.sheme {
+    flex: 3;
+}
+
+.res-info {
+    flex: 7;
+    padding-right: 20px;
+    border-left: 1px solid gainsboro;
+    font-size: 0.9em;
+    padding-left: 15px;
+}
+
+
+.results {
+    list-style: none;
+    flex-flow: row;
+}
+.results-list{
+    padding-bottom: 5px;
+    border-bottom: 1px solid gainsboro;
+    margin-bottom: 5px;
+}
+    .results li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+        .results li:before {
+            content: "-";
+            position: relative;
+            left: -5px;
+        }
+
+    .results span {
+        margin: 0 5px 5px 0;
+    }
+
+
+
+.relations-state {
+    display: flex;
+}
+
+.sheme-nav {
+    flex: 3;
+}
+
+.sheme-info {
+    flex: 7;
+    padding-right: 20px;
+    border-left: 1px solid gainsboro;
+    padding-left: 15px;
+}
+
+.info-details {
+    margin: 0 1em;
+}
+
+.sheme-info ul {
+    list-style-type: circle;
+}
+
+
+.msg-text {
+    margin-bottom: 10px;
+}
+
+.errors, .warnings, .no-errors {
+    font-size: 1.15em;
+}
+.no-errors {
+    color: green;
+}
+.errors {
+    color: red;
+}
+.warnings {
+    color: darkgoldenrod;
+}
+
+.sheme-info a {
+    text-decoration: none;
+    color: royalblue;
+}
+    .sheme-info a:hover {
+        color: blue;
+    }

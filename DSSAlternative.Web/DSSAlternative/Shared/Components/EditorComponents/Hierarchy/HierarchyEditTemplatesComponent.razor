@@ -1,0 +1,93 @@
+﻿@inherits DSSComponent
+@implements IAsyncDisposable
+@*
+    Компонент списков доступных шаблонов для оформления задачи
+*@
+
+<div class="templates-section">
+
+    @if (Account.TemplatesPresets.Any())
+    {
+        <section class="templates-group">
+            <h4 class="load-title">
+                Стандартные задачи
+            </h4>
+
+            <ul class="presets">
+                <CascadingValue Value="this">
+                    @foreach (var template in Account.TemplatesPresets)
+                    {
+                        <li>
+                            <TemplateHierarchyItemComponent Template="template" OnClickAction="() => ProjectsCollection.SetProject(template)">
+
+                            </TemplateHierarchyItemComponent>
+                        </li>
+                    }
+                </CascadingValue>
+            </ul>
+        </section>
+    }
+
+    @if (Account.TemplatesUserSaved.Any())
+    {
+        <section class="templates-group">
+            <h4 class="load-title">
+                Сохраненные образцы
+            </h4>
+
+            <ul class="presets">
+                <CascadingValue Value="this">
+                    @foreach (var template in Account.TemplatesUserSaved)
+                    {
+                        <li>
+                            <TemplateHierarchyItemComponent Template="template" ShowDescription="false" OnClickAction="() => ProjectsCollection.SetProject(template)">
+
+                            </TemplateHierarchyItemComponent>
+                        </li>
+                    }
+                </CascadingValue>
+            </ul>
+    </section>
+    }
+
+    @if (ProjectsCollection.ActiveProjects.Any(p => p.IsActiveHierCreated))
+    {
+        <section class="templates-group">
+            <h4 class="load-title">
+                Активные задачи
+            </h4>
+
+            <ul class="presets">
+                <CascadingValue Value="this">
+                    @foreach (var project in ProjectsCollection.ActiveProjects.Where(p => p.IsActiveHierCreated))
+                    {
+                        <li>
+                            <TemplateHierarchyItemComponent Template="new TemplateProject(project)" ShowDescription="false" OnClickAction="()=> ProjectsCollection.SetProject(new TemplateProject(project))">
+
+                            </TemplateHierarchyItemComponent>
+                        </li>
+                    }
+                </CascadingValue>
+            </ul>
+        </section>
+    }
+
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Account.OnLoadEnded += StateHasChanged;
+        ProjectsCollection.OnActiveProjectsChanged += StateHasChanged;
+        Account.OnUserTemplatesChanged += StateHasChanged;
+    }
+    public virtual async ValueTask DisposeAsync()
+    {
+        Account.OnLoadEnded -= StateHasChanged;
+        ProjectsCollection.OnActiveProjectsChanged -= StateHasChanged;
+        Account.OnUserTemplatesChanged -= StateHasChanged;
+    }
+
+}

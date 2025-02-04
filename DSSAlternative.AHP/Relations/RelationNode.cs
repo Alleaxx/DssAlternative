@@ -61,6 +61,10 @@ namespace DSSAlternative.AHP.Relations
         /// Округлённое значение для отображения в интерфейсе
         /// </summary>
         double ValueRounded { get; set; }
+        /// <summary>
+        /// Проставленный рейтинг, соответствует цифровому значению
+        /// </summary>
+        IRating Rating { get; }
 
 
         /// <summary>
@@ -73,10 +77,6 @@ namespace DSSAlternative.AHP.Relations
         void SetUnknown();
 
 
-        /// <summary>
-        /// Проставленный рейтинг, соответствует цифровому значению
-        /// </summary>
-        IRating Rating { get; }
         /// <summary>
         /// Установить рейтинг отношению и поменять его значение согласно переданному рейтингу
         /// </summary>
@@ -106,11 +106,9 @@ namespace DSSAlternative.AHP.Relations
             {
                 return $"'{From}' хуже '{To}' в {1 / Value} раз по {Main}";
             }
-        }
-        
+        }     
         
         public event Action<IRelationNode> OnValueChanged;
-
 
         public IRelationsCriteria CriteriaContext { get; init; }
         public INode Main { get; init; }
@@ -171,13 +169,6 @@ namespace DSSAlternative.AHP.Relations
             }
         }
         private double value;
-        
-        public void Reflect()
-        {
-            Value = 1 / Value;
-        }
-
-
 
         public RelationNode(IRelationsCriteria criteriaRelations, INode criteria, INode from, INode to, double val)
         {
@@ -225,6 +216,12 @@ namespace DSSAlternative.AHP.Relations
         public void SetUnknown()
         {
             Value = 0;
+        }
+
+
+        public void Reflect()
+        {
+            Value = 1 / Value;
         }
     }
 }

@@ -47,6 +47,17 @@ namespace DSSAlternative.AHP.Relations
         /// </summary>
         IEnumerable<IRelationNode> NodeComparesMini { get; }
 
+
+        /// <summary>
+        /// Объект для удобного представления матрицы: сравнения сгрупированные по первичному узлу
+        /// </summary>
+        IEnumerable<IGrouping<INode, IRelationNode>> MtxView { get; }
+
+        /// <summary>
+        /// Матрица по критерию. При обращении считается заново
+        /// </summary>
+        IMatrix Mtx { get; }
+
         /// <summary>
         /// Установить значение по указанному отношению
         /// </summary>
@@ -57,15 +68,6 @@ namespace DSSAlternative.AHP.Relations
         /// </summary>
         void SetUnknown();
 
-        /// <summary>
-        /// Объект для удобного представления матрицы: сравнения сгрупированные по первичному узлу
-        /// </summary>
-        IEnumerable<IGrouping<INode, IRelationNode>> MtxView { get; }
-        
-        /// <summary>
-        /// Матрица по критерию. При обращении считается заново
-        /// </summary>
-        IMatrix Mtx { get; }
     }
 
     /// <summary>
@@ -84,16 +86,13 @@ namespace DSSAlternative.AHP.Relations
 
         public event Action<IRelationsCriteria, IRelationNode> OnAnyRelationValueChanged;
 
+
         //Содержание отношений по критерию
         public INode NodeMain { get; init; }
         public IRelationsHierarchy RelationContext { get; init; }
         public IEnumerable<INode> NodesControlled { get; init; }
 
         public IEnumerable<IRelationNode> NodeCompares => this;
-        private IRelationNode this[INode from, INode to]
-        {
-            get => this.FirstOrDefault(r => r.From == from && r.To == to);
-        }
 
 
         //Требуемые отношения
@@ -107,7 +106,6 @@ namespace DSSAlternative.AHP.Relations
         private IEnumerable<IRelationNode> DiagonalMtxCellsCompares { get; set; }
 
 
-
         //Характеристика критерия
         public bool Correct => Known && Consistent;
         public bool Known => !Mtx.WithZeros();
@@ -117,7 +115,6 @@ namespace DSSAlternative.AHP.Relations
         //Матричный вид
         public IEnumerable<IGrouping<INode, IRelationNode>> MtxView { get; private set; }
         public IMatrix Mtx => Matrix.CreateRelations(RelationContext, NodeMain);
-
 
 
         //Создание
@@ -176,6 +173,11 @@ namespace DSSAlternative.AHP.Relations
             OnAnyRelationValueChanged?.Invoke(this, relation);
         }
 
+
+        private IRelationNode this[INode from, INode to]
+        {
+            get => this.FirstOrDefault(r => r.From == from && r.To == to);
+        }
 
         //Установка значений
         public void SetValue(INode from, INode to, double value)

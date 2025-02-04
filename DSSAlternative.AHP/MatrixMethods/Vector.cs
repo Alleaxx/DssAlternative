@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP.MatrixMethods
 {
+    /// <summary>
+    /// Вектор матрицы
+    /// </summary>
     public class VectorMtx
     {
         public override string ToString()
@@ -17,12 +20,6 @@ namespace DSSAlternative.AHP.MatrixMethods
         private readonly INode[] Nodes;
         private readonly double[] Vector;
         private readonly Dictionary<INode, double> Dictionary;
-
-        public double this[INode node]
-        {
-            get { return Dictionary[node]; }
-        }
-
        
         private VectorMtx(INode[] nodes, double[] vector)
         {
@@ -33,6 +30,11 @@ namespace DSSAlternative.AHP.MatrixMethods
             {
                 Dictionary.Add(nodes[i], vector[i]);
             }
+        }
+
+        public double this[INode node]
+        {
+            get { return Dictionary[node]; }
         }
 
         //Вектор -1 глобальных коэффициентов для узла

@@ -1,0 +1,62 @@
+﻿td {
+    padding: 8px 24px;
+    border-right: 1px solid gainsboro;
+}
+.rating {
+    display: flex;
+    justify-content: space-between;
+    border-radius: 2px;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    padding: 3px 0;
+}
+.non-selectable{
+    background: whitesmoke;
+}
+
+.selected{
+    opacity: 1;
+    background-color: whitesmoke;
+}
+.selected .rating-title{
+    font-weight: 500;
+}
+.selectable{
+    opacity: 0.75;
+}
+.selectable:hover{
+    cursor: pointer;
+    opacity: 1;
+}
+    .selectable.safe:hover {
+        background-color: #e6ffe6;
+    }
+    .selectable.unknown:hover {
+        background-color: #fffde6;
+    }
+    .selectable.dangerous:hover {
+        background-color: #ffe6e6;
+    }
+
+.cr {
+    min-width: 40px;
+    margin-right: 4px;
+    margin-left: 4px;
+}
+    .safe .cr {
+        color: #00d885;
+    }
+.dangerous .cr{
+    color: red;
+}
+
+.default-rating {
+    flex: 1;
+    padding: 2px 8px;
+    text-align: center;
+}

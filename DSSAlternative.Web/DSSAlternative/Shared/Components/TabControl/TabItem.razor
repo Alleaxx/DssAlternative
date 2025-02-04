@@ -1,0 +1,36 @@
+﻿@implements ITabItem
+
+@*
+    Компонент конкретной вкладки меню
+*@
+
+<li class="tab-item @IsSelected()" @onclick="SetTab">
+    @Title
+</li>
+
+@code {
+    [CascadingParameter]
+    public Tab OwnerTabSet { get; set; }
+
+    [Parameter]
+    public RenderFragment Title { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private string IsSelected()
+    {
+        return this.WithCss()
+            .AddIfTrue(OwnerTabSet.ActiveTab == this, "selected")
+            .GetClasses();
+    }
+
+    private void SetTab()
+    {
+        OwnerTabSet.SetTab(this);
+    }
+
+    protected override void OnInitialized()
+    {
+        OwnerTabSet.AddTab(this);
+    }
+}

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP.MatrixMethods
 {
-    //Свойства матрицы
+    /// <summary>
+    /// Свойства матрицы
+    /// </summary>
     public static class MtxProperties
     {
         public static bool IsSymetric(this double[,] mtx, bool ignoreNulls = true)

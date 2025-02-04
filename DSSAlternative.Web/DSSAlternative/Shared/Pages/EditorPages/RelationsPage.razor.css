@@ -1,0 +1,13 @@
+﻿.relations-grid {
+    display: flex;
+    height: 100%;
+}
+
+.relation-area {
+    flex: 10;
+    border-right: 1px solid gainsboro;
+}
+.criterias{
+    flex: 4;
+    padding: 10px;
+}

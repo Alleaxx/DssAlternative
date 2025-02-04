@@ -1,0 +1,98 @@
+﻿.row-usual {
+    margin-top: 10px;
+}
+.mtx {
+    display: flex;
+}
+.mtx table {
+    border: 1px solid gainsboro;
+    border-collapse: collapse;
+    margin: 4px;
+}
+
+    .mtx table h4 {
+        margin: 0;
+    }
+
+td {
+    padding: 10px 6px;
+}
+
+.good-mtx {
+    color: green;
+}
+.bad-mtx {
+    color: darkred;
+}
+
+.mtx input[type=text] {
+    border: 0;
+    width: 94%;
+    text-align: center;
+    border: 1px solid transparent;
+    max-width: 10em;
+    height: 30px;
+}
+
+    .mtx input[disabled] {
+        color: gray;
+    }
+
+
+.cell-header {
+    border-bottom: 1px solid gainsboro;
+    text-align: center;
+    background: whitesmoke;
+}
+
+.cell-node {
+    text-align: center;
+    font-size: 0.8em;
+    min-width: 4.5em;
+    padding-left: 5px;
+    padding-right: 5px;
+    background: whitesmoke;
+    border: 1px solid gainsboro;
+}
+
+td.cell-value {
+    padding: 0;
+    max-width: 10em;
+}
+.cell-header-more-info{
+    background-color: whitesmoke;
+    text-align: center;
+    font-weight: 500;
+}
+.cell-property-name {
+    font-size: 0.8em;
+    padding: 5px;
+    border-right: 1px solid gainsboro;
+    border-bottom: 1px solid gainsboro;
+}
+.cell-property-value {
+    padding: 0 5px;
+    font-size: 0.8em;
+    border-bottom: 1px solid gainsboro;
+}
+
+
+.cell-selected {
+    border-color: gainsboro;
+}
+
+.mtx .cell-mirrored input[type=text] {
+    border-color: green;
+}
+
+.incorrect input {
+    color: red;
+}
+
+.unknown input {
+    color: darkorange;
+}
+
+.cell-state {
+    border-right: 1px solid gainsboro;
+}

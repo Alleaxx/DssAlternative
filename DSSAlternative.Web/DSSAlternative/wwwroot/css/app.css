@@ -5,7 +5,7 @@
 
 .grid {
     display: grid;
-    grid-template-columns: 5fr 20fr 70fr 5fr;
+    grid-template-columns: 10fr 20fr 70fr 10fr;
     grid-template-rows: auto auto 1fr auto;
     grid-template-areas:
         "logo logo header header"
@@ -26,12 +26,13 @@
     border-bottom: 2px solid gainsboro;
     border-right: 1px solid gainsboro;
     border-left: 1px solid gainsboro;
+
     display: flex;
     justify-content: center;
-    text-align: center;
+    align-items: center;
 }
 
-.main-header {
+.nav-menu-main {
     grid-area: header;
     background-color: whitesmoke;
     border-bottom: 2px solid gainsboro;
@@ -41,7 +42,7 @@
     align-items: center;
 }
 
-.navside {
+.nav-stages {
     grid-area: navside;
     border-bottom: 1px solid gainsboro;
     border-right: 2px solid gainsboro;

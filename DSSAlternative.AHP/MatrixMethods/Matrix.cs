@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP.MatrixMethods
 {
+    /// <summary>
+    /// Интерфейс матрицы с возможностью изменения значений
+    /// </summary>
     public interface IMatrix
     {
         int Rows { get; }
@@ -15,21 +18,28 @@ namespace DSSAlternative.AHP.MatrixMethods
 
         double[,] Array { get; }
         double[] Coeffiients { get; }
-        bool WithZeros();
 
 
         double Cr { get; }
         bool IsCorrect { get; }
         bool Consistent { get; }
 
+        bool WithZeros();
         string GetText();
 
         void Change(INode a, INode b, double value);
         void Change(int x, int y, double value);
     }
+
+    /// <summary>
+    /// Матрица с возможностью изменения значений
+    /// </summary>
     public class Matrix : IMatrix 
     {
-        public override string ToString() => $"Матрица ({Rows}x{Cols})";
+        public override string ToString()
+        {
+            return $"Матрица ({Rows}x{Cols})";
+        }
         
         public double[,] Array { get; set; }
         public int Rows => Array.Rows();
@@ -41,8 +51,6 @@ namespace DSSAlternative.AHP.MatrixMethods
         public bool Consistent => Array.IsCorrect();
 
         public double[] Coeffiients => Array.LocalCoeffs();
-        public bool WithZeros() => Array.WithZeros();
-        public string GetText() => Array.Text();
 
         protected Matrix()
         {
@@ -63,7 +71,8 @@ namespace DSSAlternative.AHP.MatrixMethods
             }
         }
 
-
+        public bool WithZeros() => Array.WithZeros();
+        public string GetText() => Array.Text();
 
         //Матрица отношений (которая редактируется в интерфейсе)
         public static IMatrix CreateRelations(IRelationsGrouped problem, INode node)
@@ -113,7 +122,6 @@ namespace DSSAlternative.AHP.MatrixMethods
 
             return new Matrix(array);
         }
-
 
 
         public void Change(INode a, INode b, double value)

@@ -1,0 +1,159 @@
+﻿@inherits DSSComponentRelationV2
+
+@*
+    Компонент отношения с таблицей выбора приоритета
+*@
+
+<section class="relations-section">
+
+    <h4 class="main-node">
+        @Relation.Main.Name
+    </h4>
+    <div class="criteria-info non-selectable @Relation.CriteriaContext.CssColorClass()">
+        <span>
+            Отношений по критерию заполнено
+            @Relation.CriteriaContext.FilterComparesCount(c => !c.Unknown).Filtered
+            /
+            @Relation.CriteriaContext.FilterComparesCount(c => !c.Unknown).Total,
+        </span>
+        <span>
+            @if (Relation.CriteriaContext.Known)
+            {
+                @(Relation.CriteriaContext.Consistent ? " все согласованы" : " но они несогласованы! Необходимо их скорректировать")
+            }
+            else
+            {
+                <span> необходимо дозаполнить</span>
+            }
+        </span>
+    </div>
+
+    <table class="matrix">
+        <colgroup>
+            <col style="width:50%" />
+            <col style="width:50%" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th class="side-node from non-selectable">
+                    <span>
+                        @Relation.From.Name
+                    </span>
+                </th>
+                <th class="side-node to non-selectable">
+                    <span>
+                        @Relation.To.Name
+                    </span>
+                </th>
+            </tr>
+
+            @foreach (var group in Ratings)
+            {
+                <tr>
+                    <RelationRatingItemComponent Rating="group.forRating" ColSpan="1" RelationParam="Relation">
+
+                    </RelationRatingItemComponent>
+                    <RelationRatingItemComponent Rating="group.toRating" ColSpan="1" RelationParam="Relation">
+
+                    </RelationRatingItemComponent>
+                </tr>
+            }
+            <tr>
+                <td class="cell-separator" colspan="2"></td>
+            </tr>
+            <tr>
+                <RelationRatingItemComponent Rating="RatingNone" ColSpan="2" RelationParam="Relation">
+
+                </RelationRatingItemComponent>
+            </tr>
+        </tbody>
+    </table>
+
+    @if (Project.Relations.Correct)
+    {
+        <div class="nav-result">
+            <a class="link-result" href="@LinksEnum.Results">
+                Доступен результат!
+            </a>
+        </div>
+    }
+
+    <ProgressBarComponent
+        ValueInfo="Relations.CountFilled()"
+        TextPercentage="Заполненность отношений:"
+        ColorFill="@Relations.CssColor()">
+    </ProgressBarComponent>
+
+    <table class="relations-nav-table">
+        <colgroup>
+            <col style="width:50%" />
+            <col style="width:50%" />
+        </colgroup>
+        <tr>
+            <td>
+                <div class="link-nav link-prev" @onclick="SetPrev" role="button">
+                    <span >
+                        ← предыдущее отношение
+                    </span>
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="link-nav link-next" @onclick="SetNext" role="button">
+                    <span>
+                        следующее отношение →
+                    </span>
+                </div>
+            </td>
+        </tr>
+    </table>
+</section>
+
+@code {
+    [Parameter]
+    public bool UseSafeWarnings { get; set; } = true;
+
+    private IRating RatingNone { get; set; }
+    private IRating RatingEqual { get; set; }
+    private IEnumerable<(IRating forRating, IRating toRating)> Ratings { get; set; }
+    protected IRelationNode Prev => Relations.PrevRequiredRel(RelationSelected);
+    protected IRelationNode Next => Relations.NextRequiredRel(RelationSelected);
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        CreateRatings();
+        Project.OnRelationChanged += Project_OnRelationChanged;
+    }
+    public override async ValueTask DisposeAsync()
+    {
+        await base.DisposeAsync();
+        Project.OnRelationChanged -= Project_OnRelationChanged;
+    }
+
+    protected override void Project_OnSelectedRelationChanged()
+    {
+        CreateRatings();
+        StateHasChanged();
+    }
+    private void Project_OnRelationChanged(IRelationsHierarchy obj)
+    {
+        StateHasChanged();
+    }
+
+    private void CreateRatings()
+    {
+        RatingNone = new Rating(0);
+        RatingEqual = new Rating(1);
+        Ratings = RatingSystem.RatingsFor(Relation);
+    }
+
+    private void SetNext()
+    {
+        SelectRelation(Next);
+    }
+    private void SetPrev()
+    {
+        SelectRelation(Prev);
+    }
+}

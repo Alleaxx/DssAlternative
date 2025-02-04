@@ -1,0 +1,60 @@
+{
+  "Name": "Задача выбора",
+  "Description": "Базовая структура для любой задачи выбора",
+  "Img": "list.svg",
+  "Nodes": [
+    {
+      "Name": "Стандартная задача",
+      "Level": 0,
+      "Group": "Цель",
+      "GroupOwner": "Нет"
+    },
+    {
+      "Name": "К1",
+      "Level": 1,
+      "Group": "Критерии",
+      "GroupOwner": "Цель"
+    },
+    {
+      "Name": "К2",
+      "Level": 1,
+      "Group": "Критерии",
+      "GroupOwner": "Цель"
+    },
+    {
+      "Name": "А1",
+      "Level": 2,
+      "Group": "Альтернативы",
+      "GroupOwner": "Критерии"
+    },
+    {
+      "Name": "А2",
+      "Level": 2,
+      "Group": "Альтернативы",
+      "GroupOwner": "Критерии"
+    }
+  ],
+  "Relations": [
+    {
+      "Main": "Выбор 1",
+      "Level": 0,
+      "From": "К1",
+      "To": "К2",
+      "Value": 0
+    },
+    {
+      "Main": "К1",
+      "Level": 1,
+      "From": "А1",
+      "To": "А2",
+      "Value": 0
+    },
+    {
+      "Main": "К2",
+      "Level": 1,
+      "From": "А1",
+      "To": "А2",
+      "Value": 0
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+﻿.task-menu {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.state-control .add-task {
+    font-size: 0.9em;
+    border: 1px solid lightgreen;
+    color: green;
+    background-color: transparent;
+    margin-bottom: 8px;
+}
+
+    .state-control .add-task:hover {
+        background-color: lightgreen;
+    }
+
+
+    .state-control{
+        display : flex;
+        flex-direction: column;
+        padding: 4px 0;
+    }
+    .state-control button{
+        margin: 1px 4px;
+    }
+    .file-input-label {
+        margin: 1px 4px;
+    }
+
+    .file-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+
+    .state-control .save:hover{
+        color: green;
+        border-color: green;
+    }
+    .state-control .save:active{
+        color: green;
+        border-color: limegreen;
+    }

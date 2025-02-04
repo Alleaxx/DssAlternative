@@ -1,0 +1,32 @@
+﻿@page "/hierarchy"
+@inherits DSSComponentProject
+@layout EditorLayout
+@implements IAsyncDisposable
+
+@*
+    Страница редактирования иерархии выбранной задачи
+*@
+
+<section class="hierarchy-page">
+    <CascadingValue Name="Project" Value="@ProjectsCollection.SelectedProject">
+        <div class="sheme basic-border">
+            @if (!this.ProjectsCollection.SelectedProject.IsActiveHierCreated)
+            {
+                <HierarchyEditTemplatesComponent></HierarchyEditTemplatesComponent>
+            }
+            else
+            {
+                <div class="hierarchy-status-block">
+                    <HierarchyStatusComponent></HierarchyStatusComponent>
+                </div>
+
+                <HierarchyEditStructureComponent></HierarchyEditStructureComponent>
+            }
+        </div>
+    </CascadingValue>
+</section>
+
+
+@code {
+
+}

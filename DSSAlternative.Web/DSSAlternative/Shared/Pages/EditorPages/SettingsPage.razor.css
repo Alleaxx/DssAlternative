@@ -1,0 +1,57 @@
+﻿.settings-section{
+    min-width: 75%;
+    margin-top: 8px;
+}
+
+
+.rating-system {
+}
+
+    .rating-system th {
+        font-size: 0.95em;
+        font-weight: 500;
+        border-bottom: 1px solid gainsboro;
+        padding: 2px 5px;
+    }
+
+    .rating-system input {
+        width: 90%;
+        border: 0;
+        outline: 0;
+    }
+
+.rating-system {
+    border-collapse: collapse;
+}
+
+    .rating-system td {
+        padding: 2px 5px;
+        border-bottom: 1px solid gainsboro;
+    }
+
+
+
+    .table-logs{
+        font-size: 0.8em;
+        border: 1px solid silver;
+        border-collapse: collapse;
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+    .log-header-row{
+    }
+        .log-header-row th {
+            border-bottom: 1px solid silver;
+            padding: 4px;
+        }
+    .log-object-row{
+
+    }
+        .log-object-row td {
+            padding: 8px 4px;
+            border-bottom: 1px solid gainsboro;
+        }
+    .log-message {
+        font-size: 0.9em;
+        color: #838383
+    }

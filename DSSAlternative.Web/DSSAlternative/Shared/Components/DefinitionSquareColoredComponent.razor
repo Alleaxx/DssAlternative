@@ -1,8 +1,13 @@
-﻿
+﻿@*
+    Компонент элемента "легенды" - закрашенного квадрата в цвет с пояснением
+*@
+
 <div class="example-section">
-    <div class="example-block" style="background-color: @Color; border-color: @ColorBorder"></div>
+    <div class="example-block" style="background-color: @(Color); border-color: @(ColorBorder)">
+
+    </div>
     <span class="example-description">
-        - @Message
+        @Message
     </span>
 </div>
 @code {

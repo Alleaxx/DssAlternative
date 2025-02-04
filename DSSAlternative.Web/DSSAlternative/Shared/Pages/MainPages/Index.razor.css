@@ -1,0 +1,96 @@
+﻿.main-grid {
+    display: flex;
+    flex-direction: column;
+    max-width: 750px;
+}
+    .main-grid a {
+        color: black;
+    }
+
+.about {
+    font-size: 0.9em;
+}
+.about h2{
+    margin-bottom: 0;
+}
+
+.about-area {
+    flex: 1;
+}
+
+.problem-area {
+    flex: 2;
+}
+
+.info-area {
+    flex: 1;
+}
+
+.about-area,
+.problem-area,
+.info-area {
+    color: black;
+
+    text-decoration: none;
+    text-align: center;
+
+    border: 1px solid gainsboro;
+    border-radius: 2px;
+
+    padding: 8px 4px;
+    margin: 8px auto;
+    width: 80%;
+}
+
+    .about-area h2,
+    .problem-area h2,
+    .info-area h2 {
+        margin: 4px 0;
+    }
+    .about-area p,
+    .problem-area p,
+    .info-area p {
+        margin: 4px 0;
+    }
+    .about-area img,
+    .problem-area img,
+    .info-area img {
+        height: 24px;
+        margin: 0 8px;
+        opacity: 0.75;
+    }
+
+    .about-area p,
+    .problem-area p,
+    .info-area p {
+        color: rgb(64, 64, 64);
+    }
+
+    .about-area:hover,
+    .problem-area:hover,
+    .info-area:hover {
+        cursor: pointer;
+        background-color: rgb(240,240,240);
+        border-color: silver;
+    }
+    .about-area:active,
+    .problem-area:active,
+    .info-area:active {
+        background-color: rgb(240,240,240);
+        border-color: silver;
+    }
+
+    .area-header{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+.process {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.process img{
+    opacity: 0.75;
+}

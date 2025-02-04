@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace DSSAlternative.AHP.Templates
 {
     /// <summary>
-    /// Шаблон задачи с заданной иерархией и отношениями. Сохраняется в JSON
+    /// Модель задачи с заданной иерархией и отношениями. Сохраняется в JSON
     /// </summary>
     public interface ITemplateProject : ICloneable
     {
@@ -31,7 +31,7 @@ namespace DSSAlternative.AHP.Templates
     }
 
     /// <summary>
-    /// Шаблон задачи с заданной иерархией и отношениями. Сохраняется в JSON
+    /// Модель задачи с заданной иерархией и отношениями. Сохраняется в JSON
     /// </summary>
     public class TemplateProject : ITemplateProject
     {

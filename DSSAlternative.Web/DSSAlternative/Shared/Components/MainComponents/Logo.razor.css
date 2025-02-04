@@ -1,0 +1,11 @@
+﻿h1{
+    margin: auto 0;
+}
+.logo a {
+    text-decoration: none;
+    color: black;
+}
+.logo a:hover{
+}
+.logo a:active{
+}

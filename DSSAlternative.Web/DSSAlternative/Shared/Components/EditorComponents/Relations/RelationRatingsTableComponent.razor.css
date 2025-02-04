@@ -1,0 +1,122 @@
+﻿.matrix {
+    min-width: 670px;
+    border-collapse: collapse;
+    border: 1px solid gainsboro;
+    border-top: 0;
+    margin: auto;
+    margin-bottom: 8px;
+}
+
+    .matrix th, .matrix td {
+        padding: 8px 24px;
+        border: 5px solid transparent;
+        border-top: 0;
+        border-bottom: 0;
+    }
+
+    .relations-section{
+        padding: 0 8px;
+    }
+
+td.between {
+    border: 0;
+}
+
+.main-node {
+    font-size: 1.4em;
+}
+
+.matrix .side-node {
+    border: 0;
+    border-bottom: 1px solid gainsboro;
+    border-top: 1px solid gainsboro;
+    text-align: left;
+}
+
+.main-node h3 {
+    margin: 5px 0;
+}
+
+.matrix a {
+    text-decoration: none;
+    color: darkblue;
+}
+
+    .matrix a:hover {
+        color: blue;
+    }
+
+
+
+.matrix .results-message {
+    padding: 20px 0;
+    border-bottom: 1px solid whitesmoke;
+    border-top: 1px solid gainsboro;
+    text-align: center;
+}
+
+
+.matrix td.criteria-info{
+    text-align: center;
+    font-size: 0.9em;
+    border-left: 1px solid gainsboro;
+    border-right: 1px solid gainsboro;
+}
+
+.criteria-info{
+    margin: 8px 0;
+}
+.criteria-info.safe {
+    color: green;
+}
+    .criteria-info.unknown {
+        color: rgb(64,64,64);
+    }
+.criteria-info.dangerous {
+    color: red;
+}
+
+.link-result {
+    color: darkblue;
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+}
+
+    .link-result:hover {
+        color: royalblue;
+    }
+
+    .link-result:active {
+        color: royalblue;
+    }
+
+.link-nav{
+    color: darkblue;
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 0;
+}
+.link-nav:hover{
+    color: royalblue;
+}
+    .link-nav:active {
+        color: royalblue;
+    }
+    .link-next{
+        text-align: right;
+    }
+
+
+.relations-nav-table{
+    width: 100%;
+}
+.nav-result {
+    display: flex;
+    justify-content: center;
+}
+
+.matrix td.cell-separator {
+    padding: 0;
+    border-bottom: 1px solid gainsboro;
+}

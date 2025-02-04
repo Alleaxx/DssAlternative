@@ -1,0 +1,41 @@
+﻿@inherits DSSComponent
+
+@*
+    Компонент отдельной задачи выбора в списке
+*@
+
+<div class="task-menu-element @IsSelected">
+    <a class="task-link" @onclick="@SelectProblem">
+        <div class="task-element-sheme">
+            <HierarchySchemeMiniComponent Project="@Project" />
+        </div>
+        <header class="task-element-header">
+            <h4 class="task-element-name">@Project.Name</h4>
+            <p class="task-element-descr">@Project.Status</p>
+        </header>
+    </a>
+    <input class="remove-task" type="button" value="X" @onclick="RemoveProblem" />
+</div>
+
+@code {
+    [Parameter]
+    public IProject Project { get; set; }
+    [Parameter]
+    public EventCallback Removed { get; set; }
+
+    public string IsSelected => this.WithCss()
+        .AddIfTrue(Project == ProjectsCollection.SelectedProject, "selected")
+        .GetClasses();
+
+    private void SelectProblem()
+    {
+        ProjectsCollection.SelectProject(Project);
+    }
+    private void RemoveProblem()
+    {
+        string oldName = Project.Name;
+        ProjectsCollection.RemoveProject(Project);
+        Removed.InvokeAsync();
+        Logger.AddInfo(Project, $"Задача \"{oldName}\" удалена", "", LogCategory.UI);
+    }
+}

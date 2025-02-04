@@ -1,5 +1,5 @@
 ﻿h2 {
-    margin: 10px 4px;
+    margin: 10px 0px;
     font-size: 1.4em;
     font-weight: normal;
 }
@@ -47,3 +47,65 @@ a.warning {
 a.error {
     color: darkred;
 }
+
+/* Меню этапов задачи */
+.stages-list a {
+    padding: 4px 2px;
+    text-decoration: none;
+    cursor: pointer;
+    color: darkblue;
+}
+    .stages-list a.active {
+        font-weight: 500;
+        color: black;
+    }
+
+.stages-list .warning a.active {
+    color: #986b00;
+}
+
+.stages-list a:hover {
+    color: blue;
+}
+
+.stages-list a.active:hover {
+    color: black;
+}
+
+.stage-menu .active .stage-element-image:hover {
+    opacity: 80%;
+}
+
+.stage-menu-element {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.stage-menu .active .stage-element-image {
+    opacity: 100%;
+}
+
+/* Основное меню */
+.nav-menu-main a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin: 0 4px;
+    color: royalblue;
+}
+    .nav-menu-main a img {
+        height: 24px;
+        margin: 0 6px;
+        opacity: 0.25;
+    }
+    .nav-menu-main a:hover {
+        color: blue;
+    }
+    .nav-menu-main a.active {
+        color: black;
+        font-weight: 500;
+    }
+        .nav-menu-main a.active img {
+            opacity: 1;
+        }

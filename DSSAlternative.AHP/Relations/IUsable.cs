@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP.Relations
 {
+    /// <summary>
+    /// Интерфейс для применимости (отношений)
+    /// </summary>
     public interface IUsable
     {
         /// <summary>

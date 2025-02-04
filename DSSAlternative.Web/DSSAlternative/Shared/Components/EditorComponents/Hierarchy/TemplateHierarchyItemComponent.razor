@@ -1,0 +1,44 @@
+﻿@inherits DSSComponent
+
+@*
+    Компонент для шаблона задачи в списке с загрузкой по клику.
+*@
+
+<section class="preset" @onclick="OnClickAction" title="Применить этот шаблон к текущей задаче">
+    <img class="preset-img" title="@Template.Name" src="Images/@Template.Img" />
+    <div class="preset-info">
+        <div class="preset-header row">
+            <h4 class="preset-name">
+                @Template.Name
+            </h4>
+            @if (Account.TemplatesUserSaved.Contains(Template))
+            {
+                <button class="remove-task" @onclick="() => RemoveTemplate()" title="удалить этот шаблон">
+                    X
+                </button>
+            }
+        </div>
+        @if (ShowDescription)
+        {
+            <p class="preset-descr">@Template.Description</p>
+        }
+    </div>
+</section>
+
+@code {
+    [Parameter]
+    public ITemplateProject Template { get; set; }
+
+    [Parameter]
+    public Action OnClickAction { get; set; }
+
+    [Parameter]
+    public bool ShowDescription { get; set; } = true;
+
+
+    private void RemoveTemplate()
+    {
+        Account.RemoveUserTemplate(Template);
+        Logger.AddUIInfo(Template, $"Шаблон \"{Template.Name}\" удален", $"");
+    }
+}

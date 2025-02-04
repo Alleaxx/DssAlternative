@@ -129,13 +129,13 @@ namespace DSSAlternative.AHP
             return HierarchyActive.ToString();
         }
 
-        #region События
-
         public event Action<IRelationsHierarchy> OnRelationChanged;
         public event Action<IHierarchy> OnActiveHierChanged;
         public event Action<IHierarchy> OnEditingHierChanged;
 
-        #endregion
+        public event Action OnSelectedRelationChanged;
+        public event Action OnSelectedNodeChanged;
+
 
         public IHierarchy HierarchyEditing { get; private set; }
         public IHierarchy HierarchyActive { get; private set; }
@@ -166,14 +166,14 @@ namespace DSSAlternative.AHP
                 return status;
             }
         }
-        public bool UnsavedChanged => NodeMap.GetState(HierarchyEditing).State != CompareHierState.NoChanges;     
+        public bool UnsavedChanged => NodeMap.GetState(HierarchyEditing).State != HierarchyChangeState.NoChanges;     
         public bool IsUpdateAvailable => UnsavedChanged && HierarchyEditing.Correctness.IsCorrect;
         public bool IsActiveHierCreated => !IsEmptyProject && HierarchyActive.Correctness.IsCorrect;  
         public bool IsEmptyProject { get; init; }
 
 
-
-        #region Конструкторы
+        public IRelationNode RelationSelected { get; private set; }
+        public INode NodeSelected { get; private set; }
 
         public Project(ITemplateProject template)
         {
@@ -192,16 +192,15 @@ namespace DSSAlternative.AHP
             Logger.Default.AddInfo(this, "Создание проект по узлам", Name, cate: LogCategory.Projects);
         }
         
-        #endregion
 
         public void SetActiveHierarchyAsEditing()
         {
             var state = NodeMap.GetState(HierarchyEditing);
-            if (state.State == CompareHierState.MinorFieldsChanges)
+            if (state.State == HierarchyChangeState.MinorFieldsChanges)
             {
                 UpdateActiveHierarchy();
             }
-            else if (state.State == CompareHierState.StructureFieldsChanges || state.State == CompareHierState.CollectionChanges)
+            else if (state.State == HierarchyChangeState.StructureFieldsChanges || state.State == HierarchyChangeState.CollectionChanges)
             {
                 SetActiveHierarchy(HierarchyEditing.CreateCopy());
             }
@@ -279,17 +278,6 @@ namespace DSSAlternative.AHP
         }
 
 
-
-
-        #region Выбранные узлы в интерфейсе
-
-
-        public event Action OnSelectedRelationChanged;
-        public event Action OnSelectedNodeChanged;
-
-        public IRelationNode RelationSelected { get; private set; }
-        public INode NodeSelected { get; private set; }
-
         public void SelectNode(INode node)
         {
             if (!HierarchyEditing.Nodes.Contains(node) && node != null)
@@ -304,9 +292,6 @@ namespace DSSAlternative.AHP
         {
             RelationSelected = rel;
             OnSelectedRelationChanged?.Invoke();
-        }
-        
-        #endregion
+        } 
     }
-
 }

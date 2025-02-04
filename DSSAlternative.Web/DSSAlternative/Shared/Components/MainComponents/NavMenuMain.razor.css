@@ -1,0 +1,13 @@
+﻿
+.links-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+
+    margin: 4px 0;
+}
+
+    .links-list li {
+        margin: 4px 20px;
+        font-size: 1.2em;
+    }

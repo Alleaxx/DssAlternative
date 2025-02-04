@@ -1,0 +1,30 @@
+﻿.templates-section{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 4px;
+}
+
+.presets {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+    .presets li {
+        width: 20em;
+        margin: 2px;
+    }
+    .presets a{
+        text-decoration: none;
+        color: black;
+    }
+
+.load-title {
+    font-size: 1em;
+    font-weight: 500;
+    margin: 8px 0 4px 0;
+}
+
+.none-description {
+    margin-left: 24px;
+}

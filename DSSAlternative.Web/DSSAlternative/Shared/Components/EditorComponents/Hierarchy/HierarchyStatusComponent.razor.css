@@ -1,0 +1,61 @@
+﻿.add {
+    color: green;
+    border: 2px solid lightgreen;
+    background: transparent;
+    padding: 4px 16px;
+    margin: 4px 0.5em;
+    cursor: pointer;
+}
+    .add:hover {
+        background-color: lightgreen;
+    }
+
+.cancel {
+    border: 2px solid darkorange;
+    background: transparent;
+    padding: 4px 16px;
+    margin: 4px 0.5em;
+    cursor: pointer;
+}
+    .cancel:hover {
+        background-color: palegoldenrod;
+    }
+
+.hierarchy-actions{
+    display: flex;
+    flex-wrap: wrap;
+
+    margin: 4px 0;
+}
+
+.fails {
+    list-style-type: square;
+    margin: 4px;
+    font-size: 0.9em;
+}
+
+.errored {
+    border: 2px solid red;
+    border-radius: 3px;
+    font-size: 0.8em;
+    width: 2em;
+    cursor: pointer;
+    text-align: center;
+    padding: 1px 4px;
+    margin: 0 4px;
+}
+
+    .errored:hover {
+        background-color: lightpink;
+    }
+
+
+.not-saved {
+    color: darkgoldenrod;
+}
+.warning {
+    color: darkred;
+}
+.all-saved {
+    color: green;
+}

@@ -1,0 +1,173 @@
+﻿@inherits DSSComponentRelationV2
+
+@*
+    Компонент выбора конкретного приоритета для отношений с описанием и показателем согласованности 
+*@
+
+@if (AsCell)
+{
+    <td colspan="@ColSpan" title="@TooltipText()" class="@CssClassSelection() @CssClassWarnings()" @onclick="ApplyRating">
+        <div class="rating">
+            <span>
+                <span>
+                    @if (IsSelected)
+                    {
+                        <input type="checkbox" checked />
+                    }
+                    else
+                    {
+                        <input type="checkbox" />
+                    }
+                </span>
+                <span class="rating-title" style="@CssStyle()">
+                    @RatingName()
+                </span>
+            </span>
+            <span class="cr">
+                @CrDeltaText()
+            </span>
+        </div>
+    </td>
+}
+else
+{
+    <div class="default-rating" title="@CrDeltaText()" @onclick="ApplyRating">
+        @Rating.Value
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int ColSpan { get; set; }
+    [Parameter]
+    public IRating Rating { get; set; }
+    [Parameter]
+    public bool AsCell { get; set; } = true;
+
+    private bool IsSelected { get; set; }
+    private IRatingRules Rules { get; set; }
+    private RuleForRating RuleUsed => Rules.GetRuleForRating(Rating);
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        Rules = RatingCssSystem.DefaultSystem;
+
+        bool ratingsEqual = Relation.Rating.CheckEqual(Rating);
+        bool ratingsDefined = ((Relation.Value == 1 || Relation.Value == 0) && Relation.Value == Rating.Value);
+
+        IsSelected = ratingsEqual || ratingsDefined;
+    }
+
+    private void ApplyRating()
+    {
+        Relation.SetRating(Rating);
+    }
+
+    private IMatrix ThisRatingMatrix()
+    {
+        var val = Rating.Node == Relation.From ? Rating.Value : 1 / Rating.Value;
+        var mtx = Relation.GetMatrixForRating(val);
+        return Relation.GetMatrixForRating(val);
+    }
+
+    private string CssStyle()
+    {
+        return IsSelected ? RuleUsed.Style : string.Empty;
+    }
+    private string CssClassSelection()
+    {
+        return IsSelected ? "selected" : "selectable";
+    }
+    private string CssClassWarnings()
+    {
+        bool isUnknown = Rating.Value == 0;
+        bool isAllKnown = Relation.CriteriaContext.Known;
+        bool isLastUnknownNode = Relation.Unknown && Relation.CriteriaContext.WithLastUnknownRelation();
+        bool isUnknownMoreThanOne = Relation.CriteriaContext.NodeComparesMini.Count(n => n.Unknown) > 1;
+
+        if (isUnknown)
+        {
+            return "unknown";
+        }
+        if (isUnknownMoreThanOne)
+        {
+            return "undefined";
+        }
+
+        if((isAllKnown || isLastUnknownNode) && ThisRatingMatrix().IsCorrect)
+        {
+            return "safe";
+        }
+        if ((isAllKnown || isLastUnknownNode) && !ThisRatingMatrix().IsCorrect)
+        {
+            return "dangerous";
+        }
+        return "undefined";
+    }
+
+    public string RatingName()
+    {
+        return RuleUsed.Name;
+    }
+    private string CrDeltaText()
+    {
+        bool isSmallMatrix = Relation.CriteriaContext.NodesControlled.Count() <= 2;
+        bool isUnknownRating = Rating.Value == 0;
+        bool isUnknownMoreThanOne = Relation.CriteriaContext.NodeComparesMini.Count(n => n.Unknown) > 1;
+
+        bool isAllKnown = Relation.CriteriaContext.Known;
+        bool isLastUnknownNode = Relation.Unknown && Relation.CriteriaContext.WithLastUnknownRelation();
+        bool isOtherLastUnknownNode = !Relation.Unknown && Relation.CriteriaContext.WithLastUnknownRelation();
+
+        if (isSmallMatrix)
+        {
+            return string.Empty;
+        }
+
+        //показываем цифры только если все отношения уже известны
+        if ((isAllKnown || isLastUnknownNode))
+        {
+            var cr = ThisRatingMatrix().Cr;
+
+            if (double.IsInfinity(cr) || double.IsNaN(cr))
+            {
+                return "~";
+            }
+            else
+            {
+                return Math.Abs(cr).ToString("0.00");
+            }
+        }
+        return string.Empty;
+
+        if (isUnknownRating || isUnknownMoreThanOne || isOtherLastUnknownNode)
+        {
+            return "?";
+        }
+        if (isSmallMatrix)
+        {
+            return "✓";
+        }
+
+
+
+        return "???";
+    }
+    private string TooltipText()
+    {
+        bool isUnknownRating = Rating.Value == 0;
+
+        if (isUnknownRating)
+        {
+            return "Сбросить сравнение этих элементов";
+        }
+        else
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append($"Выставить приоритет {Rating.Value} для \"{Rating?.Node?.Name}\"");
+            return sb.ToString();
+        }
+    }
+}

@@ -1,0 +1,20 @@
+﻿.grid {
+    display: grid;
+    grid-template-columns: 5fr 20fr 70fr 5fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+        "logo logo header header"
+        ". content content ."
+        "footer footer footer footer";
+}
+
+main {
+    grid-area: content;
+    min-width: 640px;
+    max-width: 1280px;
+    min-height: 85vh;
+    margin: auto;
+    border-right: 1px solid silver;
+    border-left: 1px solid silver;
+    padding: 0px 10px;
+}

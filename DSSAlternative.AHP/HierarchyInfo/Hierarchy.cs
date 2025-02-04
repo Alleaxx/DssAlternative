@@ -91,15 +91,17 @@ namespace DSSAlternative.AHP.HierarchyInfo
             return $"{MainGoal.Name} ({Count})";
         }
 
-        #region Основные свойства
+        public event Action<IHierarchy> OnNodesListUpdated;
+        public event Action<INode> OnNodeFieldsUpdated;
 
-        //Список узлов
+        #region Свойства
+
         public IEnumerable<INode> Nodes => this;
         public INode MainGoal => this.FirstOrDefault(h => h.Level == 0);
         public ICorrectness Correctness { get; init; }
 
-        //Общая информация об иерархии
         public int LevelsCount => this.Select(n => n.Level).Distinct().Count();
+        public bool IsSealed { get; private set; }
 
         #endregion
 
@@ -121,10 +123,8 @@ namespace DSSAlternative.AHP.HierarchyInfo
         
         #endregion
 
-        #region Изменения коллекции и события
+        #region Методы
 
-        public event Action<IHierarchy> OnNodesListUpdated;
-        public event Action<INode> OnNodeFieldsUpdated;
         public void AddNodes(params INode[] nodes)
         {
             foreach (var node in nodes)
@@ -164,19 +164,18 @@ namespace DSSAlternative.AHP.HierarchyInfo
             OnNodeFieldsUpdated?.Invoke(node);
         }
 
-        public bool IsSealed { get; private set; }
         public void SealThisHierarchy()
         {
             IsSealed = true;
         }
-
-        #endregion
 
         public IHierarchy CreateCopy()
         {
             var nodesCopy = Nodes.Select(n => new TemplateNode(n)).Select(t => t.CreateNode()).ToArray();
             return new HierarchyNodesList(nodesCopy);
         }
+
+        #endregion
     }
 
 }

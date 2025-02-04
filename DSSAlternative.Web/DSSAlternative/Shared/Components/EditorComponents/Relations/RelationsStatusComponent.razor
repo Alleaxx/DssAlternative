@@ -1,0 +1,34 @@
+﻿@inherits DSSComponentProjectV2
+
+@*
+    Компонент статуса отношений текущей задачи и возможных действий с ними
+*@
+
+<div class="status-bar">
+    <div class="status-bar-properties">
+        <div>
+            <span class="property-name">Сравнений: </span>
+            <span class="property-value">@Relations.GetAllNodeCompares().Count()</span>
+        </div>
+    </div>
+    <div>
+        @if(Project.Relations.CountFilled().Filtered > 0)
+        {
+            <button class="action-button copy button-less-margin" @onclick="ClearAllRelations">
+                <img src="Images/share-2.svg" />
+                <span>Сбросить отношения</span>
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    private void ClearAllRelations()
+    {
+        foreach (var criteria in Project.Relations.GetActiveNodeCriterias())
+        {
+            criteria.SetUnknown();
+        }
+        Logger.AddUIInfo(Project, $"Сброшены отношения по задаче \"{Project.Name}\"!", $"");
+    }
+}

@@ -102,20 +102,14 @@ namespace DSSAlternative.AHP.HierarchyInfo
             return $"{Name} [{Group}]";
         }
 
+        public event Action<INode> OnNodeFieldsChanged;
 
-        //Константы для групп
         public const string MainGroupOwnerName = "Нет";
         public const string MainGroupName = "Цель";
 
-
-        #region События
-
-        public event Action<INode> OnNodeFieldsChanged;
-
-        #endregion
-
         #region Свойства
 
+        private static int IDTotal = 0;
         public int ID { get; private set; }
 
         public string Name
@@ -149,8 +143,6 @@ namespace DSSAlternative.AHP.HierarchyInfo
         }
         private string imgPath;
 
-
-        //Информация о структуре
         public int Level
         {
             get => level;
@@ -199,26 +191,10 @@ namespace DSSAlternative.AHP.HierarchyInfo
 
         public double Coefficient { get; set; }
 
-
         public IHierarchy Hierarchy { get; private set; }
-        public void SetHierarchy(IHierarchy hierarchy)
-        {
-            Hierarchy = hierarchy;
-        }
-        private bool IsHierarchySealed()
-        {
-            return Hierarchy?.IsSealed ?? false;
-        }
         public IRelationsCriteria Relations { get; private set; }
-        public void SetRelations(IRelationsCriteria relations)
-        {
-            Relations = relations;
-        }
 
         #endregion
-
-        #region Конструкторы
-        private static int IDTotal = 0;
 
         public Node(int level, string name, string group, string groupOwner)
         {
@@ -228,11 +204,20 @@ namespace DSSAlternative.AHP.HierarchyInfo
             Group = group;
             GroupOwner = groupOwner;
         }
-        
-        #endregion
 
+        public void SetHierarchy(IHierarchy hierarchy)
+        {
+            Hierarchy = hierarchy;
+        }
+        private bool IsHierarchySealed()
+        {
+            return Hierarchy?.IsSealed ?? false;
+        }
+        public void SetRelations(IRelationsCriteria relations)
+        {
+            Relations = relations;
+        }
 
-        //Реализация клонирования
         public object Clone()
         {
             return CloneThis();

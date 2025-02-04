@@ -64,7 +64,7 @@ namespace DSSAlternative.AHP.Relations
 
 
     /// <summary>
-    /// Список отношений для иерархии
+    /// Список отношений для иерархии. 
     /// Пересоздается при изменении текущей коллекции в проекте
     /// </summary>
     public class RelationsHierarchy : List<IRelationsCriteria>, IRelationsHierarchy
@@ -86,9 +86,11 @@ namespace DSSAlternative.AHP.Relations
         private Dictionary<INode, IRelationsCriteria> RelationsCriteriasDictionary;
         public IEnumerable<IRelationsCriteria> RelationsCriteria => this;
 
+        public bool Correct => RelationsCriteria.All(c => c.Correct);
+        public bool Consistent => RelationsCriteria.All(c => c.Consistent);
+        public bool Known => RelationsCriteria.All(c => c.Known);
 
 
-        //Создание критериев и отношений
         public RelationsHierarchy(IHierarchy hierarchy)
         {
             HierarchyContext = hierarchy;
@@ -106,7 +108,6 @@ namespace DSSAlternative.AHP.Relations
             }
             RelationsCriteriasDictionary = this.ToDictionary(c => c.NodeMain);
         }
-
 
         private void InnerCriteriaValueChanged(IRelationsCriteria relation, IRelationNode relationNode)
         {
@@ -134,8 +135,6 @@ namespace DSSAlternative.AHP.Relations
         }
 
 
-
-        //Получение отношений
         public IRelationsCriteria this[INode main]
         {
             get => RelationsCriteriasDictionary[main];
@@ -146,13 +145,6 @@ namespace DSSAlternative.AHP.Relations
         }
 
 
-        //Состояние пригодности
-        public bool Correct => RelationsCriteria.All(c => c.Correct);
-        public bool Consistent => RelationsCriteria.All(c => c.Consistent);
-        public bool Known => RelationsCriteria.All(c => c.Known);
-
-
-        //Установка значений
         public void SetValue(INode main, INode from, INode to, double value)
         {
             RelationsCriteriasDictionary[main].SetValue(from, to, value);

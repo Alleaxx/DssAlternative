@@ -1,0 +1,116 @@
+﻿@inherits DSSComponentProject
+
+@*
+    Компонент заголовка, тулбара и  навигации по этапам задач
+*@
+
+<nav class="navside nav-stages">
+    @if (!Project.IsEmptyProject)
+    {
+        <div class="nav-stages-header">
+            <h2 class="project-header">
+                @Project.Name
+            </h2>
+            <div class="status-panel">
+                <div class="actions-panel">
+                    @if (Project.IsActiveHierCreated)
+                    {
+                        <button class="action-button save-as" @onclick="SaveJsonAsFile">
+                            <img src="Images/save.svg" />
+                            <span>Сохранить в файл</span>
+                        </button>
+                        @if (!Account.CheckEqualUserTemplate(Project))
+                        {
+                            <button class="action-button save-as" @onclick="SaveAsTemplate">
+                                <img src="Images/save.svg" />
+                                <span>Сохранить как образец</span>
+                            </button>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <section class="stage-menu">
+            <ul class="stages-list">
+                <li>
+                    <NavLink class="stage-menu-element" href="@LinksEnum.Hierarchy">
+                        <img class="stage-element-image" src="Images/layers.svg" />
+                        <span class="stage-element-name">
+                            @(Project.IsActiveHierCreated ? "Иерархия" : "Формирование иерархии") @(Project.UnsavedChanged ? "[*]" : "")
+                        </span>
+                    </NavLink>
+                </li>
+                @if (Project.IsActiveHierCreated)
+                {
+                    <li>
+                        <NavLink class="stage-menu-element" href="@LinksEnum.Relations">
+                            <img class="stage-element-image" src="Images/share-2.svg" />
+                            <span class="stage-element-name">
+                                Отношения и связи @(Relations.Correct ? "[✓]" : !Relations.Known ? "[?]" : "[!]")
+                            </span>
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink class="stage-menu-element" href="@LinksEnum.Results">
+                            <img class="stage-element-image" src="Images/list.svg" />
+                            <span class="stage-element-name">Результаты</span>
+                        </NavLink>
+                    </li>
+                }
+            </ul>
+        </section>
+    }
+    else
+    {
+        <h2 class="text-center">
+            Нет открытой задачи
+        </h2>
+    }
+</nav>
+
+@code {
+    [Inject]
+    public IJsonService Json { get; set; }
+    [Inject]
+    public IFileService FileService { get; set; }
+
+    private async Task SaveJsonAsFile()
+    {
+        string fileName = $"{Project.Name}.json";
+        string text = Json.ConvertToJson(Project);
+        await FileService.SaveFile(fileName, text);
+        Logger.AddInfo(Project, $"Файл \"{fileName}\" сохранен", "А вот успешно или нет - этого мы не знаем", LogCategory.UI);
+    }
+
+    private void SaveAsTemplate()
+    {
+        Account.AddUserTemplate(Project);
+        Logger.AddInfo(Project, $"Задача \"{Project.Name}\" сохранена в шаблон", "", LogCategory.UI);
+    }
+
+    private void RemoveProblem()
+    {
+        string oldName = Project.Name;
+        ProjectsCollection.RemoveProject(Project);
+        Logger.AddInfo(Project, $"Задача \"{oldName}\" удалена", "", LogCategory.UI);
+    }
+
+    private void CopyProblem()
+    {
+        ITemplateProject template = new TemplateProject(Project);
+        ProjectsCollection.AddProject(template);
+
+        var lastAdded = ProjectsCollection.ActiveProjects.Last();
+        if(lastAdded != null && lastAdded.HierarchyActive.MainGoal != null)
+        {
+            var mainGoal = lastAdded.HierarchyActive.MainGoal;
+            mainGoal.Name = $"{mainGoal.Name} (копия)";
+            mainGoal = lastAdded.HierarchyEditing.MainGoal;
+            mainGoal.Name = $"{mainGoal.Name} (копия)";
+        }
+        Logger.AddInfo(Project, $"Задача \"{Project.Name}\" скопирована", "", LogCategory.UI);
+    }
+}
+
+

@@ -1,0 +1,47 @@
+﻿article {
+    max-width: 750px;
+    font-size: 0.9em;
+}
+
+    article p {
+        margin-top: 5px;
+    }
+
+    article li {
+        line-height: 1.4;
+    }
+
+    article h2 {
+        font-weight: 500;
+    }
+
+    article h3 {
+        font-weight: 500;
+    }
+
+    article h4 {
+        font-weight: 500;
+        font-size: 1.1em;
+    }
+
+    article a {
+        color: royalblue;
+        text-decoration: none;
+    }
+
+    article table {
+        width: 30%;
+        border: 1px solid gainsboro;
+        margin: 4px;
+    }
+
+    article h3, article h4 {
+        border-bottom: 1px solid gainsboro;
+        padding-bottom: 2px;
+    }
+
+
+.article-image {
+    width: 75%;
+    margin: 4px
+}

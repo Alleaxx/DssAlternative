@@ -14,6 +14,8 @@ namespace DSSAlternative.AHP.Logs
     }
     public class Logger : ILogger
     {
+        public event Action<Log> OnLogAdded;
+
         public static ILogger Default
         {
             get
@@ -27,14 +29,14 @@ namespace DSSAlternative.AHP.Logs
         }
         private static ILogger defaultLogger;
 
-        public event Action<Log> OnLogAdded;
-
         public IEnumerable<Log> Logs => LogsList;
         private List<Log> LogsList { get; init; }
+
         public Logger()
         {
             LogsList = new List<Log>();
         }
+
         public void AddLog(Log log)
         {
             LogsList.Add(log);

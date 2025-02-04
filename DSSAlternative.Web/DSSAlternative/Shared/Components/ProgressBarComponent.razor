@@ -1,4 +1,7 @@
-﻿
+﻿@*
+    Компонент заполняемого прогресс-бара
+*@
+
 <div class="progress-block">
     @if (TextPercentage != null)
     {
@@ -8,12 +11,13 @@
             </span>
         </div>
     }
-    <div class="progress-bar" >
+    <div class="progress-bar" style="border-color: @ColorBorder">
         <div class="progress-bar-filled" style="width:@(Math.Round(Percentage))%; background-color:@ColorFill; height:@(Height)px">
 
         </div>
     </div>
 </div>
+
 @code {
     [Parameter]
     public CountInfo ValueInfo { get; set; }
@@ -29,6 +33,8 @@
     public string TextPercentage { get; set; }
     [Parameter]
     public string ColorFill { get; set; }
+    [Parameter]
+    public string ColorBorder { get; set; } = "#c8c8c8";
 
 
     private double Percentage => ValueInfo?.Percentage ?? Value / Maximum * 100.0;

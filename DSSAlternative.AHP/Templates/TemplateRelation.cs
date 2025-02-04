@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace DSSAlternative.AHP.Templates
 {
     /// <summary>
-    /// Шаблон для отношения
+    /// Модель для отношения
     /// </summary>
     public class TemplateRelation
     {

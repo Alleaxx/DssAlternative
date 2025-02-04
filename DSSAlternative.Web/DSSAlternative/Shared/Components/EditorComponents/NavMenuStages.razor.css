@@ -1,0 +1,42 @@
+﻿
+.stage-menu {
+    border-top: 1px solid gainsboro;
+}
+.stages-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    background: whitesmoke;
+}
+.status-panel{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border: 0;
+}
+.nav-stages-header {
+    display: flex;
+    justify-content: space-between;
+}
+.project-header{
+    margin-left: 4px;
+    font-weight: 600;
+    font-size: 1.5em;
+}
+
+
+
+.stage-element-image {
+    flex: 1;
+    margin: 0 10px;
+    opacity: 50%;
+    height: 20px;
+}
+.stage-element-name {
+    flex: 20;
+    font-size: 1.1em;
+    margin: 0 4px;
+}

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace DSSAlternative.AHP.Templates
 {
     /// <summary>
-    /// Шаблон для узла
+    /// Модель для узла
     /// </summary>
     public class TemplateNode : ICloneable
     {

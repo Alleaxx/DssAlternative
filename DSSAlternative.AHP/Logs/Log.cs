@@ -12,6 +12,8 @@ namespace DSSAlternative.AHP.Logs
         {
             return $"{State} | {CreationDate:HH:mm:ss} | {Category} - {Title}";
         }
+
+        private static int TotalID;
         public int ID { get; init; }
         public object SourceObject { get; init; }
         public string Title { get; init; }
@@ -20,7 +22,6 @@ namespace DSSAlternative.AHP.Logs
         public LogCategory Category { get; init; }
         public DateTime CreationDate { get; init; }
 
-        private static int TotalID;
         public Log(object source, string title, string message, LogState state, LogCategory category)
         {
             ID = TotalID++;

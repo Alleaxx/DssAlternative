@@ -1,0 +1,129 @@
+﻿.criterias-list {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.criteria {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 2px;
+    padding: 3px;
+    padding-bottom: 0;
+    padding-left: 0;
+    border: 0px solid gainsboro;
+    font-size: 0.9em;
+    border-radius: 2px;
+    cursor: pointer;
+    user-select: none;
+    border-left: 4px solid transparent;
+}
+.progress-info{
+    width: 100%;
+}
+    .criteria.unknown {
+    }
+    .criteria.dangerous {
+    }
+    .criteria.selected-now {
+        border-left-color: orange;
+    }
+        .criteria.selected-now.unknown {
+        }
+        .criteria.selected-now.dangerous {
+        }
+
+    .criteria:hover {
+        background-color: whitesmoke;
+    }
+
+.progress {
+    height: 3px;
+    background: lightgreen;
+    margin-left: 3px;
+    transition-property: width;
+    transition-duration: 0.4s;
+}
+
+    .progress.light {
+        height: 0px;
+    }
+    .progress.medium {
+        height: 2px;
+    }
+
+.criteria-char {
+    font-size: 1.2em;
+    font-weight: 600;
+    text-align: center;
+    margin-right: 4px;
+    margin-left: 2px;
+    width: 20px;
+}
+
+.local-relations {
+    font-size: 0.8em;
+    margin-right: 1em;
+}
+
+.criteria-right {
+    flex: 1;
+    margin: 0 3px
+}
+
+.criteria-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.criteria-name {
+    margin: 2px 0;
+    color: blue;
+}
+.selected-now .criteria-name{
+    color: black;
+}
+
+.progress-text {
+    font-size: 0.8em;
+    color: gray;
+}
+
+
+
+
+.category-header {
+    margin: 4px;
+    font-weight: 500;
+    padding-bottom: 2px;
+    background-color: whitesmoke;
+    border: 1px solid gainsboro;
+    padding: 2px 4px;
+}
+.category-header-level {
+    color: gray;
+}
+
+.criteria-count {
+    font-size: 0.9em;
+    color: gray;
+}
+
+.relation-item{
+    display: flex;
+    align-items: center;
+}
+.relation-item .criteria-char{
+    font-size: 1em;
+}
+.relation-titles {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+}
+.relation-right {
+    text-align: right;
+    margin-left: 4px;
+}

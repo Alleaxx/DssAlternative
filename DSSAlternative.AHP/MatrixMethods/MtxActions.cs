@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 
 namespace DSSAlternative.AHP.MatrixMethods
 {
+    /// <summary>
+    /// Действия с матрицами
+    /// </summary>
     public static class MtxActions
     {
-        //Действия с матрицами
         public static double[] GeometricMultiVector(this double[,] mtx)
         {
             int size = mtx.GetLength(0);

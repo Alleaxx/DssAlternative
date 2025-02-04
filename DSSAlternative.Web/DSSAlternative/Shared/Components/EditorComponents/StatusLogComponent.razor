@@ -1,0 +1,43 @@
+﻿@implements IAsyncDisposable
+@*
+    Компонент для строчки логгирования по указанной категории
+*@
+
+<div class="status-log">
+    <span title="@Log.Message">
+        [@Counter] @Log.CreationDate.ToString("HH:mm:ss") - @Log.Title
+    </span>
+</div>
+
+@code {
+    [Inject]
+    public ILogger Logger { get; set; }
+
+    [Parameter]
+    public LogCategory Category { get; set; } = LogCategory.UI;
+
+    private Log Log { get; set; }
+    private int Counter { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Logger.OnLogAdded += OnLogAdded;
+        Logger.AddInfo(this, "Лог инициализирован!", "Теперь он будет записывать сообщения", LogCategory.UI);
+    }
+
+    public virtual async ValueTask DisposeAsync()
+    {
+        Logger.OnLogAdded -= OnLogAdded;
+    }
+
+    private void OnLogAdded(Log log)
+    {
+        if(log.Category == Category)
+        {
+            Log = log;
+            Counter++;
+            StateHasChanged();
+        }
+    }
+}

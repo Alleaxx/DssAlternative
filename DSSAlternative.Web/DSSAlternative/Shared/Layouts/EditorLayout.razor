@@ -1,15 +1,20 @@
 ﻿@inherits LayoutComponentBase
-<link rel="stylesheet" href="css/app.css" />
+
+@*
+    Макет сайта для редактора задач
+*@
 
 <section class="grid">
+
     <Logo />
 
-    <MainHeader />
+    <NavMenuMain></NavMenuMain>
 
     <CascadingValue Name="Project" Value="ProjectsCollection.SelectedProject">
-        <MenuProjects />
+        
+        <NavMenuProjects />
 
-        <Menu />
+        <NavMenuStages />
 
         <main>
             @if (!ProjectsCollection.SelectedProject.IsEmptyProject)
@@ -18,15 +23,16 @@
             }
             else
             {
-                <div></div>
+                <div>
+
+                </div>
             }
         </main>
+
     </CascadingValue>
 
-
-    <nav class="lower-menu"></nav>
-
     <Footer />
+
 </section>
 
 @code{

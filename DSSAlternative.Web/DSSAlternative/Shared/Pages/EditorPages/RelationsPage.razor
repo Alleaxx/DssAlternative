@@ -1,0 +1,58 @@
+﻿@page "/relations"
+@inherits DSSComponentProject
+@layout EditorLayout
+
+@*
+    Страница редактирования отношений выбранной задачи
+*@
+
+@if (Project.IsActiveHierCreated && !Project.IsEmptyProject)
+{
+    <CascadingValue Name="Project" Value="Project">
+
+        <RelationsStatusComponent></RelationsStatusComponent>
+
+        <Tab>
+            <TabItem>
+                <Title>
+                    <h3 class="tab-header">Выбор приоритета</h3>
+                </Title>
+                <ChildContent>
+                    <div class="relations-grid">
+                        <section class="relation-area">
+                            <RelationRatingsTableComponent></RelationRatingsTableComponent>
+                        </section>
+                        <section class="criterias">
+                            <CriteriasRelationsListComponent ShowNodeCompares="true"></CriteriasRelationsListComponent>
+                        </section>
+                    </div>
+                </ChildContent>
+            </TabItem>
+
+            <TabItem>
+                <Title>
+                    <h3 class="tab-header">Матрица отношений</h3>
+                </Title>
+                <ChildContent>
+                    <div class="relations-grid">
+                        <section class="relation-area">
+                            <ProgressBarComponent ValueInfo="Relations.CountFilled()" TextPercentage="Заполненность отношений:" ColorFill="@Relations.CssColor()"></ProgressBarComponent>
+
+                            <CriteriaNodeMatrixComponent />
+                        </section>
+
+                        <section class="criterias">
+                            <CriteriasRelationsListComponent ShowNodeCompares="false"></CriteriasRelationsListComponent>
+                        </section>
+                    </div>
+                </ChildContent>
+            </TabItem>
+        </Tab>
+
+    </CascadingValue>
+}
+
+
+@code {
+
+}
