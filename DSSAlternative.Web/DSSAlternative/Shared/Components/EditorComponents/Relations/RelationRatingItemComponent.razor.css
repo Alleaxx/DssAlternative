@@ -60,3 +60,9 @@
     padding: 2px 8px;
     text-align: center;
 }
+
+@media (max-device-width:480px) {
+    td {
+        padding: 2px 4px;
+    }
+}

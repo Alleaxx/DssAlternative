@@ -87,25 +87,28 @@ a.error {
 }
 
 /* Основное меню */
-.nav-menu-main a {
+.nav-menu a{
     display: flex;
     align-items: center;
     text-decoration: none;
     margin: 0 4px;
+    padding: 6px 0;
     color: royalblue;
+    border-bottom: 1px solid gainsboro;
 }
-    .nav-menu-main a img {
+    .nav-menu a img {
         height: 24px;
         margin: 0 6px;
         opacity: 0.25;
     }
-    .nav-menu-main a:hover {
+    .nav-menu a:hover {
         color: blue;
     }
-    .nav-menu-main a.active {
+    .nav-menu a.active {
         color: black;
         font-weight: 500;
+        background-color: whitesmoke;
     }
-        .nav-menu-main a.active img {
+        .nav-menu a.active img {
             opacity: 1;
         }

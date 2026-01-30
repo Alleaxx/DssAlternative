@@ -5,13 +5,36 @@
 *@
 
 <section class="grid">
+
     <Logo />
 
-    <NavMenuMain />
+    <NavMenuMain></NavMenuMain>
 
-    <main>
-        @Body
-    </main>
+    <CascadingValue Name="Project" Value="ProjectsCollection.SelectedProject">
+
+        <NavMenuProjects />
+
+        <main>
+            @Body
+        </main>
+
+    </CascadingValue>
 
     <Footer />
+
 </section>
+
+@code {
+    [Inject]
+    public IProjectsCollection ProjectsCollection { get; set; }
+    [Inject]
+    public NavigationManager Navigation { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        ProjectsCollection.OnSelectedProjectChanged += project => StateHasChanged();
+    }
+}

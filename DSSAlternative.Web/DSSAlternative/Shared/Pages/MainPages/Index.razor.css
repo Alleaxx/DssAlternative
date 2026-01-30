@@ -1,34 +1,8 @@
-﻿.main-grid {
+﻿.links-area-list {
     display: flex;
     flex-direction: column;
-    max-width: 750px;
 }
-    .main-grid a {
-        color: black;
-    }
-
-.about {
-    font-size: 0.9em;
-}
-.about h2{
-    margin-bottom: 0;
-}
-
-.about-area {
-    flex: 1;
-}
-
-.problem-area {
-    flex: 2;
-}
-
-.info-area {
-    flex: 1;
-}
-
-.about-area,
-.problem-area,
-.info-area {
+.link-area {
     color: black;
 
     text-decoration: none;
@@ -42,40 +16,28 @@
     width: 80%;
 }
 
-    .about-area h2,
-    .problem-area h2,
-    .info-area h2 {
+    .link-area h2 {
         margin: 4px 0;
     }
-    .about-area p,
-    .problem-area p,
-    .info-area p {
+    .link-area p {
         margin: 4px 0;
     }
-    .about-area img,
-    .problem-area img,
-    .info-area img {
+    .link-area img {
         height: 24px;
         margin: 0 8px;
         opacity: 0.75;
     }
 
-    .about-area p,
-    .problem-area p,
-    .info-area p {
+    .link-area p {
         color: rgb(64, 64, 64);
     }
 
-    .about-area:hover,
-    .problem-area:hover,
-    .info-area:hover {
+    .link-area:hover {
         cursor: pointer;
         background-color: rgb(240,240,240);
         border-color: silver;
     }
-    .about-area:active,
-    .problem-area:active,
-    .info-area:active {
+    .link-area:active {
         background-color: rgb(240,240,240);
         border-color: silver;
     }
@@ -93,4 +55,10 @@
 }
 .process img{
     opacity: 0.75;
+}
+
+@media (max-device-width:480px) {
+    .link-area{
+        width: 100%;
+    }
 }

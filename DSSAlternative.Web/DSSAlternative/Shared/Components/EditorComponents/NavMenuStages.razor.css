@@ -40,3 +40,19 @@
     font-size: 1.1em;
     margin: 0 4px;
 }
+
+@media (max-device-width:480px) {
+    .nav-stages-header{
+        flex-direction: column;
+        margin-bottom: 4px;
+        background-color: whitesmoke;
+        border: 0;
+        border-bottom: 1px solid gainsboro;
+    }
+    .project-header{
+        margin-bottom: 4px;
+    }
+    .stages-list {
+        flex-direction: column;
+    }
+}

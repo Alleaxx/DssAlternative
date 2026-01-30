@@ -115,3 +115,10 @@
     .sheme-info a:hover {
         color: blue;
     }
+
+
+@media (max-device-width:480px) {
+    .res{
+        flex-direction: column;
+    }
+}

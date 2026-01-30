@@ -1,10 +1,10 @@
 ﻿.task-menu-element {
     display: flex;
     cursor: pointer;
-    padding: 2px 0;
+    padding: 1px 0;
     border-bottom: 1px solid gainsboro;
     text-decoration: none;
-    margin: 2px 0px;
+    margin: 1px 4px;
 }
 
     .task-menu-element:hover {
@@ -14,17 +14,18 @@
 
     .task-menu-element.selected {
         opacity: 100%;
-        background-color: gainsboro;
+        border-bottom: 1px solid silver;
     }
-    .selected .task-element-name{
+    .selected .task-element-name {
         color: black;
-        font-weight: 500;
     }
 
 
 .task-element-sheme {
     flex: 2;
-    min-height: 50px;
+    min-height: 40px;
+}
+.selected .task-element-sheme{
 }
 
 .task-element-header {
@@ -41,7 +42,7 @@
 
 .task-element-name {
     margin: 0;
-    color: black;
+    color: gray;
     font-weight: 400;
 }
 

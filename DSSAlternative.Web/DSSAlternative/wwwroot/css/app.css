@@ -74,7 +74,6 @@ main {
     border: 1px solid gainsboro;
     padding: 5px 20px;
     border-top-width: 2px;
-    font-size: 0.9em;
 }
 .grid > footer p{
     line-height: 140%;
@@ -104,3 +103,79 @@ main {
     margin-top: 3em;
 }
 
+
+/* Общие стили для информационных страниц */
+
+.info-content {
+    max-width: 1000px;
+}
+    .info-content p {
+        margin-top: 5px;
+    }
+
+    .info-content li {
+        line-height: 1.4;
+    }
+
+    .info-content h2 {
+        font-weight: 500;
+    }
+
+    .info-content h3 {
+        font-weight: 500;
+    }
+
+    .info-content h4 {
+        font-weight: 500;
+        font-size: 1.1em;
+    }
+
+    .info-content a {
+        color: royalblue;
+        text-decoration: none;
+    }
+
+    .info-content table {
+        width: 30%;
+        border: 1px solid gainsboro;
+        margin: 4px;
+    }
+
+    .info-content h3,
+    .info-content h4 {
+        border-bottom: 1px solid gainsboro;
+        padding-bottom: 2px;
+    }
+
+.info-content-image {
+    margin: 8px;
+    max-width: 75%;
+}
+
+@media (max-device-width:480px) {
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        grid-template-areas:
+            "logo"
+            "menu"
+            "navside"
+            "content"
+            "footer";
+    }
+
+    .menu-projects{
+        min-height: auto;
+        border: 0;
+        border-bottom: 1px solid silver;
+    }
+    main{
+        border: 0;
+        min-height: auto;
+    }
+
+    .info-content-image{
+        max-width: 100%;
+    }
+}

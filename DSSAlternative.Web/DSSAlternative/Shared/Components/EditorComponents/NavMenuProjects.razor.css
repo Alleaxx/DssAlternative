@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     list-style: none;
-    padding: 0;
+    padding: 4px 0;
     margin: 0;
 }
 
@@ -50,4 +50,20 @@
     .state-control .save:active{
         color: green;
         border-color: limegreen;
+    }
+
+    .tasks-block {
+        margin-left: 1em;
+    }
+    .nav-menu{
+        font-size: 1.2em;
+    }
+    .links-list{
+        display: flex;
+        flex-direction: column;
+
+        list-style: none;
+        padding-left: 0;
+        margin: 8px 0;
+        margin-bottom: 2px;
     }

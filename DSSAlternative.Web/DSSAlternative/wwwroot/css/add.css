@@ -189,3 +189,13 @@ th {
         margin-right: 2em;
         margin-left: 4px;
     }
+
+    .selected .hier-sheme-element{
+        background-color: orange;
+    }
+
+@media (max-device-width:480px) {
+    .row{
+        flex-wrap: wrap;
+    }
+}

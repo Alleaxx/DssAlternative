@@ -28,3 +28,8 @@
 .none-description {
     margin-left: 24px;
 }
+
+@media (max-device-width:480px) {
+    .templates-section {
+    }
+}

@@ -11,3 +11,9 @@
     flex: 4;
     padding: 10px;
 }
+
+@media (max-device-width:480px) {
+    .relations-grid {
+        flex-direction: column-reverse;
+    }
+}

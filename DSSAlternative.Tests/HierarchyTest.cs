@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using DSSAlternative.AHP;
+using DSSAlternative.AHP.HierarchyInfo;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DSSAlternative.Tests

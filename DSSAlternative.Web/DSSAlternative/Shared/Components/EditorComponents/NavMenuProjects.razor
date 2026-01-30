@@ -5,35 +5,59 @@
     Компонент списка открытых задач
 *@
 
-
 <nav class="menu-projects">
-    <ul class="task-menu">
-        <CascadingValue Value="this">
-            @foreach (var project in ProjectsCollection.ActiveProjects)
-            {
-                <li>
-                    <ProjectItemComponent Project="project"></ProjectItemComponent>
-                </li>
-            }
-        </CascadingValue>
-    </ul>
+    <div class="nav-menu">
+        <ul class="links-list">
+            <li>
+                <NavLink href="info">
+                    <img src="Images/clipboard.svg" />
+                    Использование системы
+                </NavLink>
+            </li>
+            <li>
+                <NavLink href="example">
+                    <img src="Images/bookmark.svg" />
+                    Принцип работы
+                </NavLink>
+            </li>
+            <li>
+                <NavLink href="hierarchy">
+                    <img src="Images/play.svg" />
+                    Решение задач
+                </NavLink>
+            </li>
+        </ul>
+    </div>
 
-    <div class="state-control">
+    <div class="tasks-block">
+        <ul class="task-menu">
+            <CascadingValue Value="this">
+                @foreach (var project in ProjectsCollection.ActiveProjects)
+                {
+                    <li>
+                        <ProjectItemComponent Project="project"></ProjectItemComponent>
+                    </li>
+                }
+            </CascadingValue>
+        </ul>
 
-        <button class="add-task action-button" @onclick="CreateProblem">
-            <img src="Images/plus-square.svg" />
-            <span>Создать новую задачу</span>
-        </button>
+        <div class="state-control">
 
-        <label class="file-input-label action-button add-task">
-            <img src="Images/download.svg" />
-            <span>Загрузить из файла</span>
-            <div class="file-input">
-                <InputFile OnChange="FileUpload">
+            <button class="add-task action-button" @onclick="CreateProblem">
+                <img src="Images/plus-square.svg" />
+                <span>Создать новую задачу</span>
+            </button>
 
-                </InputFile>
-            </div>
-        </label>
+            <label class="file-input-label action-button add-task">
+                <img src="Images/download.svg" />
+                <span>Загрузить из файла</span>
+                <div class="file-input">
+                    <InputFile OnChange="FileUpload">
+
+                    </InputFile>
+                </div>
+            </label>
+        </div>
     </div>
 </nav>
 

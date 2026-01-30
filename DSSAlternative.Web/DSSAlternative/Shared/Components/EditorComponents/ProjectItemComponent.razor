@@ -5,7 +5,7 @@
 *@
 
 <div class="task-menu-element @IsSelected">
-    <a class="task-link" @onclick="@SelectProblem">
+    <a class="task-link" href="hierarchy" @onclick="@SelectProblem">
         <div class="task-element-sheme">
             <HierarchySchemeMiniComponent Project="@Project" />
         </div>
@@ -22,9 +22,11 @@
     public IProject Project { get; set; }
     [Parameter]
     public EventCallback Removed { get; set; }
+    [Inject]
+    public NavigationManager Navigation { get; set; }
 
     public string IsSelected => this.WithCss()
-        .AddIfTrue(Project == ProjectsCollection.SelectedProject, "selected")
+        .AddIfTrue(Project == ProjectsCollection.SelectedProject && (Navigation.Uri.Contains("hierarchy") || Navigation.Uri.Contains("results") || Navigation.Uri.Contains("relations")), "selected")
         .GetClasses();
 
     private void SelectProblem()
